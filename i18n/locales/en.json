@@ -1,0 +1,25 @@
+{
+  "common": {
+    "appName": "TravelHub",
+    "premiumTravel": "Premium Travel"
+  },
+  "auth": {
+    "hero": {
+      "title": "Explore the world with confidence.",
+      "description": "Access exclusive deals, manage your itineraries, and discover hidden gems around the globe."
+    },
+    "login": {
+      "title": "Welcome",
+      "subtitle": "Sign in to continue your journey",
+      "email": "Email Address",
+      "emailPlaceholder": "alex{'@'}example.com",
+      "password": "Password",
+      "passwordPlaceholder": "••••••••",
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign In",
+      "noAccount": "Don't have an account?",
+      "createAccount": "Create an Account",
+      "invalidCredentials": "Invalid credentials"
+    }
+  }
+}
