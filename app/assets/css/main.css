@@ -1,18 +1,59 @@
+@import "@fontsource-variable/plus-jakarta-sans";
 @import "tailwindcss";
 @import "@nuxt/ui";
 
 @theme static {
-  --font-sans: 'Public Sans', sans-serif;
+  --font-sans: 'Plus Jakarta Sans', sans-serif;
 
-  --color-green-50: #EFFDF5;
-  --color-green-100: #D9FBE8;
-  --color-green-200: #B3F5D1;
-  --color-green-300: #75EDAE;
-  --color-green-400: #00DC82;
-  --color-green-500: #00C16A;
-  --color-green-600: #00A155;
-  --color-green-700: #007F45;
-  --color-green-800: #016538;
-  --color-green-900: #0A5331;
-  --color-green-950: #052E16;
+  /* Primary - Blue */
+  --color-travelhub-50: #eff4ff;
+  --color-travelhub-100: #dbe6fe;
+  --color-travelhub-200: #bfd3fe;
+  --color-travelhub-300: #93b4fd;
+  --color-travelhub-400: #6090fa;
+  --color-travelhub-500: #2b7fff;
+  --color-travelhub-600: #135bec;
+  --color-travelhub-700: #1147d4;
+  --color-travelhub-800: #143aac;
+  --color-travelhub-900: #163588;
+  --color-travelhub-950: #122253;
+
+  /* Success - Green */
+  --color-success-50: #effdf5;
+  --color-success-100: #d9fbe8;
+  --color-success-200: #b3f5d1;
+  --color-success-300: #75edae;
+  --color-success-400: #00dc82;
+  --color-success-500: #00c16a;
+  --color-success-600: #00a155;
+  --color-success-700: #007f45;
+  --color-success-800: #016538;
+  --color-success-900: #0a5331;
+  --color-success-950: #052e16;
+
+  /* Warning - Yellow/Amber */
+  --color-warning-50: #fffbeb;
+  --color-warning-100: #fff3c4;
+  --color-warning-200: #fff085;
+  --color-warning-300: #fce358;
+  --color-warning-400: #fcc800;
+  --color-warning-500: #efb100;
+  --color-warning-600: #bf6a02;
+  --color-warning-700: #973c00;
+  --color-warning-800: #7c3006;
+  --color-warning-900: #68280b;
+  --color-warning-950: #3d1400;
+
+  /* Error - Red */
+  --color-error-50: #fef2f2;
+  --color-error-100: #fee2e2;
+  --color-error-200: #ffcaca;
+  --color-error-300: #ff9e9e;
+  --color-error-400: #ff6467;
+  --color-error-500: #fb2c36;
+  --color-error-600: #ef4444;
+  --color-error-700: #dc2626;
+  --color-error-800: #b91c1c;
+  --color-error-900: #991b1b;
+  --color-error-950: #450a0a;
 }

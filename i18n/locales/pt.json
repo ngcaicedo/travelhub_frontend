@@ -1,0 +1,25 @@
+{
+  "common": {
+    "appName": "TravelHub",
+    "premiumTravel": "Viagens Premium"
+  },
+  "auth": {
+    "hero": {
+      "title": "Explore o mundo com confiança.",
+      "description": "Acesse ofertas exclusivas, gerencie seus itinerários e descubra lugares incríveis ao redor do mundo."
+    },
+    "login": {
+      "title": "Bem-vindo",
+      "subtitle": "Faça login para continuar sua viagem",
+      "email": "Endereço de e-mail",
+      "emailPlaceholder": "alex{'@'}example.com",
+      "password": "Senha",
+      "passwordPlaceholder": "••••••••",
+      "forgotPassword": "Esqueceu a senha?",
+      "submit": "Entrar",
+      "noAccount": "Não tem uma conta?",
+      "createAccount": "Criar uma conta",
+      "invalidCredentials": "Credenciais inválidas"
+    }
+  }
+}

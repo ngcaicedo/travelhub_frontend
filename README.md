@@ -1,60 +1,86 @@
-# Nuxt Starter Template
+# TravelHub Frontend
 
-[![Nuxt UI](https://img.shields.io/badge/Made%20with-Nuxt%20UI-00DC82?logo=nuxt&labelColor=020420)](https://ui.nuxt.com)
+Frontend de la plataforma de reservas hoteleras **TravelHub**, una empresa de tecnología de viajes con presencia en 6 países de Latinoamérica (Colombia, Perú, Ecuador, México, Chile y Argentina).
 
-Use this template to get started with [Nuxt UI](https://ui.nuxt.com) quickly.
+## Stack tecnológico
 
-- [Live demo](https://starter-template.nuxt.dev/)
-- [Documentation](https://ui.nuxt.com/docs/getting-started/installation/nuxt)
+- **Framework:** Nuxt 4 (Vue 3, Composition API, TypeScript)
+- **UI:** Nuxt UI + Tailwind CSS v4
+- **Iconos:** Lucide (via `@iconify-json/lucide`)
+- **Tipografía:** Plus Jakarta Sans (variable)
+- **Internacionalización:** `@nuxtjs/i18n` — español (por defecto), inglés, portugués
+- **Testing:** Vitest + `@nuxt/test-utils` + `@vue/test-utils` + Happy DOM
+- **Linting:** ESLint con `@nuxt/eslint`
+- **Package manager:** pnpm
 
-<a href="https://starter-template.nuxt.dev/" target="_blank">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://ui.nuxt.com/assets/templates/nuxt/starter-dark.png">
-    <source media="(prefers-color-scheme: light)" srcset="https://ui.nuxt.com/assets/templates/nuxt/starter-light.png">
-    <img alt="Nuxt Starter Template" src="https://ui.nuxt.com/assets/templates/nuxt/starter-light.png" width="830" height="466">
-  </picture>
-</a>
+## Estructura del proyecto
 
-> The starter template for Vue is on https://github.com/nuxt-ui-templates/starter-vue.
-
-## Quick Start
-
-```bash [Terminal]
-npm create nuxt@latest -- -t ui
+```
+app/
+├── assets/css/main.css        # Tokens de diseño (colores, tipografía)
+├── components/
+│   └── AppLogo.vue            # Logo de TravelHub (icono + texto)
+├── layouts/
+│   ├── default.vue            # Layout general con header
+│   └── auth.vue               # Layout para login/registro (sin navegación, con selector de idioma)
+├── pages/
+│   ├── index.vue              # Redirige a /login
+│   └── login.vue              # Página de login (MPF-1)
+├── app.vue                    # Root component
+└── app.config.ts              # Tema de componentes Nuxt UI
+i18n/
+└── locales/
+    ├── es.json                # Traducciones en español
+    ├── en.json                # Traducciones en inglés
+    └── pt.json                # Traducciones en portugués
+tests/
+├── components/                # Tests de componentes
+├── layouts/                   # Tests de layouts
+└── pages/                     # Tests de páginas
 ```
 
-## Deploy your own
+## Tokens de diseño
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-name=starter&repository-url=https%3A%2F%2Fgithub.com%2Fnuxt-ui-templates%2Fstarter&demo-image=https%3A%2F%2Fui.nuxt.com%2Fassets%2Ftemplates%2Fnuxt%2Fstarter-dark.png&demo-url=https%3A%2F%2Fstarter-template.nuxt.dev%2F&demo-title=Nuxt%20Starter%20Template&demo-description=A%20minimal%20template%20to%20get%20started%20with%20Nuxt%20UI.)
+Los colores fueron  configurados como paletas en `main.css`:
+
+
+| Paleta                | Color base | Uso                    |
+| --------------------- | ---------- | ---------------------- |
+| `travelhub` (primary) | `#135bec`  | Botones, links, CTAs   |
+| `success`             | `#00c16a`  | Estados positivos      |
+| `warning`             | `#efb100`  | Alertas, pendientes    |
+| `error`               | `#fb2c36`  | Errores, destructivos  |
+| `slate` (neutral)     | built-in   | Textos, bordes, fondos |
+
 
 ## Setup
-
-Make sure to install the dependencies:
 
 ```bash
 pnpm install
 ```
 
-## Development Server
-
-Start the development server on `http://localhost:3000`:
+## Comandos
 
 ```bash
+# Servidor de desarrollo en http://localhost:3000
 pnpm dev
-```
 
-## Production
-
-Build the application for production:
-
-```bash
+# Build de producción
 pnpm build
-```
 
-Locally preview production build:
-
-```bash
+# Preview del build de producción
 pnpm preview
+
+# Ejecutar tests
+pnpm test
+
+# Tests en modo watch
+pnpm test:watch
+
+# Lint
+pnpm lint
+
+# Type checking
+pnpm typecheck
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
