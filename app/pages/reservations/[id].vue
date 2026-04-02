@@ -12,12 +12,6 @@ const reservation = ref<ReservationResponse | null>(null)
 const mockPropertyName = computed(() => t('booking.mockPropertyName'))
 const mockGuests = 2
 
-const statusLabelMap: Record<string, string> = {
-  pending_payment: 'status.pendingPayment',
-  confirmed: 'status.confirmed',
-  cancelled: 'status.cancelled'
-}
-
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString)
   const localeMap: Record<string, string> = {
@@ -37,7 +31,7 @@ const fetchReservation = async () => {
   try {
     // TODO: Reemplazar con llamado GET real cuando backend esté disponible:
     // reservation.value = await getReservation(reservationId)
-    
+
     // MVP: Usando mock data para desarrollo local
     const mockReservation: ReservationResponse = {
       id: reservationId,
@@ -55,7 +49,7 @@ const fetchReservation = async () => {
 }
 
 const copyReservationId = () => {
-  if (process.client && reservation.value) {
+  if (import.meta.client && reservation.value) {
     navigator.clipboard.writeText(reservation.value.id)
   }
 }
@@ -81,9 +75,14 @@ definePageMeta({
   <div class="min-h-screen bg-[#f3f5f9] py-10 md:py-14">
     <div class="max-w-[760px] mx-auto px-4">
       <!-- Loading State -->
-      <div v-if="loading" class="text-center py-12">
+      <div
+        v-if="loading"
+        class="text-center py-12"
+      >
         <USpin class="mx-auto mb-4" />
-        <p class="text-gray-600">{{ t('common.loading') }}</p>
+        <p class="text-gray-600">
+          {{ t('common.loading') }}
+        </p>
       </div>
 
       <!-- Error State -->
@@ -97,12 +96,18 @@ definePageMeta({
       />
 
       <!-- Success State -->
-      <div v-else-if="reservation" class="space-y-7">
+      <div
+        v-else-if="reservation"
+        class="space-y-7"
+      >
         <!-- Success Header -->
         <div class="text-center pt-2">
           <div class="flex justify-center mb-5">
             <div class="rounded-full bg-green-100/80 p-5">
-              <UIcon name="i-lucide-check-circle-2" class="w-10 h-10 text-green-600" />
+              <UIcon
+                name="i-lucide-check-circle-2"
+                class="w-10 h-10 text-green-600"
+              />
             </div>
           </div>
           <h1 class="text-[44px] leading-[1.05] font-bold tracking-tight text-slate-900 mb-2">
@@ -121,14 +126,16 @@ definePageMeta({
                 src="/mock/property-1.svg"
                 :alt="t('booking.propertyPreviewAlt')"
                 class="w-full h-full object-cover"
-              />
+              >
             </div>
             <div class="p-6 md:p-7">
               <div class="flex items-start justify-between gap-3 mb-3">
                 <p class="text-[11px] font-semibold tracking-[0.14em] text-travelhub-600 uppercase">
                   {{ t('booking.reservationDetails') }}
                 </p>
-                <p class="text-xs font-semibold text-slate-400 uppercase">#TH-88291</p>
+                <p class="text-xs font-semibold text-slate-400 uppercase">
+                  #TH-88291
+                </p>
               </div>
 
               <h2 class="text-[30px] leading-tight font-bold text-slate-900 max-w-[420px] mb-5">
@@ -137,18 +144,32 @@ definePageMeta({
 
               <div class="grid grid-cols-2 gap-5 mb-5">
                 <div class="flex items-start gap-2.5">
-                  <UIcon name="i-lucide-calendar" class="w-4 h-4 text-travelhub-600 mt-0.5" />
+                  <UIcon
+                    name="i-lucide-calendar"
+                    class="w-4 h-4 text-travelhub-600 mt-0.5"
+                  />
                   <div>
-                    <p class="text-[11px] tracking-wide uppercase text-slate-400 font-semibold">{{ t('booking.checkIn') }}</p>
-                    <p class="text-[15px] text-slate-700 font-medium">{{ formatDate(reservation.check_in_date) }}</p>
+                    <p class="text-[11px] tracking-wide uppercase text-slate-400 font-semibold">
+                      {{ t('booking.checkIn') }}
+                    </p>
+                    <p class="text-[15px] text-slate-700 font-medium">
+                      {{ formatDate(reservation.check_in_date) }}
+                    </p>
                   </div>
                 </div>
 
                 <div class="flex items-start gap-2.5">
-                  <UIcon name="i-lucide-users" class="w-4 h-4 text-travelhub-600 mt-0.5" />
+                  <UIcon
+                    name="i-lucide-users"
+                    class="w-4 h-4 text-travelhub-600 mt-0.5"
+                  />
                   <div>
-                    <p class="text-[11px] tracking-wide uppercase text-slate-400 font-semibold">{{ t('booking.guests') }}</p>
-                    <p class="text-[15px] text-slate-700 font-medium">{{ mockGuests }} {{ t('booking.adults') }}</p>
+                    <p class="text-[11px] tracking-wide uppercase text-slate-400 font-semibold">
+                      {{ t('booking.guests') }}
+                    </p>
+                    <p class="text-[15px] text-slate-700 font-medium">
+                      {{ mockGuests }} {{ t('booking.adults') }}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -174,10 +195,15 @@ definePageMeta({
           <div class="bg-white rounded-xl border border-slate-200 p-6 md:p-7">
             <div class="flex gap-4 items-start">
               <div class="w-11 h-11 rounded-full bg-travelhub-50 flex items-center justify-center shrink-0 mt-0.5">
-                <UIcon name="i-lucide-key-round" class="w-5 h-5 text-travelhub-600" />
+                <UIcon
+                  name="i-lucide-key-round"
+                  class="w-5 h-5 text-travelhub-600"
+                />
               </div>
               <div>
-                <p class="text-lg font-semibold text-slate-900 mb-1">{{ t('booking.checkInInstructions') }}</p>
+                <p class="text-lg font-semibold text-slate-900 mb-1">
+                  {{ t('booking.checkInInstructions') }}
+                </p>
                 <p class="text-slate-500 text-[15px] max-w-[430px]">
                   {{ t('booking.checkInInstructionsDescription') }}
                 </p>
@@ -193,12 +219,14 @@ definePageMeta({
               class="inline-flex items-center gap-2 text-slate-500 hover:text-slate-700 transition-colors font-medium"
               @click="backToHome"
             >
-              <UIcon name="i-lucide-arrow-left" class="w-4 h-4" />
+              <UIcon
+                name="i-lucide-arrow-left"
+                class="w-4 h-4"
+              />
               {{ t('booking.backHome') }}
             </button>
           </div>
         </div>
-
       </div>
     </div>
   </div>

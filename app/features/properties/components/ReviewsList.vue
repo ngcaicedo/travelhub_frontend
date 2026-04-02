@@ -18,10 +18,6 @@ const hasMore = computed(() => props.reviews.length > visibleReviews.value)
 const loadMore = () => {
   visibleReviews.value += 2
 }
-
-const renderStars = (rating: number) => {
-  return Array.from({ length: 5 }).map((_, i) => i < rating)
-}
 </script>
 
 <template>
@@ -30,7 +26,9 @@ const renderStars = (rating: number) => {
     <div class="bg-gray-50 rounded-lg p-6">
       <div class="flex items-center gap-4">
         <div class="text-center">
-          <div class="text-5xl font-bold text-gray-900">{{ props.rating.toFixed(2) }}</div>
+          <div class="text-5xl font-bold text-gray-900">
+            {{ props.rating.toFixed(2) }}
+          </div>
           <div class="flex gap-1 mt-2 justify-center">
             <UIcon
               v-for="i in 5"
@@ -39,7 +37,9 @@ const renderStars = (rating: number) => {
               class="w-4 h-4 fill-yellow-400 text-yellow-400"
             />
           </div>
-          <p class="text-sm text-gray-600 mt-2">{{ props.reviewCount }} {{ t('common.reviews') }}</p>
+          <p class="text-sm text-gray-600 mt-2">
+            {{ props.reviewCount }} {{ t('common.reviews') }}
+          </p>
         </div>
       </div>
     </div>
@@ -54,7 +54,9 @@ const renderStars = (rating: number) => {
         <!-- Review Header -->
         <div class="flex items-start justify-between mb-3">
           <div>
-            <p class="font-semibold text-gray-900">{{ review.author }}</p>
+            <p class="font-semibold text-gray-900">
+              {{ review.author }}
+            </p>
             <div class="flex items-center gap-2 mt-1">
               <div class="flex gap-0.5">
                 <UIcon
@@ -91,10 +93,10 @@ const renderStars = (rating: number) => {
     <!-- Load More Button -->
     <UButton
       v-if="hasMore"
-      @click="loadMore"
       variant="soft"
       color="primary"
       block
+      @click="loadMore"
     >
       {{ t('common.loadMore') }}
     </UButton>

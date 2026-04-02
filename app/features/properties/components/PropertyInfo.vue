@@ -19,7 +19,10 @@ const rating = computed(() => props.property.rating.toFixed(2))
 </script>
 
 <template>
-  <div v-if="props.property" class="space-y-4">
+  <div
+    v-if="props.property"
+    class="space-y-4"
+  >
     <!-- Header with title and actions -->
     <div class="flex items-start justify-between">
       <div>
@@ -27,7 +30,10 @@ const rating = computed(() => props.property.rating.toFixed(2))
           {{ props.property.name }}
         </h1>
         <p class="text-lg text-gray-600 mt-2 flex items-center gap-2">
-          <UIcon name="i-lucide-map-pin" class="w-5 h-5" />
+          <UIcon
+            name="i-lucide-map-pin"
+            class="w-5 h-5"
+          />
           {{ props.property.location }}
         </p>
       </div>
@@ -51,7 +57,10 @@ const rating = computed(() => props.property.rating.toFixed(2))
     <div class="flex items-center gap-4 pt-4 border-t border-gray-200">
       <div class="flex items-center gap-2">
         <div class="flex items-center">
-          <UIcon name="i-lucide-star" class="w-5 h-5 fill-yellow-400 text-yellow-400" />
+          <UIcon
+            name="i-lucide-star"
+            class="w-5 h-5 fill-yellow-400 text-yellow-400"
+          />
           <span class="text-xl font-semibold text-gray-900 ml-1">
             {{ rating }}
           </span>
@@ -68,10 +77,15 @@ const rating = computed(() => props.property.rating.toFixed(2))
       <!-- Bedrooms -->
       <div class="flex items-center gap-3">
         <div class="bg-gray-100 rounded-lg p-3">
-          <UIcon name="i-lucide-bed" class="w-6 h-6 text-gray-700" />
+          <UIcon
+            name="i-lucide-bed"
+            class="w-6 h-6 text-gray-700"
+          />
         </div>
         <div>
-          <p class="text-sm text-gray-600">{{ t('property.bedrooms') }}</p>
+          <p class="text-sm text-gray-600">
+            {{ t('property.bedrooms') }}
+          </p>
           <p class="font-semibold text-lg text-gray-900">
             {{ props.property.bedrooms }}
           </p>
@@ -81,10 +95,15 @@ const rating = computed(() => props.property.rating.toFixed(2))
       <!-- Bathrooms -->
       <div class="flex items-center gap-3">
         <div class="bg-gray-100 rounded-lg p-3">
-          <UIcon name="i-lucide-bath" class="w-6 h-6 text-gray-700" />
+          <UIcon
+            name="i-lucide-bath"
+            class="w-6 h-6 text-gray-700"
+          />
         </div>
         <div>
-          <p class="text-sm text-gray-600">{{ t('property.bathrooms') }}</p>
+          <p class="text-sm text-gray-600">
+            {{ t('property.bathrooms') }}
+          </p>
           <p class="font-semibold text-lg text-gray-900">
             {{ props.property.bathrooms }}
           </p>
@@ -94,10 +113,15 @@ const rating = computed(() => props.property.rating.toFixed(2))
       <!-- Guests -->
       <div class="flex items-center gap-3">
         <div class="bg-gray-100 rounded-lg p-3">
-          <UIcon name="i-lucide-users" class="w-6 h-6 text-gray-700" />
+          <UIcon
+            name="i-lucide-users"
+            class="w-6 h-6 text-gray-700"
+          />
         </div>
         <div>
-          <p class="text-sm text-gray-600">{{ t('property.maxGuests') }}</p>
+          <p class="text-sm text-gray-600">
+            {{ t('property.maxGuests') }}
+          </p>
           <p class="font-semibold text-lg text-gray-900">
             {{ props.property.max_guests }}
           </p>

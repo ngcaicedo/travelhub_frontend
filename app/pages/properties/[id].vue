@@ -29,12 +29,18 @@ definePageMeta({
 <template>
   <div class="min-h-screen bg-white">
     <!-- Loading State -->
-    <div v-if="loading" class="flex items-center justify-center min-h-screen">
+    <div
+      v-if="loading"
+      class="flex items-center justify-center min-h-screen"
+    >
       <USkeleton class="w-full h-96" />
     </div>
 
     <!-- Property Content -->
-    <div v-else-if="property" class="space-y-12">
+    <div
+      v-else-if="property"
+      class="space-y-12"
+    >
       <!-- Gallery Section -->
       <section class="relative -mx-safe top-0 left-0 right-0">
         <PropertyGallery :images="property.images" />
@@ -78,7 +84,10 @@ definePageMeta({
     </div>
 
     <!-- Error State -->
-    <div v-else class="max-w-7xl mx-auto px-safe py-12">
+    <div
+      v-else
+      class="max-w-7xl mx-auto px-safe py-12"
+    >
       <UAlert
         icon="i-lucide-alert-circle"
         color="error"

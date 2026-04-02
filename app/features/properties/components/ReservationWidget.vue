@@ -53,12 +53,12 @@ const totalPrice = computed(() => {
 
 const canBook = computed(() => {
   if (!checkInDateObj.value || !checkOutDateObj.value) return false
-  
+
   const validation = validateReservationDates(checkInDateObj.value, checkOutDateObj.value)
   return (
-    validation.valid &&
-    numberOfGuests.value > 0 &&
-    numberOfGuests.value <= props.property.max_guests
+    validation.valid
+    && numberOfGuests.value > 0
+    && numberOfGuests.value <= props.property.max_guests
   )
 })
 
@@ -96,9 +96,9 @@ const handleSubmit = async () => {
 
     // Navegar a página de confirmación
     await router.push(`/reservations/${response.id}`)
-  } catch (err: any) {
-    const statusCode = err.statusCode
-    
+  } catch (err: unknown) {
+    const statusCode = (err as { statusCode?: number }).statusCode
+
     if (statusCode === 400) {
       submitError.value = t('errors.validation')
     } else if (statusCode === 409) {
@@ -127,7 +127,10 @@ watch(error, (newError) => {
     </div>
 
     <!-- Booking Form -->
-    <form @submit.prevent="handleSubmit" class="space-y-4">
+    <form
+      class="space-y-4"
+      @submit.prevent="handleSubmit"
+    >
       <!-- Dates -->
       <div class="space-y-2">
         <label class="text-sm font-semibold text-gray-900">
@@ -135,7 +138,10 @@ watch(error, (newError) => {
         </label>
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <UFormField :label="t('booking.checkIn')" name="checkIn">
+            <UFormField
+              :label="t('booking.checkIn')"
+              name="checkIn"
+            >
               <UInput
                 v-model="checkInDate"
                 type="date"
@@ -147,7 +153,10 @@ watch(error, (newError) => {
             </UFormField>
           </div>
           <div>
-            <UFormField :label="t('booking.checkOut')" name="checkOut">
+            <UFormField
+              :label="t('booking.checkOut')"
+              name="checkOut"
+            >
               <UInput
                 v-model="checkOutDate"
                 type="date"
@@ -162,7 +171,10 @@ watch(error, (newError) => {
       </div>
 
       <!-- Guests -->
-      <UFormField :label="t('booking.guests')" name="guests">
+      <UFormField
+        :label="t('booking.guests')"
+        name="guests"
+      >
         <UInputNumber
           v-model="numberOfGuests"
           :min="1"
@@ -180,7 +192,10 @@ watch(error, (newError) => {
       />
 
       <!-- Price Breakdown -->
-      <div v-if="stayDuration > 0" class="space-y-2 text-sm border-t border-b border-gray-200 py-4">
+      <div
+        v-if="stayDuration > 0"
+        class="space-y-2 text-sm border-t border-b border-gray-200 py-4"
+      >
         <div class="flex justify-between text-gray-700">
           <span>{{ formatCurrency(props.property.price_per_night, props.property.currency) }} × {{ stayDuration }} {{ t('common.nights') }}</span>
           <span>{{ formatCurrency(totalPrice, props.property.currency) }}</span>

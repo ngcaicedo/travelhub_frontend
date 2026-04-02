@@ -3,15 +3,14 @@ import { useApi } from '~/shared/composables/useApi'
 
 export const useReservations = () => {
   const { reservationsBaseUrl, handleApiError } = useApi()
-  const { t } = useI18n()
-  
+
   const loading = ref(false)
   const error = ref<string | null>(null)
 
   const createReservation = async (data: ReservationRequest): Promise<ReservationResponse> => {
     loading.value = true
     error.value = null
-    
+
     try {
       const response = await $fetch<ReservationResponse>(
         '/api/v1/reservations',
@@ -24,9 +23,9 @@ export const useReservations = () => {
           }
         }
       )
-      
+
       return response
-    } catch (err: any) {
+    } catch (err: unknown) {
       const apiError = handleApiError(err)
       error.value = apiError.message
       console.error('Reservation creation error:', apiError)
@@ -39,7 +38,7 @@ export const useReservations = () => {
   const getReservation = async (reservationId: string): Promise<ReservationResponse> => {
     loading.value = true
     error.value = null
-    
+
     try {
       const response = await $fetch<ReservationResponse>(
         `/api/v1/reservations/${reservationId}`,
@@ -51,9 +50,9 @@ export const useReservations = () => {
           }
         }
       )
-      
+
       return response
-    } catch (err: any) {
+    } catch (err: unknown) {
       const apiError = handleApiError(err)
       error.value = apiError.message
       console.error('Get reservation error:', apiError)

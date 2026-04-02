@@ -33,8 +33,8 @@ const shouldShowReadMore = computed(() => props.description.length > (props.maxL
 
     <button
       v-if="shouldShowReadMore"
-      @click="isExpanded = !isExpanded"
       class="text-primary font-semibold hover:underline"
+      @click="isExpanded = !isExpanded"
     >
       {{ isExpanded ? t('common.readLess') : t('common.readMore') }}
     </button>

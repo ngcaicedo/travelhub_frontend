@@ -1,6 +1,4 @@
 <script setup lang="ts">
-const router = useRouter()
-
 // TODO: Reemplazar esta lógica con autenticación real
 // Por ahora: Si no estás autenticado, ir a login
 // En futuro: Validar token y mostrar dashboard

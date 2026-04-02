@@ -57,10 +57,10 @@ const getAmenityIcon = (amenity: string): string => {
 
     <UButton
       v-if="hasMore"
-      @click="showAll = !showAll"
       variant="soft"
       color="primary"
       :icon="showAll ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'"
+      @click="showAll = !showAll"
     >
       {{ showAll ? t('common.showLess') : t('common.showAll') }} {{ t('property.amenities') }}
     </UButton>

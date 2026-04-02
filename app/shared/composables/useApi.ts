@@ -1,7 +1,12 @@
 export const useApi = () => {
   const config = useRuntimeConfig()
-  
-  const handleApiError = (error: any) => {
+
+  const handleApiError = (error: unknown) => {
+    const err = error as {
+      statusCode?: number
+      data?: unknown
+    }
+
     const errorMap: Record<number, string> = {
       400: 'errors.validation',
       401: 'errors.unauthorized',
@@ -10,14 +15,14 @@ export const useApi = () => {
       409: 'errors.conflict',
       500: 'errors.serverError'
     }
-    
-    const statusCode = error.statusCode || 0
+
+    const statusCode = err.statusCode || 0
     const key = errorMap[statusCode] || 'errors.unknown'
-    
+
     return {
       message: key,
       statusCode,
-      details: error.data
+      details: err.data
     }
   }
 

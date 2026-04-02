@@ -26,6 +26,14 @@ export default defineNuxtConfig({
     preference: 'light'
   },
 
+  runtimeConfig: {
+    public: {
+      usersApiUrl: process.env.USERS_API_URL || 'http://localhost:8000',
+      securityApiUrl: process.env.SECURITY_API_URL || 'http://localhost:8001',
+      reservationsApiUrl: process.env.RESERVATIONS_API_URL || 'http://localhost:8002'
+    }
+  },
+
   compatibilityDate: '2025-01-15',
 
   eslint: {
@@ -50,14 +58,6 @@ export default defineNuxtConfig({
       useCookie: true,
       cookieKey: 'i18n_locale',
       fallbackLocale: 'es'
-    }
-  },
-
-  runtimeConfig: {
-    public: {
-      usersApiUrl: process.env.USERS_API_URL || 'http://localhost:8000',
-      securityApiUrl: process.env.SECURITY_API_URL || 'http://localhost:8001',
-      reservationsApiUrl: process.env.RESERVATIONS_API_URL || 'http://localhost:8002'
     }
   }
 })

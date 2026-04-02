@@ -2,8 +2,8 @@ import type { Property, Review } from '~/shared/types/api'
 import { useApi } from '~/shared/composables/useApi'
 
 export const useProperty = (propertyId?: string) => {
-  const { usersBaseUrl, handleApiError } = useApi()
-  
+  const { handleApiError } = useApi()
+
   const loading = ref(false)
   const error = ref<string | null>(null)
   const property = ref<Property | null>(null)
@@ -100,7 +100,7 @@ export const useProperty = (propertyId?: string) => {
   // Seleccionar propiedad basada en el ID
   const getPropertyPreset = () => {
     if (!propertyId) return propertyPresets[0]!
-    
+
     // Generar índice basado en el hash del ID
     let hash = 0
     for (let i = 0; i < propertyId.length; i++) {
@@ -108,7 +108,7 @@ export const useProperty = (propertyId?: string) => {
       hash = ((hash << 5) - hash) + char
       hash = hash & hash // Convertir a 32-bit integer
     }
-    
+
     const index = Math.abs(hash) % propertyPresets.length
     return propertyPresets[index]!
   }
@@ -168,7 +168,7 @@ export const useProperty = (propertyId?: string) => {
         comment: 'Lovely property in a beautiful setting. Host was very responsive and accommodating. Highly recommended!'
       }
     ]
-    
+
     // Usar el ID para seleccionar diferentes combinaciones de reviews
     let hash = 0
     if (propertyId) {
@@ -176,11 +176,11 @@ export const useProperty = (propertyId?: string) => {
         hash += propertyId.charCodeAt(i)
       }
     }
-    
+
     const startIdx = Math.abs(hash) % reviewOptions.length
     const review1 = reviewOptions[startIdx]!
     const review2 = reviewOptions[(startIdx + 1) % reviewOptions.length]!
-    
+
     return [
       {
         id: '1',
@@ -204,7 +204,7 @@ export const useProperty = (propertyId?: string) => {
   const fetchProperty = async () => {
     loading.value = true
     error.value = null
-    
+
     try {
       // TODO: Reemplazar con llamado GET real cuando backend esté disponible:
       // const response = await $fetch<Property>(
@@ -212,12 +212,11 @@ export const useProperty = (propertyId?: string) => {
       //   { baseURL: usersBaseUrl }
       // )
       // property.value = response
-      
+
       // MVP: Usando mock data para desarrollo local
       property.value = getMockProperty()
       reviews.value = getMockReviews()
-      
-    } catch (err: any) {
+    } catch (err: unknown) {
       const apiError = handleApiError(err)
       error.value = apiError.message
       console.error('Property fetch error:', apiError)
