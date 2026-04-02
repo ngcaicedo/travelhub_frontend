@@ -3,6 +3,7 @@ import { useApi } from '~/shared/composables/useApi'
 
 export const useReservations = () => {
   const { reservationsBaseUrl, handleApiError } = useApi()
+  const { t } = useI18n()
 
   const loading = ref(false)
   const error = ref<string | null>(null)
@@ -27,7 +28,7 @@ export const useReservations = () => {
       return response
     } catch (err: unknown) {
       const apiError = handleApiError(err)
-      error.value = apiError.message
+      error.value = t(apiError.message)
       console.error('Reservation creation error:', apiError)
       throw err
     } finally {
@@ -54,7 +55,7 @@ export const useReservations = () => {
       return response
     } catch (err: unknown) {
       const apiError = handleApiError(err)
-      error.value = apiError.message
+      error.value = t(apiError.message)
       console.error('Get reservation error:', apiError)
       throw err
     } finally {

@@ -63,7 +63,7 @@ const thumbnailImages = computed(() => props.images.slice(1, 5))
             name="i-lucide-images"
             class="w-6 h-6 mx-auto mb-2"
           />
-          <span class="text-xs font-semibold">{{ images.length - 4 }} more</span>
+          <span class="text-xs font-semibold">{{ images.length - 5 }} more</span>
         </div>
       </div>
     </div>

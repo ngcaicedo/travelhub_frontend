@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import type { ReservationResponse } from '~/shared/types/api'
-import { useReservations } from '~/features/reservations/composables/useReservations'
 
 const { t, locale } = useI18n()
 const route = useRoute()
 
 const reservationId = route.params.id as string
-const { loading, error } = useReservations()
+const loading = ref(false)
+const error = ref<string | null>(null)
+
+const errorDescription = computed(() => {
+  if (!error.value) return ''
+  return error.value.includes('.') ? t(error.value) : error.value
+})
 
 const reservation = ref<ReservationResponse | null>(null)
 const mockPropertyName = computed(() => t('booking.mockPropertyName'))
@@ -28,6 +33,9 @@ const formatDate = (dateString: string): string => {
 }
 
 const fetchReservation = async () => {
+  loading.value = true
+  error.value = null
+
   try {
     // TODO: Reemplazar con llamado GET real cuando backend esté disponible:
     // reservation.value = await getReservation(reservationId)
@@ -43,8 +51,11 @@ const fetchReservation = async () => {
       created_at: new Date().toISOString()
     }
     reservation.value = mockReservation
-  } catch (err) {
+  } catch (err: unknown) {
+    error.value = 'errors.failed'
     console.error('Error fetching reservation:', err)
+  } finally {
+    loading.value = false
   }
 }
 
@@ -91,7 +102,7 @@ definePageMeta({
         icon="i-lucide-alert-circle"
         color="error"
         :title="t('errors.failed')"
-        :description="error"
+        :description="errorDescription"
         class="mb-8"
       />
 

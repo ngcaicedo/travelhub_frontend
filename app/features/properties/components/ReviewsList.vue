@@ -64,7 +64,7 @@ const loadMore = () => {
                   :key="i"
                   name="i-lucide-star"
                   :class="
-                    i < review.rating
+                    i <= review.rating
                       ? 'fill-yellow-400 text-yellow-400'
                       : 'text-gray-300'
                   "

@@ -28,13 +28,43 @@ const checkOutDate = ref<string>('')
 const numberOfGuests = ref<number>(1)
 const submitError = ref<string | null>(null)
 
+const parseLocalDate = (dateValue: string): Date | null => {
+  const [yearStr, monthStr, dayStr] = dateValue.split('-')
+  if (!yearStr || !monthStr || !dayStr) return null
+
+  const year = Number(yearStr)
+  const monthIndex = Number(monthStr) - 1
+  const day = Number(dayStr)
+  if (!Number.isInteger(year) || !Number.isInteger(monthIndex) || !Number.isInteger(day)) {
+    return null
+  }
+
+  return new Date(year, monthIndex, day)
+}
+
+const formatDateInputValue = (date: Date): string => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+const serializeDateAtUtcMidnight = (dateValue: string): string | null => {
+  const localDate = parseLocalDate(dateValue)
+  if (!localDate) return null
+
+  return new Date(
+    Date.UTC(localDate.getFullYear(), localDate.getMonth(), localDate.getDate())
+  ).toISOString()
+}
+
 // Computed properties
 const checkInDateObj = computed((): Date | null => {
-  return checkInDate.value ? new Date(checkInDate.value) : null
+  return checkInDate.value ? parseLocalDate(checkInDate.value) : null
 })
 
 const checkOutDateObj = computed((): Date | null => {
-  return checkOutDate.value ? new Date(checkOutDate.value) : null
+  return checkOutDate.value ? parseLocalDate(checkOutDate.value) : null
 })
 
 const stayDuration = computed(() => {
@@ -65,13 +95,13 @@ const canBook = computed(() => {
 // Methods
 const getTodayDate = (): string => {
   const today = new Date()
-  return today.toISOString().split('T')[0]!
+  return formatDateInputValue(today)
 }
 
 const getMaxCheckoutDate = (): string => {
   const maxDate = new Date()
   maxDate.setDate(maxDate.getDate() + 365)
-  return maxDate.toISOString().split('T')[0]!
+  return formatDateInputValue(maxDate)
 }
 
 const handleSubmit = async () => {
@@ -82,12 +112,18 @@ const handleSubmit = async () => {
   try {
     // TODO: Obtener user ID desde autenticación
     const mockUserId = '11111111-1111-1111-1111-111111111111'
+    const checkInDateIso = serializeDateAtUtcMidnight(checkInDate.value)
+    const checkOutDateIso = serializeDateAtUtcMidnight(checkOutDate.value)
+    if (!checkInDateIso || !checkOutDateIso) {
+      submitError.value = t('errors.validation')
+      return
+    }
 
     const reservationData: ReservationRequest = {
       id_traveler: mockUserId,
       id_property: props.property.id,
-      check_in_date: new Date(checkInDate.value!).toISOString(),
-      check_out_date: new Date(checkOutDate.value!).toISOString(),
+      check_in_date: checkInDateIso,
+      check_out_date: checkOutDateIso,
       number_of_guests: numberOfGuests.value,
       currency: props.property.currency
     }
@@ -197,7 +233,7 @@ watch(error, (newError) => {
         class="space-y-2 text-sm border-t border-b border-gray-200 py-4"
       >
         <div class="flex justify-between text-gray-700">
-          <span>{{ formatCurrency(props.property.price_per_night, props.property.currency) }} × {{ stayDuration }} {{ t('common.nights') }}</span>
+          <span>{{ formatCurrency(props.property.price_per_night, props.property.currency) }} × {{ stayDuration }} {{ t(stayDuration === 1 ? 'common.night' : 'common.nights') }}</span>
           <span>{{ formatCurrency(totalPrice, props.property.currency) }}</span>
         </div>
         <div class="flex justify-between font-semibold text-lg text-gray-900 pt-2">

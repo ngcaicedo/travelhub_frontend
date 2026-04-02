@@ -67,7 +67,7 @@ const rating = computed(() => props.property.rating.toFixed(2))
         </div>
         <div class="text-gray-600">
           <span class="font-medium">{{ props.property.review_count }}</span>
-          <span>{{ t('common.reviews') }}</span>
+          <span>&nbsp;{{ t('common.reviews') }}</span>
         </div>
       </div>
     </div>

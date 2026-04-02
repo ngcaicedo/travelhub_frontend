@@ -41,7 +41,7 @@ const openExternalMap = () => {
           variant="soft"
           @click="openExternalMap"
         >
-          Open in Google Maps
+          {{ t('property.openInGoogleMaps') }}
         </UButton>
       </div>
     </div>
