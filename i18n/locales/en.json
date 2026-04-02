@@ -1,7 +1,16 @@
 {
   "common": {
     "appName": "TravelHub",
-    "premiumTravel": "Premium Travel"
+    "premiumTravel": "Premium Travel",
+    "reviews": "reviews",
+    "night": "night",
+    "nights": "nights",
+    "readMore": "Read more",
+    "readLess": "Read less",
+    "showAll": "Show all",
+    "showLess": "Show less",
+    "loadMore": "Load more",
+    "loading": "Loading..."
   },
   "auth": {
     "hero": {
@@ -21,5 +30,63 @@
       "createAccount": "Create an Account",
       "invalidCredentials": "Invalid credentials"
     }
+  },
+  "property": {
+    "bedrooms": "Bedrooms",
+    "bathrooms": "Bathrooms",
+    "maxGuests": "Max guests",
+    "amenities": "amenities",
+    "aboutSpace": "About this space",
+    "whatThisOffers": "What this place offers",
+    "whereYouBe": "Where you'll be",
+    "verifiedStay": "Verified stay",
+    "loading": "Loading property",
+    "notFound": "Property not found"
+  },
+  "booking": {
+    "dates": "Dates",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "guests": "Guests",
+    "adults": "adults",
+    "total": "Total",
+    "confirmBooking": "Confirm booking",
+    "youWontBeCharged": "You won't be charged for now",
+    "success": "Your reservation has been confirmed!",
+    "confirmationSent": "We sent the details to your email",
+    "reservationId": "Reservation ID",
+    "reservationDetails": "Reservation details",
+    "manageReservation": "Manage reservation",
+    "checkInInstructions": "Check-in instructions",
+    "checkInInstructionsDescription": "View details on how to access the property upon arrival.",
+    "propertyPreviewAlt": "Property preview",
+    "mockPropertyName": "Renaissance Estate & Private Vineyard",
+    "status": "Status",
+    "reservationCreated": "Reservation created on",
+    "backHome": "Back to home",
+    "printConfirmation": "Print confirmation",
+    "nextSteps": "Next steps",
+    "nextStepsDescription": "Your reservation is pending payment. Please visit the payment portal to complete the transaction. Once payment is confirmed, you will receive a final confirmation email."
+  },
+  "status": {
+    "pendingPayment": "Pending payment",
+    "confirmed": "Confirmed",
+    "cancelled": "Cancelled",
+    "unknown": "Unknown"
+  },
+  "errors": {
+    "validation": "Please verify your reservation details",
+    "unauthorized": "You are not authorized",
+    "forbidden": "You don't have permission",
+    "notFound": "Resource not found",
+    "conflict": "Unavailable on these dates",
+    "serverError": "Server error, try again later",
+    "unknown": "An unexpected error occurred",
+    "propertyNotFound": "Property not found",
+    "tryAgainLater": "Try again later",
+    "checkout_after_checkin": "Check-out must be after check-in",
+    "no_past_dates": "Cannot select past dates",
+    "unavailable": "This property is not available for these dates",
+    "failed": "Error loading reservation"
   }
 }

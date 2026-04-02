@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-label="Property image 1">
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f766e"/>
+      <stop offset="100%" stop-color="#14b8a6"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="700" fill="url(#g1)"/>
+  <circle cx="180" cy="140" r="80" fill="#99f6e4" opacity="0.35"/>
+  <rect x="120" y="430" width="960" height="180" rx="20" fill="#134e4a" opacity="0.45"/>
+  <text x="120" y="520" fill="#ecfeff" font-family="sans-serif" font-size="56" font-weight="700">TravelHub Demo Property</text>
+  <text x="120" y="575" fill="#ccfbf1" font-family="sans-serif" font-size="30">Local mock asset - no external request</text>
+</svg>

@@ -1,7 +1,16 @@
 {
   "common": {
     "appName": "TravelHub",
-    "premiumTravel": "Viagens Premium"
+    "premiumTravel": "Viagens Premium",
+    "reviews": "avaliações",
+    "night": "noite",
+    "nights": "noites",
+    "readMore": "Ler mais",
+    "readLess": "Ler menos",
+    "showAll": "Mostrar tudo",
+    "showLess": "Mostrar menos",
+    "loadMore": "Carregar mais",
+    "loading": "Carregando..."
   },
   "auth": {
     "hero": {
@@ -21,5 +30,63 @@
       "createAccount": "Criar uma conta",
       "invalidCredentials": "Credenciais inválidas"
     }
+  },
+  "property": {
+    "bedrooms": "Quartos",
+    "bathrooms": "Banheiros",
+    "maxGuests": "Máximo de hóspedes",
+    "amenities": "comodidades",
+    "aboutSpace": "Sobre este espaço",
+    "whatThisOffers": "O que este local oferece",
+    "whereYouBe": "Onde você ficará",
+    "verifiedStay": "Estadia verificada",
+    "loading": "Carregando propriedade",
+    "notFound": "Propriedade não encontrada"
+  },
+  "booking": {
+    "dates": "Datas",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "guests": "Hóspedes",
+    "adults": "adultos",
+    "total": "Total",
+    "confirmBooking": "Confirmar reserva",
+    "youWontBeCharged": "Você não será cobrado por enquanto",
+    "success": "Sua reserva foi confirmada!",
+    "confirmationSent": "Enviamos os detalhes para seu email",
+    "reservationId": "ID da Reserva",
+    "reservationDetails": "Detalhes da reserva",
+    "manageReservation": "Gerenciar reserva",
+    "checkInInstructions": "Instruções de check-in",
+    "checkInInstructionsDescription": "Veja os detalhes de acesso à propriedade para sua chegada.",
+    "propertyPreviewAlt": "Pré-visualização da propriedade",
+    "mockPropertyName": "Propriedade Renascentista e Vinhedo Privado",
+    "status": "Status",
+    "reservationCreated": "Reserva criada em",
+    "backHome": "Voltar ao início",
+    "printConfirmation": "Imprimir confirmação",
+    "nextSteps": "Próximos passos",
+    "nextStepsDescription": "Sua reserva está pendente de pagamento. Por favor, visite o portal de pagamento para concluir a transação. Após a confirmação do pagamento, você receberá um email de confirmação final."
+  },
+  "status": {
+    "pendingPayment": "Pendente de pagamento",
+    "confirmed": "Confirmada",
+    "cancelled": "Cancelada",
+    "unknown": "Desconhecido"
+  },
+  "errors": {
+    "validation": "Verifique os detalhes da sua reserva",
+    "unauthorized": "Você não está autorizado",
+    "forbidden": "Você não tem permissão",
+    "notFound": "Recurso não encontrado",
+    "conflict": "Indisponível nessas datas",
+    "serverError": "Erro do servidor, tente mais tarde",
+    "unknown": "Um erro inesperado ocorreu",
+    "propertyNotFound": "Propriedade não encontrada",
+    "tryAgainLater": "Tente mais tarde",
+    "checkout_after_checkin": "O check-out deve ser após o check-in",
+    "no_past_dates": "Não é possível selecionar datas passadas",
+    "unavailable": "Esta propriedade não está disponível para estas datas",
+    "failed": "Erro ao carregar a reserva"
   }
 }
