@@ -20,6 +20,35 @@
       "noAccount": "Não tem uma conta?",
       "createAccount": "Criar uma conta",
       "invalidCredentials": "Credenciais inválidas"
+    },
+    "register": {
+      "title": "Criar conta",
+      "subtitle": "Junte-se à nossa comunidade global de viajantes e comece a explorar.",
+      "accountType": "Eu sou um...",
+      "traveler": "Viajante",
+      "hotelPartner": "Parceiro Hoteleiro",
+      "fullName": "Nome completo",
+      "fullNamePlaceholder": "John Doe",
+      "hotelName": "Nome do hotel / empresa",
+      "hotelNamePlaceholder": "Grand Hotel",
+      "contactName": "Nome de contato",
+      "contactNamePlaceholder": "John Doe",
+      "email": "Endereço de e-mail",
+      "emailPlaceholder": "john{'@'}example.com",
+      "password": "Senha",
+      "passwordPlaceholder": "••••••••",
+      "passwordHint": "Pelo menos 8 caracteres",
+      "strengthWeak": "Fraca",
+      "strengthMedium": "Força média",
+      "strengthStrong": "Forte",
+      "strengthVeryStrong": "Muito forte",
+      "termsAgree": "Eu concordo com os",
+      "termsOfService": "Termos de serviço",
+      "and": "e a",
+      "privacyPolicy": "Política de privacidade",
+      "submit": "Criar conta",
+      "hasAccount": "Já tem uma conta?",
+      "login": "Entrar"
     }
   }
 }

@@ -20,6 +20,35 @@
       "noAccount": "Don't have an account?",
       "createAccount": "Create an Account",
       "invalidCredentials": "Invalid credentials"
+    },
+    "register": {
+      "title": "Create Account",
+      "subtitle": "Join our global travel community and start exploring.",
+      "accountType": "I am a...",
+      "traveler": "Traveler",
+      "hotelPartner": "Hotel Partner",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "John Doe",
+      "hotelName": "Hotel / Business Name",
+      "hotelNamePlaceholder": "Grand Hotel",
+      "contactName": "Contact Name",
+      "contactNamePlaceholder": "John Doe",
+      "email": "Email Address",
+      "emailPlaceholder": "john{'@'}example.com",
+      "password": "Password",
+      "passwordPlaceholder": "••••••••",
+      "passwordHint": "At least 8 characters",
+      "strengthWeak": "Weak",
+      "strengthMedium": "Medium Strength",
+      "strengthStrong": "Strong",
+      "strengthVeryStrong": "Very Strong",
+      "termsAgree": "I agree to the",
+      "termsOfService": "Terms of Service",
+      "and": "and",
+      "privacyPolicy": "Privacy Policy",
+      "submit": "Create Account",
+      "hasAccount": "Already have an account?",
+      "login": "Log in"
     }
   }
 }
