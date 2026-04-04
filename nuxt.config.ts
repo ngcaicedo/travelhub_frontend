@@ -23,27 +23,17 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
-  colorMode: {
-    preference: 'light'
-  },
-
   runtimeConfig: {
     public: {
       usersApiBase: '',
-      securityApiBase: ''
+      securityApiBase: '',
+      usersApiUrl: process.env.USERS_API_URL || 'http://localhost:8000',
+      securityApiUrl: process.env.SECURITY_API_URL || 'http://localhost:8001',
+      reservationsApiUrl: process.env.RESERVATIONS_API_URL || 'http://localhost:8002'
     }
   },
 
   compatibilityDate: '2025-01-15',
-
-  eslint: {
-    config: {
-      stylistic: {
-        commaDangle: 'never',
-        braceStyle: '1tbs'
-      }
-    }
-  },
 
   i18n: {
     defaultLocale: 'es',
