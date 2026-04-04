@@ -2,6 +2,7 @@
   "common": {
     "appName": "TravelHub",
     "premiumTravel": "Viagens Premium",
+    "unexpectedError": "Erro inesperado. Tente novamente.",
     "reviews": "avaliações",
     "night": "noite",
     "nights": "noites",
@@ -28,7 +29,8 @@
       "submit": "Entrar",
       "noAccount": "Não tem uma conta?",
       "createAccount": "Criar uma conta",
-      "invalidCredentials": "Credenciais inválidas"
+      "invalidCredentials": "Credenciais inválidas",
+      "error": "Erro de login"
     },
     "register": {
       "title": "Criar conta",
@@ -44,6 +46,8 @@
       "contactNamePlaceholder": "John Doe",
       "email": "Endereço de e-mail",
       "emailPlaceholder": "john{'@'}example.com",
+      "phone": "Número de telefone",
+      "phonePlaceholder": "3001234567",
       "password": "Senha",
       "passwordPlaceholder": "••••••••",
       "passwordHint": "Pelo menos 8 caracteres",
@@ -57,7 +61,18 @@
       "privacyPolicy": "Política de privacidade",
       "submit": "Criar conta",
       "hasAccount": "Já tem uma conta?",
-      "login": "Entrar"
+      "login": "Entrar",
+      "termsRequired": "Você deve aceitar os termos e condições",
+      "error": "Erro de registro"
+    },
+    "verifyOtp": {
+      "title": "Verifique sua identidade",
+      "description": "Digite o código de 6 dígitos que enviamos para seu e-mail",
+      "otpLabel": "Código OTP",
+      "otpPlaceholder": "000000",
+      "invalidOtp": "O código deve ter 6 dígitos",
+      "submit": "Verificar",
+      "error": "Erro ao verificar OTP"
     }
   },
   "property": {

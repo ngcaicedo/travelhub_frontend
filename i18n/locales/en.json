@@ -2,6 +2,7 @@
   "common": {
     "appName": "TravelHub",
     "premiumTravel": "Premium Travel",
+    "unexpectedError": "An unexpected error occurred. Please try again.",
     "reviews": "reviews",
     "night": "night",
     "nights": "nights",
@@ -28,7 +29,8 @@
       "submit": "Sign In",
       "noAccount": "Don't have an account?",
       "createAccount": "Create an Account",
-      "invalidCredentials": "Invalid credentials"
+      "invalidCredentials": "Invalid credentials",
+      "error": "Sign in error"
     },
     "register": {
       "title": "Create Account",
@@ -44,6 +46,8 @@
       "contactNamePlaceholder": "John Doe",
       "email": "Email Address",
       "emailPlaceholder": "john{'@'}example.com",
+      "phone": "Phone Number",
+      "phonePlaceholder": "3001234567",
       "password": "Password",
       "passwordPlaceholder": "••••••••",
       "passwordHint": "At least 8 characters",
@@ -57,7 +61,18 @@
       "privacyPolicy": "Privacy Policy",
       "submit": "Create Account",
       "hasAccount": "Already have an account?",
-      "login": "Log in"
+      "login": "Log in",
+      "termsRequired": "You must accept the terms and conditions",
+      "error": "Registration error"
+    },
+    "verifyOtp": {
+      "title": "Verify Your Identity",
+      "description": "Enter the 6-digit code we sent to your email",
+      "otpLabel": "OTP Code",
+      "otpPlaceholder": "000000",
+      "invalidOtp": "Code must be 6 digits",
+      "submit": "Verify",
+      "error": "OTP verification error"
     }
   },
   "property": {
