@@ -1,3 +1,4 @@
+import { useI18n } from '#imports'
 import type { ReservationRequest, ReservationResponse } from '~/types/reservations'
 import { createReservation as createReservationService, getReservation as getReservationService } from '~/services/reservationService'
 

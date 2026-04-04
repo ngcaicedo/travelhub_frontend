@@ -1,4 +1,5 @@
 import type { MaybeRefOrGetter } from 'vue'
+import { useI18n } from '#imports'
 import type { Property, Review } from '~/types/api'
 import { getPropertyDetails } from '~/services/propertyServices'
 import { handleApiError } from '~/utils/api'
