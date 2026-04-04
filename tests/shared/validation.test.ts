@@ -4,7 +4,7 @@ import {
   calculateStayDuration,
   calculateTotalPrice,
   formatCurrency
-} from '../../app/shared/utils/validation'
+} from '../../app/utils/validation'
 
 describe('shared/utils/validation', () => {
   beforeEach(() => {

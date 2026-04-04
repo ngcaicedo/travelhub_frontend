@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { useProperty } from '~/features/properties/composables/useProperty'
-import PropertyGallery from '~/features/properties/components/PropertyGallery.vue'
-import PropertyInfo from '~/features/properties/components/PropertyInfo.vue'
-import PropertyDescription from '~/features/properties/components/PropertyDescription.vue'
-import AmenitiesList from '~/features/properties/components/AmenitiesList.vue'
-import ReviewsList from '~/features/properties/components/ReviewsList.vue'
-import LocationMap from '~/features/properties/components/LocationMap.vue'
-import ReservationWidget from '~/features/properties/components/ReservationWidget.vue'
+import { useProperty } from '~/composables/useProperty'
+import PropertyGallery from '~/components/properties/PropertyGallery.vue'
+import PropertyInfo from '~/components/properties/PropertyInfo.vue'
+import PropertyDescription from '~/components/properties/PropertyDescription.vue'
+import AmenitiesList from '~/components/properties/AmenitiesList.vue'
+import ReviewsList from '~/components/properties/ReviewsList.vue'
+import LocationMap from '~/components/properties/LocationMap.vue'
+import ReservationWidget from '~/components/reservations/ReservationWidget.vue'
 
 const { t } = useI18n()
 const route = useRoute()
 
 // Simulamos que recibimos el ID de la propiedad desde la ruta
-const propertyId = route.params.id as string
+const propertyId = computed(() => route.params.id as string | undefined)
 
 const { property, reviews, loading } = useProperty(propertyId)
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Review } from '~/shared/types/api'
+import type { Review } from '~/types/api'
 
 interface Props {
   reviews: readonly Review[]

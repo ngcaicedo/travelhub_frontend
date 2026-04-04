@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { ReservationRequest } from '~/shared/types/api'
+import type { ReservationRequest } from '~/types/reservations'
 import {
   calculateStayDuration,
   calculateTotalPrice,
   formatCurrency,
   validateReservationDates
-} from '~/shared/utils/validation'
-import { useReservations } from '~/features/reservations/composables/useReservations'
+} from '~/utils/validation'
+import { useReservations } from '~/composables/useReservations'
 
 interface Props {
   property: {

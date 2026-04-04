@@ -25,26 +25,6 @@ export interface Property {
   images: PropertyImage[]
 }
 
-export interface ReservationRequest {
-  id_traveler: string
-  id_property: string
-  id_room?: string
-  check_in_date: string // ISO 8601
-  check_out_date: string // ISO 8601
-  number_of_guests: number
-  currency: string
-}
-
-export interface ReservationResponse {
-  id: string
-  status: 'pending_payment' | 'confirmed' | 'cancelled'
-  total_price: string
-  currency: string
-  check_in_date: string
-  check_out_date: string
-  created_at: string
-}
-
 export interface Review {
   id: string
   author: string

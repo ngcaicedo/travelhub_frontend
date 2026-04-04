@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PropertyImage } from '~/shared/types/api'
+import type { PropertyImage } from '~/types/api'
 
 interface Props {
   images: readonly PropertyImage[]

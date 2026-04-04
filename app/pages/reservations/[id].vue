@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ReservationResponse } from '~/shared/types/api'
+import type { ReservationResponse } from '~/types/reservations'
 
 const { t, locale } = useI18n()
 const route = useRoute()
