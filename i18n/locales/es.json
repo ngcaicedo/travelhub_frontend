@@ -3,6 +3,10 @@
     "appName": "TravelHub",
     "premiumTravel": "Viajes Premium"
   },
+  "navigation": {
+    "login": "Iniciar sesión",
+    "checkout": "Proceso de pago"
+  },
   "auth": {
     "hero": {
       "title": "Explora el mundo con confianza.",
@@ -20,6 +24,107 @@
       "noAccount": "¿No tienes una cuenta?",
       "createAccount": "Crear una cuenta",
       "invalidCredentials": "Credenciales inválidas"
+    }
+  },
+  "payments": {
+    "meta": {
+      "title": "Proceso de pago"
+    },
+    "title": "Proceso de pago",
+    "subtitle": "Encriptación segura para tu tranquilidad",
+    "timer": {
+      "prefix": "Tu habitación está reservada durante",
+      "value": "12:45 minutos"
+    },
+    "methodTitle": "Selecciona el método de pago",
+    "scenarioLabel": "Escenario de prueba",
+    "scenarios": {
+      "success": "Tarjeta aprobada",
+      "insufficient": "Fondos insuficientes",
+      "declined": "Tarjeta rechazada"
+    },
+    "form": {
+      "cardholder": "Nombre del titular",
+      "cardholderPlaceholder": "John Doe",
+      "token": "Token de pago",
+      "cardNumber": "Número de tarjeta",
+      "expiration": "Fecha de expiración",
+      "cvv": "CVV",
+      "reservationId": "ID de reserva",
+      "travelerId": "ID del viajero",
+      "amount": "Monto en centavos",
+      "currency": "Moneda"
+    },
+    "securityNotice": "Puedes editar estos datos mock para la demo, pero el backend recibe únicamente el token de pago.",
+    "tokenHint": "Usa tokens como pm_tok_visa_ok, pm_fail_insufficient_funds o pm_fail_card_declined para reproducir los escenarios del MVP.",
+    "feedback": {
+      "readyTitle": "Checkout seguro listo",
+      "readyDescription": "Selecciona un escenario de pago para validar el comportamiento mínimo viable de la HU.",
+      "successTitle": "Pago confirmado",
+      "successDescription": "Se generó el recibo {receipt} y el backend solicitó la confirmación de la reserva.",
+      "failureTitle": "Pago rechazado",
+      "failureInsufficient": "La tarjeta fue rechazada por fondos insuficientes. El viajero puede reintentar con otra tarjeta.",
+      "failureDeclined": "La tarjeta fue rechazada. El viajero puede reintentar con otra tarjeta.",
+      "duplicateTitle": "Cobro duplicado bloqueado",
+      "duplicateDescription": "El backend rechazó un segundo intento inmediato con la misma operación, evitando un cobro doble accidental.",
+      "duplicateUnexpectedDescription": "El segundo intento no fue bloqueado como se esperaba. Revisa el backend o cambia los datos para repetir la prueba.",
+      "requestErrorTitle": "No fue posible procesar el pago",
+      "requestErrorDescription": "El backend no pudo completar la solicitud de pago.",
+      "timeoutDescription": "La solicitud tardó demasiado. Verifica que el backend de payments esté arriba y vuelve a intentarlo.",
+      "backendUnavailableDescription": "No fue posible conectar con el backend de payments. Verifica que esté ejecutándose en localhost:8002.",
+      "invalidResponseDescription": "El frontend recibió una respuesta inválida del backend de payments.",
+      "eventsUnavailable": "El pago se procesó, pero no fue posible cargar los eventos desde el backend."
+    },
+    "result": {
+      "title": "Resultado del último pago",
+      "status": "Estado",
+      "confirmed": "Confirmado",
+      "failed": "Fallido",
+      "paymentId": "ID del pago",
+      "receipt": "Recibo",
+      "amount": "Monto",
+      "noReceipt": "No generado",
+      "idempotency": "Clave de idempotencia"
+    },
+    "events": {
+      "title": "Eventos del pago",
+      "caption": "Esta sección muestra el rastro real que devuelve el backend para el último pago procesado.",
+      "empty": "Aún no hay eventos. Procesa un pago o prueba un duplicado para verlos aquí.",
+      "dateUnavailable": "Fecha no disponible",
+      "details": {
+        "recorded": "Evento registrado en backend",
+        "notAvailable": "Sin detalle adicional"
+      },
+      "labels": {
+        "paymentSucceeded": "Pago confirmado",
+        "reservationConfirmationRequested": "Confirmación de reserva solicitada",
+        "inventoryUpdateRequested": "Actualización de inventario solicitada",
+        "receiptGenerated": "Recibo generado",
+        "paymentFailed": "Pago rechazado"
+      }
+    },
+    "summary": {
+      "dates": "Fechas",
+      "guests": "Huéspedes",
+      "breakdown": "Desglose de precio",
+      "total": "Total (USD)",
+      "footer": "Sin cargos ocultos. Cancelación gratuita hasta el 5 de octubre."
+    },
+    "actions": {
+      "payNow": "Pagar ahora",
+      "processing": "Procesando pago",
+      "testDuplicate": "Probar duplicado"
+    },
+    "booking": {
+      "property": "Renaissance Estate & Private Vineyard",
+      "location": "Toscana, Italia",
+      "reviews": "128 reseñas",
+      "dates": "12 oct - 17 oct",
+      "guests": "4 huéspedes",
+      "line1": "$450.00 x 5 noches",
+      "line2": "Tarifa de limpieza",
+      "line3": "Cargo de servicio TravelHub",
+      "line4": "Impuestos locales (IVA 10%)"
     }
   }
 }
