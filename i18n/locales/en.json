@@ -92,7 +92,7 @@
       "requestErrorTitle": "Payment request failed",
       "requestErrorDescription": "The backend could not complete the payment request.",
       "timeoutDescription": "The request took too long. Verify that the payments backend is running and try again.",
-      "backendUnavailableDescription": "The frontend could not reach the payments backend. Verify that it is running on localhost:8002.",
+      "backendUnavailableDescription": "The frontend could not reach the payments backend. Verify that it is running on localhost:8003.",
       "invalidResponseDescription": "The frontend received an invalid response from the payments backend.",
       "eventsUnavailable": "The payment was processed, but the frontend could not load the event trail from the backend.",
       "stripeReadyDescription": "Prepare the secure Stripe form and use a Stripe test card to validate the token-only flow.",

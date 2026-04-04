@@ -28,7 +28,7 @@ type FeedbackState = {
 
 const { t, locale } = useI18n()
 const config = useRuntimeConfig()
-const paymentsApiBase = String(config.public.paymentsApiBase || 'http://localhost:8002').replace(/\/$/, '')
+const paymentsApiBase = String(config.public.paymentsApiBase || 'http://localhost:8003').replace(/\/$/, '')
 const requestTimeoutMs = 10000
 
 const form = reactive({

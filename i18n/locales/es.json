@@ -93,7 +93,7 @@
       "requestErrorTitle": "No fue posible procesar el pago",
       "requestErrorDescription": "El backend no pudo completar la solicitud de pago.",
       "timeoutDescription": "La solicitud tardó demasiado. Verifica que el backend de payments esté arriba y vuelve a intentarlo.",
-      "backendUnavailableDescription": "No fue posible conectar con el backend de payments. Verifica que esté ejecutándose en localhost:8002.",
+      "backendUnavailableDescription": "No fue posible conectar con el backend de payments. Verifica que esté ejecutándose en localhost:8003.",
       "invalidResponseDescription": "El frontend recibió una respuesta inválida del backend de payments.",
       "eventsUnavailable": "El pago se procesó, pero no fue posible cargar los eventos desde el backend.",
       "pendingVerificationDescription": "El pago está siendo verificado. Consulta de nuevo el último estado en unos segundos."
