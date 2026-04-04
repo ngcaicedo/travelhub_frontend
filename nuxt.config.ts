@@ -22,14 +22,13 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  colorMode: {
+    preference: 'light'
+  },
   runtimeConfig: {
     public: {
       paymentsApiBase: process.env.NUXT_PUBLIC_PAYMENTS_API_BASE || 'http://localhost:8002'
     }
-  },
-
-  colorMode: {
-    preference: 'light'
   },
 
   compatibilityDate: '2025-01-15',

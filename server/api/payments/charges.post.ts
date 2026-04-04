@@ -11,11 +11,13 @@ export default defineEventHandler(async (event) => {
         'x-forwarded-proto': 'https'
       }
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const response = (error as { response?: { status?: number, _data?: unknown } } | null)?.response
+
     throw createError({
-      statusCode: error?.response?.status || 500,
+      statusCode: response?.status || 500,
       statusMessage: 'Payments request failed',
-      data: error?.response?._data || null
+      data: response?._data || null
     })
   }
 })

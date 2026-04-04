@@ -127,9 +127,14 @@ function setReadyFeedback() {
 
 function formatMoney(amountInCents: number, currency: string) {
   const c = currency?.trim().toUpperCase()
-  if (!c || c.length !== 3) return `${(amountInCents / 100).toFixed(2)}`
-  try { return new Intl.NumberFormat(locale.value, { style: 'currency', currency: c }).format(amountInCents / 100) }
-  catch { return `${(amountInCents / 100).toFixed(2)} ${c}` }
+  if (!c || c.length !== 3) {
+    return `${(amountInCents / 100).toFixed(2)}`
+  }
+  try {
+    return new Intl.NumberFormat(locale.value, { style: 'currency', currency: c }).format(amountInCents / 100)
+  } catch {
+    return `${(amountInCents / 100).toFixed(2)} ${c}`
+  }
 }
 
 function formatDate(value: string | null) {
@@ -138,9 +143,15 @@ function formatDate(value: string | null) {
   return Number.isNaN(parsed.getTime()) ? t('payments.events.dateUnavailable') : new Intl.DateTimeFormat(locale.value, { dateStyle: 'short', timeStyle: 'short' }).format(parsed)
 }
 
-function buildIdempotencyKey() { return `checkout-${Date.now()}-${Math.random().toString(36).slice(2, 8)}` }
-function detailMessage(detail: unknown) { return typeof detail === 'string' ? detail : t('payments.feedback.requestErrorDescription') }
-function isDuplicate(detail: unknown): detail is { message: string } { return typeof detail === 'object' && detail !== null && 'message' in detail && typeof detail.message === 'string' }
+function buildIdempotencyKey() {
+  return `checkout-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+}
+function detailMessage(detail: unknown) {
+  return typeof detail === 'string' ? detail : t('payments.feedback.requestErrorDescription')
+}
+function isDuplicate(detail: unknown): detail is { message: string } {
+  return typeof detail === 'object' && detail !== null && 'message' in detail && typeof detail.message === 'string'
+}
 function isCardDeclined(value: string | null | undefined) {
   if (!value) return false
   const normalized = value.toLowerCase()
@@ -148,7 +159,7 @@ function isCardDeclined(value: string | null | undefined) {
     || normalized.includes('card was declined')
     || normalized.includes('payment failed')
     || normalized.includes('tarjeta fue rechazada')
-    || normalized.includes('cartão foi recusado')
+    || normalized.includes('cartÃ£o foi recusado')
 }
 function isInsufficientFunds(value: string | null | undefined) {
   if (!value) return false
@@ -430,105 +441,324 @@ async function simulateDuplicate() {
     <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
       <div class="space-y-6">
         <div>
-          <h1 class="text-4xl font-semibold tracking-tight text-slate-900">{{ t('payments.title') }}</h1>
-          <p class="mt-2 text-sm text-emerald-700">{{ t('payments.subtitle') }}</p>
-          <p class="mt-4 text-sm text-slate-600">{{ isStripeMode ? t('payments.integration.stripeModeDescription') : t('payments.integration.fakeModeDescription') }}</p>
+          <h1 class="text-4xl font-semibold tracking-tight text-slate-900">
+            {{ t('payments.title') }}
+          </h1>
+          <p class="mt-2 text-sm text-emerald-700">
+            {{ t('payments.subtitle') }}
+          </p>
+          <p class="mt-4 text-sm text-slate-600">
+            {{ isStripeMode ? t('payments.integration.stripeModeDescription') : t('payments.integration.fakeModeDescription') }}
+          </p>
         </div>
 
         <div :class="['rounded-2xl border px-4 py-4 text-sm', toneClass]">
-          <p class="font-semibold">{{ feedbackTitle }}</p>
-          <p class="mt-1">{{ feedbackDescription }}</p>
+          <p class="font-semibold">
+            {{ feedbackTitle }}
+          </p>
+          <p class="mt-1">
+            {{ feedbackDescription }}
+          </p>
         </div>
 
         <div class="grid gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:grid-cols-2">
-          <label v-if="!isStripeMode" class="space-y-2 text-sm"><span>{{ t('payments.scenarioLabel') }}</span><select v-model="form.scenario" class="w-full rounded-xl border border-slate-200 px-3 py-2"><option v-for="option in scenarioOptions" :key="option.value" :value="option.value">{{ option.label }}</option></select></label>
-          <label class="space-y-2 text-sm"><span>{{ t('payments.form.cardholder') }}</span><input v-model="form.cardholderName" type="text" class="w-full rounded-xl border border-slate-200 px-3 py-2"></label>
+          <label
+            v-if="!isStripeMode"
+            class="space-y-2 text-sm"
+          ><span>{{ t('payments.scenarioLabel') }}</span><select
+            v-model="form.scenario"
+            class="w-full rounded-xl border border-slate-200 px-3 py-2"
+          ><option
+            v-for="option in scenarioOptions"
+            :key="option.value"
+            :value="option.value"
+          >{{ option.label }}</option></select></label>
+          <label class="space-y-2 text-sm"><span>{{ t('payments.form.cardholder') }}</span><input
+            v-model="form.cardholderName"
+            type="text"
+            class="w-full rounded-xl border border-slate-200 px-3 py-2"
+          ></label>
           <template v-if="!isStripeMode">
-            <label class="space-y-2 text-sm"><span>{{ t('payments.form.cardNumber') }}</span><input v-model="form.cardNumber" type="text" class="w-full rounded-xl border border-slate-200 px-3 py-2"></label>
+            <label class="space-y-2 text-sm"><span>{{ t('payments.form.cardNumber') }}</span><input
+              v-model="form.cardNumber"
+              type="text"
+              class="w-full rounded-xl border border-slate-200 px-3 py-2"
+            ></label>
             <div class="grid grid-cols-2 gap-4">
-              <label class="space-y-2 text-sm"><span>{{ t('payments.form.expiration') }}</span><input v-model="form.expiration" type="text" class="w-full rounded-xl border border-slate-200 px-3 py-2"></label>
-              <label class="space-y-2 text-sm"><span>{{ t('payments.form.cvv') }}</span><input v-model="form.cvv" type="text" class="w-full rounded-xl border border-slate-200 px-3 py-2"></label>
+              <label class="space-y-2 text-sm"><span>{{ t('payments.form.expiration') }}</span><input
+                v-model="form.expiration"
+                type="text"
+                class="w-full rounded-xl border border-slate-200 px-3 py-2"
+              ></label>
+              <label class="space-y-2 text-sm"><span>{{ t('payments.form.cvv') }}</span><input
+                v-model="form.cvv"
+                type="text"
+                class="w-full rounded-xl border border-slate-200 px-3 py-2"
+              ></label>
             </div>
-            <label class="space-y-2 text-sm md:col-span-2"><span>{{ t('payments.form.token') }}</span><input v-model="form.paymentToken" type="text" class="w-full rounded-xl border border-slate-200 px-3 py-2"></label>
+            <label class="space-y-2 text-sm md:col-span-2"><span>{{ t('payments.form.token') }}</span><input
+              v-model="form.paymentToken"
+              type="text"
+              class="w-full rounded-xl border border-slate-200 px-3 py-2"
+            ></label>
           </template>
-          <label class="space-y-2 text-sm"><span>{{ t('payments.form.reservationId') }}</span><input v-model="form.reservationId" type="text" class="w-full rounded-xl border border-slate-200 px-3 py-2"></label>
-          <label class="space-y-2 text-sm"><span>{{ t('payments.form.travelerId') }}</span><input v-model="form.travelerId" type="text" class="w-full rounded-xl border border-slate-200 px-3 py-2"></label>
-          <label class="space-y-2 text-sm"><span>{{ t('payments.form.amount') }}</span><input v-model.number="form.amountInCents" type="number" min="1" class="w-full rounded-xl border border-slate-200 px-3 py-2"></label>
-          <label class="space-y-2 text-sm"><span>{{ t('payments.form.currency') }}</span><input v-model="form.currency" type="text" maxlength="3" class="w-full rounded-xl border border-slate-200 px-3 py-2 uppercase"></label>
-          <label class="space-y-2 text-sm"><span>{{ t('payments.form.checkInDate') }}</span><input v-model="form.checkInDate" type="date" class="w-full rounded-xl border border-slate-200 px-3 py-2"></label>
-          <label class="space-y-2 text-sm"><span>{{ t('payments.form.checkOutDate') }}</span><input v-model="form.checkOutDate" type="date" class="w-full rounded-xl border border-slate-200 px-3 py-2"></label>
+          <label class="space-y-2 text-sm"><span>{{ t('payments.form.reservationId') }}</span><input
+            v-model="form.reservationId"
+            type="text"
+            class="w-full rounded-xl border border-slate-200 px-3 py-2"
+          ></label>
+          <label class="space-y-2 text-sm"><span>{{ t('payments.form.travelerId') }}</span><input
+            v-model="form.travelerId"
+            type="text"
+            class="w-full rounded-xl border border-slate-200 px-3 py-2"
+          ></label>
+          <label class="space-y-2 text-sm"><span>{{ t('payments.form.amount') }}</span><input
+            v-model.number="form.amountInCents"
+            type="number"
+            min="1"
+            class="w-full rounded-xl border border-slate-200 px-3 py-2"
+          ></label>
+          <label class="space-y-2 text-sm"><span>{{ t('payments.form.currency') }}</span><input
+            v-model="form.currency"
+            type="text"
+            maxlength="3"
+            class="w-full rounded-xl border border-slate-200 px-3 py-2 uppercase"
+          ></label>
+          <label class="space-y-2 text-sm"><span>{{ t('payments.form.checkInDate') }}</span><input
+            v-model="form.checkInDate"
+            type="date"
+            class="w-full rounded-xl border border-slate-200 px-3 py-2"
+          ></label>
+          <label class="space-y-2 text-sm"><span>{{ t('payments.form.checkOutDate') }}</span><input
+            v-model="form.checkOutDate"
+            type="date"
+            class="w-full rounded-xl border border-slate-200 px-3 py-2"
+          ></label>
         </div>
 
         <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
           <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 class="text-lg font-semibold text-slate-900">{{ t('payments.methodTitle') }}</h2>
-              <p class="mt-1 text-sm text-slate-600">{{ t('payments.securityNotice') }}</p>
+              <h2 class="text-lg font-semibold text-slate-900">
+                {{ t('payments.methodTitle') }}
+              </h2>
+              <p class="mt-1 text-sm text-slate-600">
+                {{ t('payments.securityNotice') }}
+              </p>
             </div>
-            <button v-if="isStripeMode" type="button" class="rounded-full border border-blue-200 px-4 py-2 text-sm font-medium text-blue-700" :disabled="stripeLoading || processing" @click="prepareStripe">{{ stripeReady ? t('payments.integration.sessionReady') : t('payments.actions.prepareSecureForm') }}</button>
+            <button
+              v-if="isStripeMode"
+              type="button"
+              class="rounded-full border border-blue-200 px-4 py-2 text-sm font-medium text-blue-700"
+              :disabled="stripeLoading || processing"
+              @click="prepareStripe"
+            >
+              {{ stripeReady ? t('payments.integration.sessionReady') : t('payments.actions.prepareSecureForm') }}
+            </button>
           </div>
-          <p class="mt-4 text-sm text-slate-500">{{ isStripeMode ? t('payments.integration.stripeFieldHint') : t('payments.tokenHint') }}</p>
+          <p class="mt-4 text-sm text-slate-500">
+            {{ isStripeMode ? t('payments.integration.stripeFieldHint') : t('payments.tokenHint') }}
+          </p>
 
-          <div v-if="isStripeMode" class="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <p class="text-sm font-semibold text-slate-900">{{ t('payments.integration.secureFormTitle') }}</p>
-            <p class="mt-1 text-sm text-slate-600">{{ t('payments.integration.stripeFieldHint') }}</p>
+          <div
+            v-if="isStripeMode"
+            class="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4"
+          >
+            <p class="text-sm font-semibold text-slate-900">
+              {{ t('payments.integration.secureFormTitle') }}
+            </p>
+            <p class="mt-1 text-sm text-slate-600">
+              {{ t('payments.integration.stripeFieldHint') }}
+            </p>
             <div class="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
-              <div v-if="stripeLoading" class="text-sm text-slate-500">{{ t('payments.integration.loadingConfig') }}</div>
+              <div
+                v-if="stripeLoading"
+                class="text-sm text-slate-500"
+              >
+                {{ t('payments.integration.loadingConfig') }}
+              </div>
               <div id="stripe-payment-element" />
-              <p v-if="stripeNotice" class="mt-3 text-sm text-slate-500">{{ stripeNotice }}</p>
-              <p class="mt-3 text-xs text-slate-400">{{ t('payments.integration.securityNoticeStripeHint') }}</p>
+              <p
+                v-if="stripeNotice"
+                class="mt-3 text-sm text-slate-500"
+              >
+                {{ stripeNotice }}
+              </p>
+              <p class="mt-3 text-xs text-slate-400">
+                {{ t('payments.integration.securityNoticeStripeHint') }}
+              </p>
             </div>
           </div>
-          <div v-else class="mt-6 rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm text-slate-600">{{ t('payments.integration.fakeModeDescription') }}</div>
+          <div
+            v-else
+            class="mt-6 rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm text-slate-600"
+          >
+            {{ t('payments.integration.fakeModeDescription') }}
+          </div>
 
           <div class="mt-6 flex flex-wrap gap-3">
-            <button type="button" class="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white disabled:bg-blue-300" :disabled="processing || stripeLoading" @click="submitPayment">{{ processing ? t('payments.actions.processing') : t('payments.actions.payNow') }}</button>
-            <button v-if="!isStripeMode" type="button" class="rounded-2xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 disabled:opacity-60" :disabled="processing || stripeLoading" @click="simulateDuplicate">{{ t('payments.actions.testDuplicate') }}</button>
+            <button
+              type="button"
+              class="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white disabled:bg-blue-300"
+              :disabled="processing || stripeLoading"
+              @click="submitPayment"
+            >
+              {{ processing ? t('payments.actions.processing') : t('payments.actions.payNow') }}
+            </button>
+            <button
+              v-if="!isStripeMode"
+              type="button"
+              class="rounded-2xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 disabled:opacity-60"
+              :disabled="processing || stripeLoading"
+              @click="simulateDuplicate"
+            >
+              {{ t('payments.actions.testDuplicate') }}
+            </button>
           </div>
         </div>
 
         <div class="grid gap-6 xl:grid-cols-2">
           <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 class="text-lg font-semibold text-slate-900">{{ t('payments.result.title') }}</h2>
-            <div v-if="paymentResult" class="mt-4 space-y-3 text-sm">
-              <div class="flex justify-between gap-4"><span>{{ t('payments.result.status') }}</span><span class="font-semibold">{{ paymentResult.status === 'confirmed' ? t('payments.result.confirmed') : t('payments.result.failed') }}</span></div>
-              <div class="flex justify-between gap-4"><span>{{ t('payments.result.paymentId') }}</span><span class="font-mono text-xs">{{ paymentResult.payment_id }}</span></div>
-              <div class="flex justify-between gap-4"><span>{{ t('payments.result.amount') }}</span><span class="font-semibold">{{ formatMoney(paymentResult.amount_in_cents, paymentResult.currency) }}</span></div>
-              <div class="flex justify-between gap-4"><span>{{ t('payments.result.receipt') }}</span><span class="font-semibold">{{ paymentResult.receipt_number || t('payments.result.noReceipt') }}</span></div>
-              <div class="flex justify-between gap-4"><span>{{ t('payments.result.idempotency') }}</span><span class="font-mono text-xs">{{ lastIdempotencyKey || '-' }}</span></div>
+            <h2 class="text-lg font-semibold text-slate-900">
+              {{ t('payments.result.title') }}
+            </h2>
+            <div
+              v-if="paymentResult"
+              class="mt-4 space-y-3 text-sm"
+            >
+              <div class="flex justify-between gap-4">
+                <span>{{ t('payments.result.status') }}</span><span class="font-semibold">{{ paymentResult.status === 'confirmed' ? t('payments.result.confirmed') : t('payments.result.failed') }}</span>
+              </div>
+              <div class="flex justify-between gap-4">
+                <span>{{ t('payments.result.paymentId') }}</span><span class="font-mono text-xs">{{ paymentResult.payment_id }}</span>
+              </div>
+              <div class="flex justify-between gap-4">
+                <span>{{ t('payments.result.amount') }}</span><span class="font-semibold">{{ formatMoney(paymentResult.amount_in_cents, paymentResult.currency) }}</span>
+              </div>
+              <div class="flex justify-between gap-4">
+                <span>{{ t('payments.result.receipt') }}</span><span class="font-semibold">{{ paymentResult.receipt_number || t('payments.result.noReceipt') }}</span>
+              </div>
+              <div class="flex justify-between gap-4">
+                <span>{{ t('payments.result.idempotency') }}</span><span class="font-mono text-xs">{{ lastIdempotencyKey || '-' }}</span>
+              </div>
             </div>
-            <p v-else class="mt-4 text-sm text-slate-500">{{ t('payments.feedback.readyDescription') }}</p>
+            <p
+              v-else
+              class="mt-4 text-sm text-slate-500"
+            >
+              {{ t('payments.feedback.readyDescription') }}
+            </p>
           </article>
 
           <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 class="text-lg font-semibold text-slate-900">{{ t('payments.events.title') }}</h2>
-            <p class="mt-1 text-sm text-slate-500">{{ t('payments.events.caption') }}</p>
-            <p v-if="eventsNotice" class="mt-3 text-sm text-amber-700">{{ eventsNotice }}</p>
-            <div v-if="eventsLoading" class="mt-4 space-y-3"><div v-for="i in 3" :key="i" class="h-16 animate-pulse rounded-2xl bg-slate-100" /></div>
-            <ul v-else-if="paymentEvents.length" class="mt-4 max-h-80 space-y-3 overflow-y-auto">
-              <li v-for="event in paymentEvents" :key="event.event_id" class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <h2 class="text-lg font-semibold text-slate-900">
+              {{ t('payments.events.title') }}
+            </h2>
+            <p class="mt-1 text-sm text-slate-500">
+              {{ t('payments.events.caption') }}
+            </p>
+            <p
+              v-if="eventsNotice"
+              class="mt-3 text-sm text-amber-700"
+            >
+              {{ eventsNotice }}
+            </p>
+            <div
+              v-if="eventsLoading"
+              class="mt-4 space-y-3"
+            >
+              <div
+                v-for="i in 3"
+                :key="i"
+                class="h-16 animate-pulse rounded-2xl bg-slate-100"
+              />
+            </div>
+            <ul
+              v-else-if="paymentEvents.length"
+              class="mt-4 max-h-80 space-y-3 overflow-y-auto"
+            >
+              <li
+                v-for="event in paymentEvents"
+                :key="event.event_id"
+                class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3"
+              >
                 <div class="flex items-start justify-between gap-4">
-                  <div><p class="text-sm font-semibold text-slate-900">{{ eventLabel(event.event_type) }}</p><p class="mt-1 text-sm text-slate-600">{{ eventDetail(event) }}</p></div>
+                  <div>
+                    <p class="text-sm font-semibold text-slate-900">
+                      {{ eventLabel(event.event_type) }}
+                    </p><p class="mt-1 text-sm text-slate-600">
+                      {{ eventDetail(event) }}
+                    </p>
+                  </div>
                   <time class="text-xs text-slate-400">{{ formatDate(event.created_at) }}</time>
                 </div>
               </li>
             </ul>
-            <p v-else class="mt-4 text-sm text-slate-500">{{ t('payments.events.empty') }}</p>
+            <p
+              v-else
+              class="mt-4 text-sm text-slate-500"
+            >
+              {{ t('payments.events.empty') }}
+            </p>
           </article>
         </div>
       </div>
 
       <aside class="rounded-[2rem] border border-slate-200 bg-white p-4 shadow-sm">
-        <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80" :alt="booking.property" class="h-56 w-full rounded-[1.5rem] object-cover">
+        <img
+          src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80"
+          :alt="booking.property"
+          class="h-56 w-full rounded-[1.5rem] object-cover"
+        >
         <div class="px-2 pb-2 pt-5">
-          <div class="flex items-center justify-between gap-4"><div><h2 class="text-2xl font-semibold text-slate-900">{{ booking.property }}</h2><p class="mt-1 text-sm text-slate-500">{{ booking.location }}</p></div><span class="rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-700">{{ booking.rating }} ({{ booking.reviews }})</span></div>
-          <div class="mt-6 grid grid-cols-2 gap-4 border-y border-slate-100 py-5 text-sm">
-            <div><p class="text-xs uppercase tracking-[0.2em] text-slate-400">{{ t('payments.summary.dates') }}</p><p class="mt-2 font-medium text-slate-900">{{ booking.dates }}</p></div>
-            <div><p class="text-xs uppercase tracking-[0.2em] text-slate-400">{{ t('payments.summary.guests') }}</p><p class="mt-2 font-medium text-slate-900">{{ booking.guests }}</p></div>
+          <div class="flex items-center justify-between gap-4">
+            <div>
+              <h2 class="text-2xl font-semibold text-slate-900">
+                {{ booking.property }}
+              </h2><p class="mt-1 text-sm text-slate-500">
+                {{ booking.location }}
+              </p>
+            </div><span class="rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-700">{{ booking.rating }} ({{ booking.reviews }})</span>
           </div>
-          <div class="mt-6"><p class="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">{{ t('payments.summary.breakdown') }}</p><ul class="mt-4 space-y-3 text-sm text-slate-600"><li v-for="line in booking.lines" :key="line.label" class="flex items-center justify-between gap-3"><span>{{ line.label }}</span><span class="font-medium text-slate-900">{{ line.amount }}</span></li></ul></div>
-          <div class="mt-6 border-t border-slate-100 pt-5"><p class="text-sm font-semibold text-slate-500">{{ t('payments.summary.total') }}</p><p class="mt-1 text-3xl font-semibold tracking-tight text-blue-600">{{ formatMoney(form.amountInCents, form.currency) }}</p></div>
-          <p class="mt-6 text-center text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">{{ t('payments.summary.footer') }}</p>
+          <div class="mt-6 grid grid-cols-2 gap-4 border-y border-slate-100 py-5 text-sm">
+            <div>
+              <p class="text-xs uppercase tracking-[0.2em] text-slate-400">
+                {{ t('payments.summary.dates') }}
+              </p><p class="mt-2 font-medium text-slate-900">
+                {{ booking.dates }}
+              </p>
+            </div>
+            <div>
+              <p class="text-xs uppercase tracking-[0.2em] text-slate-400">
+                {{ t('payments.summary.guests') }}
+              </p><p class="mt-2 font-medium text-slate-900">
+                {{ booking.guests }}
+              </p>
+            </div>
+          </div>
+          <div class="mt-6">
+            <p class="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
+              {{ t('payments.summary.breakdown') }}
+            </p><ul class="mt-4 space-y-3 text-sm text-slate-600">
+              <li
+                v-for="line in booking.lines"
+                :key="line.label"
+                class="flex items-center justify-between gap-3"
+              >
+                <span>{{ line.label }}</span><span class="font-medium text-slate-900">{{ line.amount }}</span>
+              </li>
+            </ul>
+          </div>
+          <div class="mt-6 border-t border-slate-100 pt-5">
+            <p class="text-sm font-semibold text-slate-500">
+              {{ t('payments.summary.total') }}
+            </p><p class="mt-1 text-3xl font-semibold tracking-tight text-blue-600">
+              {{ formatMoney(form.amountInCents, form.currency) }}
+            </p>
+          </div>
+          <p class="mt-6 text-center text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+            {{ t('payments.summary.footer') }}
+          </p>
         </div>
       </aside>
     </div>

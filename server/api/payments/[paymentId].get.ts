@@ -6,11 +6,13 @@ export default defineEventHandler(async (event) => {
     return await $fetch(`${config.public.paymentsApiBase}/api/v1/payments/${paymentId}`, {
       timeout: 10000
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const response = (error as { response?: { status?: number, _data?: unknown } } | null)?.response
+
     throw createError({
-      statusCode: error?.response?.status || 500,
+      statusCode: response?.status || 500,
       statusMessage: 'Payment lookup failed',
-      data: error?.response?._data || null
+      data: response?._data || null
     })
   }
 })
