@@ -1,6 +1,39 @@
 export type PaymentStatus = 'confirmed' | 'failed'
 export type ScenarioKind = 'success' | 'insufficient' | 'declined'
 
+export type PaymentsProvider = 'fake_stripe' | 'stripe_test' | string
+
+export type PaymentsConfig = {
+  provider: PaymentsProvider
+  stripe_enabled: boolean
+  publishable_key: string
+}
+
+export type CheckoutSession = {
+  payment_transaction_id: string
+  amount_in_cents: number
+  currency: string
+  publishable_key: string
+  stripe_enabled: boolean
+}
+
+export type CheckoutSessionStatus = {
+  payment_transaction_id: string
+  status: string
+  payment_id: string | null
+  payment_intent_id: string | null
+  error: string | null
+  updated_at: string | null
+}
+
+export type FinalizePaymentResponse = {
+  status: string
+  payment_id: string | null
+  payment_intent_id: string | null
+  client_secret: string | null
+  error: string | null
+}
+
 export type PaymentResponse = {
   payment_id: string
   reservation_id: string
@@ -86,6 +119,77 @@ function asIsoDateOrNull(value: unknown): string | null {
 
   const parsed = new Date(value)
   return Number.isNaN(parsed.getTime()) ? null : value
+}
+
+export function normalizePaymentsConfig(value: unknown): PaymentsConfig {
+  if (!isRecord(value)) {
+    return {
+      provider: 'fake_stripe',
+      stripe_enabled: false,
+      publishable_key: ''
+    }
+  }
+
+  return {
+    provider: asRequiredString(value.provider) || 'fake_stripe',
+    stripe_enabled: value.stripe_enabled === true,
+    publishable_key: asRequiredString(value.publishable_key)
+  }
+}
+
+export function normalizeCheckoutSession(value: unknown): CheckoutSession | null {
+  if (!isRecord(value)) {
+    return null
+  }
+
+  const paymentTransactionId = asNullableString(value.payment_transaction_id)
+
+  if (!paymentTransactionId) {
+    return null
+  }
+
+  return {
+    payment_transaction_id: paymentTransactionId,
+    amount_in_cents: asNumber(value.amount_in_cents),
+    currency: asCurrency(value.currency),
+    publishable_key: asRequiredString(value.publishable_key),
+    stripe_enabled: value.stripe_enabled === true
+  }
+}
+
+export function normalizeCheckoutSessionStatus(value: unknown): CheckoutSessionStatus | null {
+  if (!isRecord(value)) {
+    return null
+  }
+
+  const paymentTransactionId = asNullableString(value.payment_transaction_id)
+
+  if (!paymentTransactionId) {
+    return null
+  }
+
+  return {
+    payment_transaction_id: paymentTransactionId,
+    status: asRequiredString(value.status),
+    payment_id: asNullableString(value.payment_id),
+    payment_intent_id: asNullableString(value.payment_intent_id),
+    error: asNullableString(value.error),
+    updated_at: asIsoDateOrNull(value.updated_at)
+  }
+}
+
+export function normalizeFinalizePaymentResponse(value: unknown): FinalizePaymentResponse | null {
+  if (!isRecord(value)) {
+    return null
+  }
+
+  return {
+    status: asRequiredString(value.status),
+    payment_id: asNullableString(value.payment_id),
+    payment_intent_id: asNullableString(value.payment_intent_id),
+    client_secret: asNullableString(value.client_secret),
+    error: asNullableString(value.error)
+  }
 }
 
 export function normalizePaymentResponse(value: unknown): PaymentResponse | null {

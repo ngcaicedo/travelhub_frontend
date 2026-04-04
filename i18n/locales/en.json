@@ -53,7 +53,28 @@
       "reservationId": "Reservation ID",
       "travelerId": "Traveler ID",
       "amount": "Amount in cents",
-      "currency": "Currency"
+      "currency": "Currency",
+      "checkInDate": "Check-in date",
+      "checkOutDate": "Check-out date"
+    },
+    "integration": {
+      "loadingConfig": "Loading payment configuration",
+      "stripeBadge": "Stripe test mode",
+      "fakeBadge": "Mock mode",
+      "stripeModeDescription": "This checkout loads Stripe.js in test mode and sends card data directly to Stripe through Payment Element.",
+      "fakeModeDescription": "This checkout uses the backend mock provider so you can still validate success, failure, and duplicate scenarios without Stripe configured.",
+      "secureFormTitle": "Secure card form",
+      "secureFormDescription": "The card fields below are hosted by Stripe. TravelHub only receives the confirmation token.",
+      "stripeFieldHint": "Use Stripe test cards in the embedded form after preparing the secure session.",
+      "sessionReady": "Secure form ready",
+      "sessionError": "The secure form could not be initialized.",
+      "sessionNeedsRefresh": "The secure session was reset because the reservation data changed.",
+      "securityNoticeStripe": "Stripe iframe",
+      "securityNoticeStripeHint": "The raw card number, expiration date, and CVV are sent directly to Stripe from the browser.",
+      "requiresActionTitle": "Additional authentication required",
+      "requiresActionDescription": "Stripe requested an extra verification step before final confirmation.",
+      "confirmationTokenError": "Stripe could not create the confirmation token.",
+      "duplicateOnlyFake": "The duplicate scenario is only simulated in mock mode. In Stripe mode the server-side flow uses a different session lifecycle."
     },
     "securityNotice": "You can edit these mock values for the demo, but the backend receives only the payment token.",
     "tokenHint": "Use tokens such as pm_tok_visa_ok, pm_fail_insufficient_funds, or pm_fail_card_declined to reproduce the MVP scenarios.",
@@ -73,7 +94,9 @@
       "timeoutDescription": "The request took too long. Verify that the payments backend is running and try again.",
       "backendUnavailableDescription": "The frontend could not reach the payments backend. Verify that it is running on localhost:8002.",
       "invalidResponseDescription": "The frontend received an invalid response from the payments backend.",
-      "eventsUnavailable": "The payment was processed, but the frontend could not load the event trail from the backend."
+      "eventsUnavailable": "The payment was processed, but the frontend could not load the event trail from the backend.",
+      "stripeReadyDescription": "Prepare the secure Stripe form and use a Stripe test card to validate the token-only flow.",
+      "pendingVerificationDescription": "The payment is being verified. Check the latest payment status again in a few seconds."
     },
     "result": {
       "title": "Latest payment result",
@@ -113,7 +136,8 @@
     "actions": {
       "payNow": "Pay now",
       "processing": "Processing payment",
-      "testDuplicate": "Test duplicate"
+      "testDuplicate": "Test duplicate",
+      "prepareSecureForm": "Prepare secure form"
     },
     "booking": {
       "property": "Renaissance Estate & Private Vineyard",
