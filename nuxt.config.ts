@@ -5,7 +5,8 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
     '@nuxt/ui',
-    '@nuxtjs/i18n'
+    '@nuxtjs/i18n',
+    '@pinia/nuxt'
   ],
   ssr: false,
 
@@ -24,6 +25,13 @@ export default defineNuxtConfig({
 
   colorMode: {
     preference: 'light'
+  },
+
+  runtimeConfig: {
+    public: {
+      usersApiBase: '',
+      securityApiBase: ''
+    }
   },
 
   compatibilityDate: '2025-01-15',
