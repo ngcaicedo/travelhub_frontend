@@ -10,7 +10,8 @@ export const getApiBaseUrls = () => {
   return {
     usersBaseUrl: config.public.usersApiUrl,
     securityBaseUrl: config.public.securityApiUrl,
-    reservationsBaseUrl: config.public.reservationsApiUrl
+    reservationsBaseUrl: config.public.reservationsApiUrl,
+    searchBaseUrl: config.public.searchApiUrl
   }
 }
 
