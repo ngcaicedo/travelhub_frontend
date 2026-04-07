@@ -47,10 +47,15 @@ describe('SearchPage', () => {
 
     expect(mockSearchProperties).toHaveBeenCalledTimes(1)
     const request = mockSearchProperties.mock.calls[0]?.[0]
+    const checkInDate = request?.check_in ? new Date(`${request.check_in}T00:00:00`) : null
+    const checkOutDate = request?.check_out ? new Date(`${request.check_out}T00:00:00`) : null
 
     expect(request?.ciudad).toBe('Bogota')
-    expect(request?.check_in).toBe('2026-04-10')
-    expect(request?.check_out).toBe('2026-04-12')
+    expect(request?.check_in).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+    expect(request?.check_out).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+    expect(checkInDate).not.toBeNull()
+    expect(checkOutDate).not.toBeNull()
+    expect(checkOutDate!.getTime()).toBeGreaterThan(checkInDate!.getTime())
     expect(request?.huespedes).toBe(2)
     expect(request?.page).toBe(1)
     expect(request?.page_size).toBe(8)
@@ -71,5 +76,21 @@ describe('SearchPage', () => {
     const validationMessage = wrapper.find('.text-error-600')
     expect(validationMessage.exists()).toBe(true)
     expect(validationMessage.text().trim().length).toBeGreaterThan(0)
+  })
+
+  it('prevents submit when minPrice is not numeric', async () => {
+    const wrapper = await mountSuspended(SearchPage)
+    const searchPageVm = wrapper.vm as { searchState: { minPrice: string } }
+
+    searchPageVm.searchState.minPrice = 'abc'
+    await wrapper.vm.$nextTick()
+    mockSearchProperties.mockClear()
+
+    await wrapper.find('form').trigger('submit')
+
+    expect(mockSearchProperties).toHaveBeenCalledTimes(0)
+
+    const validationMessages = wrapper.findAll('.text-error-600')
+    expect(validationMessages.some(message => message.text().includes('valid'))).toBe(true)
   })
 })

@@ -203,6 +203,7 @@
       "requiredCheckOut": "El check-out es obligatorio",
       "requiredGuests": "Debes ingresar al menos 1 huésped",
       "checkOutAfterCheckIn": "El check-out debe ser posterior al check-in",
+      "priceInvalid": "El precio debe ser un número válido",
       "priceNonNegative": "El precio no puede ser negativo",
       "priceRange": "El precio máximo debe ser mayor o igual al mínimo"
     }

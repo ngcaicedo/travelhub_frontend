@@ -2,7 +2,7 @@ import type {
   SearchRequest,
   SearchResponse
 } from '~/types/search'
-import { getApiBaseUrls } from '~/utils/api'
+import { createSearchClient } from './_client'
 
 const appendSearchParams = (
   params: URLSearchParams,
@@ -26,7 +26,7 @@ const appendArrayParams = (params: URLSearchParams, key: string, values?: string
 
 export const searchService = {
   searchProperties(params: SearchRequest) {
-    const { searchBaseUrl } = getApiBaseUrls()
+    const searchClient = createSearchClient()
     const query = new URLSearchParams()
 
     appendSearchParams(query, 'ciudad', params.ciudad)
@@ -41,12 +41,8 @@ export const searchService = {
     appendSearchParams(query, 'page', params.page)
     appendSearchParams(query, 'page_size', params.page_size)
 
-    return $fetch<SearchResponse>(`/api/v1/search?${query.toString()}`, {
-      baseURL: searchBaseUrl,
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
+    return searchClient<SearchResponse>(`/api/v1/search?${query.toString()}`, {
+      method: 'GET'
     })
   }
 }

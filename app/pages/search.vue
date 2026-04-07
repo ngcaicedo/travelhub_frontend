@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useSearch } from '~/composables/useSearch'
+import { formatCurrency } from '~/utils/validation'
 import type { SearchRequest, SearchResultItem } from '~/types/search'
 
 type SortOption = 'recommended' | 'price_asc' | 'price_desc' | 'rating'
@@ -25,7 +26,32 @@ interface SearchResultCard {
 
 type QueryParamValue = string | null | Array<string | null> | undefined
 
-const { t } = useI18n()
+const formatLocalDate = (date: Date) => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+
+  return `${year}-${month}-${day}`
+}
+
+const createRelativeDate = (offsetDays: number) => {
+  const date = new Date()
+  date.setHours(0, 0, 0, 0)
+  date.setDate(date.getDate() + offsetDays)
+  return formatLocalDate(date)
+}
+
+const createDefaultSearchState = () => ({
+  city: 'Bogota',
+  checkIn: createRelativeDate(1),
+  checkOut: createRelativeDate(3),
+  guests: 2,
+  minPrice: '',
+  maxPrice: '',
+  sort: 'recommended' as SortOption
+})
+
+const { t, locale } = useI18n()
 const search = useSearch()
 const route = useRoute()
 const router = useRouter()
@@ -39,15 +65,7 @@ useSeoMeta({
   description: () => t('search.pageDescription')
 })
 
-const searchState = reactive({
-  city: 'Bogota',
-  checkIn: '2026-04-10',
-  checkOut: '2026-04-12',
-  guests: 2,
-  minPrice: '',
-  maxPrice: '',
-  sort: 'recommended' as SortOption
-})
+const searchState = reactive(createDefaultSearchState())
 
 const currentPage = ref(1)
 const pageSize = 8
@@ -90,7 +108,9 @@ const parseQueryNumber = (value: QueryParamValue, fallback: number) => {
 
 const parseQueryString = (value: QueryParamValue, fallback: string) => {
   const singleValue = Array.isArray(value) ? value[0] : value
-  return singleValue?.trim() ? singleValue : fallback
+  const trimmedValue = singleValue?.trim()
+
+  return trimmedValue ? trimmedValue : fallback
 }
 
 const parseQueryAmenities = (value: QueryParamValue) => {
@@ -105,6 +125,20 @@ const parseQueryAmenities = (value: QueryParamValue) => {
 
 const isValidSortOption = (value: string): value is SortOption =>
   ['recommended', 'price_asc', 'price_desc', 'rating'].includes(value)
+
+const parseFiniteNumber = (value: string) => {
+  if (!value.trim()) {
+    return null
+  }
+
+  const parsedValue = Number(value)
+  return Number.isFinite(parsedValue) ? parsedValue : null
+}
+
+const normalizePriceInput = (value: string) => {
+  const parsedValue = parseFiniteNumber(value)
+  return parsedValue === null ? '' : String(parsedValue)
+}
 
 const pagination = computed(() => search.results.value?.pagination)
 
@@ -139,14 +173,14 @@ const summaryText = computed(() => {
   }
 
   const total = pagination.value?.total ?? 0
-  const dateFormatter = new Intl.DateTimeFormat('en-GB', {
+  const dateFormatter = new Intl.DateTimeFormat(locale.value, {
     month: 'short',
     day: 'numeric'
   })
   const checkIn = new Date(`${searchState.checkIn}T00:00:00`)
   const checkOut = new Date(`${searchState.checkOut}T00:00:00`)
 
-  return `${total.toLocaleString()} ${t('search.resultsFound')} • ${dateFormatter.format(checkIn)} — ${dateFormatter.format(checkOut)} • ${searchState.guests} ${t('search.guests')}`
+  return `${total.toLocaleString(locale.value)} ${t('search.resultsFound')} • ${dateFormatter.format(checkIn)} — ${dateFormatter.format(checkOut)} • ${searchState.guests.toLocaleString(locale.value)} ${t('search.guests')}`
 })
 
 const sortOptions = computed(() => [
@@ -204,6 +238,14 @@ const validateSearchForm = () => {
     isValid = false
   }
 
+  const minPrice = parseFiniteNumber(searchState.minPrice)
+  const maxPrice = parseFiniteNumber(searchState.maxPrice)
+
+  if (searchState.minPrice !== '' && minPrice === null) {
+    validationErrors.minPrice = t('search.validation.priceInvalid')
+    isValid = false
+  }
+
   const checkInDate = searchState.checkIn ? parseLocalDate(searchState.checkIn) : null
   const checkOutDate = searchState.checkOut ? parseLocalDate(searchState.checkOut) : null
 
@@ -212,20 +254,25 @@ const validateSearchForm = () => {
     isValid = false
   }
 
-  if (searchState.minPrice !== '' && Number(searchState.minPrice) < 0) {
+  if (minPrice !== null && minPrice < 0) {
     validationErrors.minPrice = t('search.validation.priceNonNegative')
     isValid = false
   }
 
-  if (searchState.maxPrice !== '' && Number(searchState.maxPrice) < 0) {
+  if (searchState.maxPrice !== '' && maxPrice === null) {
+    validationErrors.maxPrice = t('search.validation.priceInvalid')
+    isValid = false
+  }
+
+  if (maxPrice !== null && maxPrice < 0) {
     validationErrors.maxPrice = t('search.validation.priceNonNegative')
     isValid = false
   }
 
   if (
-    searchState.minPrice !== ''
-    && searchState.maxPrice !== ''
-    && Number(searchState.minPrice) > Number(searchState.maxPrice)
+    minPrice !== null
+    && maxPrice !== null
+    && minPrice > maxPrice
   ) {
     validationErrors.maxPrice = t('search.validation.priceRange')
     isValid = false
@@ -275,12 +322,7 @@ const getStarFillStyle = (rating: number, index: number) => {
   }
 }
 
-const formatMoney = (amount: number, currency: string) =>
-  new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency,
-    maximumFractionDigits: 0
-  }).format(amount)
+const formatMoney = (amount: number, currency: string) => formatCurrency(amount, currency, locale.value)
 
 const formatRating = (rating: number) => rating.toFixed(1)
 
@@ -290,8 +332,8 @@ const buildSearchRequest = (): SearchRequest => ({
   check_out: searchState.checkOut,
   huespedes: Number(searchState.guests),
   amenidades: selectedAmenities.value.length ? selectedAmenities.value : undefined,
-  precio_min: searchState.minPrice === '' ? undefined : Number(searchState.minPrice),
-  precio_max: searchState.maxPrice === '' ? undefined : Number(searchState.maxPrice),
+  precio_min: parseFiniteNumber(searchState.minPrice) ?? undefined,
+  precio_max: parseFiniteNumber(searchState.maxPrice) ?? undefined,
   order_by:
     searchState.sort === 'price_asc' || searchState.sort === 'price_desc'
       ? 'price'
@@ -331,8 +373,8 @@ const hydrateFromQuery = () => {
   const checkIn = parseQueryString(route.query.check_in, searchState.checkIn)
   const checkOut = parseQueryString(route.query.check_out, searchState.checkOut)
   const guests = Math.max(1, parseQueryNumber(route.query.huespedes, searchState.guests))
-  const minPrice = parseQueryString(route.query.precio_min, '')
-  const maxPrice = parseQueryString(route.query.precio_max, '')
+  const minPrice = normalizePriceInput(parseQueryString(route.query.precio_min, ''))
+  const maxPrice = normalizePriceInput(parseQueryString(route.query.precio_max, ''))
   const sort = parseQueryString(route.query.sort, searchState.sort)
   const page = Math.max(1, parseQueryNumber(route.query.page, 1))
   const queryAmenities = parseQueryAmenities(route.query.amenidades)
@@ -406,7 +448,7 @@ onMounted(async () => {
               {{ t('search.sectionLabel') }}
             </p>
             <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-950 tracking-tight">
-              {{ t('search.heading', { city: searchState.city || 'London' }) }}
+              {{ searchState.city ? t('search.heading', { city: searchState.city }) : t('search.breadcrumb.currentSearch') }}
             </h1>
             <p class="text-sm sm:text-base text-slate-500">
               {{ summaryText }}
@@ -513,6 +555,7 @@ onMounted(async () => {
                   v-for="amenity in amenities"
                   :key="amenity.id"
                   type="button"
+                  :aria-pressed="selectedAmenities.includes(amenity.id)"
                   class="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-colors"
                   :class="selectedAmenities.includes(amenity.id)
                     ? 'border-travelhub-200 bg-travelhub-50 text-travelhub-700'
