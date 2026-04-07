@@ -23,8 +23,12 @@ interface SearchResultCard {
   amenities: string[]
 }
 
+type QueryParamValue = string | null | Array<string | null> | undefined
+
 const { t } = useI18n()
 const search = useSearch()
+const route = useRoute()
+const router = useRouter()
 
 definePageMeta({
   layout: 'default'
@@ -77,6 +81,30 @@ const amenityLabelMap = computed<Record<string, string>>(() => ({
 }))
 
 const selectedAmenities = ref<string[]>(['wifi'])
+
+const parseQueryNumber = (value: QueryParamValue, fallback: number) => {
+  const singleValue = Array.isArray(value) ? value[0] : value
+  const parsed = Number(singleValue)
+  return Number.isFinite(parsed) ? parsed : fallback
+}
+
+const parseQueryString = (value: QueryParamValue, fallback: string) => {
+  const singleValue = Array.isArray(value) ? value[0] : value
+  return singleValue?.trim() ? singleValue : fallback
+}
+
+const parseQueryAmenities = (value: QueryParamValue) => {
+  if (!value) {
+    return []
+  }
+
+  return (Array.isArray(value) ? value : [value]).filter(
+    (item): item is string => Boolean(item)
+  )
+}
+
+const isValidSortOption = (value: string): value is SortOption =>
+  ['recommended', 'price_asc', 'price_desc', 'rating'].includes(value)
 
 const pagination = computed(() => search.results.value?.pagination)
 
@@ -220,10 +248,32 @@ const mapSearchResultToCard = (item: SearchResultItem): SearchResultCard => ({
   amenities: item.amenidades.map((amenity) => amenityLabelMap.value[amenity] || amenity.replaceAll('_', ' '))
 })
 
-const getStarClass = (rating: number, index: number) =>
-  index <= Math.round(rating)
-    ? 'text-amber-500 fill-current'
-    : 'text-slate-300'
+const getStarFillPercent = (rating: number, index: number) => {
+  const normalized = Math.max(0, Math.min(5, rating))
+  const relativeValue = normalized - (index - 1)
+
+  if (relativeValue >= 1) {
+    return 100
+  }
+
+  if (relativeValue <= 0) {
+    return 0
+  }
+
+  return Math.round(relativeValue * 100)
+}
+
+const getStarFillStyle = (rating: number, index: number) => {
+  const fillPercent = getStarFillPercent(rating, index)
+
+  return {
+    backgroundImage: `linear-gradient(90deg, rgb(245 158 11) ${fillPercent}%, rgb(148 163 184) ${fillPercent}%)`,
+    backgroundClip: 'text',
+    WebkitBackgroundClip: 'text',
+    color: 'transparent',
+    WebkitTextFillColor: 'transparent'
+  }
+}
 
 const formatMoney = (amount: number, currency: string) =>
   new Intl.NumberFormat('en-US', {
@@ -231,6 +281,8 @@ const formatMoney = (amount: number, currency: string) =>
     currency,
     maximumFractionDigits: 0
   }).format(amount)
+
+const formatRating = (rating: number) => rating.toFixed(1)
 
 const buildSearchRequest = (): SearchRequest => ({
   ciudad: searchState.city.trim(),
@@ -251,7 +303,53 @@ const buildSearchRequest = (): SearchRequest => ({
   page_size: pageSize
 })
 
-const runSearch = async (page: number) => {
+const syncQueryParams = async (mode: 'push' | 'replace' = 'push') => {
+  const routeLocation = {
+    query: {
+      ciudad: searchState.city,
+      check_in: searchState.checkIn,
+      check_out: searchState.checkOut,
+      huespedes: String(searchState.guests),
+      amenidades: selectedAmenities.value,
+      precio_min: searchState.minPrice || undefined,
+      precio_max: searchState.maxPrice || undefined,
+      sort: searchState.sort,
+      page: String(currentPage.value)
+    }
+  }
+
+  if (mode === 'replace') {
+    await router.replace(routeLocation)
+    return
+  }
+
+  await router.push(routeLocation)
+}
+
+const hydrateFromQuery = () => {
+  const city = parseQueryString(route.query.ciudad, searchState.city)
+  const checkIn = parseQueryString(route.query.check_in, searchState.checkIn)
+  const checkOut = parseQueryString(route.query.check_out, searchState.checkOut)
+  const guests = Math.max(1, parseQueryNumber(route.query.huespedes, searchState.guests))
+  const minPrice = parseQueryString(route.query.precio_min, '')
+  const maxPrice = parseQueryString(route.query.precio_max, '')
+  const sort = parseQueryString(route.query.sort, searchState.sort)
+  const page = Math.max(1, parseQueryNumber(route.query.page, 1))
+  const queryAmenities = parseQueryAmenities(route.query.amenidades)
+
+  searchState.city = city
+  searchState.checkIn = checkIn
+  searchState.checkOut = checkOut
+  searchState.guests = guests
+  searchState.minPrice = minPrice
+  searchState.maxPrice = maxPrice
+  searchState.sort = isValidSortOption(sort) ? sort : 'recommended'
+  currentPage.value = page
+
+  selectedAmenities.value = queryAmenities.length ? queryAmenities : selectedAmenities.value
+}
+
+const runSearch = async (page: number, historyMode: 'push' | 'replace' = 'push') => {
   currentPage.value = page
   hasAttemptedSearch.value = true
 
@@ -260,7 +358,11 @@ const runSearch = async (page: number) => {
   }
 
   try {
+    await syncQueryParams(historyMode)
     await search.searchProperties(buildSearchRequest())
+    if (search.results.value?.pagination?.page) {
+      currentPage.value = search.results.value.pagination.page
+    }
   } catch {
     // Error state is already handled by useSearch composable.
   }
@@ -275,7 +377,8 @@ const goToPage = async (page: number) => {
 }
 
 onMounted(async () => {
-  await runSearch(1)
+  hydrateFromQuery()
+  await runSearch(currentPage.value, 'replace')
 })
 </script>
 
@@ -503,14 +606,22 @@ onMounted(async () => {
               <div class="p-5 sm:p-6 space-y-5">
                 <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                   <div class="space-y-2">
-                    <div class="flex items-center gap-1 text-amber-500">
-                      <UIcon
+                    <div
+                      class="flex items-center gap-0.5"
+                      role="img"
+                      :aria-label="t('search.ratingAria', { rating: formatRating(result.rating) })"
+                    >
+                      <span
                         v-for="star in 5"
                         :key="star"
-                        name="i-lucide-star"
-                        class="size-4"
-                        :class="getStarClass(result.rating, star)"
-                      />
+                        class="inline-flex h-4 w-4 items-center justify-center text-[14px] leading-none align-middle"
+                        :style="getStarFillStyle(result.rating, star)"
+                      >
+                        ★
+                      </span>
+                      <span class="sr-only">
+                        {{ t('search.ratingAria', { rating: formatRating(result.rating) }) }}
+                      </span>
                     </div>
 
                     <div>
@@ -529,7 +640,7 @@ onMounted(async () => {
 
                   <div class="shrink-0 rounded-2xl bg-slate-50 px-4 py-3 text-center border border-slate-100">
                     <p class="text-sm font-semibold text-travelhub-600">
-                      {{ result.rating.toFixed(1) }}
+                      {{ formatRating(result.rating) }}
                     </p>
                     <p
                       v-if="result.reviewCount"

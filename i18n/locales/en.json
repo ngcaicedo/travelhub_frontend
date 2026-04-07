@@ -148,6 +148,7 @@
     "bookNow": "Book now",
     "viewProperty": "View property",
     "night": "night",
+    "ratingAria": "Rating {rating} out of 5",
     "reviews": "reviews",
     "maxGuests": "Up to {count} guests",
     "pricePerNight": "Price per night",

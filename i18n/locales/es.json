@@ -148,6 +148,7 @@
     "bookNow": "Reservar ahora",
     "viewProperty": "Ver propiedad",
     "night": "noche",
+    "ratingAria": "Calificación {rating} de 5",
     "reviews": "reseñas",
     "maxGuests": "Hasta {count} huéspedes",
     "pricePerNight": "Precio por noche",
