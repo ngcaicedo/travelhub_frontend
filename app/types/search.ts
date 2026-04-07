@@ -25,7 +25,7 @@ export interface SearchResultItem {
   rating: number
   precio_desde: string
   moneda: string
-  amenidades: string[]
+  amenidades: readonly string[]
 }
 
 export interface SearchPagination {

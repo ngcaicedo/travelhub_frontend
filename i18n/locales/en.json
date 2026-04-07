@@ -139,6 +139,7 @@
     "pageDescription": "Explore available properties and filter by city, dates, guests, amenities, and price.",
     "sectionLabel": "Search results",
     "heading": "Properties in {city}",
+    "summaryReady": "Complete the filters and press Search to see available properties.",
     "resultsFound": "results found",
     "guests": "guests",
     "showMap": "Show map",
@@ -148,6 +149,10 @@
     "night": "night",
     "reviews": "reviews",
     "pricePerNight": "Price per night",
+    "errorTitle": "We could not load the search",
+    "emptyTitle": "No available properties found",
+    "emptyDescription": "Try changing the city, dates, or reduce the filters to see more options.",
+    "paginationSummary": "Page {page} of {totalPages}",
     "fields": {
       "city": "City",
       "checkIn": "Check-in",
@@ -172,14 +177,26 @@
     },
     "breadcrumb": {
       "home": "Home",
-      "country": "United Kingdom",
-      "city": "London Hotels"
+      "currentSearch": "City"
     },
     "sort": {
       "recommended": "Recommended",
       "priceAsc": "Price: low to high",
       "priceDesc": "Price: high to low",
       "rating": "Rating"
+    },
+    "pagination": {
+      "prev": "Previous",
+      "next": "Next"
+    },
+    "validation": {
+      "requiredCity": "City is required",
+      "requiredCheckIn": "Check-in is required",
+      "requiredCheckOut": "Check-out is required",
+      "requiredGuests": "You must enter at least 1 guest",
+      "checkOutAfterCheckIn": "Check-out must be after check-in",
+      "priceNonNegative": "Price cannot be negative",
+      "priceRange": "Max price must be greater than or equal to min price"
     }
   }
 }
