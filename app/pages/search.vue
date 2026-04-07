@@ -15,6 +15,7 @@ interface SearchResultCard {
   location: string
   rating: number
   reviewCount?: number
+  maxGuests: number
   pricePerNight: number
   currency: string
   image: string
@@ -63,6 +64,17 @@ const amenities = computed<SearchAmenity[]>(() => [
   { id: 'pool', label: t('search.amenities.pool') },
   { id: 'breakfast', label: t('search.amenities.breakfast') }
 ])
+
+const amenityLabelMap = computed<Record<string, string>>(() => ({
+  wifi: t('search.amenities.wifi'),
+  piscina: t('search.amenities.pool'),
+  desayuno_incluido: t('search.amenities.breakfast'),
+  aire_acondicionado: t('search.amenities.airConditioning'),
+  pet_friendly: t('search.amenities.petFriendly'),
+  parqueadero: t('search.amenities.parking'),
+  gimnasio: t('search.amenities.gym'),
+  spa: t('search.amenities.spa')
+}))
 
 const selectedAmenities = ref<string[]>(['wifi'])
 
@@ -200,12 +212,18 @@ const mapSearchResultToCard = (item: SearchResultItem): SearchResultCard => ({
   location: `${item.ciudad}, ${item.pais}`,
   rating: item.rating,
   reviewCount: Math.max(1, Math.round(item.rating * 200)),
+  maxGuests: item.capacidad_maxima,
   pricePerNight: Number(item.precio_desde),
   currency: item.moneda,
   image: item.imagen_principal_url || '/mock/property-1.svg',
   imageAlt: item.nombre,
-  amenities: [...item.amenidades]
+  amenities: item.amenidades.map((amenity) => amenityLabelMap.value[amenity] || amenity.replaceAll('_', ' '))
 })
+
+const getStarClass = (rating: number, index: number) =>
+  index <= Math.round(rating)
+    ? 'text-amber-500 fill-current'
+    : 'text-slate-300'
 
 const formatMoney = (amount: number, currency: string) =>
   new Intl.NumberFormat('en-US', {
@@ -293,15 +311,6 @@ onMounted(async () => {
           </div>
 
           <div class="flex items-center gap-3">
-            <UButton
-              icon="i-lucide-map-pinned"
-              color="neutral"
-              variant="soft"
-              class="shadow-sm"
-            >
-              {{ t('search.showMap') }}
-            </UButton>
-
             <USelect
               v-model="searchState.sort"
               :items="sortOptions"
@@ -480,7 +489,7 @@ onMounted(async () => {
             <article
               v-for="result in results"
               :key="result.id"
-              class="overflow-hidden rounded-[28px] bg-white shadow-[0_10px_30px_rgba(15,23,42,0.08)] border border-slate-100"
+              class="overflow-hidden rounded-[28px] bg-white shadow-[0_10px_30px_rgba(15,23,42,0.08)] border border-slate-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(15,23,42,0.14)]"
             >
               <div class="relative h-[240px] sm:h-[280px] overflow-hidden">
                 <img
@@ -499,7 +508,8 @@ onMounted(async () => {
                         v-for="star in 5"
                         :key="star"
                         name="i-lucide-star"
-                        class="size-4 fill-current"
+                        class="size-4"
+                        :class="getStarClass(result.rating, star)"
                       />
                     </div>
 
@@ -540,6 +550,14 @@ onMounted(async () => {
                   </span>
                 </div>
 
+                <p class="text-sm text-slate-500 flex items-center gap-2">
+                  <UIcon
+                    name="i-lucide-users"
+                    class="size-4"
+                  />
+                  {{ t('search.maxGuests', { count: result.maxGuests }) }}
+                </p>
+
                 <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between border-t border-slate-100 pt-4">
                   <div>
                     <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400">
@@ -554,10 +572,12 @@ onMounted(async () => {
                   </div>
 
                   <UButton
+                    :to="`/properties/${result.id}`"
                     size="lg"
                     class="sm:min-w-[180px] justify-center"
+                    trailing-icon="i-lucide-arrow-right"
                   >
-                    {{ t('search.bookNow') }}
+                    {{ t('search.viewProperty') }}
                   </UButton>
                 </div>
               </div>

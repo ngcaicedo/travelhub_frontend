@@ -146,8 +146,10 @@
     "sortLabel": "Ordenar por",
     "searchAction": "Buscar",
     "bookNow": "Reservar agora",
+    "viewProperty": "Ver propriedade",
     "night": "noite",
     "reviews": "avaliações",
+    "maxGuests": "Até {count} hóspedes",
     "pricePerNight": "Preço por noite",
     "errorTitle": "Não foi possível carregar a busca",
     "emptyTitle": "Nenhuma propriedade disponível encontrada",
@@ -169,7 +171,12 @@
     "amenities": {
       "wifi": "Wifi",
       "pool": "Piscina",
-      "breakfast": "Café da manhã incluído"
+      "breakfast": "Café da manhã incluído",
+      "airConditioning": "Ar-condicionado",
+      "petFriendly": "Pet friendly",
+      "parking": "Estacionamento",
+      "gym": "Academia",
+      "spa": "Spa"
     },
     "badges": {
       "guestFavorite": "Favorito dos hóspedes",

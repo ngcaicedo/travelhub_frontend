@@ -146,8 +146,10 @@
     "sortLabel": "Sort by",
     "searchAction": "Search",
     "bookNow": "Book now",
+    "viewProperty": "View property",
     "night": "night",
     "reviews": "reviews",
+    "maxGuests": "Up to {count} guests",
     "pricePerNight": "Price per night",
     "errorTitle": "We could not load the search",
     "emptyTitle": "No available properties found",
@@ -169,7 +171,12 @@
     "amenities": {
       "wifi": "Wifi",
       "pool": "Pool",
-      "breakfast": "Breakfast included"
+      "breakfast": "Breakfast included",
+      "airConditioning": "Air conditioning",
+      "petFriendly": "Pet friendly",
+      "parking": "Parking",
+      "gym": "Gym",
+      "spa": "Spa"
     },
     "badges": {
       "guestFavorite": "Guest favorite",
