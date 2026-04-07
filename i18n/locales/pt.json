@@ -133,5 +133,53 @@
     "no_past_dates": "Não é possível selecionar datas passadas",
     "unavailable": "Esta propriedade não está disponível para estas datas",
     "failed": "Erro ao carregar a reserva"
+  },
+  "search": {
+    "pageTitle": "Buscar propriedades",
+    "pageDescription": "Explore propriedades disponíveis e filtre por cidade, datas, hóspedes, comodidades e preço.",
+    "sectionLabel": "Resultados da busca",
+    "heading": "Propriedades em {city}",
+    "resultsFound": "resultados encontrados",
+    "guests": "hóspedes",
+    "showMap": "Mostrar mapa",
+    "sortLabel": "Ordenar por",
+    "searchAction": "Buscar",
+    "bookNow": "Reservar agora",
+    "night": "noite",
+    "reviews": "avaliações",
+    "pricePerNight": "Preço por noite",
+    "fields": {
+      "city": "Cidade",
+      "checkIn": "Check-in",
+      "checkOut": "Check-out",
+      "guests": "Hóspedes",
+      "minPrice": "Preço mínimo",
+      "maxPrice": "Preço máximo"
+    },
+    "placeholders": {
+      "city": "Digite uma cidade"
+    },
+    "amenitiesLabel": "Comodidades",
+    "amenitiesHint": "Selecione um ou mais filtros para refinar os resultados.",
+    "amenities": {
+      "wifi": "Wifi",
+      "pool": "Piscina",
+      "breakfast": "Café da manhã incluído"
+    },
+    "badges": {
+      "guestFavorite": "Favorito dos hóspedes",
+      "lightningFast": "Lightning fast"
+    },
+    "breadcrumb": {
+      "home": "Home",
+      "country": "United Kingdom",
+      "city": "London Hotels"
+    },
+    "sort": {
+      "recommended": "Recomendado",
+      "priceAsc": "Preço: menor para maior",
+      "priceDesc": "Preço: maior para menor",
+      "rating": "Avaliação"
+    }
   }
 }

@@ -133,5 +133,53 @@
     "no_past_dates": "Cannot select past dates",
     "unavailable": "This property is not available for these dates",
     "failed": "Error loading reservation"
+  },
+  "search": {
+    "pageTitle": "Search properties",
+    "pageDescription": "Explore available properties and filter by city, dates, guests, amenities, and price.",
+    "sectionLabel": "Search results",
+    "heading": "Properties in {city}",
+    "resultsFound": "results found",
+    "guests": "guests",
+    "showMap": "Show map",
+    "sortLabel": "Sort by",
+    "searchAction": "Search",
+    "bookNow": "Book now",
+    "night": "night",
+    "reviews": "reviews",
+    "pricePerNight": "Price per night",
+    "fields": {
+      "city": "City",
+      "checkIn": "Check-in",
+      "checkOut": "Check-out",
+      "guests": "Guests",
+      "minPrice": "Min price",
+      "maxPrice": "Max price"
+    },
+    "placeholders": {
+      "city": "Enter a city"
+    },
+    "amenitiesLabel": "Amenities",
+    "amenitiesHint": "Select one or more filters to refine the results.",
+    "amenities": {
+      "wifi": "Wifi",
+      "pool": "Pool",
+      "breakfast": "Breakfast included"
+    },
+    "badges": {
+      "guestFavorite": "Guest favorite",
+      "lightningFast": "Lightning fast"
+    },
+    "breadcrumb": {
+      "home": "Home",
+      "country": "United Kingdom",
+      "city": "London Hotels"
+    },
+    "sort": {
+      "recommended": "Recommended",
+      "priceAsc": "Price: low to high",
+      "priceDesc": "Price: high to low",
+      "rating": "Rating"
+    }
   }
 }
