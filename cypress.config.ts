@@ -15,7 +15,7 @@ export default defineConfig({
     json: true
   },
   e2e: {
-    baseUrl: 'http://localhost:3000',
+    baseUrl: process.env.CYPRESS_BASE_URL || 'http://localhost:3000',
     specPattern: 'cypress/e2e/scenarios/**/*.cy.ts',
     supportFile: 'cypress/support/e2e.ts',
     fixturesFolder: 'cypress/fixtures',
@@ -31,8 +31,8 @@ export default defineConfig({
       openMode: 0
     },
     env: {
-      usersApiUrl: 'http://localhost:8000',
-      securityApiUrl: 'http://localhost:8001'
+      usersApiUrl: process.env.NUXT_PUBLIC_USERS_API_BASE || 'http://localhost:8000',
+      securityApiUrl: process.env.NUXT_PUBLIC_SECURITY_API_BASE || 'http://localhost:8001'
     },
     setupNodeEvents(on) {
       mochawesomePlugin(on)
