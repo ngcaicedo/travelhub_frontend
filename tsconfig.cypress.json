@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "target": "ES2021",
+    "lib": ["ES2021", "dom"],
+    "types": ["cypress", "node"],
+    "moduleResolution": "bundler",
+    "module": "ESNext",
+    "esModuleInterop": true,
+    "strict": true,
+    "baseUrl": "."
+  },
+  "include": ["cypress/**/*.ts", "cypress.config.ts"]
+}
