@@ -51,6 +51,7 @@ async function onSubmit() {
 
       <UAlert
         v-if="error"
+        role="alert"
         icon="i-lucide-alert-circle"
         color="error"
         :title="t('auth.verifyOtp.error')"
@@ -71,6 +72,7 @@ async function onSubmit() {
             :placeholder="$t('auth.verifyOtp.otpPlaceholder')"
             size="xl"
             class="w-full text-center text-2xl font-mono tracking-widest"
+            data-cy="otp-input"
           />
         </UFormField>
 
@@ -81,6 +83,7 @@ async function onSubmit() {
           size="xl"
           block
           :loading="isLoading"
+          data-cy="otp-submit"
         />
       </form>
     </div>
