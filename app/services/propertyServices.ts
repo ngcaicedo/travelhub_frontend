@@ -195,3 +195,33 @@ export const getPropertyDetails = async (propertyId?: string): Promise<PropertyD
     reviews: getMockReviews(propertyId)
   }
 }
+
+export const getAllProperties = async (): Promise<Property[]> => {
+  // Simular delay de API
+  await new Promise(resolve => setTimeout(resolve, 300))
+
+  const propertyIds = [
+    '11111111-1111-1111-1111-111111111111',
+    '22222222-2222-2222-2222-222222222222',
+    '33333333-3333-3333-3333-333333333333',
+    '44444444-4444-4444-4444-444444444444'
+  ]
+
+  return propertyPresets.map((preset, index) => ({
+    id: propertyIds[index]!,
+    name: preset.name,
+    description: preset.description,
+    location: preset.location,
+    latitude: preset.latitude,
+    longitude: preset.longitude,
+    price_per_night: preset.price_per_night,
+    currency: 'COP',
+    rating: preset.rating,
+    review_count: preset.review_count,
+    bedrooms: preset.bedrooms,
+    bathrooms: preset.bathrooms,
+    max_guests: preset.max_guests,
+    amenities: Array.from(preset.amenities),
+    images: preset.images.map(image => ({ ...image }))
+  }))
+}

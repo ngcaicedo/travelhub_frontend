@@ -76,6 +76,10 @@
     }
   },
   "property": {
+    "properties": "Propiedades",
+    "discoverPlaces": "Descubre lugares increíbles",
+    "discoverAmazingPlaces": "Descubre lugares increíbles para hospedarte",
+    "exploreOurSelection": "Explora nuestra selección de propiedades de lujo y encontra el lugar perfecto para tu próxima aventura",
     "bedrooms": "Habitaciones",
     "bathrooms": "Baños",
     "maxGuests": "Huéspedes máximo",
@@ -86,7 +90,8 @@
     "openInGoogleMaps": "Abrir en Google Maps",
     "verifiedStay": "Estadía verificada",
     "loading": "Cargando propiedad",
-    "notFound": "Propiedad no encontrada"
+    "notFound": "Propiedad no encontrada",
+    "noPropertiesFound": "No hay propiedades disponibles en este momento"
   },
   "booking": {
     "dates": "Fechas",
@@ -128,6 +133,7 @@
     "serverError": "Error del servidor, intenta más tarde",
     "unknown": "Ocurrió un error inesperado",
     "propertyNotFound": "Propiedad no encontrada",
+    "failedToLoadProperties": "Error al cargar las propiedades",
     "tryAgainLater": "Intenta más tarde",
     "checkout_after_checkin": "El check-out debe ser posterior al check-in",
     "no_past_dates": "No se pueden seleccionar fechas pasadas",

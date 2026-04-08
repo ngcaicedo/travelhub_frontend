@@ -76,17 +76,22 @@
     }
   },
   "property": {
+    "properties": "Propriedades",
+    "discoverPlaces": "Descubra Lugares Incríveis",
+    "discoverAmazingPlaces": "Descubra lugares incríveis para ficar",
+    "exploreOurSelection": "Explore nossa seleção de propriedades de luxo e encontre o lugar perfeito para sua próxima aventura",
     "bedrooms": "Quartos",
     "bathrooms": "Banheiros",
-    "maxGuests": "Máximo de hóspedes",
+    "maxGuests": "Hóspedes máximos",
     "amenities": "comodidades",
     "aboutSpace": "Sobre este espaço",
-    "whatThisOffers": "O que este local oferece",
-    "whereYouBe": "Onde você ficará",
+    "whatThisOffers": "O que este lugar oferece",
+    "whereYouBe": "Onde você vai ficar",
     "openInGoogleMaps": "Abrir no Google Maps",
     "verifiedStay": "Estadia verificada",
     "loading": "Carregando propriedade",
-    "notFound": "Propriedade não encontrada"
+    "notFound": "Propriedade não encontrada",
+    "noPropertiesFound": "Nenhuma propriedade disponível no momento"
   },
   "booking": {
     "dates": "Datas",
@@ -128,6 +133,7 @@
     "serverError": "Erro do servidor, tente mais tarde",
     "unknown": "Um erro inesperado ocorreu",
     "propertyNotFound": "Propriedade não encontrada",
+    "failedToLoadProperties": "Falha ao carregar propriedades",
     "tryAgainLater": "Tente mais tarde",
     "checkout_after_checkin": "O check-out deve ser após o check-in",
     "no_past_dates": "Não é possível selecionar datas passadas",
