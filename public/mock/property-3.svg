@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-label="Property image 3">
+  <defs>
+    <linearGradient id="g3" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7c2d12"/>
+      <stop offset="100%" stop-color="#fb923c"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="700" fill="url(#g3)"/>
+  <path d="M0 530 Q300 420 600 520 T1200 500 V700 H0 Z" fill="#431407" opacity="0.4"/>
+  <text x="110" y="150" fill="#fff7ed" font-family="sans-serif" font-size="54" font-weight="700">Scenic Residence</text>
+  <text x="110" y="205" fill="#fed7aa" font-family="sans-serif" font-size="28">ORB-safe local placeholder</text>
+</svg>

@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { getApiErrorMessage } from '~/utils/apiError'
+
 const { t } = useI18n()
+const authStore = useAuthStore()
 
 definePageMeta({
   layout: 'auth'
@@ -15,9 +18,20 @@ const form = reactive({
 })
 
 const showPassword = ref(false)
+const error = ref('')
+const isLoading = ref(false)
 
-function onSubmit() {
-  // TODO: Integrar con API de autenticación (MPF-1)
+async function onSubmit() {
+  error.value = ''
+  isLoading.value = true
+
+  try {
+    await authStore.login(form.email, form.password)
+  } catch (e) {
+    error.value = getApiErrorMessage(e, t('common.unexpectedError'))
+  } finally {
+    isLoading.value = false
+  }
 }
 </script>
 
@@ -58,6 +72,17 @@ function onSubmit() {
           {{ $t('auth.login.subtitle') }}
         </p>
       </div>
+
+      <UAlert
+        v-if="error"
+        icon="i-lucide-alert-circle"
+        color="error"
+        :title="t('auth.login.error')"
+        :description="error"
+        closable
+        class="mb-6"
+        @close="error = ''"
+      />
 
       <form
         class="space-y-6"
@@ -114,6 +139,7 @@ function onSubmit() {
           trailing-icon="i-lucide-arrow-right"
           size="xl"
           block
+          :loading="isLoading"
         />
       </form>
 

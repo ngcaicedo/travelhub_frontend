@@ -1,7 +1,17 @@
 {
   "common": {
     "appName": "TravelHub",
-    "premiumTravel": "Viajes Premium"
+    "premiumTravel": "Viajes Premium",
+    "unexpectedError": "Error inesperado. Intenta de nuevo.",
+    "reviews": "reseñas",
+    "night": "noche",
+    "nights": "noches",
+    "readMore": "Leer más",
+    "readLess": "Leer menos",
+    "showAll": "Ver todas",
+    "showLess": "Ver menos",
+    "loadMore": "Cargar más",
+    "loading": "Cargando..."
   },
   "navigation": {
     "login": "Iniciar sesión",
@@ -23,7 +33,50 @@
       "submit": "Iniciar sesión",
       "noAccount": "¿No tienes una cuenta?",
       "createAccount": "Crear una cuenta",
-      "invalidCredentials": "Credenciales inválidas"
+      "invalidCredentials": "Credenciales inválidas",
+      "error": "Error de inicio de sesión"
+    },
+    "register": {
+      "title": "Crear cuenta",
+      "subtitle": "Únete a nuestra comunidad global de viajeros y comienza a explorar.",
+      "accountType": "Soy un...",
+      "traveler": "Viajero",
+      "hotelPartner": "Socio Hotelero",
+      "fullName": "Nombre completo",
+      "fullNamePlaceholder": "John Doe",
+      "hotelName": "Nombre del hotel / empresa",
+      "hotelNamePlaceholder": "Gran Hotel",
+      "contactName": "Nombre de contacto",
+      "contactNamePlaceholder": "John Doe",
+      "email": "Correo electrónico",
+      "emailPlaceholder": "john{'@'}example.com",
+      "phone": "Teléfono",
+      "phonePlaceholder": "3001234567",
+      "password": "Contraseña",
+      "passwordPlaceholder": "••••••••",
+      "passwordHint": "Al menos 8 caracteres",
+      "strengthWeak": "Débil",
+      "strengthMedium": "Fuerza media",
+      "strengthStrong": "Fuerte",
+      "strengthVeryStrong": "Muy fuerte",
+      "termsAgree": "Acepto los",
+      "termsOfService": "Términos de servicio",
+      "and": "y la",
+      "privacyPolicy": "Política de privacidad",
+      "submit": "Crear cuenta",
+      "hasAccount": "¿Ya tienes una cuenta?",
+      "login": "Iniciar sesión",
+      "termsRequired": "Debes aceptar los términos y condiciones",
+      "error": "Error de registro"
+    },
+    "verifyOtp": {
+      "title": "Verifica tu identidad",
+      "description": "Ingresa el código de 6 dígitos que enviamos a tu correo electrónico",
+      "otpLabel": "Código OTP",
+      "otpPlaceholder": "000000",
+      "invalidOtp": "El código debe tener 6 dígitos",
+      "submit": "Verificar",
+      "error": "Error al verificar OTP"
     }
   },
   "payments": {
@@ -150,5 +203,65 @@
       "line3": "Cargo de servicio TravelHub",
       "line4": "Impuestos locales (IVA 10%)"
     }
+  },
+  "property": {
+    "bedrooms": "Habitaciones",
+    "bathrooms": "Baños",
+    "maxGuests": "Huéspedes máximo",
+    "amenities": "amenidades",
+    "aboutSpace": "Sobre este espacio",
+    "whatThisOffers": "Qué ofrece este lugar",
+    "whereYouBe": "Dónde te hospedas",
+    "openInGoogleMaps": "Abrir en Google Maps",
+    "verifiedStay": "Estadía verificada",
+    "loading": "Cargando propiedad",
+    "notFound": "Propiedad no encontrada"
+  },
+  "booking": {
+    "dates": "Fechas",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "guests": "Huéspedes",
+    "adults": "adultos",
+    "total": "Total",
+    "confirmBooking": "Confirmar reserva",
+    "youWontBeCharged": "No se te cobrará por ahora",
+    "success": "¡Tu reserva ha sido confirmada!",
+    "confirmationSent": "Hemos enviado los detalles a tu correo electrónico",
+    "reservationId": "ID de Reserva",
+    "reservationDetails": "Detalles de la reserva",
+    "manageReservation": "Gestionar reserva",
+    "checkInInstructions": "Instrucciones de check-in",
+    "checkInInstructionsDescription": "Mira los detalles de acceso a la propiedad para tu llegada.",
+    "propertyPreviewAlt": "Vista previa de la propiedad",
+    "mockPropertyName": "Hacienda Renacentista y Viñedo Privado",
+    "status": "Estado",
+    "reservationCreated": "Reserva creada el",
+    "backHome": "Volver al inicio",
+    "printConfirmation": "Imprimir confirmación",
+    "nextSteps": "Próximos pasos",
+    "nextStepsDescription": "Tu reserva está pendiente de pago. Por favor, visita el portal de pagos para completar la transacción. Una vez confirmado el pago, recibirás un email de confirmación final."
+  },
+  "status": {
+    "pendingPayment": "Pendiente de pago",
+    "confirmed": "Confirmada",
+    "cancelled": "Cancelada",
+    "unknown": "Desconocido"
+  },
+  "errors": {
+    "validation": "Valida los datos de tu reserva",
+    "unauthorized": "No estás autorizado",
+    "forbidden": "No tienes permiso",
+    "notFound": "Recurso no encontrado",
+    "conflict": "No disponible en estas fechas",
+    "serverError": "Error del servidor, intenta más tarde",
+    "unknown": "Ocurrió un error inesperado",
+    "propertyNotFound": "Propiedad no encontrada",
+    "tryAgainLater": "Intenta más tarde",
+    "checkout_after_checkin": "El check-out debe ser posterior al check-in",
+    "no_past_dates": "No se pueden seleccionar fechas pasadas",
+    "unavailable": "Esta propiedad no está disponible para estas fechas",
+    "failed": "Error al cargar la reserva"
   }
 }
+

@@ -5,7 +5,8 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
     '@nuxt/ui',
-    '@nuxtjs/i18n'
+    '@nuxtjs/i18n',
+    '@pinia/nuxt'
   ],
   ssr: false,
 
@@ -22,25 +23,18 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
-  colorMode: {
-    preference: 'light'
-  },
   runtimeConfig: {
     public: {
-      paymentsApiBase: process.env.NUXT_PUBLIC_PAYMENTS_API_BASE || 'http://localhost:8003'
+      paymentsApiBase: process.env.NUXT_PUBLIC_PAYMENTS_API_BASE || 'http://localhost:8003',
+      usersApiBase: '',
+      securityApiBase: '',
+      usersApiUrl: process.env.USERS_API_URL || 'http://localhost:8000',
+      securityApiUrl: process.env.SECURITY_API_URL || 'http://localhost:8001',
+      reservationsApiUrl: process.env.RESERVATIONS_API_URL || 'http://localhost:8002'
     }
   },
 
   compatibilityDate: '2025-01-15',
-
-  eslint: {
-    config: {
-      stylistic: {
-        commaDangle: 'never',
-        braceStyle: '1tbs'
-      }
-    }
-  },
 
   i18n: {
     defaultLocale: 'es',
