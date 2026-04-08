@@ -91,7 +91,8 @@
     "verifiedStay": "Estadía verificada",
     "loading": "Cargando propiedad",
     "notFound": "Propiedad no encontrada",
-    "noPropertiesFound": "No hay propiedades disponibles en este momento"
+    "noPropertiesFound": "No hay propiedades disponibles en este momento",
+    "cancellationPolicy": "Política de cancelación"
   },
   "booking": {
     "dates": "Fechas",
