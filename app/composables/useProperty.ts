@@ -17,9 +17,9 @@ export const useProperty = (propertyId?: MaybeRefOrGetter<string | undefined>) =
     error.value = null
 
     try {
-      const details = await getPropertyDetails(toValue(propertyId))
-      property.value = details.property
-      reviews.value = details.reviews
+      const { property: fetchedProperty, reviews: fetchedReviews } = await getPropertyDetails(toValue(propertyId))
+      property.value = fetchedProperty
+      reviews.value = fetchedProperty.reviews || fetchedReviews || []
     } catch (err: unknown) {
       const apiError = handleApiError(err)
       error.value = t(apiError.message)

@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import type { Property, PropertyImage } from '~/types/api'
+import type { Property, PropertyImage, Review } from '~/types/api'
 
 interface Props {
-  property: Omit<Property, 'amenities' | 'images'> & {
+  property: Omit<Property, 'amenities' | 'images' | 'reviews'> & {
     amenities: readonly string[] | string[]
     images: readonly PropertyImage[] | PropertyImage[]
+    reviews?: readonly Review[] | Review[]
   }
 }
 
