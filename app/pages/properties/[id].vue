@@ -42,13 +42,13 @@ const navigateToSection = (sectionId: string) => {
   }
 }
 
-const sections = [
-  { id: 'overview', label: 'Descripción', icon: 'i-lucide-info' },
-  { id: 'amenities', label: 'Amenidades', icon: 'i-lucide-sparkles' },
-  { id: 'reviews', label: 'Reseñas', icon: 'i-lucide-star' },
-  { id: 'location', label: 'Ubicación', icon: 'i-lucide-map-pin' },
-  { id: 'policies', label: 'Políticas', icon: 'i-lucide-shield' }
-]
+const sections = computed(() => [
+  { id: 'overview', label: t('property.sections.overview'), icon: 'i-lucide-info' },
+  { id: 'amenities', label: t('property.sections.amenities'), icon: 'i-lucide-sparkles' },
+  { id: 'reviews', label: t('property.sections.reviews'), icon: 'i-lucide-star' },
+  { id: 'location', label: t('property.sections.location'), icon: 'i-lucide-map-pin' },
+  { id: 'policies', label: t('property.sections.policies'), icon: 'i-lucide-shield' }
+])
 
 useSeoMeta({
   title: () => `${property.value?.name || t('property.loading')} - TravelHub`,

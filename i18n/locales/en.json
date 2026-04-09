@@ -92,7 +92,15 @@
     "loading": "Loading property",
     "notFound": "Property not found",
     "noPropertiesFound": "No properties available at the moment",
-    "cancellationPolicy": "Cancellation Policy"
+    "cancellationPolicy": "Cancellation Policy",
+    "sections": {
+      "overview": "Overview",
+      "amenities": "Amenities",
+      "reviews": "Reviews",
+      "location": "Location",
+      "policies": "Policies"
+    },
+    "bookNow": "Book now"
   },
   "booking": {
     "dates": "Dates",

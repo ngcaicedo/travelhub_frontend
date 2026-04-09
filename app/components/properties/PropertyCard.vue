@@ -11,6 +11,7 @@ interface Props {
 
 const props = defineProps<Props>()
 const router = useRouter()
+const { t } = useI18n()
 
 const handleClick = () => {
   router.push(`/properties/${props.property.id}`)
@@ -73,14 +74,14 @@ const formattedPrice = computed(() => {
       <!-- Price and Book Button -->
       <div class="border-t border-gray-200 pt-3 flex items-center justify-between gap-3">
         <p class="text-2xl font-bold text-gray-900">
-          {{ formattedPrice }}/noche
+          {{ formattedPrice }}/{{ t('common.night') }}
         </p>
         <UButton
           size="sm"
           color="primary"
           @click.stop="handleClick"
         >
-          Reserva ya
+          {{ t('property.bookNow') }}
         </UButton>
       </div>
     </div>

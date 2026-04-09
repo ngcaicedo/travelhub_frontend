@@ -92,7 +92,15 @@
     "loading": "Carregando propriedade",
     "notFound": "Propriedade não encontrada",
     "noPropertiesFound": "Nenhuma propriedade disponível no momento",
-    "cancellationPolicy": "Política de Cancelamento"
+    "cancellationPolicy": "Política de Cancelamento",
+    "sections": {
+      "overview": "Visão geral",
+      "amenities": "Comodidades",
+      "reviews": "Avaliações",
+      "location": "Localização",
+      "policies": "Políticas"
+    },
+    "bookNow": "Reserve agora"
   },
   "booking": {
     "dates": "Datas",
