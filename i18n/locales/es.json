@@ -15,7 +15,8 @@
   },
   "navigation": {
     "login": "Iniciar sesión",
-    "checkout": "Proceso de pago"
+    "checkout": "Proceso de pago",
+    "reservations": "Mis reservas"
   },
   "auth": {
     "hero": {
@@ -241,6 +242,57 @@
     "printConfirmation": "Imprimir confirmación",
     "nextSteps": "Próximos pasos",
     "nextStepsDescription": "Tu reserva está pendiente de pago. Por favor, visita el portal de pagos para completar la transacción. Una vez confirmado el pago, recibirás un email de confirmación final."
+  },
+  "notifications": {
+    "meta": {
+      "title": "Confirmación del pago"
+    },
+    "success": {
+      "title": "Reserva confirmada",
+      "subtitle": "Tu pago fue confirmado correctamente. Ya puedes revisar los detalles de tu reserva."
+    },
+    "summary": {
+      "badge": "Confirmación del pago",
+      "reservationId": "ID de reserva",
+      "paymentId": "ID del pago",
+      "dates": "Fechas de estadía",
+      "property": "Propiedad",
+      "propertyFallback": "Hospedaje TravelHub",
+      "amountPaid": "Monto pagado"
+    },
+    "actions": {
+      "viewReservations": "Ver mis reservas",
+      "downloadReceipt": "Descargar recibo",
+      "retryVerification": "Consultar de nuevo",
+      "backToCheckout": "Volver al checkout"
+    },
+    "receipt": {
+      "title": "Recibo",
+      "label": "Recibo",
+      "pending": "Recibo pendiente"
+    },
+    "verification": {
+      "title": "Tu pago está siendo verificado",
+      "subtitle": "Estamos conciliando el estado final del pago con Stripe.",
+      "description": "Esto puede ocurrir después de un timeout justo tras confirmar el pago. TravelHub seguirá consultando en background durante un máximo de 30 segundos.",
+      "expired": "Todavía estamos esperando la confirmación final de Stripe. Intenta consultar de nuevo en un momento o vuelve al checkout.",
+      "failed": "No pudimos validar el estado final del pago."
+    },
+    "errors": {
+      "title": "No pudimos cargar la confirmación",
+      "missingReference": "Se necesita una referencia del pago para mostrar esta confirmación."
+    }
+  },
+  "reservationHistory": {
+    "meta": {
+      "title": "Mis reservas"
+    },
+    "badge": "Zona viajero",
+    "title": "Mis reservas",
+    "subtitle": "Revisa las confirmaciones de reserva más recientes generadas después de tus pagos exitosos.",
+    "latestReservation": "Reserva más reciente",
+    "emptyTitle": "Aún no tienes reservas",
+    "emptyDescription": "Cuando un pago quede confirmado, el resumen de tu reserva aparecerá aquí."
   },
   "status": {
     "pendingPayment": "Pendiente de pago",

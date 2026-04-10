@@ -9,3 +9,9 @@ export function createSecurityClient() {
     baseURL: useRuntimeConfig().public.securityApiBase
   })
 }
+
+export function createPaymentsClient() {
+  return $fetch.create({
+    baseURL: useRuntimeConfig().public.paymentsApiBase
+  })
+}

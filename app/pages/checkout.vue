@@ -9,6 +9,7 @@ import {
   normalizePaymentsConfig,
   scenarioPresets,
   type CheckoutSession,
+  type FinalizePaymentResponse,
   type PaymentEvent,
   type PaymentResponse,
   type PaymentsConfig,
@@ -63,6 +64,33 @@ const stripeReady = ref(false)
 const stripeClient = shallowRef<StripeClient | null>(null)
 const stripeElements = shallowRef<StripeElementsInstance | null>(null)
 const stripePaymentElement = shallowRef<{ mount: (target: string | HTMLElement) => void, unmount?: () => void, destroy?: () => void } | null>(null)
+
+function isTimeoutLikeError(error: unknown) {
+  const message = (
+    (error as { message?: string })?.message
+    || (error as { statusMessage?: string })?.statusMessage
+    || ''
+  ).toLowerCase()
+
+  return message.includes('timeout')
+    || message.includes('timed out')
+    || message.includes('fetch failed')
+    || message.includes('network')
+}
+
+async function goToPaymentConfirmation(paymentId: string) {
+  await navigateTo({
+    path: '/notifications/payment-confirmation',
+    query: { paymentId }
+  })
+}
+
+async function goToPendingVerification(paymentTransactionId: string) {
+  await navigateTo({
+    path: '/notifications/payment-confirmation',
+    query: { transactionId: paymentTransactionId }
+  })
+}
 
 const booking = computed(() => ({
   property: t('payments.booking.property'),
@@ -329,6 +357,9 @@ async function submitFake() {
   if (!normalized) throw createError({ statusCode: 502, data: { detail: 'invalid_backend_response' } })
   paymentResult.value = normalized
   await loadPaymentAndEvents(normalized.payment_id)
+  if (normalized.status === 'confirmed') {
+    await goToPaymentConfirmation(normalized.payment_id)
+  }
 }
 
 async function submitStripe() {
@@ -344,26 +375,47 @@ async function submitStripe() {
     params: { payment_method_data: { billing_details: { name: form.cardholderName } }, return_url: window.location.href }
   })
   if (!confirmation.confirmationToken?.id) throw createError({ statusCode: 400, data: { detail: confirmation.error?.message || t('payments.integration.confirmationTokenError') } })
-  const finalized = normalizeFinalizePaymentResponse(await $fetch(`${paymentsApiBase}/api/v1/payments/finalize`, {
-    method: 'POST',
-    timeout: requestTimeoutMs,
-    headers: { 'x-forwarded-proto': 'https' },
-    body: { payment_transaction_id: stripeSession.value!.payment_transaction_id, confirmation_token_id: confirmation.confirmationToken.id }
-  }))
+  let finalized: FinalizePaymentResponse | null = null
+  try {
+    finalized = normalizeFinalizePaymentResponse(await $fetch(`${paymentsApiBase}/api/v1/payments/finalize`, {
+      method: 'POST',
+      timeout: requestTimeoutMs,
+      headers: { 'x-forwarded-proto': 'https' },
+      body: { payment_transaction_id: stripeSession.value!.payment_transaction_id, confirmation_token_id: confirmation.confirmationToken.id }
+    }))
+  } catch (error) {
+    if (stripeSession.value?.payment_transaction_id && isTimeoutLikeError(error)) {
+      await goToPendingVerification(stripeSession.value.payment_transaction_id)
+      return
+    }
+    throw error
+  }
   if (!finalized) throw createError({ statusCode: 502, data: { detail: 'invalid_backend_response' } })
   lastIdempotencyKey.value = stripeSession.value!.payment_transaction_id
   if (finalized.status === 'failed') lastFailureMessage.value = finalized.error
-  if (finalized.payment_id) return loadPaymentAndEvents(finalized.payment_id)
+  if (finalized.payment_id) {
+    await loadPaymentAndEvents(finalized.payment_id)
+    if (paymentResult.value?.status === 'confirmed') {
+      await goToPaymentConfirmation(finalized.payment_id)
+    }
+    return
+  }
   if (finalized.status === 'requires_action' && finalized.client_secret) {
     feedback.value = { tone: 'info', titleKey: 'payments.integration.requiresActionTitle', descriptionKey: 'payments.integration.requiresActionDescription' }
     const nextAction = await stripeClient.value!.handleNextAction({ clientSecret: finalized.client_secret })
     if (nextAction.error?.message) throw createError({ statusCode: 400, data: { detail: nextAction.error.message } })
     for (let i = 0; i < 6; i += 1) {
       const status = normalizeCheckoutSessionStatus(await $fetch(`${paymentsApiBase}/api/v1/payments/checkout/${stripeSession.value!.payment_transaction_id}`, { timeout: requestTimeoutMs }))
-      if (status?.payment_id) return loadPaymentAndEvents(status.payment_id)
+      if (status?.payment_id) {
+        await loadPaymentAndEvents(status.payment_id)
+        if (paymentResult.value?.status === 'confirmed') {
+          await goToPaymentConfirmation(status.payment_id)
+        }
+        return
+      }
       await new Promise(resolve => setTimeout(resolve, 1000))
     }
-    feedback.value = { tone: 'warning', titleKey: 'payments.feedback.requestErrorTitle', descriptionKey: 'payments.feedback.pendingVerificationDescription' }
+    await goToPendingVerification(stripeSession.value!.payment_transaction_id)
   }
 }
 

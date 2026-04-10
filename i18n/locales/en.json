@@ -15,7 +15,8 @@
   },
   "navigation": {
     "login": "Login",
-    "checkout": "Checkout"
+    "checkout": "Checkout",
+    "reservations": "My reservations"
   },
   "auth": {
     "hero": {
@@ -241,6 +242,57 @@
     "printConfirmation": "Print confirmation",
     "nextSteps": "Next steps",
     "nextStepsDescription": "Your reservation is pending payment. Please visit the payment portal to complete the transaction. Once payment is confirmed, you will receive a final confirmation email."
+  },
+  "notifications": {
+    "meta": {
+      "title": "Payment confirmation"
+    },
+    "success": {
+      "title": "Reservation confirmed",
+      "subtitle": "Your payment was confirmed successfully. You can now review your reservation details."
+    },
+    "summary": {
+      "badge": "Payment confirmation",
+      "reservationId": "Reservation ID",
+      "paymentId": "Payment ID",
+      "dates": "Stay dates",
+      "property": "Property",
+      "propertyFallback": "TravelHub stay",
+      "amountPaid": "Amount paid"
+    },
+    "actions": {
+      "viewReservations": "View my reservations",
+      "downloadReceipt": "Download receipt",
+      "retryVerification": "Check again",
+      "backToCheckout": "Back to checkout"
+    },
+    "receipt": {
+      "title": "Receipt",
+      "label": "Receipt",
+      "pending": "Receipt pending"
+    },
+    "verification": {
+      "title": "Your payment is being verified",
+      "subtitle": "We are reconciling the final payment status with Stripe.",
+      "description": "This can happen after a timeout right after payment confirmation. TravelHub will keep checking in the background for up to 30 seconds.",
+      "expired": "We are still waiting for the final confirmation from Stripe. Please check again in a moment or return to checkout.",
+      "failed": "We could not validate the final payment status."
+    },
+    "errors": {
+      "title": "We could not load the confirmation",
+      "missingReference": "A payment reference is required to display this confirmation."
+    }
+  },
+  "reservationHistory": {
+    "meta": {
+      "title": "My reservations"
+    },
+    "badge": "Traveler area",
+    "title": "My reservations",
+    "subtitle": "Review the latest reservation confirmations generated after your successful payments.",
+    "latestReservation": "Latest reservation",
+    "emptyTitle": "You do not have reservations yet",
+    "emptyDescription": "Once a payment is confirmed, your reservation summary will appear here."
   },
   "status": {
     "pendingPayment": "Pending payment",

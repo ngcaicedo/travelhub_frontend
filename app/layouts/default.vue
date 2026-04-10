@@ -30,6 +30,12 @@ function onLocaleChange(code: string) {
               variant="ghost"
             />
             <UButton
+              to="/reservations"
+              :label="t('navigation.reservations')"
+              color="neutral"
+              variant="ghost"
+            />
+            <UButton
               to="/checkout"
               :label="t('navigation.checkout')"
               color="primary"
