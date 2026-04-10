@@ -8,9 +8,10 @@ export const getApiBaseUrls = () => {
   const config = useRuntimeConfig()
 
   return {
-    usersBaseUrl: config.public.usersApiUrl,
-    securityBaseUrl: config.public.securityApiUrl,
-    reservationsBaseUrl: config.public.reservationsApiUrl
+    usersApiUrl: config.public.usersApiUrl,
+    securityApiUrl: config.public.securityApiUrl,
+    reservationsApiUrl: config.public.reservationsApiUrl,
+    searchApiUrl: config.public.searchApiUrl
   }
 }
 

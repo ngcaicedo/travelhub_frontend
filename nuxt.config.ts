@@ -25,11 +25,10 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      usersApiBase: '',
-      securityApiBase: '',
       usersApiUrl: process.env.USERS_API_URL || 'http://localhost:8000',
       securityApiUrl: process.env.SECURITY_API_URL || 'http://localhost:8001',
-      reservationsApiUrl: process.env.RESERVATIONS_API_URL || 'http://localhost:8002'
+      reservationsApiUrl: process.env.RESERVATIONS_API_URL || 'http://localhost:8002',
+      searchApiUrl: process.env.SEARCH_API_URL || 'http://localhost:8003'
     }
   },
 
