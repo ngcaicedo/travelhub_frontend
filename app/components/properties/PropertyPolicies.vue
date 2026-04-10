@@ -25,7 +25,7 @@ const policiesMap = {
     color: 'error' as const,
     description: 'No reembolsable. Se aplica cargo completo.'
   }
-} satisfies Record<'flexible' | 'moderate' | 'strict', { label: string; color: any; description: string }>
+} satisfies Record<'flexible' | 'moderate' | 'strict', { label: string; color: 'warning' | 'error'; description: string }>
 
 const refundPolicies = [
   {
