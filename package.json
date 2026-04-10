@@ -10,7 +10,11 @@
     "lint": "eslint .",
     "typecheck": "nuxt typecheck",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:e2e": "cypress run",
+    "test:e2e:open": "cypress open",
+    "test:e2e:ci": "cypress run --headless --browser chrome",
+    "test:e2e:report": "cypress run && echo \"\\nReporte: cypress/reports/index.html\""
   },
   "dependencies": {
     "@fontsource-variable/plus-jakarta-sans": "^5.2.8",
@@ -26,7 +30,10 @@
   "devDependencies": {
     "@nuxt/eslint": "^1.15.2",
     "@nuxt/test-utils": "^4.0.0",
+    "@types/node": "^25.5.2",
     "@vue/test-utils": "^2.4.6",
+    "cypress": "^15.13.1",
+    "cypress-mochawesome-reporter": "^4.0.2",
     "eslint": "^10.0.3",
     "happy-dom": "^20.8.9",
     "typescript": "^5.9.3",
