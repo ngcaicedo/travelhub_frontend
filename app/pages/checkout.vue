@@ -676,6 +676,7 @@ async function simulateDuplicate() {
           ><span>{{ t('payments.form.cardholder') }}</span><input
             v-model="form.cardholderName"
             type="text"
+            :placeholder="t('payments.form.cardholderPlaceholder')"
             class="w-full rounded-xl border border-slate-200 px-3 py-2"
           ></label>
           <template v-if="isFakeMode">
