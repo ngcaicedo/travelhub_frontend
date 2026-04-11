@@ -76,9 +76,13 @@
     }
   },
   "property": {
+    "properties": "Properties",
+    "discoverPlaces": "Discover Amazing Places",
+    "discoverAmazingPlaces": "Discover amazing places to stay",
+    "exploreOurSelection": "Explore our selection of luxury properties and find the perfect place for your next adventure",
     "bedrooms": "Bedrooms",
     "bathrooms": "Bathrooms",
-    "maxGuests": "Max guests",
+    "maxGuests": "Maximum Guests",
     "amenities": "amenities",
     "aboutSpace": "About this space",
     "whatThisOffers": "What this place offers",
@@ -86,7 +90,41 @@
     "openInGoogleMaps": "Open in Google Maps",
     "verifiedStay": "Verified stay",
     "loading": "Loading property",
-    "notFound": "Property not found"
+    "notFound": "Property not found",
+    "noPropertiesFound": "No properties available at the moment",
+    "cancellationPolicy": "Cancellation Policy",
+    "sections": {
+      "overview": "Overview",
+      "amenities": "Amenities",
+      "reviews": "Reviews",
+      "location": "Location",
+      "policies": "Policies"
+    },
+    "bookNow": "Book now",
+    "capacity": "Capacity",
+    "morePhotos": "+{count} photos",
+    "policies": {
+      "flexible": {
+        "label": "Flexible",
+        "description": "Free cancellation within 48 hours. Afterwards, a 50% charge applies."
+      },
+      "moderate": {
+        "label": "Moderate",
+        "description": "Free cancellation up to 7 days before check-in. Afterwards, full charge applies."
+      },
+      "strict": {
+        "label": "Strict",
+        "description": "Non-refundable. Full charge applies."
+      },
+      "freeCancellationTitle": "Free cancellation",
+      "freeCancellationDesc": "You can cancel up to 48 hours before check-in and receive a full refund.",
+      "dateChangeTitle": "Date changes",
+      "dateChangeDesc": "You can change your stay dates at no extra cost, subject to availability.",
+      "securityDepositTitle": "Security deposit",
+      "securityDepositDesc": "A security deposit equivalent to one night is required. It will be refunded after check-out.",
+      "propertyDamageTitle": "Property damage",
+      "propertyDamageDesc": "The guest is responsible for any damage caused during their stay."
+    }
   },
   "booking": {
     "dates": "Dates",
@@ -128,6 +166,7 @@
     "serverError": "Server error, try again later",
     "unknown": "An unexpected error occurred",
     "propertyNotFound": "Property not found",
+    "failedToLoadProperties": "Failed to load properties",
     "tryAgainLater": "Try again later",
     "checkout_after_checkin": "Check-out must be after check-in",
     "no_past_dates": "Cannot select past dates",

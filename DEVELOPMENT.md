@@ -114,7 +114,8 @@ window.location.href = '/properties/22222222-2222-2222-2222-222222222222'
 # .env (crear si no existe)
 USERS_API_URL=http://localhost:8000
 SECURITY_API_URL=http://localhost:8001
-RESERVATIONS_API_URL=http://localhost:8002
+PROPERTIES_API_URL=http://localhost:8004
+RESERVATIONS_API_URL=http://localhost:8003
 ```
 
 ---
@@ -150,7 +151,7 @@ RESERVATIONS_API_URL=http://localhost:8002
 → Verifica que accedas a `/properties/22222222-2222-2222-2222-222222222222`
 
 ### "El formulario de reserva no funciona"
-→ Asegúrate de que el servicio `reservations` en backend está corriendo en `http://localhost:8002`
+→ Asegúrate de que el servicio `reservations` en backend está corriendo en `http://localhost:8003`
 
 ### "Las fechas no se validan"
 → El navegador debe permitir el input de tipo `date`. Prueba con Chrome/Edge modernos.

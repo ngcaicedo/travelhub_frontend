@@ -52,6 +52,8 @@ export interface Property {
   max_guests: number
   amenities: string[]
   images: PropertyImage[]
+  reviews?: Review[]
+  status?: number
 }
 
 export interface Review {
