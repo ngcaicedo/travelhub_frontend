@@ -1,13 +1,84 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-label="Property image 1">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-label="Scenic vineyard estate">
   <defs>
-    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#0f766e"/>
-      <stop offset="100%" stop-color="#14b8a6"/>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#82c7ff"/>
+      <stop offset="100%" stop-color="#dbeeff"/>
+    </linearGradient>
+    <linearGradient id="hillBack" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#88b59c"/>
+      <stop offset="100%" stop-color="#5f8f78"/>
+    </linearGradient>
+    <linearGradient id="hillFront" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#739769"/>
+      <stop offset="100%" stop-color="#4d6f45"/>
+    </linearGradient>
+    <linearGradient id="field" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#d8d16a"/>
+      <stop offset="100%" stop-color="#8daa3b"/>
     </linearGradient>
   </defs>
-  <rect width="1200" height="700" fill="url(#g1)"/>
-  <circle cx="180" cy="140" r="80" fill="#99f6e4" opacity="0.35"/>
-  <rect x="120" y="430" width="960" height="180" rx="20" fill="#134e4a" opacity="0.45"/>
-  <text x="120" y="520" fill="#ecfeff" font-family="sans-serif" font-size="56" font-weight="700">TravelHub Demo Property</text>
-  <text x="120" y="575" fill="#ccfbf1" font-family="sans-serif" font-size="30">Local mock asset - no external request</text>
+
+  <rect width="1200" height="700" fill="url(#sky)"/>
+  <rect y="320" width="1200" height="380" fill="#edf2d8"/>
+
+  <path d="M0 285 C140 225 255 228 372 270 C474 307 573 308 679 258 C807 198 940 191 1200 265 V430 H0 Z" fill="url(#hillBack)"/>
+  <path d="M0 346 C165 302 308 328 456 370 C586 406 730 402 863 348 C988 297 1089 292 1200 325 V480 H0 Z" fill="url(#hillFront)"/>
+
+  <path d="M0 448 C206 407 371 423 567 470 C716 505 890 503 1034 454 C1094 434 1149 426 1200 432 V700 H0 Z" fill="url(#field)"/>
+
+  <g stroke="#5d7f2f" stroke-width="7" opacity="0.55">
+    <path d="M18 690 L370 470"/>
+    <path d="M96 700 L438 488"/>
+    <path d="M174 700 L506 508"/>
+    <path d="M254 700 L576 528"/>
+    <path d="M334 700 L648 548"/>
+    <path d="M418 700 L728 566"/>
+    <path d="M510 700 L814 585"/>
+  </g>
+
+  <g fill="#6e8d2f" opacity="0.75">
+    <circle cx="146" cy="620" r="10"/>
+    <circle cx="170" cy="606" r="10"/>
+    <circle cx="198" cy="592" r="10"/>
+    <circle cx="232" cy="574" r="10"/>
+    <circle cx="264" cy="556" r="10"/>
+    <circle cx="298" cy="538" r="10"/>
+    <circle cx="336" cy="518" r="10"/>
+
+    <circle cx="226" cy="642" r="10"/>
+    <circle cx="250" cy="628" r="10"/>
+    <circle cx="278" cy="612" r="10"/>
+    <circle cx="312" cy="594" r="10"/>
+    <circle cx="346" cy="576" r="10"/>
+    <circle cx="382" cy="558" r="10"/>
+    <circle cx="418" cy="538" r="10"/>
+
+    <circle cx="308" cy="664" r="10"/>
+    <circle cx="334" cy="650" r="10"/>
+    <circle cx="362" cy="634" r="10"/>
+    <circle cx="396" cy="616" r="10"/>
+    <circle cx="430" cy="598" r="10"/>
+    <circle cx="466" cy="580" r="10"/>
+    <circle cx="502" cy="560" r="10"/>
+  </g>
+
+  <g transform="translate(170 292)">
+    <rect x="0" y="126" width="442" height="132" fill="#ceb898"/>
+    <rect x="42" y="158" width="48" height="100" fill="#7b5a3f"/>
+    <rect x="320" y="158" width="48" height="100" fill="#7b5a3f"/>
+    <rect x="146" y="146" width="102" height="112" fill="#845f40"/>
+    <rect x="158" y="158" width="78" height="100" fill="#2d3338"/>
+    <polygon points="20,126 221,40 424,126" fill="#74553b"/>
+    <polygon points="88,118 224,68 356,118" fill="#674a31"/>
+    <polygon points="152,110 222,78 292,110" fill="#7f5f44"/>
+    <rect x="62" y="168" width="56" height="42" fill="#8dd0f1"/>
+    <rect x="282" y="168" width="60" height="42" fill="#8dd0f1"/>
+    <rect x="102" y="188" width="248" height="12" fill="#b99f77" opacity="0.7"/>
+  </g>
+
+  <g opacity="0.75">
+    <circle cx="1018" cy="143" r="46" fill="#ffffff"/>
+    <circle cx="968" cy="164" r="20" fill="#ffffff"/>
+    <circle cx="1058" cy="164" r="16" fill="#ffffff"/>
+  </g>
 </svg>

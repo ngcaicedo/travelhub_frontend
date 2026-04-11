@@ -16,13 +16,32 @@ const errorDescription = computed(() => {
 const reservation = ref<ReservationResponse | null>(null)
 const mockPropertyName = computed(() => t('booking.mockPropertyName'))
 const mockGuests = 2
+const localeMap: Record<string, string> = {
+  es: 'es-CO',
+  en: 'en-US',
+  pt: 'pt-BR'
+}
+
+const buildReservationCode = (value: string): string => {
+  const seed = value.replace(/[^a-fA-F0-9]/g, '')
+
+  if (!seed) return '00000'
+
+  const numericSeed = Number.parseInt(seed.slice(0, 10), 16)
+  const safeValue = Number.isFinite(numericSeed) ? numericSeed : 0
+
+  return String((safeValue % 90000) + 10000)
+}
+
+const reservationReference = computed(() => reservation.value ? `#TH-${buildReservationCode(reservation.value.id)}` : '#')
 
 const formatDate = (dateString: string): string => {
-  const date = new Date(dateString)
-  const localeMap: Record<string, string> = {
-    es: 'es-ES',
-    en: 'en-US',
-    pt: 'pt-PT'
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(dateString)
+    ? new Date(`${dateString}T00:00:00`)
+    : new Date(dateString)
+
+  if (Number.isNaN(date.getTime())) {
+    return dateString
   }
 
   return new Intl.DateTimeFormat(localeMap[locale.value] || 'en-US', {
@@ -65,6 +84,9 @@ const copyReservationId = () => {
   }
 }
 
+const checkInSummary = computed(() => reservation.value ? formatDate(reservation.value.check_in_date) : '-')
+const guestSummary = computed(() => `${mockGuests} ${t('booking.adults')}`)
+
 const backToHome = async () => {
   await navigateTo('/')
 }
@@ -74,7 +96,7 @@ onMounted(async () => {
 })
 
 useSeoMeta({
-  title: () => `${t('booking.confirmBooking')} - TravelHub`
+  title: () => `${t('booking.confirmBooking')} - ${t('common.appName')}`
 })
 
 definePageMeta({
@@ -83,88 +105,85 @@ definePageMeta({
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#f3f5f9] py-10 md:py-14">
-    <div class="max-w-[760px] mx-auto px-4">
-      <!-- Loading State -->
+  <div class="min-h-screen bg-[#f4f6fb] py-8 md:py-12">
+    <div class="mx-auto max-w-[920px] px-4">
       <div
         v-if="loading"
-        class="text-center py-12"
+        class="py-14 text-center"
       >
         <USpin class="mx-auto mb-4" />
-        <p class="text-gray-600">
+        <p class="text-slate-600">
           {{ t('common.loading') }}
         </p>
       </div>
 
-      <!-- Error State -->
       <UAlert
         v-else-if="error"
         icon="i-lucide-alert-circle"
         color="error"
         :title="t('errors.failed')"
         :description="errorDescription"
-        class="mb-8"
+        class="mx-auto max-w-[720px]"
       />
 
-      <!-- Success State -->
       <div
         v-else-if="reservation"
-        class="space-y-7"
+        class="mx-auto max-w-[760px] space-y-9"
       >
-        <!-- Success Header -->
-        <div class="text-center pt-2">
-          <div class="flex justify-center mb-5">
-            <div class="rounded-full bg-green-100/80 p-5">
+        <div class="pt-1 text-center">
+          <div class="mb-6 flex justify-center">
+            <div class="flex h-[60px] w-[60px] items-center justify-center rounded-full bg-[#dff7e8]">
               <UIcon
-                name="i-lucide-check-circle-2"
-                class="w-10 h-10 text-green-600"
+                name="i-lucide-circle-check-big"
+                class="h-8 w-8 text-[#16a34a]"
               />
             </div>
           </div>
-          <h1 class="text-[44px] leading-[1.05] font-bold tracking-tight text-slate-900 mb-2">
+
+          <h1 class="text-[34px] leading-[1.02] font-bold tracking-tight text-slate-900 md:text-[50px]">
             {{ t('booking.success') }}
           </h1>
-          <p class="text-slate-500 text-[17px]">
+          <p class="mx-auto mt-2 max-w-[520px] text-[16px] leading-7 text-slate-500">
             {{ t('booking.confirmationSent') }}
           </p>
         </div>
 
-        <!-- Reservation Summary Card -->
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-          <div class="grid grid-cols-1 md:grid-cols-[250px_1fr]">
-            <div class="h-52 md:h-full">
+        <div class="overflow-hidden rounded-2xl border border-[#dbe4ef] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.04)]">
+          <div class="grid grid-cols-1 md:grid-cols-[260px_1fr]">
+            <div class="h-[172px] md:h-full">
               <img
                 src="/mock/property-1.svg"
                 :alt="t('booking.propertyPreviewAlt')"
-                class="w-full h-full object-cover"
+                class="h-full w-full object-cover"
               >
             </div>
-            <div class="p-6 md:p-7">
-              <div class="flex items-start justify-between gap-3 mb-3">
-                <p class="text-[11px] font-semibold tracking-[0.14em] text-travelhub-600 uppercase">
+
+            <div class="flex flex-col justify-center p-7 md:px-8 md:py-6">
+              <div class="mb-4 flex items-start justify-between gap-4">
+                <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#2563eb]">
                   {{ t('booking.reservationDetails') }}
                 </p>
-                <p class="text-xs font-semibold text-slate-400 uppercase">
-                  #TH-88291
+                <p class="pt-0.5 text-[14px] font-medium text-slate-400">
+                  {{ reservationReference }}
                 </p>
               </div>
 
-              <h2 class="text-[30px] leading-tight font-bold text-slate-900 max-w-[420px] mb-5">
+              <h2 class="mb-5 max-w-[400px] text-[18px] leading-[1.35] font-semibold text-slate-900 md:text-[19px]">
                 {{ mockPropertyName }}
               </h2>
 
-              <div class="grid grid-cols-2 gap-5 mb-5">
+              <div class="mb-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div class="flex items-start gap-2.5">
                   <UIcon
-                    name="i-lucide-calendar"
-                    class="w-4 h-4 text-travelhub-600 mt-0.5"
+                    name="i-lucide-calendar-range"
+                    class="mt-0.5 h-4.5 w-4.5 text-[#2563eb]"
                   />
                   <div>
-                    <p class="text-[11px] tracking-wide uppercase text-slate-400 font-semibold">
+                    <p class="text-[11px] font-medium uppercase tracking-wide text-slate-400">
                       {{ t('booking.checkIn') }}
                     </p>
-                    <p class="text-[15px] text-slate-700 font-medium">
-                      {{ formatDate(reservation.check_in_date) }}
+                    <p class="text-[14px] leading-5 font-medium text-slate-700">
+                      {{ checkInSummary }}
                     </p>
                   </div>
                 </div>
@@ -172,24 +191,24 @@ definePageMeta({
                 <div class="flex items-start gap-2.5">
                   <UIcon
                     name="i-lucide-users"
-                    class="w-4 h-4 text-travelhub-600 mt-0.5"
+                    class="mt-0.5 h-4.5 w-4.5 text-[#2563eb]"
                   />
                   <div>
-                    <p class="text-[11px] tracking-wide uppercase text-slate-400 font-semibold">
+                    <p class="text-[11px] font-medium uppercase tracking-wide text-slate-400">
                       {{ t('booking.guests') }}
                     </p>
-                    <p class="text-[15px] text-slate-700 font-medium">
-                      {{ mockGuests }} {{ t('booking.adults') }}
+                    <p class="text-[14px] leading-5 font-medium text-slate-700">
+                      {{ guestSummary }}
                     </p>
                   </div>
                 </div>
               </div>
 
               <UButton
-                icon="i-lucide-receipt-text"
+                icon="i-lucide-clipboard-list"
                 color="neutral"
                 variant="soft"
-                class="font-semibold"
+                class="w-fit rounded-xl border-0 bg-[#f5f7fb] px-4 py-2 text-[14px] font-semibold text-slate-700 hover:bg-[#eef3fb]"
                 @click="copyReservationId"
               >
                 {{ t('booking.manageReservation') }}
@@ -199,23 +218,23 @@ definePageMeta({
         </div>
 
         <div class="space-y-4">
-          <h3 class="text-[34px] leading-tight font-bold text-slate-900">
+          <h3 class="text-[20px] font-bold tracking-tight text-slate-900 md:text-[22px]">
             {{ t('booking.nextSteps') }}
           </h3>
 
-          <div class="bg-white rounded-xl border border-slate-200 p-6 md:p-7">
-            <div class="flex gap-4 items-start">
-              <div class="w-11 h-11 rounded-full bg-travelhub-50 flex items-center justify-center shrink-0 mt-0.5">
+          <div class="rounded-2xl border border-[#dbe4ef] bg-white px-5 py-6 shadow-[0_2px_10px_rgba(15,23,42,0.03)] md:min-h-[122px] md:px-6">
+            <div class="flex items-start gap-4">
+              <div class="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#edf3ff]">
                 <UIcon
                   name="i-lucide-key-round"
-                  class="w-5 h-5 text-travelhub-600"
+                  class="h-4.5 w-4.5 text-[#2563eb]"
                 />
               </div>
-              <div>
-                <p class="text-lg font-semibold text-slate-900 mb-1">
+              <div class="pt-1">
+                <p class="mb-1 text-[15px] font-semibold text-slate-900">
                   {{ t('booking.checkInInstructions') }}
                 </p>
-                <p class="text-slate-500 text-[15px] max-w-[430px]">
+                <p class="max-w-[250px] text-[14px] leading-6 text-slate-500">
                   {{ t('booking.checkInInstructionsDescription') }}
                 </p>
               </div>
@@ -224,15 +243,15 @@ definePageMeta({
         </div>
 
         <div class="pt-2">
-          <div class="border-t border-slate-200 mb-5" />
+          <div class="mb-7 border-t border-slate-200" />
           <div class="text-center">
             <button
-              class="inline-flex items-center gap-2 text-slate-500 hover:text-slate-700 transition-colors font-medium"
+              class="inline-flex items-center gap-2 text-[15px] font-medium text-slate-500 transition-colors hover:text-slate-700"
               @click="backToHome"
             >
               <UIcon
                 name="i-lucide-arrow-left"
-                class="w-4 h-4"
+                class="h-4 w-4"
               />
               {{ t('booking.backHome') }}
             </button>

@@ -15,3 +15,9 @@ export function createSearchClient() {
     baseURL: useRuntimeConfig().public.searchApiUrl
   })
 }
+
+export function createPaymentsClient() {
+  return $fetch.create({
+    baseURL: useRuntimeConfig().public.paymentsApiBase
+  })
+}
