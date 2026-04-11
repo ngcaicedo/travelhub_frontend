@@ -62,5 +62,10 @@ export async function loadStripeJs(): Promise<void> {
     })
   }
 
-  await stripeScriptPromise
+  try {
+    await stripeScriptPromise
+  } catch (error) {
+    stripeScriptPromise = null
+    throw error
+  }
 }
