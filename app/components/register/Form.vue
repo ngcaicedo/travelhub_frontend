@@ -68,6 +68,7 @@ async function onSubmit() {
   <div>
     <UAlert
       v-if="error"
+      role="alert"
       icon="i-lucide-alert-circle"
       color="error"
       :title="t('auth.register.error')"
@@ -91,6 +92,7 @@ async function onSubmit() {
           icon="i-lucide-user"
           size="xl"
           class="w-full"
+          data-cy="register-fullname"
         />
       </UFormField>
 
@@ -102,6 +104,7 @@ async function onSubmit() {
             icon="i-lucide-building-2"
             size="xl"
             class="w-full"
+            data-cy="register-hotel-name"
           />
         </UFormField>
 
@@ -112,6 +115,7 @@ async function onSubmit() {
             icon="i-lucide-user"
             size="xl"
             class="w-full"
+            data-cy="register-contact-name"
           />
         </UFormField>
       </template>
@@ -124,6 +128,7 @@ async function onSubmit() {
           icon="i-lucide-mail"
           size="xl"
           class="w-full"
+          data-cy="register-email"
         />
       </UFormField>
 
@@ -135,6 +140,7 @@ async function onSubmit() {
           icon="i-lucide-phone"
           size="xl"
           class="w-full"
+          data-cy="register-phone"
         />
       </UFormField>
 
@@ -147,6 +153,7 @@ async function onSubmit() {
           size="xl"
           class="w-full"
           :ui="{ trailing: 'pointer-events-auto' }"
+          data-cy="register-password"
         >
           <template #trailing>
             <UButton
@@ -183,7 +190,10 @@ async function onSubmit() {
       </UFormField>
 
       <div class="pt-2">
-        <UCheckbox v-model="agreeTerms">
+        <UCheckbox
+          v-model="agreeTerms"
+          data-cy="register-terms"
+        >
           <template #label>
             <span class="text-sm text-slate-500">
               {{ $t('auth.register.termsAgree') }}
@@ -208,6 +218,7 @@ async function onSubmit() {
           size="xl"
           block
           :loading="isLoading"
+          data-cy="register-submit"
         />
       </div>
     </form>

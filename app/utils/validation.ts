@@ -38,9 +38,10 @@ export const calculateTotalPrice = (
 
 export const formatCurrency = (
   amount: number,
-  currency: string = 'COP'
+  currency: string = 'COP',
+  locale: string = 'es-CO'
 ): string => {
-  return new Intl.NumberFormat('es-CO', {
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: currency,
     minimumFractionDigits: 0,
