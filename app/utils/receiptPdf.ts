@@ -191,8 +191,8 @@ function sanitizeFilenamePart(value: string) {
   return value
     .trim()
     .replace(/[\\/:*?"<>|\s]+/g, '_')
-    .replace(/[\x00-\x1f\x80-\x9f]/g, '_')
-    .replace(/^[_\.]+|[_\.]+$/g, '')
+    .replace(/[\0-\x1F\x80-\x9F]/g, '_')
+    .replace(/^[_.]+|[_.]+$/g, '')
 }
 
 export function buildReceiptFilename(receiptNumber: string | null) {
