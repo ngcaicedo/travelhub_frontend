@@ -24,18 +24,21 @@ const navigate = (sectionId: string) => {
   <div class="sticky top-16 z-40 bg-white border-b border-gray-200">
     <div class="max-w-7xl mx-auto px-safe">
       <div class="flex overflow-x-auto gap-1 scrollbar-hide">
-        <button
+        <UButton
           v-for="section in props.sections"
           :key="section.id"
-          class="flex items-center gap-2 px-4 py-4 text-sm font-medium text-gray-700 hover:text-primary transition-colors border-b-2 border-transparent hover:border-primary whitespace-nowrap"
-          :class="{
-            'text-primary border-primary': props.activeSection === section.id
-          }"
+          :leading-icon="section.icon"
+          :label="section.label"
+          variant="ghost"
+          color="neutral"
+          class="rounded-none px-4 py-4 border-b-2 whitespace-nowrap transition-colors"
+          :class="[
+            props.activeSection === section.id
+              ? 'border-primary text-primary'
+              : 'border-transparent text-gray-700 hover:text-primary hover:border-primary'
+          ]"
           @click="navigate(section.id)"
-        >
-          <UIcon :name="section.icon" class="w-4 h-4" />
-          {{ section.label }}
-        </button>
+        />
       </div>
     </div>
   </div>

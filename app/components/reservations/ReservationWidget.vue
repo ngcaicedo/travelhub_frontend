@@ -166,11 +166,11 @@ watch(error, (newError) => {
     <!-- Check-in and Check-out Times -->
     <div class="grid grid-cols-2 gap-4 pb-4 border-b border-gray-200">
       <div>
-        <p class="text-xs text-gray-600 mb-1">Check-in</p>
+        <p class="text-xs text-gray-600 mb-1">{{ t('booking.checkIn') }}</p>
         <p class="text-sm font-semibold text-gray-900">16:00</p>
       </div>
       <div>
-        <p class="text-xs text-gray-600 mb-1">Check-out</p>
+        <p class="text-xs text-gray-600 mb-1">{{ t('booking.checkOut') }}</p>
         <p class="text-sm font-semibold text-gray-900">10:00</p>
       </div>
     </div>

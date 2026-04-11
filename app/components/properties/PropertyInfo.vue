@@ -32,9 +32,6 @@ const { t } = useI18n()
 
 const rating = computed(() => props.property.rating.toFixed(2))
 
-// Simulated property details
-const propertyType = 'Casa de lujo'
-
 const navigateToSection = (sectionId: string) => {
   emit('navigate', sectionId)
 }
@@ -97,40 +94,25 @@ const navigateToSection = (sectionId: string) => {
     <!-- Navigation Tabs -->
     <div v-if="props.sections && props.sections.length > 0" class="border-b border-gray-200 pt-4">
       <div class="flex gap-6">
-        <button
+        <UButton
           v-for="section in props.sections"
           :key="section.id"
-          class="py-3 text-sm font-medium text-gray-700 hover:text-primary transition-colors border-b-2 border-transparent hover:border-primary"
-          :class="{
-            'text-primary border-primary': props.activeSection === section.id
-          }"
+          :label="section.label"
+          variant="ghost"
+          color="neutral"
+          class="rounded-none px-1 border-b-2 transition-colors"
+          :class="[
+            props.activeSection === section.id
+              ? 'border-primary text-primary'
+              : 'border-transparent text-gray-700 hover:text-primary hover:border-primary'
+          ]"
           @click="navigateToSection(section.id)"
-        >
-          {{ section.label }}
-        </button>
+        />
       </div>
     </div>
 
     <!-- Property features grid -->
     <div class="grid grid-cols-3 gap-4 pt-4">
-      <!-- Property Type -->
-      <div class="flex items-center gap-3">
-        <div class="bg-gray-100 rounded-lg p-3">
-          <UIcon
-            name="i-lucide-home"
-            class="w-6 h-6 text-gray-700"
-          />
-        </div>
-        <div>
-          <p class="text-xs text-gray-600">
-            Tipo
-          </p>
-          <p class="font-semibold text-sm text-gray-900">
-            {{ propertyType }}
-          </p>
-        </div>
-      </div>
-
       <!-- Bedrooms -->
       <div class="flex items-center gap-3">
         <div class="bg-gray-100 rounded-lg p-3">
@@ -149,6 +131,24 @@ const navigateToSection = (sectionId: string) => {
         </div>
       </div>
 
+      <!-- Bathrooms -->
+      <div class="flex items-center gap-3">
+        <div class="bg-gray-100 rounded-lg p-3">
+          <UIcon
+            name="i-lucide-bath"
+            class="w-6 h-6 text-gray-700"
+          />
+        </div>
+        <div>
+          <p class="text-xs text-gray-600">
+            {{ t('property.bathrooms') }}
+          </p>
+          <p class="font-semibold text-sm text-gray-900">
+            {{ props.property.bathrooms }}
+          </p>
+        </div>
+      </div>
+
       <!-- Capacity -->
       <div class="flex items-center gap-3">
         <div class="bg-gray-100 rounded-lg p-3">
@@ -159,7 +159,7 @@ const navigateToSection = (sectionId: string) => {
         </div>
         <div>
           <p class="text-xs text-gray-600">
-            Capacidad
+            {{ t('property.capacity') }}
           </p>
           <p class="font-semibold text-sm text-gray-900">
             {{ props.property.max_guests }}

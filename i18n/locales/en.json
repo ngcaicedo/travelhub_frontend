@@ -100,7 +100,31 @@
       "location": "Location",
       "policies": "Policies"
     },
-    "bookNow": "Book now"
+    "bookNow": "Book now",
+    "capacity": "Capacity",
+    "morePhotos": "+{count} photos",
+    "policies": {
+      "flexible": {
+        "label": "Flexible",
+        "description": "Free cancellation within 48 hours. Afterwards, a 50% charge applies."
+      },
+      "moderate": {
+        "label": "Moderate",
+        "description": "Free cancellation up to 7 days before check-in. Afterwards, full charge applies."
+      },
+      "strict": {
+        "label": "Strict",
+        "description": "Non-refundable. Full charge applies."
+      },
+      "freeCancellationTitle": "Free cancellation",
+      "freeCancellationDesc": "You can cancel up to 48 hours before check-in and receive a full refund.",
+      "dateChangeTitle": "Date changes",
+      "dateChangeDesc": "You can change your stay dates at no extra cost, subject to availability.",
+      "securityDepositTitle": "Security deposit",
+      "securityDepositDesc": "A security deposit equivalent to one night is required. It will be refunded after check-out.",
+      "propertyDamageTitle": "Property damage",
+      "propertyDamageDesc": "The guest is responsible for any damage caused during their stay."
+    }
   },
   "booking": {
     "dates": "Dates",

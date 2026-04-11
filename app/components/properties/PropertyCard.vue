@@ -11,7 +11,7 @@ interface Props {
 
 const props = defineProps<Props>()
 const router = useRouter()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const handleClick = () => {
   router.push(`/properties/${props.property.id}`)
@@ -20,10 +20,12 @@ const handleClick = () => {
 const mainImage = computed(() => props.property.images[0])
 const rating = computed(() => props.property.rating.toFixed(2))
 const formattedPrice = computed(() => {
-  return props.property.price_per_night.toLocaleString('es-CO', {
+  return new Intl.NumberFormat(locale.value, {
+    style: 'currency',
+    currency: props.property.currency || 'USD',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0
-  })
+  }).format(props.property.price_per_night)
 })
 </script>
 

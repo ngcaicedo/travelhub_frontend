@@ -9,42 +9,42 @@ withDefaults(defineProps<Props>(), {
 
 const { t } = useI18n()
 
-const policiesMap = {
+const policiesMap = computed(() => ({
   flexible: {
-    label: 'Flexible',
+    label: t('property.policies.flexible.label'),
     color: 'success' as const,
-    description: 'Cancelación gratuita durante 48 horas. Después, se aplica cargo del 50%.'
+    description: t('property.policies.flexible.description')
   },
   moderate: {
-    label: 'Moderada',
+    label: t('property.policies.moderate.label'),
     color: 'warning' as const,
-    description: 'Cancelación gratuita hasta 7 días antes del check-in. Después, full charge.'
+    description: t('property.policies.moderate.description')
   },
   strict: {
-    label: 'Estricta',
+    label: t('property.policies.strict.label'),
     color: 'error' as const,
-    description: 'No reembolsable. Se aplica cargo completo.'
+    description: t('property.policies.strict.description')
   }
-} satisfies Record<'flexible' | 'moderate' | 'strict', { label: string; color: 'success' | 'warning' | 'error'; description: string }>
+}))
 
-const refundPolicies = [
+const refundPolicies = computed(() => [
   {
-    title: 'Cancelación gratuita',
-    description: 'Puedes cancelar hasta 48 horas antes del check-in y recibir un reembolso completo.'
+    title: t('property.policies.freeCancellationTitle'),
+    description: t('property.policies.freeCancellationDesc')
   },
   {
-    title: 'Modificación de fechas',
-    description: 'Puedes cambiar tus fechas de hospedaje sin costo adicional, sujeto a disponibilidad.'
+    title: t('property.policies.dateChangeTitle'),
+    description: t('property.policies.dateChangeDesc')
   },
   {
-    title: 'Depósito de seguridad',
-    description: 'Se requiere un depósito de seguridad equivalente a una noche. Se reembolsará después del check-out.'
+    title: t('property.policies.securityDepositTitle'),
+    description: t('property.policies.securityDepositDesc')
   },
   {
-    title: 'Daños a la propiedad',
-    description: 'El huésped es responsable de cualquier daño causado durante su estadía.'
+    title: t('property.policies.propertyDamageTitle'),
+    description: t('property.policies.propertyDamageDesc')
   }
-]
+])
 </script>
 
 <template>
