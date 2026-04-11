@@ -275,5 +275,79 @@
     "no_past_dates": "Não é possível selecionar datas passadas",
     "unavailable": "Esta propriedade não está disponível para estas datas",
     "failed": "Erro ao carregar a reserva"
+  },
+  "search": {
+    "pageTitle": "Buscar propriedades",
+    "pageDescription": "Explore propriedades disponíveis e filtre por cidade, datas, hóspedes, comodidades e preço.",
+    "sectionLabel": "Resultados da busca",
+    "heading": "Propriedades em {city}",
+    "summaryReady": "Preencha os filtros e pressione Buscar para ver as propriedades disponíveis.",
+    "resultsFound": "resultados encontrados",
+    "guests": "hóspedes",
+    "showMap": "Mostrar mapa",
+    "sortLabel": "Ordenar por",
+    "searchAction": "Buscar",
+    "bookNow": "Reservar agora",
+    "viewProperty": "Ver propriedade",
+    "night": "noite",
+    "ratingAria": "Avaliação {rating} de 5",
+    "reviews": "avaliações",
+    "maxGuests": "Até {count} hóspedes",
+    "pricePerNight": "Preço por noite",
+    "errorTitle": "Não foi possível carregar a busca",
+    "emptyTitle": "Nenhuma propriedade disponível encontrada",
+    "emptyDescription": "Tente trocar a cidade, as datas ou reduza os filtros para ver mais opções.",
+    "paginationSummary": "Página {page} de {totalPages}",
+    "fields": {
+      "city": "Cidade",
+      "checkIn": "Check-in",
+      "checkOut": "Check-out",
+      "guests": "Hóspedes",
+      "minPrice": "Preço mínimo",
+      "maxPrice": "Preço máximo"
+    },
+    "placeholders": {
+      "city": "Digite uma cidade"
+    },
+    "amenitiesLabel": "Comodidades",
+    "amenitiesHint": "Selecione um ou mais filtros para refinar os resultados.",
+    "amenities": {
+      "wifi": "Wifi",
+      "pool": "Piscina",
+      "breakfast": "Café da manhã incluído",
+      "airConditioning": "Ar-condicionado",
+      "petFriendly": "Pet friendly",
+      "parking": "Estacionamento",
+      "gym": "Academia",
+      "spa": "Spa"
+    },
+    "badges": {
+      "guestFavorite": "Favorito dos hóspedes",
+      "lightningFast": "Lightning fast"
+    },
+    "breadcrumb": {
+      "home": "Home",
+      "currentSearch": "Cidade"
+    },
+    "sort": {
+      "recommended": "Recomendado",
+      "priceAsc": "Preço: menor para maior",
+      "priceDesc": "Preço: maior para menor",
+      "rating": "Avaliação"
+    },
+    "pagination": {
+      "prev": "Anterior",
+      "next": "Próxima"
+    },
+    "validation": {
+      "requiredCity": "A cidade é obrigatória",
+      "requiredCheckIn": "O check-in é obrigatório",
+      "requiredCheckOut": "O check-out é obrigatório",
+      "requiredGuests": "Você deve informar pelo menos 1 hóspede",
+      "checkOutAfterCheckIn": "O check-out deve ser após o check-in",
+      "priceInvalid": "O preço deve ser um número válido",
+      "priceNonNegative": "O preço não pode ser negativo",
+      "priceRange": "O preço máximo deve ser maior ou igual ao mínimo"
+    }
   }
 }

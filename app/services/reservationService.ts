@@ -2,11 +2,11 @@ import type { ReservationRequest, ReservationResponse } from '~/types/reservatio
 import { getApiBaseUrls, handleApiError } from '~/utils/api'
 
 export const createReservation = async (data: ReservationRequest): Promise<ReservationResponse> => {
-  const { reservationsBaseUrl } = getApiBaseUrls()
+  const { reservationsApiUrl } = getApiBaseUrls()
 
   try {
     return await $fetch<ReservationResponse>('/api/v1/reservations', {
-      baseURL: reservationsBaseUrl,
+      baseURL: reservationsApiUrl,
       method: 'POST',
       body: data,
       headers: {
@@ -19,11 +19,11 @@ export const createReservation = async (data: ReservationRequest): Promise<Reser
 }
 
 export const getReservation = async (reservationId: string): Promise<ReservationResponse> => {
-  const { reservationsBaseUrl } = getApiBaseUrls()
+  const { reservationsApiUrl } = getApiBaseUrls()
 
   try {
     return await $fetch<ReservationResponse>(`/api/v1/reservations/${reservationId}`, {
-      baseURL: reservationsBaseUrl,
+      baseURL: reservationsApiUrl,
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
