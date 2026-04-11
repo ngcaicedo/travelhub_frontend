@@ -913,7 +913,7 @@ async function simulateDuplicate() {
 
       <aside class="rounded-[2rem] border border-slate-200 bg-white p-4 shadow-sm">
         <img
-          src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80"
+          src="/mock/property-1.svg"
           :alt="booking.property"
           class="h-56 w-full rounded-[1.5rem] object-cover"
         >

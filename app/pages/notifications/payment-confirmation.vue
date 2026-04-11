@@ -204,7 +204,9 @@ function downloadReceipt() {
   anchor.href = url
   anchor.download = receiptFilename.value
   anchor.click()
-  URL.revokeObjectURL(url)
+  setTimeout(() => {
+    URL.revokeObjectURL(url)
+  }, 1000)
 }
 
 async function loadPageState() {

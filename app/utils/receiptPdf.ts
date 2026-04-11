@@ -187,12 +187,26 @@ function buildPdfDocument(content: string) {
   return new Blob([concatBytes(chunks)], { type: 'application/pdf' })
 }
 
+function sanitizeFilenamePart(value: string) {
+  return value
+    .trim()
+    .replace(/[\\/:*?"<>|\s]+/g, '_')
+    .replace(/[\x00-\x1f\x80-\x9f]/g, '_')
+    .replace(/^[_\.]+|[_\.]+$/g, '')
+}
+
 export function buildReceiptFilename(receiptNumber: string | null) {
   if (!receiptNumber) {
     return 'travelhub-receipt.pdf'
   }
 
-  return `travelhub-${receiptNumber}.pdf`
+  const sanitizedReceiptNumber = sanitizeFilenamePart(receiptNumber)
+
+  if (!sanitizedReceiptNumber) {
+    return 'travelhub-receipt.pdf'
+  }
+
+  return `travelhub-${sanitizedReceiptNumber}.pdf`
 }
 
 export function createPaymentReceiptPdf({ summary, formattedAmount, formattedDates, labels }: ReceiptPdfOptions) {

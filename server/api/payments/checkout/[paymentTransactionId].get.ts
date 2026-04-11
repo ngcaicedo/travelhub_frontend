@@ -2,6 +2,13 @@ export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig(event)
   const paymentTransactionId = getRouterParam(event, 'paymentTransactionId')
 
+  if (typeof paymentTransactionId !== 'string' || paymentTransactionId.trim() === '') {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Missing or invalid paymentTransactionId'
+    })
+  }
+
   try {
     return await $fetch(`${config.public.paymentsApiBase}/api/v1/payments/checkout/${paymentTransactionId}`, {
       timeout: 10000
