@@ -45,6 +45,28 @@ describe('CheckoutPage', () => {
     const wrapper = await mountSuspended(CheckoutPage)
     expect(textContent(wrapper)).toMatch(/There are no events yet|eventos/)
   })
+
+  it('renders secure Stripe mode without manual card fields', async () => {
+    vi.stubGlobal('$fetch', vi.fn(async (url: string) => {
+      if (url === '/api/payments/config') {
+        return {
+          provider: 'stripe_test',
+          stripe_enabled: true,
+          publishable_key: 'pk_test_123'
+        }
+      }
+
+      throw new Error(`Unexpected fetch call: ${url}`)
+    }))
+
+    const wrapper = await mountSuspended(CheckoutPage)
+    const text = textContent(wrapper)
+
+    expect(text).toMatch(/Prepare secure form|Preparar formulario seguro|Preparar formulario seguro|Preparar formulario/)
+    expect(text).not.toMatch(/Token de pago|Payment token/)
+    expect(text).not.toMatch(/Probar duplicado|Test duplicate/)
+    expect(wrapper.find('#stripe-payment-element').exists()).toBe(true)
+  })
 })
 
 function textContent(wrapper: Awaited<ReturnType<typeof mountSuspended>>) {

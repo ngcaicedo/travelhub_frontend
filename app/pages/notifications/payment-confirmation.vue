@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { buildReceiptFilename, createPaymentReceiptPdf } from '~/utils/receiptPdf'
+
 const { t, locale } = useI18n()
 const route = useRoute()
 const router = useRouter()
@@ -33,10 +35,7 @@ const localeMap: Record<string, string> = {
 }
 
 const receiptFilename = computed(() => {
-  if (!confirmation.value?.receipt_number) {
-    return 'travelhub-receipt.txt'
-  }
-  return `travelhub-${confirmation.value.receipt_number}.txt`
+  return buildReceiptFilename(confirmation.value?.receipt_number || null)
 })
 
 function formatDate(value: string | null) {
@@ -67,25 +66,30 @@ function formatMoney(amountInCents: number, currency: string) {
   }
 }
 
-function buildReceiptContent() {
-  if (!confirmation.value) return ''
-
-  return [
-    'TravelHub',
-    `${t('notifications.receipt.title')}: ${confirmation.value.receipt_number || t('notifications.receipt.pending')}`,
-    `${t('notifications.summary.reservationId')}: ${confirmation.value.reservation_id}`,
-    `${t('notifications.summary.property')}: ${confirmation.value.property_name || t('notifications.summary.propertyFallback')}`,
-    `${t('notifications.summary.dates')}: ${formatDate(confirmation.value.check_in_date)} - ${formatDate(confirmation.value.check_out_date)}`,
-    `${t('notifications.summary.amountPaid')}: ${formatMoney(confirmation.value.amount_in_cents, confirmation.value.currency)}`,
-    `${t('notifications.summary.paymentId')}: ${confirmation.value.payment_id}`
-  ].join('\n')
-}
-
 function downloadReceipt() {
-  const content = buildReceiptContent()
-  if (!content) return
+  if (!confirmation.value) return
 
-  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' })
+  const blob = createPaymentReceiptPdf({
+    summary: confirmation.value,
+    formattedDates: `${formatDate(confirmation.value.check_in_date)} - ${formatDate(confirmation.value.check_out_date)}`,
+    formattedAmount: formatMoney(confirmation.value.amount_in_cents, confirmation.value.currency),
+    labels: {
+      brand: 'TravelHub',
+      badge: t('notifications.summary.badge'),
+      paidBadge: t('notifications.receipt.paidBadge'),
+      title: t('notifications.receipt.pdfTitle'),
+      subtitle: t('notifications.receipt.pdfSubtitle'),
+      receipt: t('notifications.receipt.title'),
+      reservationId: t('notifications.summary.reservationId'),
+      paymentId: t('notifications.summary.paymentId'),
+      property: t('notifications.summary.property'),
+      dates: t('notifications.summary.dates'),
+      amountPaid: t('notifications.summary.amountPaid'),
+      propertyFallback: t('notifications.summary.propertyFallback'),
+      pending: t('notifications.receipt.pending'),
+      footer: t('notifications.receipt.footer')
+    }
+  })
   const url = URL.createObjectURL(blob)
   const anchor = document.createElement('a')
   anchor.href = url

@@ -1,4 +1,4 @@
-{
+﻿{
   "common": {
     "appName": "TravelHub",
     "premiumTravel": "Premium Travel",
@@ -29,7 +29,7 @@
       "email": "Email Address",
       "emailPlaceholder": "alex{'@'}example.com",
       "password": "Password",
-      "passwordPlaceholder": "••••••••",
+      "passwordPlaceholder": "â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢",
       "forgotPassword": "Forgot password?",
       "submit": "Sign In",
       "noAccount": "Don't have an account?",
@@ -54,7 +54,7 @@
       "phone": "Phone Number",
       "phonePlaceholder": "3001234567",
       "password": "Password",
-      "passwordPlaceholder": "••••••••",
+      "passwordPlaceholder": "â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢",
       "passwordHint": "At least 8 characters",
       "strengthWeak": "Weak",
       "strengthMedium": "Medium Strength",
@@ -281,7 +281,11 @@
     "receipt": {
       "title": "Receipt",
       "label": "Receipt",
-      "pending": "Receipt pending"
+      "pending": "Receipt pending",
+      "paidBadge": "Paid",
+      "pdfTitle": "Payment receipt",
+      "pdfSubtitle": "Your payment was confirmed successfully. Keep this document for your travel records.",
+      "footer": "Generated from your TravelHub confirmation page."
     },
     "verification": {
       "title": "Your payment is being verified",
@@ -402,3 +406,5 @@
     }
   }
 }
+
+

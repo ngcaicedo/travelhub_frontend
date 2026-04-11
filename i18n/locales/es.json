@@ -1,45 +1,45 @@
-{
+﻿{
   "common": {
     "appName": "TravelHub",
     "premiumTravel": "Viajes Premium",
     "unexpectedError": "Error inesperado. Intenta de nuevo.",
-    "reviews": "reseñas",
+    "reviews": "reseÃ±as",
     "night": "noche",
     "nights": "noches",
-    "readMore": "Leer más",
+    "readMore": "Leer mÃ¡s",
     "readLess": "Leer menos",
     "showAll": "Ver todas",
     "showLess": "Ver menos",
-    "loadMore": "Cargar más",
+    "loadMore": "Cargar mÃ¡s",
     "loading": "Cargando..."
   },
   "navigation": {
-    "login": "Iniciar sesión",
+    "login": "Iniciar sesiÃ³n",
     "checkout": "Proceso de pago",
     "reservations": "Mis reservas"
   },
   "auth": {
     "hero": {
       "title": "Explora el mundo con confianza.",
-      "description": "Accede a ofertas exclusivas, gestiona tus itinerarios y descubre lugares increíbles alrededor del mundo."
+      "description": "Accede a ofertas exclusivas, gestiona tus itinerarios y descubre lugares increÃ­bles alrededor del mundo."
     },
     "login": {
       "title": "Bienvenido",
-      "subtitle": "Inicia sesión para continuar tu viaje",
-      "email": "Correo electrónico",
+      "subtitle": "Inicia sesiÃ³n para continuar tu viaje",
+      "email": "Correo electrÃ³nico",
       "emailPlaceholder": "alex{'@'}example.com",
-      "password": "Contraseña",
-      "passwordPlaceholder": "••••••••",
-      "forgotPassword": "¿Olvidaste tu contraseña?",
-      "submit": "Iniciar sesión",
-      "noAccount": "¿No tienes una cuenta?",
+      "password": "ContraseÃ±a",
+      "passwordPlaceholder": "â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢",
+      "forgotPassword": "Â¿Olvidaste tu contraseÃ±a?",
+      "submit": "Iniciar sesiÃ³n",
+      "noAccount": "Â¿No tienes una cuenta?",
       "createAccount": "Crear una cuenta",
-      "invalidCredentials": "Credenciales inválidas",
-      "error": "Error de inicio de sesión"
+      "invalidCredentials": "Credenciales invÃ¡lidas",
+      "error": "Error de inicio de sesiÃ³n"
     },
     "register": {
       "title": "Crear cuenta",
-      "subtitle": "Únete a nuestra comunidad global de viajeros y comienza a explorar.",
+      "subtitle": "Ãšnete a nuestra comunidad global de viajeros y comienza a explorar.",
       "accountType": "Soy un...",
       "traveler": "Viajero",
       "hotelPartner": "Socio Hotelero",
@@ -49,33 +49,33 @@
       "hotelNamePlaceholder": "Gran Hotel",
       "contactName": "Nombre de contacto",
       "contactNamePlaceholder": "John Doe",
-      "email": "Correo electrónico",
+      "email": "Correo electrÃ³nico",
       "emailPlaceholder": "john{'@'}example.com",
-      "phone": "Teléfono",
+      "phone": "TelÃ©fono",
       "phonePlaceholder": "3001234567",
-      "password": "Contraseña",
-      "passwordPlaceholder": "••••••••",
+      "password": "ContraseÃ±a",
+      "passwordPlaceholder": "â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢",
       "passwordHint": "Al menos 8 caracteres",
-      "strengthWeak": "Débil",
+      "strengthWeak": "DÃ©bil",
       "strengthMedium": "Fuerza media",
       "strengthStrong": "Fuerte",
       "strengthVeryStrong": "Muy fuerte",
       "termsAgree": "Acepto los",
-      "termsOfService": "Términos de servicio",
+      "termsOfService": "TÃ©rminos de servicio",
       "and": "y la",
-      "privacyPolicy": "Política de privacidad",
+      "privacyPolicy": "PolÃ­tica de privacidad",
       "submit": "Crear cuenta",
-      "hasAccount": "¿Ya tienes una cuenta?",
-      "login": "Iniciar sesión",
-      "termsRequired": "Debes aceptar los términos y condiciones",
+      "hasAccount": "Â¿Ya tienes una cuenta?",
+      "login": "Iniciar sesiÃ³n",
+      "termsRequired": "Debes aceptar los tÃ©rminos y condiciones",
       "error": "Error de registro"
     },
     "verifyOtp": {
       "title": "Verifica tu identidad",
-      "description": "Ingresa el código de 6 dígitos que enviamos a tu correo electrónico",
-      "otpLabel": "Código OTP",
+      "description": "Ingresa el cÃ³digo de 6 dÃ­gitos que enviamos a tu correo electrÃ³nico",
+      "otpLabel": "CÃ³digo OTP",
       "otpPlaceholder": "000000",
-      "invalidOtp": "El código debe tener 6 dígitos",
+      "invalidOtp": "El cÃ³digo debe tener 6 dÃ­gitos",
       "submit": "Verificar",
       "error": "Error al verificar OTP"
     }
@@ -85,12 +85,12 @@
       "title": "Proceso de pago"
     },
     "title": "Proceso de pago",
-    "subtitle": "Encriptación segura para tu tranquilidad",
+    "subtitle": "EncriptaciÃ³n segura para tu tranquilidad",
     "timer": {
-      "prefix": "Tu habitación está reservada durante",
+      "prefix": "Tu habitaciÃ³n estÃ¡ reservada durante",
       "value": "12:45 minutos"
     },
-    "methodTitle": "Selecciona el método de pago",
+    "methodTitle": "Selecciona el mÃ©todo de pago",
     "scenarioLabel": "Escenario de prueba",
     "scenarios": {
       "success": "Tarjeta aprobada",
@@ -101,8 +101,8 @@
       "cardholder": "Nombre del titular",
       "cardholderPlaceholder": "John Doe",
       "token": "Token de pago",
-      "cardNumber": "Número de tarjeta",
-      "expiration": "Fecha de expiración",
+      "cardNumber": "NÃºmero de tarjeta",
+      "expiration": "Fecha de expiraciÃ³n",
       "cvv": "CVV",
       "reservationId": "ID de reserva",
       "travelerId": "ID del viajero",
@@ -112,45 +112,45 @@
       "checkOutDate": "Fecha de salida"
     },
     "integration": {
-      "loadingConfig": "Cargando configuración de pagos",
+      "loadingConfig": "Cargando configuraciÃ³n de pagos",
       "stripeBadge": "Stripe pruebas",
       "fakeBadge": "Modo mock",
-      "stripeModeDescription": "Este checkout carga Stripe.js en modo de pruebas y envía los datos de la tarjeta directamente a Stripe mediante Payment Element.",
-      "fakeModeDescription": "Este checkout usa el proveedor simulado del backend para validar éxito, rechazo y duplicados aunque Stripe aún no esté configurado.",
+      "stripeModeDescription": "Este checkout carga Stripe.js en modo de pruebas y envÃ­a los datos de la tarjeta directamente a Stripe mediante Payment Element.",
+      "fakeModeDescription": "Este checkout usa el proveedor simulado del backend para validar Ã©xito, rechazo y duplicados aunque Stripe aÃºn no estÃ© configurado.",
       "secureFormTitle": "Formulario seguro de tarjeta",
-      "secureFormDescription": "Los campos de tarjeta están hospedados por Stripe. TravelHub solo recibe el token de confirmación.",
-      "stripeFieldHint": "Usa tarjetas de prueba de Stripe dentro del formulario embebido después de preparar la sesión segura.",
+      "secureFormDescription": "Los campos de tarjeta estÃ¡n hospedados por Stripe. TravelHub solo recibe el token de confirmaciÃ³n.",
+      "stripeFieldHint": "Usa tarjetas de prueba de Stripe dentro del formulario embebido despuÃ©s de preparar la sesiÃ³n segura.",
       "sessionReady": "Formulario seguro listo",
       "sessionError": "No fue posible inicializar el formulario seguro.",
-      "sessionNeedsRefresh": "La sesión segura se reinició porque cambiaron los datos de la reserva.",
+      "sessionNeedsRefresh": "La sesiÃ³n segura se reiniciÃ³ porque cambiaron los datos de la reserva.",
       "securityNoticeStripe": "Iframe de Stripe",
-      "securityNoticeStripeHint": "El número, la expiración y el CVV se envían directamente a Stripe desde el navegador.",
-      "requiresActionTitle": "Se requiere autenticación adicional",
-      "requiresActionDescription": "Stripe solicitó una verificación extra antes de la confirmación final.",
-      "confirmationTokenError": "Stripe no pudo generar el token de confirmación.",
-      "duplicateOnlyFake": "La prueba de duplicado solo se simula en modo mock. En modo Stripe el flujo usa otro ciclo de sesión."
+      "securityNoticeStripeHint": "El nÃºmero, la expiraciÃ³n y el CVV se envÃ­an directamente a Stripe desde el navegador.",
+      "requiresActionTitle": "Se requiere autenticaciÃ³n adicional",
+      "requiresActionDescription": "Stripe solicitÃ³ una verificaciÃ³n extra antes de la confirmaciÃ³n final.",
+      "confirmationTokenError": "Stripe no pudo generar el token de confirmaciÃ³n.",
+      "duplicateOnlyFake": "La prueba de duplicado solo se simula en modo mock. En modo Stripe el flujo usa otro ciclo de sesiÃ³n."
     },
-    "securityNotice": "Puedes editar estos datos mock para la demo, pero el backend recibe únicamente el token de pago.",
+    "securityNotice": "Puedes editar estos datos mock para la demo, pero el backend recibe Ãºnicamente el token de pago.",
     "tokenHint": "Usa tokens como pm_tok_visa_ok, pm_fail_insufficient_funds o pm_fail_card_declined para reproducir los escenarios del MVP.",
     "feedback": {
       "readyTitle": "Checkout seguro listo",
-      "readyDescription": "Selecciona un escenario de pago para validar el comportamiento mínimo viable de la HU.",
+      "readyDescription": "Selecciona un escenario de pago para validar el comportamiento mÃ­nimo viable de la HU.",
       "stripeReadyDescription": "Prepara el formulario seguro de Stripe y usa una tarjeta de prueba para validar el flujo token-only.",
       "successTitle": "Pago confirmado",
-      "successDescription": "Se generó el recibo {receipt} y el backend solicitó la confirmación de la reserva.",
+      "successDescription": "Se generÃ³ el recibo {receipt} y el backend solicitÃ³ la confirmaciÃ³n de la reserva.",
       "failureTitle": "Pago rechazado",
       "failureInsufficient": "La tarjeta fue rechazada por fondos insuficientes. El viajero puede reintentar con otra tarjeta.",
       "failureDeclined": "La tarjeta fue rechazada. El viajero puede reintentar con otra tarjeta.",
       "duplicateTitle": "Cobro duplicado bloqueado",
-      "duplicateDescription": "El backend rechazó un segundo intento inmediato con la misma operación, evitando un cobro doble accidental.",
+      "duplicateDescription": "El backend rechazÃ³ un segundo intento inmediato con la misma operaciÃ³n, evitando un cobro doble accidental.",
       "duplicateUnexpectedDescription": "El segundo intento no fue bloqueado como se esperaba. Revisa el backend o cambia los datos para repetir la prueba.",
       "requestErrorTitle": "No fue posible procesar el pago",
       "requestErrorDescription": "El backend no pudo completar la solicitud de pago.",
-      "timeoutDescription": "La solicitud tardó demasiado. Verifica que el backend de payments esté arriba y vuelve a intentarlo.",
-      "backendUnavailableDescription": "No fue posible conectar con el backend de payments. Verifica que esté ejecutándose y que la URL configurada sea correcta.",
-      "invalidResponseDescription": "El frontend recibió una respuesta inválida del backend de payments.",
-      "eventsUnavailable": "El pago se procesó, pero no fue posible cargar los eventos desde el backend.",
-      "pendingVerificationDescription": "El pago está siendo verificado. Consulta de nuevo el último estado en unos segundos."
+      "timeoutDescription": "La solicitud tardÃ³ demasiado. Verifica que el backend de payments estÃ© arriba y vuelve a intentarlo.",
+      "backendUnavailableDescription": "No fue posible conectar con el backend de payments. Verifica que estÃ© ejecutÃ¡ndose y que la URL configurada sea correcta.",
+      "invalidResponseDescription": "El frontend recibiÃ³ una respuesta invÃ¡lida del backend de payments.",
+      "eventsUnavailable": "El pago se procesÃ³, pero no fue posible cargar los eventos desde el backend.",
+      "pendingVerificationDescription": "El pago estÃ¡ siendo verificado. Consulta de nuevo el Ãºltimo estado en unos segundos."
     },
     "detection": {
       "cardDeclined": [
@@ -165,7 +165,7 @@
       ]
     },
     "result": {
-      "title": "Resultado del último pago",
+      "title": "Resultado del Ãºltimo pago",
       "status": "Estado",
       "confirmed": "Confirmado",
       "failed": "Fallido",
@@ -177,8 +177,8 @@
     },
     "events": {
       "title": "Eventos del pago",
-      "caption": "Esta sección muestra el rastro real que devuelve el backend para el último pago procesado.",
-      "empty": "Aún no hay eventos. Procesa un pago o prueba un duplicado para verlos aquí.",
+      "caption": "Esta secciÃ³n muestra el rastro real que devuelve el backend para el Ãºltimo pago procesado.",
+      "empty": "AÃºn no hay eventos. Procesa un pago o prueba un duplicado para verlos aquÃ­.",
       "dateUnavailable": "Fecha no disponible",
       "details": {
         "recorded": "Evento registrado en backend",
@@ -186,18 +186,18 @@
       },
       "labels": {
         "paymentSucceeded": "Pago confirmado",
-        "reservationConfirmationRequested": "Confirmación de reserva solicitada",
-        "inventoryUpdateRequested": "Actualización de inventario solicitada",
+        "reservationConfirmationRequested": "ConfirmaciÃ³n de reserva solicitada",
+        "inventoryUpdateRequested": "ActualizaciÃ³n de inventario solicitada",
         "receiptGenerated": "Recibo generado",
         "paymentFailed": "Pago rechazado"
       }
     },
     "summary": {
       "dates": "Fechas",
-      "guests": "Huéspedes",
+      "guests": "HuÃ©spedes",
       "breakdown": "Desglose de precio",
       "total": "Total (USD)",
-      "footer": "Sin cargos ocultos. Cancelación gratuita hasta el 5 de octubre."
+      "footer": "Sin cargos ocultos. CancelaciÃ³n gratuita hasta el 5 de octubre."
     },
     "actions": {
       "payNow": "Pagar ahora",
@@ -208,9 +208,9 @@
     "booking": {
       "property": "Renaissance Estate & Private Vineyard",
       "location": "Toscana, Italia",
-      "reviews": "128 reseñas",
+      "reviews": "128 reseÃ±as",
       "dates": "12 oct - 17 oct",
-      "guests": "4 huéspedes",
+      "guests": "4 huÃ©spedes",
       "line1": "$450.00 x 5 noches",
       "line2": "Tarifa de limpieza",
       "line3": "Cargo de servicio TravelHub",
@@ -219,14 +219,14 @@
   },
   "property": {
     "bedrooms": "Habitaciones",
-    "bathrooms": "Baños",
-    "maxGuests": "Huéspedes máximo",
+    "bathrooms": "BaÃ±os",
+    "maxGuests": "HuÃ©spedes mÃ¡ximo",
     "amenities": "amenidades",
     "aboutSpace": "Sobre este espacio",
-    "whatThisOffers": "Qué ofrece este lugar",
-    "whereYouBe": "Dónde te hospedas",
+    "whatThisOffers": "QuÃ© ofrece este lugar",
+    "whereYouBe": "DÃ³nde te hospedas",
     "openInGoogleMaps": "Abrir en Google Maps",
-    "verifiedStay": "Estadía verificada",
+    "verifiedStay": "EstadÃ­a verificada",
     "loading": "Cargando propiedad",
     "notFound": "Propiedad no encontrada"
   },
@@ -234,40 +234,40 @@
     "dates": "Fechas",
     "checkIn": "Check-in",
     "checkOut": "Check-out",
-    "guests": "Huéspedes",
+    "guests": "HuÃ©spedes",
     "adults": "adultos",
     "total": "Total",
     "confirmBooking": "Confirmar reserva",
-    "youWontBeCharged": "No se te cobrará por ahora",
-    "success": "¡Tu reserva ha sido confirmada!",
-    "confirmationSent": "Hemos enviado los detalles a tu correo electrónico",
+    "youWontBeCharged": "No se te cobrarÃ¡ por ahora",
+    "success": "Â¡Tu reserva ha sido confirmada!",
+    "confirmationSent": "Hemos enviado los detalles a tu correo electrÃ³nico",
     "reservationId": "ID de Reserva",
     "reservationDetails": "Detalles de la reserva",
     "manageReservation": "Gestionar reserva",
     "checkInInstructions": "Instrucciones de check-in",
     "checkInInstructionsDescription": "Mira los detalles de acceso a la propiedad para tu llegada.",
     "propertyPreviewAlt": "Vista previa de la propiedad",
-    "mockPropertyName": "Hacienda Renacentista y Viñedo Privado",
+    "mockPropertyName": "Hacienda Renacentista y ViÃ±edo Privado",
     "status": "Estado",
     "reservationCreated": "Reserva creada el",
     "backHome": "Volver al inicio",
-    "printConfirmation": "Imprimir confirmación",
-    "nextSteps": "Próximos pasos",
-    "nextStepsDescription": "Tu reserva está pendiente de pago. Por favor, visita el portal de pagos para completar la transacción. Una vez confirmado el pago, recibirás un email de confirmación final."
+    "printConfirmation": "Imprimir confirmaciÃ³n",
+    "nextSteps": "PrÃ³ximos pasos",
+    "nextStepsDescription": "Tu reserva estÃ¡ pendiente de pago. Por favor, visita el portal de pagos para completar la transacciÃ³n. Una vez confirmado el pago, recibirÃ¡s un email de confirmaciÃ³n final."
   },
   "notifications": {
     "meta": {
-      "title": "Confirmación del pago"
+      "title": "ConfirmaciÃ³n del pago"
     },
     "success": {
       "title": "Reserva confirmada",
       "subtitle": "Tu pago fue confirmado correctamente. Ya puedes revisar los detalles de tu reserva."
     },
     "summary": {
-      "badge": "Confirmación del pago",
+      "badge": "Confirmaci\u00f3n del pago",
       "reservationId": "ID de reserva",
       "paymentId": "ID del pago",
-      "dates": "Fechas de estadía",
+      "dates": "Fechas de estad\u00eda",
       "property": "Propiedad",
       "propertyFallback": "Hospedaje TravelHub",
       "amountPaid": "Monto pagado"
@@ -281,18 +281,22 @@
     "receipt": {
       "title": "Recibo",
       "label": "Recibo",
-      "pending": "Recibo pendiente"
+      "pending": "Recibo pendiente",
+      "paidBadge": "Pagado",
+      "pdfTitle": "Recibo de pago",
+      "pdfSubtitle": "Tu pago fue confirmado correctamente. Conserva este documento para tu historial de viaje.",
+      "footer": "Generado desde tu p\u00e1gina de confirmaci\u00f3n de TravelHub."
     },
     "verification": {
-      "title": "Tu pago está siendo verificado",
+      "title": "Tu pago estÃ¡ siendo verificado",
       "subtitle": "Estamos conciliando el estado final del pago con Stripe.",
-      "description": "Esto puede ocurrir después de un timeout justo tras confirmar el pago. TravelHub seguirá consultando en background durante un máximo de 30 segundos.",
-      "expired": "Todavía estamos esperando la confirmación final de Stripe. Intenta consultar de nuevo en un momento o vuelve al checkout.",
+      "description": "Esto puede ocurrir despuÃ©s de un timeout justo tras confirmar el pago. TravelHub seguirÃ¡ consultando en background durante un mÃ¡ximo de 30 segundos.",
+      "expired": "TodavÃ­a estamos esperando la confirmaciÃ³n final de Stripe. Intenta consultar de nuevo en un momento o vuelve al checkout.",
       "failed": "No pudimos validar el estado final del pago."
     },
     "errors": {
-      "title": "No pudimos cargar la confirmación",
-      "missingReference": "Se necesita una referencia del pago para mostrar esta confirmación."
+      "title": "No pudimos cargar la confirmaciÃ³n",
+      "missingReference": "Se necesita una referencia del pago para mostrar esta confirmaciÃ³n."
     }
   },
   "reservationHistory": {
@@ -301,10 +305,10 @@
     },
     "badge": "Zona viajero",
     "title": "Mis reservas",
-    "subtitle": "Revisa las confirmaciones de reserva más recientes generadas después de tus pagos exitosos.",
-    "latestReservation": "Reserva más reciente",
-    "emptyTitle": "Aún no tienes reservas",
-    "emptyDescription": "Cuando un pago quede confirmado, el resumen de tu reserva aparecerá aquí."
+    "subtitle": "Revisa las confirmaciones de reserva mÃ¡s recientes generadas despuÃ©s de tus pagos exitosos.",
+    "latestReservation": "Reserva mÃ¡s reciente",
+    "emptyTitle": "AÃºn no tienes reservas",
+    "emptyDescription": "Cuando un pago quede confirmado, el resumen de tu reserva aparecerÃ¡ aquÃ­."
   },
   "status": {
     "pendingPayment": "Pendiente de pago",
@@ -314,54 +318,54 @@
   },
   "errors": {
     "validation": "Valida los datos de tu reserva",
-    "unauthorized": "No estás autorizado",
+    "unauthorized": "No estÃ¡s autorizado",
     "forbidden": "No tienes permiso",
     "notFound": "Recurso no encontrado",
     "conflict": "No disponible en estas fechas",
-    "serverError": "Error del servidor, intenta más tarde",
-    "unknown": "Ocurrió un error inesperado",
+    "serverError": "Error del servidor, intenta mÃ¡s tarde",
+    "unknown": "OcurriÃ³ un error inesperado",
     "propertyNotFound": "Propiedad no encontrada",
-    "tryAgainLater": "Intenta más tarde",
+    "tryAgainLater": "Intenta mÃ¡s tarde",
     "checkout_after_checkin": "El check-out debe ser posterior al check-in",
     "no_past_dates": "No se pueden seleccionar fechas pasadas",
-    "unavailable": "Esta propiedad no está disponible para estas fechas",
+    "unavailable": "Esta propiedad no estÃ¡ disponible para estas fechas",
     "failed": "Error al cargar la reserva"
   },
   "search": {
     "pageTitle": "Buscar propiedades",
-    "pageDescription": "Explora propiedades disponibles y filtra por ciudad, fechas, huéspedes, amenidades y precio.",
-    "sectionLabel": "Resultados de búsqueda",
+    "pageDescription": "Explora propiedades disponibles y filtra por ciudad, fechas, huÃ©spedes, amenidades y precio.",
+    "sectionLabel": "Resultados de bÃºsqueda",
     "heading": "Propiedades en {city}",
     "summaryReady": "Completa los filtros y presiona Buscar para ver propiedades disponibles.",
     "resultsFound": "resultados encontrados",
-    "guests": "huéspedes",
+    "guests": "huÃ©spedes",
     "showMap": "Mostrar mapa",
     "sortLabel": "Ordenar por",
     "searchAction": "Buscar",
     "bookNow": "Reservar ahora",
     "viewProperty": "Ver propiedad",
     "night": "noche",
-    "ratingAria": "Calificación {rating} de 5",
-    "reviews": "reseñas",
-    "maxGuests": "Hasta {count} huéspedes",
+    "ratingAria": "CalificaciÃ³n {rating} de 5",
+    "reviews": "reseÃ±as",
+    "maxGuests": "Hasta {count} huÃ©spedes",
     "pricePerNight": "Precio por noche",
-    "errorTitle": "No pudimos cargar la búsqueda",
+    "errorTitle": "No pudimos cargar la bÃºsqueda",
     "emptyTitle": "No encontramos propiedades disponibles",
-    "emptyDescription": "Prueba cambiando ciudad, fechas o reduce los filtros para ver más opciones.",
-    "paginationSummary": "Página {page} de {totalPages}",
+    "emptyDescription": "Prueba cambiando ciudad, fechas o reduce los filtros para ver mÃ¡s opciones.",
+    "paginationSummary": "PÃ¡gina {page} de {totalPages}",
     "fields": {
       "city": "Ciudad",
       "checkIn": "Check-in",
       "checkOut": "Check-out",
-      "guests": "Huéspedes",
-      "minPrice": "Precio mínimo",
-      "maxPrice": "Precio máximo"
+      "guests": "HuÃ©spedes",
+      "minPrice": "Precio mÃ­nimo",
+      "maxPrice": "Precio mÃ¡ximo"
     },
     "placeholders": {
       "city": "Ingresa una ciudad"
     },
     "amenitiesLabel": "Amenidades",
-    "amenitiesHint": "Selecciona uno o más filtros para refinar los resultados.",
+    "amenitiesHint": "Selecciona uno o mÃ¡s filtros para refinar los resultados.",
     "amenities": {
       "wifi": "Wifi",
       "pool": "Piscina",
@@ -373,7 +377,7 @@
       "spa": "Spa"
     },
     "badges": {
-      "guestFavorite": "Favorito de huéspedes",
+      "guestFavorite": "Favorito de huÃ©spedes",
       "lightningFast": "Lightning fast"
     },
     "breadcrumb": {
@@ -384,7 +388,7 @@
       "recommended": "Recomendado",
       "priceAsc": "Precio: menor a mayor",
       "priceDesc": "Precio: mayor a menor",
-      "rating": "Calificación"
+      "rating": "CalificaciÃ³n"
     },
     "pagination": {
       "prev": "Anterior",
@@ -394,12 +398,14 @@
       "requiredCity": "La ciudad es obligatoria",
       "requiredCheckIn": "El check-in es obligatorio",
       "requiredCheckOut": "El check-out es obligatorio",
-      "requiredGuests": "Debes ingresar al menos 1 huésped",
+      "requiredGuests": "Debes ingresar al menos 1 huÃ©sped",
       "checkOutAfterCheckIn": "El check-out debe ser posterior al check-in",
-      "priceInvalid": "El precio debe ser un número válido",
+      "priceInvalid": "El precio debe ser un nÃºmero vÃ¡lido",
       "priceNonNegative": "El precio no puede ser negativo",
-      "priceRange": "El precio máximo debe ser mayor o igual al mínimo"
+      "priceRange": "El precio mÃ¡ximo debe ser mayor o igual al mÃ­nimo"
     }
   }
 }
+
+
 

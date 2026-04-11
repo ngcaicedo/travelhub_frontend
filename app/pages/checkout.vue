@@ -107,6 +107,7 @@ const booking = computed(() => ({
 }))
 
 const isStripeMode = computed(() => paymentsConfig.value.provider === 'stripe_test' && paymentsConfig.value.stripe_enabled)
+const isFakeMode = computed(() => !configLoading.value && !isStripeMode.value)
 const scenarioOptions = computed(() => [
   { label: t('payments.scenarios.success'), value: 'success' },
   { label: t('payments.scenarios.insufficient'), value: 'insufficient' },
@@ -514,7 +515,7 @@ async function simulateDuplicate() {
 
         <div class="grid gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:grid-cols-2">
           <label
-            v-if="!isStripeMode"
+            v-if="isFakeMode"
             class="space-y-2 text-sm"
           ><span>{{ t('payments.scenarioLabel') }}</span><select
             v-model="form.scenario"
@@ -524,12 +525,15 @@ async function simulateDuplicate() {
             :key="option.value"
             :value="option.value"
           >{{ option.label }}</option></select></label>
-          <label class="space-y-2 text-sm"><span>{{ t('payments.form.cardholder') }}</span><input
+          <label
+            v-if="!configLoading"
+            class="space-y-2 text-sm"
+          ><span>{{ t('payments.form.cardholder') }}</span><input
             v-model="form.cardholderName"
             type="text"
             class="w-full rounded-xl border border-slate-200 px-3 py-2"
           ></label>
-          <template v-if="!isStripeMode">
+          <template v-if="isFakeMode">
             <label class="space-y-2 text-sm"><span>{{ t('payments.form.cardNumber') }}</span><input
               v-model="form.cardNumber"
               type="text"
@@ -641,23 +645,29 @@ async function simulateDuplicate() {
             </div>
           </div>
           <div
-            v-else
+            v-else-if="isFakeMode"
             class="mt-6 rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm text-slate-600"
           >
             {{ t('payments.integration.fakeModeDescription') }}
+          </div>
+          <div
+            v-else
+            class="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-500"
+          >
+            {{ t('payments.integration.loadingConfig') }}
           </div>
 
           <div class="mt-6 flex flex-wrap gap-3">
             <button
               type="button"
               class="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white disabled:bg-blue-300"
-              :disabled="processing || stripeLoading"
+              :disabled="processing || stripeLoading || configLoading"
               @click="submitPayment"
             >
               {{ processing ? t('payments.actions.processing') : t('payments.actions.payNow') }}
             </button>
             <button
-              v-if="!isStripeMode"
+              v-if="isFakeMode"
               type="button"
               class="rounded-2xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 disabled:opacity-60"
               :disabled="processing || stripeLoading"

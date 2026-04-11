@@ -65,23 +65,23 @@ export type ScenarioPreset = {
 export const scenarioPresets: Record<ScenarioKind, ScenarioPreset> = {
   success: {
     cardholderName: 'John Doe',
-    cardNumber: '4242 4242 4242 4242',
-    expiration: '12/29',
-    cvv: '123',
+    cardNumber: '**** **** **** 4242',
+    expiration: '**/**',
+    cvv: '***',
     paymentToken: 'pm_tok_visa_ok'
   },
   insufficient: {
     cardholderName: 'John Doe',
-    cardNumber: '4000 0000 0000 9995',
-    expiration: '11/29',
-    cvv: '456',
+    cardNumber: '**** **** **** 9995',
+    expiration: '**/**',
+    cvv: '***',
     paymentToken: 'pm_fail_insufficient_funds'
   },
   declined: {
     cardholderName: 'John Doe',
-    cardNumber: '4000 0000 0000 0002',
-    expiration: '10/29',
-    cvv: '789',
+    cardNumber: '**** **** **** 0002',
+    expiration: '**/**',
+    cvv: '***',
     paymentToken: 'pm_fail_card_declined'
   }
 }
