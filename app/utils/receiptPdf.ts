@@ -188,12 +188,18 @@ function buildPdfDocument(content: string) {
 }
 
 function sanitizeFilenamePart(value: string) {
-  return value
+  const withoutUnsafeCharacters = value
     .trim()
     .replace(/[\\/:*?"<>|\s]+/g, '_')
     .replace(/[\x80-\x9F]/g, '_')
-    .replace(/[\u0000-\u001F]/g, '_')
-    .replace(/^[_.]+|[_.]+$/g, '')
+    .split('')
+    .map((character) => {
+      const code = character.charCodeAt(0)
+      return code <= 0x1F ? '_' : character
+    })
+    .join('')
+
+  return withoutUnsafeCharacters.replace(/^[_.]+|[_.]+$/g, '')
 }
 
 export function buildReceiptFilename(receiptNumber: string | null) {
