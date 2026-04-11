@@ -74,7 +74,7 @@ function downloadReceipt() {
     formattedDates: `${formatDate(confirmation.value.check_in_date)} - ${formatDate(confirmation.value.check_out_date)}`,
     formattedAmount: formatMoney(confirmation.value.amount_in_cents, confirmation.value.currency),
     labels: {
-      brand: 'TravelHub',
+      brand: t('common.appName'),
       badge: t('notifications.summary.badge'),
       paidBadge: t('notifications.receipt.paidBadge'),
       title: t('notifications.receipt.pdfTitle'),
@@ -155,7 +155,7 @@ async function goToCheckout() {
 onMounted(loadPageState)
 
 useSeoMeta({
-  title: () => `${t('notifications.meta.title')} - TravelHub`
+  title: () => `${t('notifications.meta.title')} - ${t('common.appName')}`
 })
 
 definePageMeta({

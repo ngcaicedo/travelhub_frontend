@@ -143,7 +143,7 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => unmountStripeElement())
-useSeoMeta({ title: () => `${t('payments.meta.title')} - TravelHub` })
+useSeoMeta({ title: () => `${t('payments.meta.title')} - ${t('common.appName')}` })
 
 function setReadyFeedback() {
   feedback.value = {

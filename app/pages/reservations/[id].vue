@@ -16,13 +16,20 @@ const errorDescription = computed(() => {
 const reservation = ref<ReservationResponse | null>(null)
 const mockPropertyName = computed(() => t('booking.mockPropertyName'))
 const mockGuests = 2
+const reservationReference = computed(() => reservation.value ? `#${reservation.value.id.slice(0, 8).toUpperCase()}` : '#')
 
 const formatDate = (dateString: string): string => {
-  const date = new Date(dateString)
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(dateString)
+    ? new Date(`${dateString}T00:00:00`)
+    : new Date(dateString)
   const localeMap: Record<string, string> = {
     es: 'es-ES',
     en: 'en-US',
     pt: 'pt-PT'
+  }
+
+  if (Number.isNaN(date.getTime())) {
+    return dateString
   }
 
   return new Intl.DateTimeFormat(localeMap[locale.value] || 'en-US', {
@@ -74,7 +81,7 @@ onMounted(async () => {
 })
 
 useSeoMeta({
-  title: () => `${t('booking.confirmBooking')} - TravelHub`
+  title: () => `${t('booking.confirmBooking')} - ${t('common.appName')}`
 })
 
 definePageMeta({
@@ -145,7 +152,7 @@ definePageMeta({
                   {{ t('booking.reservationDetails') }}
                 </p>
                 <p class="text-xs font-semibold text-slate-400 uppercase">
-                  #TH-88291
+                  {{ reservationReference }}
                 </p>
               </div>
 

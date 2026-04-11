@@ -1,4 +1,4 @@
-import type { PaymentConfirmationSummary } from '~/types/payments'
+﻿import type { PaymentConfirmationSummary } from '~/types/payments'
 
 type ReceiptPdfLabels = {
   brand: string
@@ -161,7 +161,10 @@ function buildPdfDocument(content: string) {
     `6 0 obj\n<< /Length ${encodeLatin1(content).length} >>\nstream\n${content}\nendstream\nendobj\n`
   ].map(encodeLatin1)
 
-  const header = encodeLatin1('%PDF-1.4\n%âãÏÓ\n')
+  const header = concatBytes([
+    encodeLatin1('%PDF-1.4\n'),
+    new Uint8Array([0x25, 0xE2, 0xE3, 0xCF, 0xD3, 0x0A])
+  ])
   const chunks: Uint8Array[] = [header]
   const offsets = [0]
   let currentOffset = header.length
@@ -263,3 +266,4 @@ export function createPaymentReceiptPdf({ summary, formattedAmount, formattedDat
 
   return buildPdfDocument(content)
 }
+

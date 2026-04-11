@@ -10,11 +10,19 @@ const localeMap: Record<string, string> = {
 
 function formatDate(value: string | null) {
   if (!value) return '-'
+  const parsed = /^\d{4}-\d{2}-\d{2}$/.test(value)
+    ? new Date(`${value}T00:00:00`)
+    : new Date(value)
+
+  if (Number.isNaN(parsed.getTime())) {
+    return value
+  }
+
   return new Intl.DateTimeFormat(localeMap[locale.value] || 'en-US', {
     month: 'short',
     day: 'numeric',
     year: 'numeric'
-  }).format(new Date(value))
+  }).format(parsed)
 }
 
 function formatMoney(amountInCents: number, currency: string) {
@@ -29,7 +37,7 @@ function formatMoney(amountInCents: number, currency: string) {
 }
 
 useSeoMeta({
-  title: () => `${t('reservationHistory.meta.title')} - TravelHub`
+  title: () => `${t('reservationHistory.meta.title')} - ${t('common.appName')}`
 })
 
 definePageMeta({
@@ -66,7 +74,7 @@ definePageMeta({
             </h2>
           </div>
           <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700">
-            {{ latestReservation.status }}
+            {{ t(`status.${latestReservation.status}`) }}
           </span>
         </div>
 
