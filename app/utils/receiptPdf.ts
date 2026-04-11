@@ -191,7 +191,8 @@ function sanitizeFilenamePart(value: string) {
   return value
     .trim()
     .replace(/[\\/:*?"<>|\s]+/g, '_')
-    .replace(/[\0-\x1F\x80-\x9F]/g, '_')
+    .replace(/[\x80-\x9F]/g, '_')
+    .replace(/[\u0000-\u001F]/g, '_')
     .replace(/^[_.]+|[_.]+$/g, '')
 }
 
