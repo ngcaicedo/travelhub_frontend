@@ -27,9 +27,8 @@ type FeedbackState = {
   descriptionParams?: Record<string, string | number>
 }
 
-const { t, locale } = useI18n()
-const config = useRuntimeConfig()
-const paymentsApiBase = String(config.public.paymentsApiBase || 'http://localhost:8003').replace(/\/$/, '')
+const { t, locale, tm } = useI18n()
+const paymentsApiBase = '/api/payments'
 const requestTimeoutMs = 10000
 
 const form = reactive({
@@ -180,21 +179,21 @@ function detailMessage(detail: unknown) {
 function isDuplicate(detail: unknown): detail is { message: string } {
   return typeof detail === 'object' && detail !== null && 'message' in detail && typeof detail.message === 'string'
 }
+function localizedMatchers(key: string) {
+  const value = tm(key)
+  return Array.isArray(value)
+    ? value.filter((entry): entry is string => typeof entry === 'string').map(entry => entry.toLowerCase())
+    : []
+}
 function isCardDeclined(value: string | null | undefined) {
   if (!value) return false
   const normalized = value.toLowerCase()
-  return normalized.includes('card_declined')
-    || normalized.includes('card was declined')
-    || normalized.includes('payment failed')
-    || normalized.includes('tarjeta fue rechazada')
-    || normalized.includes('cartÃ£o foi recusado')
+  return localizedMatchers('payments.detection.cardDeclined').some(matcher => normalized.includes(matcher))
 }
 function isInsufficientFunds(value: string | null | undefined) {
   if (!value) return false
   const normalized = value.toLowerCase()
-  return normalized.includes('insufficient_funds')
-    || normalized.includes('insufficient funds')
-    || normalized.includes('fondos insuficientes')
+  return localizedMatchers('payments.detection.insufficientFunds').some(matcher => normalized.includes(matcher))
 }
 
 function resolveFailureDescription(failureReason: string | null, errorMessage: string | null) {
@@ -245,7 +244,7 @@ function handleError(error: unknown) {
 async function fetchConfig() {
   configLoading.value = true
   try {
-    paymentsConfig.value = normalizePaymentsConfig(await $fetch(`${paymentsApiBase}/api/v1/payments/config`, { timeout: requestTimeoutMs }))
+    paymentsConfig.value = normalizePaymentsConfig(await $fetch(`${paymentsApiBase}/config`, { timeout: requestTimeoutMs }))
   } catch {
     paymentsConfig.value = { provider: 'fake_stripe', stripe_enabled: false, publishable_key: '' }
   } finally {
@@ -256,7 +255,7 @@ async function fetchConfig() {
 async function loadEvents(paymentId: string) {
   eventsLoading.value = true
   try {
-    paymentEvents.value = normalizePaymentEvents(await $fetch(`${paymentsApiBase}/api/v1/payments/${paymentId}/events`, { timeout: requestTimeoutMs }))
+    paymentEvents.value = normalizePaymentEvents(await $fetch(`${paymentsApiBase}/${paymentId}/events`, { timeout: requestTimeoutMs }))
     eventsNotice.value = ''
   } catch {
     paymentEvents.value = []
@@ -267,7 +266,7 @@ async function loadEvents(paymentId: string) {
 }
 
 async function loadPayment(paymentId: string) {
-  const normalized = normalizePaymentResponse(await $fetch(`${paymentsApiBase}/api/v1/payments/${paymentId}`, { timeout: requestTimeoutMs }))
+  const normalized = normalizePaymentResponse(await $fetch(`${paymentsApiBase}/${paymentId}`, { timeout: requestTimeoutMs }))
   if (!normalized) throw createError({ statusCode: 502, data: { detail: 'invalid_backend_response' } })
   paymentResult.value = normalized
   const failureFeedback = resolveFailureDescription(normalized.failure_reason, lastFailureMessage.value)
@@ -300,7 +299,7 @@ async function prepareStripe() {
   if (!isStripeMode.value) return false
   stripeLoading.value = true
   try {
-    const session = normalizeCheckoutSession(await $fetch(`${paymentsApiBase}/api/v1/payments/create-intent`, {
+    const session = normalizeCheckoutSession(await $fetch(`${paymentsApiBase}/create-intent`, {
       method: 'POST',
       timeout: requestTimeoutMs,
       headers: { 'x-forwarded-proto': 'https' },
@@ -341,7 +340,7 @@ async function submitFake() {
   const idempotencyKey = buildIdempotencyKey()
   lastIdempotencyKey.value = idempotencyKey
   lastFailureMessage.value = null
-  const normalized = normalizePaymentResponse(await $fetch(`${paymentsApiBase}/api/v1/payments/charges`, {
+  const normalized = normalizePaymentResponse(await $fetch(`${paymentsApiBase}/charges`, {
     method: 'POST',
     timeout: requestTimeoutMs,
     headers: { 'x-forwarded-proto': 'https' },
@@ -377,7 +376,7 @@ async function submitStripe() {
   if (!confirmation.confirmationToken?.id) throw createError({ statusCode: 400, data: { detail: confirmation.error?.message || t('payments.integration.confirmationTokenError') } })
   let finalized: FinalizePaymentResponse | null = null
   try {
-    finalized = normalizeFinalizePaymentResponse(await $fetch(`${paymentsApiBase}/api/v1/payments/finalize`, {
+    finalized = normalizeFinalizePaymentResponse(await $fetch(`${paymentsApiBase}/finalize`, {
       method: 'POST',
       timeout: requestTimeoutMs,
       headers: { 'x-forwarded-proto': 'https' },
@@ -405,7 +404,7 @@ async function submitStripe() {
     const nextAction = await stripeClient.value!.handleNextAction({ clientSecret: finalized.client_secret })
     if (nextAction.error?.message) throw createError({ statusCode: 400, data: { detail: nextAction.error.message } })
     for (let i = 0; i < 6; i += 1) {
-      const status = normalizeCheckoutSessionStatus(await $fetch(`${paymentsApiBase}/api/v1/payments/checkout/${stripeSession.value!.payment_transaction_id}`, { timeout: requestTimeoutMs }))
+      const status = normalizeCheckoutSessionStatus(await $fetch(`${paymentsApiBase}/checkout/${stripeSession.value!.payment_transaction_id}`, { timeout: requestTimeoutMs }))
       if (status?.payment_id) {
         await loadPaymentAndEvents(status.payment_id)
         if (paymentResult.value?.status === 'confirmed') {
@@ -445,7 +444,7 @@ async function simulateDuplicate() {
   try {
     const key = buildIdempotencyKey()
     lastIdempotencyKey.value = key
-    const first = normalizePaymentResponse(await $fetch(`${paymentsApiBase}/api/v1/payments/charges`, {
+    const first = normalizePaymentResponse(await $fetch(`${paymentsApiBase}/charges`, {
       method: 'POST',
       timeout: requestTimeoutMs,
       headers: { 'x-forwarded-proto': 'https' },
@@ -459,7 +458,7 @@ async function simulateDuplicate() {
       }
     }))
     if (first) await loadPaymentAndEvents(first.payment_id)
-    await $fetch(`${paymentsApiBase}/api/v1/payments/charges`, {
+    await $fetch(`${paymentsApiBase}/charges`, {
       method: 'POST',
       timeout: requestTimeoutMs,
       headers: { 'x-forwarded-proto': 'https' },
