@@ -38,12 +38,16 @@ describe('useAuthStore', () => {
     expect(loginSpy).toHaveBeenCalledWith('test@example.com', 'password123')
   })
 
-  it('logout clears token and role', () => {
+  it('logout clears token and role', async () => {
     const store = useAuthStore()
     store.token = 'test-token'
     store.role = 'traveler'
 
-    store.logout()
+    try {
+      await store.logout()
+    } catch {
+      // navigateTo throws in test environment, which is expected
+    }
 
     expect(store.token).toBeNull()
     expect(store.role).toBeNull()
