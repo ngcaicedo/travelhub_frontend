@@ -205,13 +205,26 @@
                                      "footer":  "Sem taxas ocultas. Cancelamento gratuito até 5 de outubro."
                                  },
                      "actions":  {
-                                     "payNow":  "Pagar agora",
-                                     "processing":  "Processando pagamento",
-                                     "testDuplicate":  "Testar duplicado",
-                                     "prepareSecureForm":  "Preparar formulário seguro"
-                                 },
+                                      "payNow":  "Pagar agora",
+                                      "processing":  "Processando pagamento",
+                                      "testDuplicate":  "Testar duplicado",
+                                      "prepareSecureForm":  "Preparar formulário seguro"
+                                  },
+                     "compliance":  {
+                                         "bannerTitle":  "Protecao financeira ativa",
+                                         "bannerDescription":  "Este checkout usa apenas campos de pagamento hospedados pelo Stripe. A TravelHub nunca recebe numero do cartao, CVV ou data de validade quando o modo de compliance esta ativo.",
+                                         "strictModeDescription":  "O modo de compliance esta ativo. Os campos manuais do cartao estao desabilitados e o pagamento deve fluir pelo Stripe Payment Element.",
+                                         "strictModeHint":  "Prepare o formulario seguro do Stripe para continuar com um fluxo token-only.",
+                                         "misconfiguredTitle":  "O modo seguro do Stripe nao esta pronto",
+                                         "misconfiguredDescription":  "O modo de compliance esta ativo, mas o servico de payments nao esta expondo Stripe test mode. Revise a configuracao do backend antes de processar pagamentos.",
+                                         "steps":  {
+                                                        "checkout":  "Checkout",
+                                                        "tokenization":  "Tokenizacao",
+                                                        "confirmation":  "Confirmacao"
+                                                    }
+                                     },
                      "booking":  {
-                                     "property":  "Renaissance Estate \u0026 Private Vineyard",
+                                      "property":  "Renaissance Estate \u0026 Private Vineyard",
                                      "location":  "Toscana, Itália",
                                      "reviews":  "{count} avaliações",
                                      "dates":  "12 out - 17 out",

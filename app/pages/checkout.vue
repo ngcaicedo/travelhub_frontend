@@ -69,6 +69,8 @@ const stripeClient = shallowRef<StripeClient | null>(null)
 const stripeElements = shallowRef<StripeElementsInstance | null>(null)
 const stripePaymentElement = shallowRef<{ mount: (target: string | HTMLElement) => void, unmount?: () => void, destroy?: () => void } | null>(null)
 
+const complianceMode = usePaymentsCompliance()
+
 function isTimeoutLikeError(error: unknown) {
   const message = (
     (error as { message?: string })?.message
@@ -97,7 +99,8 @@ async function goToPendingVerification(paymentTransactionId: string) {
 }
 
 const isStripeMode = computed(() => paymentsConfig.value.provider === 'stripe_test' && paymentsConfig.value.stripe_enabled)
-const isFakeMode = computed(() => !configLoading.value && !isStripeMode.value)
+const isFakeMode = computed(() => !complianceMode.value && !configLoading.value && !isStripeMode.value)
+const isComplianceBlocked = computed(() => complianceMode.value && !configLoading.value && !isStripeMode.value)
 const scenarioOptions = computed(() => [
   { label: t('payments.scenarios.success'), value: 'success' },
   { label: t('payments.scenarios.insufficient'), value: 'insufficient' },
@@ -136,6 +139,15 @@ onBeforeUnmount(() => unmountStripeElement())
 useSeoMeta({ title: () => `${t('payments.meta.title')} - ${t('common.appName')}` })
 
 function setReadyFeedback() {
+  if (isComplianceBlocked.value) {
+    feedback.value = {
+      tone: 'warning',
+      titleKey: 'payments.compliance.misconfiguredTitle',
+      descriptionKey: 'payments.compliance.misconfiguredDescription'
+    }
+    return
+  }
+
   feedback.value = {
     tone: 'info',
     titleKey: 'payments.feedback.readyTitle',
@@ -565,6 +577,15 @@ async function submitStripe() {
 }
 
 async function submitPayment() {
+  if (isComplianceBlocked.value) {
+    feedback.value = {
+      tone: 'error',
+      titleKey: 'payments.compliance.misconfiguredTitle',
+      descriptionKey: 'payments.compliance.misconfiguredDescription'
+    }
+    return
+  }
+
   processing.value = true
   paymentResult.value = null
   paymentEvents.value = []
@@ -628,6 +649,8 @@ async function simulateDuplicate() {
 
 <template>
   <section class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <PaymentsCheckoutSecurityMenu class="mb-6" />
+
     <div class="mb-6 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-4 text-sm text-slate-700">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <span>{{ t('payments.timer.prefix') }} <strong>{{ t('payments.timer.value') }}</strong></span>
@@ -645,9 +668,18 @@ async function simulateDuplicate() {
             {{ t('payments.subtitle') }}
           </p>
           <p class="mt-4 text-sm text-slate-600">
-            {{ isStripeMode ? t('payments.integration.stripeModeDescription') : t('payments.integration.fakeModeDescription') }}
+            {{ isStripeMode ? t('payments.integration.stripeModeDescription') : (complianceMode ? t('payments.compliance.strictModeDescription') : t('payments.integration.fakeModeDescription')) }}
           </p>
         </div>
+
+        <UAlert
+          v-if="complianceMode"
+          color="primary"
+          variant="soft"
+          icon="i-lucide-shield-check"
+          :title="t('payments.compliance.bannerTitle')"
+          :description="isComplianceBlocked ? t('payments.compliance.misconfiguredDescription') : t('payments.compliance.bannerDescription')"
+        />
 
         <div :class="['rounded-2xl border px-4 py-4 text-sm', toneClass]">
           <p class="font-semibold">
@@ -758,7 +790,7 @@ async function simulateDuplicate() {
             </button>
           </div>
           <p class="mt-4 text-sm text-slate-500">
-            {{ isStripeMode ? t('payments.integration.stripeFieldHint') : t('payments.tokenHint') }}
+            {{ isStripeMode ? t('payments.integration.stripeFieldHint') : (complianceMode ? t('payments.compliance.strictModeHint') : t('payments.tokenHint')) }}
           </p>
 
           <div
@@ -796,6 +828,15 @@ async function simulateDuplicate() {
           >
             {{ t('payments.integration.fakeModeDescription') }}
           </div>
+          <UAlert
+            v-else-if="isComplianceBlocked"
+            class="mt-6"
+            color="warning"
+            variant="soft"
+            icon="i-lucide-shield-alert"
+            :title="t('payments.compliance.misconfiguredTitle')"
+            :description="t('payments.compliance.misconfiguredDescription')"
+          />
           <div
             v-else
             class="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-500"

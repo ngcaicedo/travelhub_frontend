@@ -80,7 +80,34 @@ pnpm test:watch
 # Lint
 pnpm lint
 
+# Escaneo de seguridad del modulo de pagos
+pnpm run security:scan
+
 # Type checking
 pnpm typecheck
 ```
+
+## Modo de cumplimiento para pagos
+
+El checkout soporta un modo de cumplimiento pensado para HU-ARQ-05:
+
+- `NUXT_PUBLIC_PAYMENTS_COMPLIANCE_MODE=true`
+- oculta completamente el formulario manual de tarjeta
+- deja visible solo el flujo de Stripe Elements
+- muestra una alerta si el backend no expone `stripe_test` como proveedor activo
+
+Variables relevantes en `.env`:
+
+```bash
+NUXT_PUBLIC_PAYMENTS_API_BASE=
+NUXT_PUBLIC_PAYMENTS_COMPLIANCE_MODE=false
+```
+
+## Evidencia de seguridad
+
+- `pnpm run security:scan` revisa `app/`, `server/` y `nuxt.config.ts` para detectar:
+  - PAN hardcodeado
+  - logs inseguros con referencias de tarjeta o token
+  - patrones que contradigan el flujo token-only
+- El workflow [`ci.yml`](.\github\workflows\ci.yml) ejecuta `lint`, `security:scan`, `typecheck` y `test` en cada push.
 

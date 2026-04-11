@@ -209,6 +209,19 @@
       "testDuplicate": "Test duplicate",
       "prepareSecureForm": "Prepare secure form"
     },
+    "compliance": {
+      "bannerTitle": "Financial data protection enabled",
+      "bannerDescription": "This checkout uses Stripe-hosted payment fields only. TravelHub never receives raw card numbers, CVV, or expiration dates in compliance mode.",
+      "strictModeDescription": "Compliance mode is active. Manual card fields are disabled and payment data must flow through Stripe Payment Element.",
+      "strictModeHint": "Prepare the secure Stripe form to continue with a token-only payment flow.",
+      "misconfiguredTitle": "Stripe secure mode is not ready",
+      "misconfiguredDescription": "Compliance mode is active, but the payments service is not exposing Stripe test mode. Review the backend configuration before processing payments.",
+      "steps": {
+        "checkout": "Checkout",
+        "tokenization": "Tokenization",
+        "confirmation": "Confirmation"
+      }
+    },
     "booking": {
       "property": "Renaissance Estate & Private Vineyard",
       "location": "Tuscany, Italy",

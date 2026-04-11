@@ -8,6 +8,7 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
+    "security:scan": "node scripts/security-scan.mjs",
     "typecheck": "nuxt typecheck",
     "test": "vitest run",
     "test:watch": "vitest",

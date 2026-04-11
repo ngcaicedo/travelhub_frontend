@@ -209,8 +209,21 @@
                                      "testDuplicate":  "Probar duplicado",
                                      "prepareSecureForm":  "Preparar formulario seguro"
                                  },
+                     "compliance":  {
+                                         "bannerTitle":  "Proteccion financiera activa",
+                                         "bannerDescription":  "Este checkout usa solo campos de pago hospedados por Stripe. TravelHub nunca recibe numero de tarjeta, CVV ni fecha de expiracion cuando el modo de cumplimiento esta activo.",
+                                         "strictModeDescription":  "El modo de cumplimiento esta activo. Los campos manuales de tarjeta estan deshabilitados y el pago debe fluir por Stripe Payment Element.",
+                                         "strictModeHint":  "Prepara el formulario seguro de Stripe para continuar con un flujo token-only.",
+                                         "misconfiguredTitle":  "El modo seguro de Stripe no esta listo",
+                                         "misconfiguredDescription":  "El modo de cumplimiento esta activo, pero el servicio de payments no expone Stripe test mode. Revisa la configuracion del backend antes de procesar pagos.",
+                                         "steps":  {
+                                                        "checkout":  "Checkout",
+                                                        "tokenization":  "Tokenizacion",
+                                                        "confirmation":  "Confirmacion"
+                                                    }
+                                     },
                      "booking":  {
-                                     "property":  "Renaissance Estate \u0026 Private Vineyard",
+                                      "property":  "Renaissance Estate \u0026 Private Vineyard",
                                      "location":  "Toscana, Italia",
                                      "reviews":  "{count} reseñas",
                                      "dates":  "12 oct - 17 oct",
