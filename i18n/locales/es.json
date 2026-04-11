@@ -172,6 +172,80 @@
     "no_past_dates": "No se pueden seleccionar fechas pasadas",
     "unavailable": "Esta propiedad no está disponible para estas fechas",
     "failed": "Error al cargar la reserva"
+  },
+  "search": {
+    "pageTitle": "Buscar propiedades",
+    "pageDescription": "Explora propiedades disponibles y filtra por ciudad, fechas, huéspedes, amenidades y precio.",
+    "sectionLabel": "Resultados de búsqueda",
+    "heading": "Propiedades en {city}",
+    "summaryReady": "Completa los filtros y presiona Buscar para ver propiedades disponibles.",
+    "resultsFound": "resultados encontrados",
+    "guests": "huéspedes",
+    "showMap": "Mostrar mapa",
+    "sortLabel": "Ordenar por",
+    "searchAction": "Buscar",
+    "bookNow": "Reservar ahora",
+    "viewProperty": "Ver propiedad",
+    "night": "noche",
+    "ratingAria": "Calificación {rating} de 5",
+    "reviews": "reseñas",
+    "maxGuests": "Hasta {count} huéspedes",
+    "pricePerNight": "Precio por noche",
+    "errorTitle": "No pudimos cargar la búsqueda",
+    "emptyTitle": "No encontramos propiedades disponibles",
+    "emptyDescription": "Prueba cambiando ciudad, fechas o reduce los filtros para ver más opciones.",
+    "paginationSummary": "Página {page} de {totalPages}",
+    "fields": {
+      "city": "Ciudad",
+      "checkIn": "Check-in",
+      "checkOut": "Check-out",
+      "guests": "Huéspedes",
+      "minPrice": "Precio mínimo",
+      "maxPrice": "Precio máximo"
+    },
+    "placeholders": {
+      "city": "Ingresa una ciudad"
+    },
+    "amenitiesLabel": "Amenidades",
+    "amenitiesHint": "Selecciona uno o más filtros para refinar los resultados.",
+    "amenities": {
+      "wifi": "Wifi",
+      "pool": "Piscina",
+      "breakfast": "Desayuno incluido",
+      "airConditioning": "Aire acondicionado",
+      "petFriendly": "Pet friendly",
+      "parking": "Parqueadero",
+      "gym": "Gimnasio",
+      "spa": "Spa"
+    },
+    "badges": {
+      "guestFavorite": "Favorito de huéspedes",
+      "lightningFast": "Lightning fast"
+    },
+    "breadcrumb": {
+      "home": "Home",
+      "currentSearch": "Ciudad"
+    },
+    "sort": {
+      "recommended": "Recomendado",
+      "priceAsc": "Precio: menor a mayor",
+      "priceDesc": "Precio: mayor a menor",
+      "rating": "Calificación"
+    },
+    "pagination": {
+      "prev": "Anterior",
+      "next": "Siguiente"
+    },
+    "validation": {
+      "requiredCity": "La ciudad es obligatoria",
+      "requiredCheckIn": "El check-in es obligatorio",
+      "requiredCheckOut": "El check-out es obligatorio",
+      "requiredGuests": "Debes ingresar al menos 1 huésped",
+      "checkOutAfterCheckIn": "El check-out debe ser posterior al check-in",
+      "priceInvalid": "El precio debe ser un número válido",
+      "priceNonNegative": "El precio no puede ser negativo",
+      "priceRange": "El precio máximo debe ser mayor o igual al mínimo"
+    }
   }
 }
 

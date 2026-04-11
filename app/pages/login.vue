@@ -75,6 +75,7 @@ async function onSubmit() {
 
       <UAlert
         v-if="error"
+        role="alert"
         icon="i-lucide-alert-circle"
         color="error"
         :title="t('auth.login.error')"
@@ -96,6 +97,7 @@ async function onSubmit() {
             icon="i-lucide-mail"
             size="xl"
             class="w-full"
+            data-cy="login-email"
           />
         </UFormField>
 
@@ -119,6 +121,7 @@ async function onSubmit() {
             size="xl"
             class="w-full"
             :ui="{ trailing: 'pointer-events-auto' }"
+            data-cy="login-password"
           >
             <template #trailing>
               <UButton
@@ -140,6 +143,7 @@ async function onSubmit() {
           size="xl"
           block
           :loading="isLoading"
+          data-cy="login-submit"
         />
       </form>
 

@@ -1,11 +1,17 @@
 export function createUsersClient() {
   return $fetch.create({
-    baseURL: useRuntimeConfig().public.usersApiBase
+    baseURL: useRuntimeConfig().public.usersApiUrl
   })
 }
 
 export function createSecurityClient() {
   return $fetch.create({
-    baseURL: useRuntimeConfig().public.securityApiBase
+    baseURL: useRuntimeConfig().public.securityApiUrl
+  })
+}
+
+export function createSearchClient() {
+  return $fetch.create({
+    baseURL: useRuntimeConfig().public.searchApiUrl
   })
 }

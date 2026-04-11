@@ -101,5 +101,16 @@ describe('shared/utils/validation', () => {
 
       expect(formatCurrency(1240, 'USD')).toBe(expected)
     })
+
+    it('formats currency using the provided locale', () => {
+      const expected = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      }).format(1240)
+
+      expect(formatCurrency(1240, 'USD', 'en-US')).toBe(expected)
+    })
   })
 })

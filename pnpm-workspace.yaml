@@ -1,6 +1,7 @@
 ignoredBuiltDependencies:
   - '@parcel/watcher'
   - '@tailwindcss/oxide'
+  - cypress
   - esbuild
   - unrs-resolver
   - vue-demi

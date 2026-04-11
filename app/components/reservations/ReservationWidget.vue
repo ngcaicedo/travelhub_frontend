@@ -18,7 +18,7 @@ interface Props {
   }
 }
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const router = useRouter()
 const { createReservation, loading, error } = useReservations()
 
@@ -158,7 +158,7 @@ watch(error, (newError) => {
     <!-- Price Header -->
     <div>
       <h3 class="text-3xl font-bold text-gray-900">
-        {{ formatCurrency(props.property.price_per_night, props.property.currency) }}
+        {{ formatCurrency(props.property.price_per_night, props.property.currency, locale) }}
         <span class="text-lg text-gray-600 font-normal">/{{ t('common.night') }}</span>
       </h3>
     </div>
@@ -246,12 +246,12 @@ watch(error, (newError) => {
         class="space-y-2 text-sm border-t border-b border-gray-200 py-4"
       >
         <div class="flex justify-between text-gray-700">
-          <span>{{ formatCurrency(props.property.price_per_night, props.property.currency) }} × {{ stayDuration }} {{ t(stayDuration === 1 ? 'common.night' : 'common.nights') }}</span>
-          <span>{{ formatCurrency(totalPrice, props.property.currency) }}</span>
+          <span>{{ formatCurrency(props.property.price_per_night, props.property.currency, locale) }} × {{ stayDuration }} {{ t(stayDuration === 1 ? 'common.night' : 'common.nights') }}</span>
+          <span>{{ formatCurrency(totalPrice, props.property.currency, locale) }}</span>
         </div>
         <div class="flex justify-between font-semibold text-lg text-gray-900 pt-2">
           <span>{{ t('booking.total') }}</span>
-          <span>{{ formatCurrency(totalPrice, props.property.currency) }}</span>
+          <span>{{ formatCurrency(totalPrice, props.property.currency, locale) }}</span>
         </div>
       </div>
 

@@ -88,7 +88,7 @@ window.location.href = '/properties/22222222-2222-2222-2222-222222222222'
 // TODO: Reemplazar con llamado GET real cuando backend esté disponible:
 // const response = await $fetch<Property>(
 //   `/api/v1/properties/${propertyId}`,
-//   { baseURL: usersBaseUrl }
+//   { baseURL: usersApiUrl }
 // )
 
 // En: app/pages/reservations/[id].vue (línea ~37)
