@@ -152,6 +152,10 @@
       "stripeReadyDescription": "Prepare the secure Stripe form and use a Stripe test card to validate the token-only flow.",
       "pendingVerificationDescription": "The payment is being verified. Check the latest payment status again in a few seconds."
     },
+    "errors": {
+      "invalidConfirmationResponse": "The payment confirmation response was invalid.",
+      "invalidCheckoutStatusResponse": "The checkout status response was invalid."
+    },
     "detection": {
       "cardDeclined": [
         "card_declined",
@@ -208,10 +212,10 @@
     "booking": {
       "property": "Renaissance Estate & Private Vineyard",
       "location": "Tuscany, Italy",
-      "reviews": "128 reviews",
+      "reviews": "{count} reviews",
       "dates": "Oct 12 - Oct 17",
-      "guests": "4 guests",
-      "line1": "$450.00 x 5 nights",
+      "guests": "{count} guests",
+      "line1": "Nightly rate x 5 nights",
       "line2": "Cleaning fee",
       "line3": "TravelHub service fee",
       "line4": "Local taxes (VAT 10%)"
@@ -239,8 +243,8 @@
     "total": "Total",
     "confirmBooking": "Confirm booking",
     "youWontBeCharged": "You won't be charged for now",
-    "success": "Your reservation has been confirmed!",
-    "confirmationSent": "We sent the details to your email",
+    "success": "Booking Confirmed!",
+    "confirmationSent": "A confirmation email has been sent to your inbox.",
     "reservationId": "Reservation ID",
     "reservationDetails": "Reservation details",
     "manageReservation": "Manage reservation",
@@ -260,14 +264,15 @@
       "title": "Payment confirmation"
     },
     "success": {
-      "title": "Reservation confirmed",
-      "subtitle": "Your payment was confirmed successfully. You can now review your reservation details."
+      "title": "Booking Confirmed!",
+      "subtitle": "A confirmation email has been sent to your inbox."
     },
     "summary": {
-      "badge": "Payment confirmation",
+      "badge": "Reservation details",
       "reservationId": "Reservation ID",
       "paymentId": "Payment ID",
-      "dates": "Stay dates",
+      "dates": "Check-in",
+      "stay": "Stay",
       "property": "Property",
       "propertyFallback": "TravelHub stay",
       "amountPaid": "Amount paid"
@@ -296,7 +301,12 @@
     },
     "errors": {
       "title": "We could not load the confirmation",
-      "missingReference": "A payment reference is required to display this confirmation."
+      "missingReference": "A payment reference is required to display this confirmation.",
+      "backendUnavailable": "We could not verify the payment right now. Please try again in a moment.",
+      "insufficientFunds": "The payment could not be confirmed because the card has insufficient funds.",
+      "paymentDeclined": "The payment could not be confirmed because the card was declined.",
+      "invalidConfirmationResponse": "The payment confirmation could not be processed.",
+      "invalidCheckoutStatusResponse": "The latest checkout status could not be processed."
     }
   },
   "reservationHistory": {

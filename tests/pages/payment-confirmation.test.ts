@@ -65,7 +65,7 @@ describe('PaymentConfirmationPage', () => {
     const text = wrapper.text()
     expect(loadConfirmation).toHaveBeenCalledWith('payment-123')
     expect(text).toContain('Renaissance Estate & Private Vineyard')
-    expect(text).toMatch(/Reservation confirmed|Reserva confirmada|Reserva confirmada!/)
+    expect(text).toMatch(/Booking Confirmed|Reserva confirmada/)
     expect(text).toMatch(/View my reservations|Ver mis reservas|Ver minhas reservas/)
     expect(text).toMatch(/Download receipt|Descargar recibo|Baixar recibo/)
     expect(text).toContain('Oct 12, 2026')

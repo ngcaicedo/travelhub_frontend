@@ -28,6 +28,30 @@ export const usePaymentConfirmation = () => {
   const loading = ref(false)
   const error = ref<string | null>(null)
 
+  const normalizeConfirmationError = (err: unknown) => {
+    const message = err instanceof Error ? err.message : ''
+    const normalized = message.toLowerCase()
+
+    if (message === 'payments.errors.invalidConfirmationResponse') {
+      return 'notifications.errors.invalidConfirmationResponse'
+    }
+
+    if (message === 'payments.errors.invalidCheckoutStatusResponse') {
+      return 'notifications.errors.invalidCheckoutStatusResponse'
+    }
+
+    if (
+      normalized.includes('timeout')
+      || normalized.includes('timed out')
+      || normalized.includes('fetch failed')
+      || normalized.includes('network')
+    ) {
+      return 'notifications.errors.backendUnavailable'
+    }
+
+    return 'notifications.errors.title'
+  }
+
   const loadConfirmation = async (paymentId: string) => {
     loading.value = true
     error.value = null
@@ -38,7 +62,7 @@ export const usePaymentConfirmation = () => {
       latestReservation.value = toReservationHistoryEntry(summary)
       return summary
     } catch (err) {
-      error.value = err instanceof Error ? err.message : 'unknown'
+      error.value = normalizeConfirmationError(err)
       throw err
     } finally {
       loading.value = false

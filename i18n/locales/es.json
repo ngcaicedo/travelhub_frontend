@@ -152,6 +152,10 @@
                                       "eventsUnavailable":  "El pago se procesó, pero no fue posible cargar los eventos desde el backend.",
                                       "pendingVerificationDescription":  "El pago está siendo verificado. Consulta de nuevo el último estado en unos segundos."
                                   },
+                     "errors":  {
+                                     "invalidConfirmationResponse":  "La respuesta de confirmación del pago no fue válida.",
+                                     "invalidCheckoutStatusResponse":  "La respuesta del estado del checkout no fue válida."
+                                  },
                      "detection":  {
                                        "cardDeclined":  [
                                                             "card_declined",
@@ -208,10 +212,10 @@
                      "booking":  {
                                      "property":  "Renaissance Estate \u0026 Private Vineyard",
                                      "location":  "Toscana, Italia",
-                                     "reviews":  "128 reseñas",
+                                     "reviews":  "{count} reseñas",
                                      "dates":  "12 oct - 17 oct",
-                                     "guests":  "4 huéspedes",
-                                     "line1":  "$450.00 x 5 noches",
+                                     "guests":  "{count} huéspedes",
+                                     "line1":  "Tarifa por noche x 5 noches",
                                      "line2":  "Tarifa de limpieza",
                                      "line3":  "Cargo de servicio TravelHub",
                                      "line4":  "Impuestos locales (IVA 10%)"
@@ -239,15 +243,15 @@
                     "total":  "Total",
                     "confirmBooking":  "Confirmar reserva",
                     "youWontBeCharged":  "No se te cobrará por ahora",
-                    "success":  "¡Tu reserva ha sido confirmada!",
-                    "confirmationSent":  "Ya puedes revisar los detalles de tu reserva.",
+                    "success":  "¡Reserva confirmada!",
+                    "confirmationSent":  "Hemos enviado un correo de confirmación a tu bandeja de entrada.",
                     "reservationId":  "ID de Reserva",
                     "reservationDetails":  "Detalles de la reserva",
                     "manageReservation":  "Gestionar reserva",
                     "checkInInstructions":  "Instrucciones de check-in",
                     "checkInInstructionsDescription":  "Mira los detalles de acceso a la propiedad para tu llegada.",
                     "propertyPreviewAlt":  "Vista previa de la propiedad",
-                    "mockPropertyName":  "Hacienda Renacentista y Viñedo Privado",
+                    "mockPropertyName":  "Renaissance Estate & Private Vineyard",
                     "status":  "Estado",
                     "reservationCreated":  "Reserva creada el",
                     "backHome":  "Volver al inicio",
@@ -260,14 +264,15 @@
                                        "title":  "Confirmación del pago"
                                    },
                           "success":  {
-                                          "title":  "Reserva confirmada",
-                                          "subtitle":  "Tu pago fue confirmado correctamente. Ya puedes revisar los detalles de tu reserva."
+                                          "title":  "¡Reserva confirmada!",
+                                          "subtitle":  "Hemos enviado un correo de confirmación a tu bandeja de entrada."
                                       },
                           "summary":  {
-                                          "badge":  "Confirmación del pago",
+                                          "badge":  "Detalles de la reserva",
                                           "reservationId":  "ID de reserva",
                                           "paymentId":  "ID del pago",
-                                          "dates":  "Fechas de estadía",
+                                          "dates":  "Check-in",
+                                          "stay":  "Estadía",
                                           "property":  "Propiedad",
                                           "propertyFallback":  "Hospedaje TravelHub",
                                           "amountPaid":  "Monto pagado"
@@ -296,7 +301,12 @@
                                            },
                           "errors":  {
                                          "title":  "No pudimos cargar la confirmación",
-                                         "missingReference":  "Se necesita una referencia del pago para mostrar esta confirmación."
+                                         "missingReference":  "Se necesita una referencia del pago para mostrar esta confirmación.",
+                                         "backendUnavailable":  "No pudimos verificar el pago en este momento. Intenta de nuevo en un instante.",
+                                         "insufficientFunds":  "No fue posible confirmar el pago porque la tarjeta no tiene fondos suficientes.",
+                                         "paymentDeclined":  "No fue posible confirmar el pago porque la tarjeta fue rechazada.",
+                                         "invalidConfirmationResponse":  "No fue posible procesar la confirmación del pago.",
+                                         "invalidCheckoutStatusResponse":  "No fue posible procesar el estado más reciente del checkout."
                                      }
                       },
     "reservationHistory":  {

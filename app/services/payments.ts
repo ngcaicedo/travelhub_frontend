@@ -70,7 +70,7 @@ export const paymentsService = {
 
     const normalized = normalizePaymentConfirmationSummary(response)
     if (!normalized) {
-      throw new Error('Invalid payment confirmation response')
+      throw new Error('payments.errors.invalidConfirmationResponse')
     }
 
     return normalized
@@ -83,7 +83,7 @@ export const paymentsService = {
 
     const normalized = normalizeCheckoutSessionStatus(response)
     if (!normalized) {
-      throw new Error('Invalid checkout status response')
+      throw new Error('payments.errors.invalidCheckoutStatusResponse')
     }
 
     return normalized
