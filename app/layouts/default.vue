@@ -32,8 +32,8 @@ function onLocaleChange(code: string) {
       />
     </header>
 
-    <UMain>
+    <main class="px-10 py-8">
       <slot />
-    </UMain>
+    </main>
   </div>
 </template>

@@ -91,6 +91,7 @@ const navigateToSection = (sectionId: string) => {
       </div>
     </div>
 
+    <!-- Navigation Tabs using UTabs -->
     <!-- Navigation Tabs -->
     <div v-if="props.sections && props.sections.length > 0" class="border-b border-gray-200 pt-4">
       <div class="flex gap-6">
@@ -98,6 +99,7 @@ const navigateToSection = (sectionId: string) => {
           v-for="section in props.sections"
           :key="section.id"
           :label="section.label"
+          :leading-icon="section.icon"
           variant="ghost"
           color="neutral"
           class="rounded-none px-1 border-b-2 transition-colors"
