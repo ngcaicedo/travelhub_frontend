@@ -14,26 +14,30 @@ function onLocaleChange(code: string) {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#f8fafc]">
-    <header class="bg-white border-b border-[#e2e8f0] px-10 py-4 flex items-center justify-between">
-      <NuxtLink to="/">
-        <AppLogo class="h-6 w-auto shrink-0" />
-      </NuxtLink>
+  <UApp>
+    <UHeader class="bg-white border-b border-[#e2e8f0]">
+      <template #left>
+        <NuxtLink to="/">
+          <AppLogo class="h-6 w-auto shrink-0" />
+        </NuxtLink>
+      </template>
 
-      <USelect
-        :model-value="locale"
-        :items="localeOptions"
-        icon="i-lucide-globe"
-        color="neutral"
-        variant="ghost"
-        size="sm"
-        class="w-auto"
-        @update:model-value="onLocaleChange"
-      />
-    </header>
+      <template #right>
+        <USelect
+          :model-value="locale"
+          :items="localeOptions"
+          icon="i-lucide-globe"
+          color="neutral"
+          variant="ghost"
+          size="sm"
+          class="w-auto"
+          @update:model-value="onLocaleChange"
+        />
+      </template>
+    </UHeader>
 
-    <main class="px-10 py-8">
+    <UMain>
       <slot />
-    </main>
-  </div>
+    </UMain>
+  </UApp>
 </template>
