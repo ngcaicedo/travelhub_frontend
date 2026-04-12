@@ -176,15 +176,16 @@ watch(error, (newError) => {
     </div>
 
     <!-- Booking Form -->
-    <form
+    <UForm
+      :state="{ checkInDate, checkOutDate, numberOfGuests }"
       class="space-y-4"
-      @submit.prevent="handleSubmit"
+      @submit="handleSubmit"
     >
       <!-- Dates -->
       <div class="space-y-2">
-        <label class="text-sm font-semibold text-gray-900">
+        <p class="text-sm font-semibold text-gray-900">
           {{ t('booking.dates') }}
-        </label>
+        </p>
         <div class="grid grid-cols-2 gap-2">
           <div>
             <UFormField
@@ -271,6 +272,6 @@ watch(error, (newError) => {
       <p class="text-xs text-gray-500 text-center">
         {{ t('booking.youWontBeCharged') }}
       </p>
-    </form>
+    </UForm>
   </div>
 </template>
