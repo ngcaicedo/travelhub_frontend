@@ -281,14 +281,25 @@ function localizedMatchers(key: string) {
     .filter((entry): entry is string => typeof entry === 'string')
     .map(entry => entry.toLowerCase())
 }
+
+function normalizePaymentErrorToken(value: string | null | undefined) {
+  return (value || '')
+    .toLowerCase()
+    .replace(/[_-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 function isCardDeclined(value: string | null | undefined) {
   if (!value) return false
-  const normalized = value.toLowerCase()
+  const normalized = normalizePaymentErrorToken(value)
+  if (normalized.includes('card declined')) return true
   return localizedMatchers('payments.detection.cardDeclined').some(matcher => normalized.includes(matcher))
 }
 function isInsufficientFunds(value: string | null | undefined) {
   if (!value) return false
-  const normalized = value.toLowerCase()
+  const normalized = normalizePaymentErrorToken(value)
+  if (normalized.includes('insufficient funds')) return true
   return localizedMatchers('payments.detection.insufficientFunds').some(matcher => normalized.includes(matcher))
 }
 
@@ -458,6 +469,17 @@ function eventDetail(event: PaymentEvent) {
   return t('payments.events.details.recorded')
 }
 
+function latestEventFailureReason(events: PaymentEvent[]) {
+  for (let index = events.length - 1; index >= 0; index -= 1) {
+    const failureReason = events[index]?.payload?.failure_reason
+    if (typeof failureReason === 'string' && failureReason.trim().length > 0) {
+      return failureReason
+    }
+  }
+
+  return null
+}
+
 function handleError(error: unknown) {
   const detail = (error as { data?: { detail?: unknown } })?.data?.detail
   const detailText = typeof detail === 'string' ? detail : (isDuplicate(detail) ? detail.message : '')
@@ -513,6 +535,19 @@ async function loadPayment(paymentId: string) {
 async function loadPaymentAndEvents(paymentId: string) {
   await loadPayment(paymentId)
   await loadEvents(paymentId)
+
+  if (paymentResult.value?.status === 'failed') {
+    const failureFeedback = resolveFailureDescription(
+      paymentResult.value.failure_reason,
+      latestEventFailureReason(paymentEvents.value) || lastFailureMessage.value
+    )
+
+    feedback.value = {
+      tone: 'error',
+      titleKey: 'payments.feedback.failureTitle',
+      ...failureFeedback
+    }
+  }
 }
 
 function unmountStripeElement() {
@@ -750,6 +785,7 @@ async function simulateDuplicate() {
 
         <UAlert
           v-if="complianceMode"
+          data-cy="checkout-compliance-banner"
           color="primary"
           variant="soft"
           icon="i-lucide-shield-check"
@@ -757,7 +793,10 @@ async function simulateDuplicate() {
           :description="isComplianceBlocked ? t('payments.compliance.misconfiguredDescription') : t('payments.compliance.bannerDescription')"
         />
 
-        <div :class="['rounded-2xl border px-4 py-4 text-sm', toneClass]">
+        <div
+          data-cy="checkout-feedback"
+          :class="['rounded-2xl border px-4 py-4 text-sm', toneClass]"
+        >
           <p class="font-semibold">
             {{ feedbackTitle }}
           </p>
@@ -772,6 +811,7 @@ async function simulateDuplicate() {
             class="space-y-2 text-sm"
           ><span>{{ t('payments.scenarioLabel') }}</span><select
             v-model="form.scenario"
+            data-cy="checkout-scenario"
             class="w-full rounded-xl border border-slate-200 px-3 py-2"
           ><option
             v-for="option in scenarioOptions"
@@ -783,6 +823,7 @@ async function simulateDuplicate() {
             class="space-y-2 text-sm"
           ><span>{{ t('payments.form.cardholder') }}</span><input
             v-model="form.cardholderName"
+            data-cy="checkout-cardholder"
             type="text"
             :placeholder="t('payments.form.cardholderPlaceholder')"
             class="w-full rounded-xl border border-slate-200 px-3 py-2"
@@ -790,56 +831,66 @@ async function simulateDuplicate() {
           <template v-if="isFakeMode">
             <label class="space-y-2 text-sm"><span>{{ t('payments.form.cardNumber') }}</span><input
               v-model="form.cardNumber"
+              data-cy="checkout-card-number"
               type="text"
               class="w-full rounded-xl border border-slate-200 px-3 py-2"
             ></label>
             <div class="grid grid-cols-2 gap-4">
               <label class="space-y-2 text-sm"><span>{{ t('payments.form.expiration') }}</span><input
                 v-model="form.expiration"
+                data-cy="checkout-expiration"
                 type="text"
                 class="w-full rounded-xl border border-slate-200 px-3 py-2"
               ></label>
               <label class="space-y-2 text-sm"><span>{{ t('payments.form.cvv') }}</span><input
                 v-model="form.cvv"
+                data-cy="checkout-cvv"
                 type="text"
                 class="w-full rounded-xl border border-slate-200 px-3 py-2"
               ></label>
             </div>
             <label class="space-y-2 text-sm md:col-span-2"><span>{{ t('payments.form.token') }}</span><input
               v-model="form.paymentToken"
+              data-cy="checkout-token"
               type="text"
               class="w-full rounded-xl border border-slate-200 px-3 py-2"
             ></label>
           </template>
           <label class="space-y-2 text-sm"><span>{{ t('payments.form.reservationId') }}</span><input
             v-model="form.reservationId"
+            data-cy="checkout-reservation-id"
             type="text"
             class="w-full rounded-xl border border-slate-200 px-3 py-2"
           ></label>
           <label class="space-y-2 text-sm"><span>{{ t('payments.form.travelerId') }}</span><input
             v-model="form.travelerId"
+            data-cy="checkout-traveler-id"
             type="text"
             class="w-full rounded-xl border border-slate-200 px-3 py-2"
           ></label>
           <label class="space-y-2 text-sm"><span>{{ t('payments.form.amount') }}</span><input
             v-model.number="form.amountInCents"
+            data-cy="checkout-amount"
             type="number"
             min="1"
             class="w-full rounded-xl border border-slate-200 px-3 py-2"
           ></label>
           <label class="space-y-2 text-sm"><span>{{ t('payments.form.currency') }}</span><input
             v-model="form.currency"
+            data-cy="checkout-currency"
             type="text"
             maxlength="3"
             class="w-full rounded-xl border border-slate-200 px-3 py-2 uppercase"
           ></label>
           <label class="space-y-2 text-sm"><span>{{ t('payments.form.checkInDate') }}</span><input
             v-model="form.checkInDate"
+            data-cy="checkout-checkin"
             type="date"
             class="w-full rounded-xl border border-slate-200 px-3 py-2"
           ></label>
           <label class="space-y-2 text-sm"><span>{{ t('payments.form.checkOutDate') }}</span><input
             v-model="form.checkOutDate"
+            data-cy="checkout-checkout"
             type="date"
             class="w-full rounded-xl border border-slate-200 px-3 py-2"
           ></label>
@@ -858,6 +909,7 @@ async function simulateDuplicate() {
             <button
               v-if="isStripeMode"
               type="button"
+              data-cy="checkout-prepare-secure-form"
               class="rounded-full border border-blue-200 px-4 py-2 text-sm font-medium text-blue-700"
               :disabled="stripeLoading || processing"
               @click="prepareStripe"
@@ -882,11 +934,15 @@ async function simulateDuplicate() {
             <div class="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
               <div
                 v-if="stripeLoading"
+                data-cy="checkout-stripe-loading"
                 class="text-sm text-slate-500"
               >
                 {{ t('payments.integration.loadingConfig') }}
               </div>
-              <div id="stripe-payment-element" />
+              <div
+                id="stripe-payment-element"
+                data-cy="checkout-stripe-element"
+              />
               <p
                 v-if="stripeNotice"
                 class="mt-3 text-sm text-slate-500"
@@ -923,6 +979,7 @@ async function simulateDuplicate() {
           <div class="mt-6 flex flex-wrap gap-3">
             <button
               type="button"
+              data-cy="checkout-pay-now"
               class="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white disabled:bg-blue-300"
               :disabled="processing || stripeLoading || configLoading"
               @click="submitPayment"
@@ -932,6 +989,7 @@ async function simulateDuplicate() {
             <button
               v-if="isFakeMode"
               type="button"
+              data-cy="checkout-test-duplicate"
               class="rounded-2xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 disabled:opacity-60"
               :disabled="processing || stripeLoading"
               @click="simulateDuplicate"
