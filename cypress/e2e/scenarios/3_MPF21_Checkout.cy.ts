@@ -42,13 +42,13 @@ function stubStripeClient(win: Cypress.AUTWindow, confirmationTokenId: string) {
 }
 
 function registerStripeFailureScenario(scenario: FailureScenario) {
-  cy.intercept('GET', '**/api/payments/config', {
+  cy.intercept('GET', '**/api/v1/payments/config', {
     provider: 'stripe_test',
     stripe_enabled: true,
     publishable_key: 'pk_test_cypress'
   }).as('getPaymentsConfig')
 
-  cy.intercept('POST', '**/api/payments/create-intent', {
+  cy.intercept('POST', '**/api/v1/payments/create-intent', {
     statusCode: 201,
     body: {
       payment_transaction_id: scenario.transactionId,
@@ -59,7 +59,7 @@ function registerStripeFailureScenario(scenario: FailureScenario) {
     }
   }).as('createIntent')
 
-  cy.intercept('POST', '**/api/payments/finalize', (req) => {
+  cy.intercept('POST', '**/api/v1/payments/finalize', (req) => {
     expect(req.body).to.deep.equal({
       payment_transaction_id: scenario.transactionId,
       confirmation_token_id: scenario.confirmationTokenId
@@ -77,7 +77,7 @@ function registerStripeFailureScenario(scenario: FailureScenario) {
     })
   }).as('finalizePayment')
 
-  cy.intercept('GET', `**/api/payments/${scenario.paymentId}`, {
+  cy.intercept('GET', `**/api/v1/payments/${scenario.paymentId}`, {
     statusCode: 200,
     body: {
       payment_id: scenario.paymentId,
@@ -92,7 +92,7 @@ function registerStripeFailureScenario(scenario: FailureScenario) {
     }
   }).as('getFailedPayment')
 
-  cy.intercept('GET', `**/api/payments/${scenario.paymentId}/events`, {
+  cy.intercept('GET', `**/api/v1/payments/${scenario.paymentId}/events`, {
     statusCode: 200,
     body: [
       {
@@ -133,9 +133,6 @@ function runStripeFailureScenario(scenario: FailureScenario) {
 }
 
 describe('MPF-21 | Checkout seguro y tokenizacion', () => {
-  beforeEach(() => {
-  })
-
   it('usa Stripe en modo seguro y muestra el mensaje de fondos insuficientes', () => {
     registerStripeFailureScenario({
       transactionId: 'txn-stripe-insufficient',

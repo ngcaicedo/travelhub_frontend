@@ -20,13 +20,13 @@ const paymentSummary = {
 
 describe('MPF-15 | Confirmacion del pago', () => {
   it('redirige desde checkout a la confirmacion y muestra el comprobante', () => {
-    cy.intercept('GET', '**/api/payments/config', {
+    cy.intercept('GET', '**/api/v1/payments/config', {
       provider: 'fake_stripe',
       stripe_enabled: false,
       publishable_key: ''
     }).as('getPaymentsConfig')
 
-    cy.intercept('POST', '**/api/payments/charges', {
+    cy.intercept('POST', '**/api/v1/payments/charges', {
       statusCode: 201,
       body: {
         payment_id: 'pay-confirmed-cypress',
@@ -41,7 +41,7 @@ describe('MPF-15 | Confirmacion del pago', () => {
       }
     }).as('createCharge')
 
-    cy.intercept('GET', '**/api/payments/pay-confirmed-cypress', {
+    cy.intercept('GET', '**/api/v1/payments/pay-confirmed-cypress', {
       statusCode: 200,
       body: {
         payment_id: 'pay-confirmed-cypress',
@@ -56,7 +56,7 @@ describe('MPF-15 | Confirmacion del pago', () => {
       }
     }).as('getPayment')
 
-    cy.intercept('GET', '**/api/payments/pay-confirmed-cypress/events', {
+    cy.intercept('GET', '**/api/v1/payments/pay-confirmed-cypress/events', {
       statusCode: 200,
       body: [
         {
