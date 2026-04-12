@@ -1,4 +1,4 @@
-import type { CheckoutSessionStatus, PaymentsConfig, PaymentResponse, PaymentEvent, CheckoutSession, FinalizePaymentResponse } from '~/utils/payments'
+import type { CheckoutSessionStatus } from '~/utils/payments'
 import type { PaymentConfirmationSummary } from '~/types/payments'
 import { createPaymentsClient } from './_client'
 import { normalizeCheckoutSessionStatus } from '~/utils/payments'
