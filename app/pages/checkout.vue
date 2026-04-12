@@ -846,10 +846,7 @@ async function simulateDuplicate() {
                 />
               </UFormField>
             </div>
-            <UFormField
-              :label="t('payments.form.token')"
-              class="md:col-span-2"
-            >
+            <UFormField :label="t('payments.form.token')" class="md:col-span-2">
               <UInput
                 v-model="form.paymentToken"
                 type="text"
@@ -1062,10 +1059,10 @@ async function simulateDuplicate() {
               v-if="eventsLoading"
               class="mt-4 space-y-3"
             >
-              <div
+              <USkeleton
                 v-for="i in 3"
                 :key="i"
-                class="h-16 animate-pulse rounded-2xl bg-slate-100"
+                class="h-16 rounded-2xl"
               />
             </div>
             <ul

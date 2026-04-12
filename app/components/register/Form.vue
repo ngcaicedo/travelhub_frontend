@@ -78,9 +78,10 @@ async function onSubmit() {
       @close="error = ''"
     />
 
-    <form
+    <UForm
+      :state="form"
       class="space-y-5 mt-8"
-      @submit.prevent="onSubmit"
+      @submit="onSubmit"
     >
       <UFormField
         v-if="type === 'traveler'"
@@ -221,6 +222,6 @@ async function onSubmit() {
           data-cy="register-submit"
         />
       </div>
-    </form>
+    </UForm>
   </div>
 </template>
