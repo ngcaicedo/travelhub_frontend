@@ -233,11 +233,15 @@ function hydrateReservationFromQuery() {
   const checkInDate = parseStringQuery(route.query.checkInDate)
   const checkOutDate = parseStringQuery(route.query.checkOutDate)
   const lockExpiresAt = parseNumberQuery(route.query.lockExpiresAt)
+  const amountInCents = parseNumberQuery(route.query.amountInCents)
+  const currency = parseStringQuery(route.query.currency)
 
   if (reservationId) form.reservationId = reservationId
   if (travelerId) form.travelerId = travelerId
   if (checkInDate) form.checkInDate = checkInDate
   if (checkOutDate) form.checkOutDate = checkOutDate
+  if (amountInCents) form.amountInCents = amountInCents
+  if (currency) form.currency = currency
 
   if (lockExpiresAt) {
     reservationLockExpiresAt.value = lockExpiresAt

@@ -145,7 +145,9 @@ const handleSubmit = async () => {
         travelerId: mockUserId,
         checkInDate: checkInDate.value,
         checkOutDate: checkOutDate.value,
-        lockExpiresAt: String(lockExpiresAt)
+        lockExpiresAt: String(lockExpiresAt),
+        amountInCents: String(Math.round(totalPrice.value * 100)),
+        currency: props.property.currency
       }
     })
   } catch (err: unknown) {
@@ -166,6 +168,18 @@ watch(error, (newError) => {
     submitError.value = newError
   }
 })
+
+watch(() => [props.initialCheckInDate, props.initialCheckOutDate, props.initialNumberOfGuests], () => {
+  if (props.initialCheckInDate) {
+    checkInDate.value = props.initialCheckInDate
+  }
+  if (props.initialCheckOutDate) {
+    checkOutDate.value = props.initialCheckOutDate
+  }
+  if (props.initialNumberOfGuests) {
+    numberOfGuests.value = props.initialNumberOfGuests
+  }
+}, { immediate: true })
 </script>
 
 <template>
