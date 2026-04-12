@@ -30,6 +30,7 @@ type FeedbackState = {
 }
 
 const { t, locale, tm, getLocaleMessage } = useI18n()
+const route = useRoute()
 const localeMap: Record<string, string> = {
   es: 'es-CO',
   en: 'en-US',
@@ -37,6 +38,7 @@ const localeMap: Record<string, string> = {
 }
 const stripePollMaxAttempts = 6
 const stripePollIntervalMs = 1000
+const reservationLockDurationSeconds = 15 * 60
 
 const form = reactive({
   scenario: 'success' as ScenarioKind,
@@ -60,6 +62,9 @@ const stripeSession = ref<CheckoutSession | null>(null)
 const feedback = ref<FeedbackState>({ tone: 'info', titleKey: null, titleText: '', descriptionKey: null, descriptionText: '' })
 const eventsNotice = ref('')
 const stripeNotice = ref('')
+const reservationLockRemainingSeconds = ref<number>(reservationLockDurationSeconds)
+const reservationLockExpiresAt = ref<number>(Date.now() + (reservationLockDurationSeconds * 1000))
+const reservationLockIntervalId = ref<ReturnType<typeof setInterval> | null>(null)
 const lastFailureMessage = ref<string | null>(null)
 const lastIdempotencyKey = ref('')
 const processing = ref(false)
@@ -87,6 +92,12 @@ function isTimeoutLikeError(error: unknown) {
 }
 
 async function goToPaymentConfirmation(paymentId: string) {
+  // Preserve reservation dates in sessionStorage for payment-confirmation fallback
+  if (form.checkInDate && form.checkOutDate) {
+    sessionStorage.setItem('reservation_checkout_date', form.checkInDate)
+    sessionStorage.setItem('reservation_checkout_out_date', form.checkOutDate)
+  }
+
   await navigateTo({
     path: '/notifications/payment-confirmation',
     query: { paymentId }
@@ -146,6 +157,13 @@ const feedbackTitle = computed(() => feedback.value.titleKey ? t(feedback.value.
 const feedbackDescription = computed(() => feedback.value.descriptionKey
   ? t(feedback.value.descriptionKey, feedback.value.descriptionParams || {})
   : (feedback.value.descriptionText || ''))
+const reservationLockCountdown = computed(() => {
+  const totalSeconds = Math.max(0, reservationLockRemainingSeconds.value)
+  const minutes = Math.floor(totalSeconds / 60)
+  const seconds = totalSeconds % 60
+
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+})
 
 watch(() => form.scenario, (scenario) => {
   const preset = scenarioPresets[scenario]
@@ -160,12 +178,78 @@ watch(() => [form.reservationId, form.travelerId, form.amountInCents, form.curre
 })
 
 onMounted(async () => {
+  hydrateReservationFromQuery()
+  startReservationLockCountdown()
   await fetchConfig()
   setReadyFeedback()
 })
 
-onBeforeUnmount(() => unmountStripeElement())
+onBeforeUnmount(() => {
+  unmountStripeElement()
+  clearReservationLockCountdown()
+})
 useSeoMeta({ title: () => `${t('payments.meta.title')} - ${t('common.appName')}` })
+
+function clearReservationLockCountdown() {
+  if (!reservationLockIntervalId.value) return
+
+  clearInterval(reservationLockIntervalId.value)
+  reservationLockIntervalId.value = null
+}
+
+function syncReservationLockCountdown() {
+  const seconds = Math.max(0, Math.ceil((reservationLockExpiresAt.value - Date.now()) / 1000))
+  reservationLockRemainingSeconds.value = seconds
+
+  if (seconds === 0) {
+    clearReservationLockCountdown()
+  }
+}
+
+function startReservationLockCountdown() {
+  syncReservationLockCountdown()
+  clearReservationLockCountdown()
+
+  reservationLockIntervalId.value = setInterval(() => {
+    syncReservationLockCountdown()
+  }, 1000)
+}
+
+function parseStringQuery(value: unknown): string | null {
+  if (typeof value === 'string' && value.trim().length > 0) {
+    return value.trim()
+  }
+  return null
+}
+
+function parseNumberQuery(value: unknown): number | null {
+  const parsed = Number(value)
+  return Number.isFinite(parsed) ? parsed : null
+}
+
+function hydrateReservationFromQuery() {
+  const reservationId = parseStringQuery(route.query.reservationId)
+  const travelerId = parseStringQuery(route.query.travelerId)
+  const checkInDate = parseStringQuery(route.query.checkInDate)
+  const checkOutDate = parseStringQuery(route.query.checkOutDate)
+  const lockExpiresAt = parseNumberQuery(route.query.lockExpiresAt)
+  const amountInCents = parseNumberQuery(route.query.amountInCents)
+  const currency = parseStringQuery(route.query.currency)
+
+  if (reservationId) form.reservationId = reservationId
+  if (travelerId) form.travelerId = travelerId
+  if (checkInDate) form.checkInDate = checkInDate
+  if (checkOutDate) form.checkOutDate = checkOutDate
+  if (amountInCents) form.amountInCents = amountInCents
+  if (currency) form.currency = currency
+
+  if (lockExpiresAt) {
+    reservationLockExpiresAt.value = lockExpiresAt
+    return
+  }
+
+  reservationLockExpiresAt.value = Date.now() + (reservationLockDurationSeconds * 1000)
+}
 
 function setReadyFeedback() {
   if (isComplianceBlocked.value) {
@@ -704,7 +788,7 @@ async function simulateDuplicate() {
 
     <div class="mb-6 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-4 text-sm text-slate-700">
       <div class="flex flex-wrap items-center justify-between gap-3">
-        <span>{{ t('payments.timer.prefix') }} <strong>{{ t('payments.timer.value') }}</strong></span>
+        <span>Tu habitacion esta bloqueada durante 15 minutos <strong>{{ reservationLockCountdown }}</strong></span>
         <span class="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-600">{{ configLoading ? t('payments.integration.loadingConfig') : (isStripeMode ? t('payments.integration.stripeBadge') : t('payments.integration.fakeBadge')) }}</span>
       </div>
     </div>

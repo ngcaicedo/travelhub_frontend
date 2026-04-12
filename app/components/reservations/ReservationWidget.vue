@@ -16,17 +16,21 @@ interface Props {
     currency: string
     max_guests: number
   }
+  initialCheckInDate?: string
+  initialCheckOutDate?: string
+  initialNumberOfGuests?: number
 }
 
 const { t, locale } = useI18n()
 const router = useRouter()
 const { createReservation, loading, error } = useReservations()
+const reservationLockDurationMs = 15 * 60 * 1000
 
 const props = defineProps<Props>()
 
-const checkInDate = ref<string>('')
-const checkOutDate = ref<string>('')
-const numberOfGuests = ref<number>(1)
+const checkInDate = ref<string>(props.initialCheckInDate || '')
+const checkOutDate = ref<string>(props.initialCheckOutDate || '')
+const numberOfGuests = ref<number>(props.initialNumberOfGuests || 1)
 const submitError = ref<string | null>(null)
 
 const parseLocalDate = (dateValue: string): Date | null => {
@@ -123,6 +127,7 @@ const handleSubmit = async () => {
     const reservationData: ReservationRequest = {
       id_traveler: mockUserId,
       id_property: props.property.id,
+      id_room: props.property.id,
       check_in_date: checkInDateIso,
       check_out_date: checkOutDateIso,
       number_of_guests: numberOfGuests.value,
@@ -130,9 +135,21 @@ const handleSubmit = async () => {
     }
 
     const response = await createReservation(reservationData)
+    const lockExpiresAt = Date.now() + reservationLockDurationMs
 
-    // Navegar a página de confirmación
-    await router.push(`/reservations/${response.id}`)
+    // Redirigir al checkout para completar el pago con ventana de bloqueo.
+    await router.push({
+      path: '/checkout',
+      query: {
+        reservationId: response.id,
+        travelerId: mockUserId,
+        checkInDate: checkInDate.value,
+        checkOutDate: checkOutDate.value,
+        lockExpiresAt: String(lockExpiresAt),
+        amountInCents: String(Math.round(totalPrice.value * 100)),
+        currency: props.property.currency
+      }
+    })
   } catch (err: unknown) {
     const statusCode = (err as { statusCode?: number }).statusCode
 
@@ -151,10 +168,22 @@ watch(error, (newError) => {
     submitError.value = newError
   }
 })
+
+watch(() => [props.initialCheckInDate, props.initialCheckOutDate, props.initialNumberOfGuests], () => {
+  if (props.initialCheckInDate) {
+    checkInDate.value = props.initialCheckInDate
+  }
+  if (props.initialCheckOutDate) {
+    checkOutDate.value = props.initialCheckOutDate
+  }
+  if (props.initialNumberOfGuests) {
+    numberOfGuests.value = props.initialNumberOfGuests
+  }
+}, { immediate: true })
 </script>
 
 <template>
-  <div class="bg-white rounded-lg border border-gray-200 p-6 sticky top-6 shadow-lg space-y-6">
+  <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-lg space-y-6">
     <!-- Price Header -->
     <div>
       <h3 class="text-3xl font-bold text-gray-900">

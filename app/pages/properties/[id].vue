@@ -8,14 +8,37 @@ import ReviewsList from '~/components/properties/ReviewsList.vue'
 import LocationMap from '~/components/properties/LocationMap.vue'
 import PropertyPolicies from '~/components/properties/PropertyPolicies.vue'
 import ReservationWidget from '~/components/reservations/ReservationWidget.vue'
+import { decodePropertyRouteId } from '~/utils/propertyRouteId'
 
 const { t } = useI18n()
 const route = useRoute()
 
 // Simulamos que recibimos el ID de la propiedad desde la ruta
-const propertyId = computed(() => route.params.id as string | undefined)
+const propertyId = computed(() => decodePropertyRouteId(route.params.id as string | undefined))
+
+// Extract reservation dates from search query params
+const initialCheckInDate = computed(() => {
+  const value = route.query.check_in
+  return typeof value === 'string' ? value : ''
+})
+
+const initialCheckOutDate = computed(() => {
+  const value = route.query.check_out
+  return typeof value === 'string' ? value : ''
+})
+
+const initialNumberOfGuests = computed(() => {
+  const value = Number(route.query.guests)
+  return Number.isFinite(value) && value > 0 ? value : undefined
+})
 
 const { property, reviews, loading } = useProperty(propertyId)
+
+const breadcrumbItems = computed(() => [
+  { label: t('nav.home'), icon: 'i-lucide-home', to: '/properties' },
+  { label: property.value?.location || '' },
+  { label: property.value?.name || '' }
+])
 
 // Refs para scroll
 const overviewRef = ref<HTMLElement | null>(null)
@@ -75,8 +98,13 @@ definePageMeta({
       v-else-if="property"
       class="space-y-0"
     >
+      <!-- Breadcrumbs -->
+      <div class="max-w-7xl mx-auto px-safe pt-6">
+        <UBreadcrumb :items="breadcrumbItems" />
+      </div>
+
       <!-- Gallery Section -->
-      <section class="relative -mx-safe top-0 left-0 right-0">
+      <section class="max-w-7xl mx-auto px-safe pt-4">
         <PropertyGallery :images="property.images" />
       </section>
 
@@ -86,7 +114,7 @@ definePageMeta({
           <!-- Left Column: Property Info -->
           <div class="lg:col-span-2 space-y-6">
             <!-- Property Header Info -->
-            <PropertyInfo 
+            <PropertyInfo
               :property="property"
               :sections="sections"
               :active-section="activeSection"
@@ -129,7 +157,38 @@ definePageMeta({
 
           <!-- Right Column: Reservation Widget -->
           <div class="lg:col-span-1">
-            <ReservationWidget :property="property" />
+            <div class="sticky top-20 space-y-4">
+              <ReservationWidget
+                :property="property"
+                :initial-check-in-date="initialCheckInDate"
+                :initial-check-out-date="initialCheckOutDate"
+                :initial-number-of-guests="initialNumberOfGuests"
+              />
+
+              <!-- Traveler Protection -->
+              <div class="bg-slate-50 rounded-lg p-4 flex items-start gap-3">
+                <UIcon
+                  name="i-lucide-shield-check"
+                  class="w-5 h-5 text-slate-500 shrink-0 mt-0.5"
+                />
+                <p class="text-sm text-slate-600">
+                  {{ t('property.travelerProtection') }}
+                </p>
+              </div>
+
+              <!-- Report Listing -->
+              <div class="text-center">
+                <UButton
+                  variant="link"
+                  color="neutral"
+                  size="sm"
+                  leading-icon="i-lucide-flag"
+                  class="text-slate-400"
+                >
+                  {{ t('property.reportListing') }}
+                </UButton>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Property } from '~/types/api'
 import type { DeepReadonly } from 'vue'
+import { encodePropertyRouteId } from '~/utils/propertyRouteId'
 
 interface Props {
   property: Property | DeepReadonly<Property>
@@ -11,7 +12,7 @@ const router = useRouter()
 const { t, locale } = useI18n()
 
 const handleClick = () => {
-  router.push(`/properties/${props.property.id}`)
+  router.push(`/properties/${encodePropertyRouteId(props.property.id)}`)
 }
 
 const mainImage = computed(() => props.property.images[0])

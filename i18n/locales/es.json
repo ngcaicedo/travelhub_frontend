@@ -13,10 +13,15 @@
     "loadMore": "Cargar más",
     "loading": "Cargando..."
   },
+  "nav": {
+    "home": "Inicio"
+  },
   "navigation": {
     "login": "Iniciar sesión",
+    "search": "Hoteles",
     "checkout": "Proceso de pago",
-    "reservations": "Mis reservas"
+    "reservations": "Mis reservas",
+    "logout": "Cerrar sesión"
   },
   "auth": {
     "hero": {
@@ -238,6 +243,7 @@
   },
   "property": {
     "properties": "Propiedades",
+    "advancedSearch": "Búsqueda avanzada",
     "discoverPlaces": "Descubre lugares increíbles",
     "discoverAmazingPlaces": "Descubre lugares increíbles para hospedarte",
     "exploreOurSelection": "Explora nuestra selección de propiedades de lujo y encuentra el lugar perfecto para tu próxima aventura",
@@ -263,7 +269,15 @@
     },
     "bookNow": "Reserva ya",
     "capacity": "Capacidad",
+    "host": "Anfitrión",
+    "travelHubPlus": "Propiedad TravelHub Plus",
+    "travelHubPlusDesc": "Verificada por calidad, confort y servicio premium.",
+    "sortBy": "Ordenar por",
+    "mostRecent": "Más recientes",
+    "travelerProtection": "Protección al viajero incluida. Reembolso completo si cancelas dentro de las 48 horas de la reserva.",
+    "reportListing": "Reportar este anuncio",
     "morePhotos": "+{count} fotos",
+    "showAllPhotos": "Ver todas las fotos",
     "policies": {
       "flexible": {
         "label": "Flexible",
@@ -423,7 +437,8 @@
       "checkOut": "Check-out",
       "guests": "Huéspedes",
       "minPrice": "Precio mínimo",
-      "maxPrice": "Precio máximo"
+      "maxPrice": "Precio máximo",
+      "priceRange": "Rango de precio"
     },
     "placeholders": {
       "city": "Ingresa una ciudad"
