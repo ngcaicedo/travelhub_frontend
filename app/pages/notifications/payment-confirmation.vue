@@ -360,7 +360,7 @@ definePageMeta({
             </div>
           </div>
           <h1 class="text-[34px] leading-[1.02] font-bold tracking-tight text-slate-900 md:text-[50px]">
-            {{ t('notifications.success.title') }}
+            <span data-cy="payment-confirmation-title">{{ t('notifications.success.title') }}</span>
           </h1>
           <p class="mx-auto mt-2 max-w-[520px] text-[16px] leading-7 text-slate-500">
             {{ t('notifications.success.subtitle') }}
@@ -438,13 +438,14 @@ definePageMeta({
                     {{ t('notifications.summary.reservationId') }}
                   </p>
                   <p class="mt-1 text-[13px] break-all font-medium text-slate-700">
-                    {{ confirmation.reservation_id }}
+                    <span data-cy="payment-confirmation-reservation-id">{{ confirmation.reservation_id }}</span>
                   </p>
                 </div>
               </div>
 
               <div class="flex flex-wrap gap-3">
                 <UButton
+                  data-cy="payment-confirmation-view-reservations"
                   icon="i-lucide-suitcase"
                   class="rounded-xl px-4 py-2 text-[14px] font-semibold"
                   @click="goToReservations"
@@ -452,6 +453,7 @@ definePageMeta({
                   {{ t('notifications.actions.viewReservations') }}
                 </UButton>
                 <UButton
+                  data-cy="payment-confirmation-download-receipt"
                   icon="i-lucide-download"
                   color="neutral"
                   variant="soft"
@@ -494,6 +496,7 @@ definePageMeta({
           <div class="mb-7 border-t border-slate-200" />
           <div class="text-center">
             <button
+              data-cy="payment-confirmation-back-home"
               class="inline-flex items-center gap-2 text-[15px] font-medium text-slate-500 transition-colors hover:text-slate-700"
               @click="backToHome"
             >
