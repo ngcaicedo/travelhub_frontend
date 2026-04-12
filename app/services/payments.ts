@@ -3,6 +3,8 @@ import type { PaymentConfirmationSummary } from '~/types/payments'
 import { createPaymentsClient } from './_client'
 import { normalizeCheckoutSessionStatus } from '~/utils/payments'
 
+const REQUEST_TIMEOUT_MS = 10_000
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
@@ -62,7 +64,73 @@ function normalizePaymentConfirmationSummary(value: unknown): PaymentConfirmatio
   }
 }
 
+export interface CreateChargePayload {
+  reservation_id: string
+  traveler_id: string
+  payment_method_token: string
+  amount_in_cents: number
+  currency: string
+  idempotency_key: string
+}
+
+export interface CreateIntentPayload {
+  reservation_id: string
+  traveler_id: string
+  amount_in_cents: number
+  currency: string
+  property_name: string
+  check_in_date: string
+  check_out_date: string
+}
+
+export interface FinalizePaymentPayload {
+  payment_transaction_id: string
+  confirmation_token_id: string
+}
+
 export const paymentsService = {
+  async getConfig(): Promise<unknown> {
+    return await createPaymentsClient()('/api/v1/payments/config', {
+      timeout: REQUEST_TIMEOUT_MS
+    })
+  },
+
+  async createCharge(body: CreateChargePayload): Promise<unknown> {
+    return await createPaymentsClient()('/api/v1/payments/charges', {
+      method: 'POST',
+      timeout: REQUEST_TIMEOUT_MS,
+      body
+    })
+  },
+
+  async createIntent(body: CreateIntentPayload): Promise<unknown> {
+    return await createPaymentsClient()('/api/v1/payments/create-intent', {
+      method: 'POST',
+      timeout: REQUEST_TIMEOUT_MS,
+      body
+    })
+  },
+
+  async finalizePayment(body: FinalizePaymentPayload): Promise<unknown> {
+    return await createPaymentsClient()('/api/v1/payments/finalize', {
+      method: 'POST',
+      timeout: REQUEST_TIMEOUT_MS,
+      body
+    })
+  },
+
+  async getPayment(paymentId: string): Promise<unknown> {
+    return await createPaymentsClient()(`/api/v1/payments/${paymentId}`, {
+      timeout: REQUEST_TIMEOUT_MS
+    })
+  },
+
+  async getPaymentEvents(paymentId: string): Promise<unknown> {
+    return await createPaymentsClient()(`/api/v1/payments/${paymentId}/events`, {
+      timeout: REQUEST_TIMEOUT_MS
+    })
+  },
+
   async getPaymentConfirmationSummary(paymentId: string): Promise<PaymentConfirmationSummary> {
     const response = await createPaymentsClient()(`/api/v1/payments/${paymentId}/confirmation`, {
       method: 'GET'

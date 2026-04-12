@@ -11,87 +11,94 @@ const { usePaymentsComplianceMock } = vi.hoisted(() => ({
 
 mockNuxtImport('usePaymentsCompliance', () => usePaymentsComplianceMock)
 
-type FetchPayload = Record<string, unknown>
-type FetchOptions = {
-  method?: string
-  body?: FetchPayload
-}
+const mockGetConfig = vi.fn()
+const mockCreateCharge = vi.fn()
+const mockGetPayment = vi.fn()
+const mockGetPaymentEvents = vi.fn()
+const mockCreateIntent = vi.fn()
+const mockFinalizePayment = vi.fn()
+const mockGetCheckoutStatus = vi.fn()
+const mockGetPaymentConfirmationSummary = vi.fn()
 
-function createFetchMock({
+vi.mock('~/services/payments', () => ({
+  paymentsService: {
+    getConfig: (...args: unknown[]) => mockGetConfig(...args),
+    createCharge: (...args: unknown[]) => mockCreateCharge(...args),
+    getPayment: (...args: unknown[]) => mockGetPayment(...args),
+    getPaymentEvents: (...args: unknown[]) => mockGetPaymentEvents(...args),
+    createIntent: (...args: unknown[]) => mockCreateIntent(...args),
+    finalizePayment: (...args: unknown[]) => mockFinalizePayment(...args),
+    getCheckoutStatus: (...args: unknown[]) => mockGetCheckoutStatus(...args),
+    getPaymentConfirmationSummary: (...args: unknown[]) => mockGetPaymentConfirmationSummary(...args)
+  }
+}))
+
+function setupDefaultMocks({
   config = {
     provider: 'fake_stripe',
     stripe_enabled: false,
     publishable_key: ''
   },
-  charges = [],
-  payments = {},
-  events = {},
-  checkoutStatuses = []
-}: {
-  config?: Record<string, unknown>
-  charges?: Array<Record<string, unknown> | { error: unknown }>
-  payments?: Record<string, Record<string, unknown>>
-  events?: Record<string, unknown[]>
-  checkoutStatuses?: Record<string, unknown>[]
+  charges = [] as Array<Record<string, unknown> | { error: unknown }>,
+  payments = {} as Record<string, Record<string, unknown>>,
+  events = {} as Record<string, unknown[]>,
+  checkoutStatuses = [] as Record<string, unknown>[]
 } = {}) {
   let chargeCalls = 0
   let checkoutCalls = 0
 
-  return vi.fn(async (url: string, options?: FetchOptions) => {
-    if (url === '/api/payments/config') {
-      return config
+  mockGetConfig.mockResolvedValue(config)
+
+  mockCreateCharge.mockImplementation(async () => {
+    const response = charges[chargeCalls] || charges[charges.length - 1]
+    chargeCalls += 1
+
+    if (!response) {
+      throw new Error('Missing mocked charges response')
     }
 
-    if (url === '/api/payments/charges' && options?.method === 'POST') {
-      const response = charges[chargeCalls] || charges[charges.length - 1]
-      chargeCalls += 1
-
-      if (!response) {
-        throw new Error('Missing mocked /charges response')
-      }
-
-      if ('error' in response) {
-        throw response.error
-      }
-
-      return response
+    if ('error' in response) {
+      throw response.error
     }
 
-    if (url.startsWith('/api/payments/checkout/')) {
-      const response = checkoutStatuses[checkoutCalls] || checkoutStatuses[checkoutStatuses.length - 1]
-      checkoutCalls += 1
-      return response
+    return response
+  })
+
+  mockGetPayment.mockImplementation(async (paymentId: string) => {
+    const payment = payments[paymentId]
+    if (!payment) {
+      throw new Error(`Missing mocked payment ${paymentId}`)
     }
+    return payment
+  })
 
-    if (url.startsWith('/api/payments/') && url.endsWith('/events')) {
-      const paymentId = url.split('/')[3]
-      return events[paymentId] || []
-    }
+  mockGetPaymentEvents.mockImplementation(async (paymentId: string) => {
+    return events[paymentId] || []
+  })
 
-    if (url.startsWith('/api/payments/')) {
-      const paymentId = url.split('/')[3]
-      const payment = payments[paymentId]
-
-      if (!payment) {
-        throw new Error(`Missing mocked payment ${paymentId}`)
-      }
-
-      return payment
-    }
-
-    throw new Error(`Unexpected fetch call: ${url}`)
+  mockGetCheckoutStatus.mockImplementation(async () => {
+    const response = checkoutStatuses[checkoutCalls] || checkoutStatuses[checkoutStatuses.length - 1]
+    checkoutCalls += 1
+    return response
   })
 }
 
 describe('CheckoutPage', () => {
   beforeEach(() => {
     usePaymentsComplianceMock.mockReturnValue(computed(() => false))
-    vi.stubGlobal('$fetch', createFetchMock())
+    setupDefaultMocks()
   })
 
   afterEach(() => {
-    vi.unstubAllGlobals()
     vi.restoreAllMocks()
+    mockGetConfig.mockReset()
+    mockCreateCharge.mockReset()
+    mockGetPayment.mockReset()
+    mockGetPaymentEvents.mockReset()
+    mockCreateIntent.mockReset()
+    mockFinalizePayment.mockReset()
+    mockGetCheckoutStatus.mockReset()
+    mockGetPaymentConfirmationSummary.mockReset()
   })
 
   it('renders the checkout title and primary actions', async () => {
@@ -131,7 +138,7 @@ describe('CheckoutPage', () => {
   })
 
   it('processes a successful fake payment and renders the latest result', async () => {
-    vi.stubGlobal('$fetch', createFetchMock({
+    setupDefaultMocks({
       charges: [
         {
           payment_id: 'pay-success',
@@ -169,7 +176,7 @@ describe('CheckoutPage', () => {
           }
         ]
       }
-    }))
+    })
 
     const wrapper = await mountSuspended(CheckoutPage)
     await findButtonByText(wrapper, /Pagar ahora|Pay now/).trigger('click')
@@ -182,7 +189,7 @@ describe('CheckoutPage', () => {
   })
 
   it('shows the insufficient funds feedback when the gateway rejects the card', async () => {
-    vi.stubGlobal('$fetch', createFetchMock({
+    setupDefaultMocks({
       charges: [
         {
           payment_id: 'pay-failed',
@@ -209,7 +216,7 @@ describe('CheckoutPage', () => {
           failure_reason: 'insufficient_funds'
         }
       }
-    }))
+    })
 
     const wrapper = await mountSuspended(CheckoutPage)
     await findButtonByText(wrapper, /Pagar ahora|Pay now/).trigger('click')
@@ -219,7 +226,7 @@ describe('CheckoutPage', () => {
   })
 
   it('blocks duplicate attempts in fake mode', async () => {
-    vi.stubGlobal('$fetch', createFetchMock({
+    setupDefaultMocks({
       charges: [
         {
           payment_id: 'pay-first',
@@ -255,7 +262,7 @@ describe('CheckoutPage', () => {
           failure_reason: null
         }
       }
-    }))
+    })
 
     const wrapper = await mountSuspended(CheckoutPage)
     await findButtonByText(wrapper, /Probar duplicado|Test duplicate/).trigger('click')
@@ -265,13 +272,13 @@ describe('CheckoutPage', () => {
   })
 
   it('renders secure Stripe mode without manual card fields', async () => {
-    vi.stubGlobal('$fetch', createFetchMock({
+    setupDefaultMocks({
       config: {
         provider: 'stripe_test',
         stripe_enabled: true,
         publishable_key: 'pk_test_123'
       }
-    }))
+    })
 
     const wrapper = await mountSuspended(CheckoutPage)
     const text = textContent(wrapper)
