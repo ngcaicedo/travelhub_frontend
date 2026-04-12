@@ -2,13 +2,13 @@ export type SearchOrderBy = 'price' | 'rating' | 'name'
 export type SearchOrderDirection = 'asc' | 'desc'
 
 export interface SearchRequest {
-  ciudad: string
+  city: string
   check_in: string
   check_out: string
-  huespedes: number
-  amenidades?: string[]
-  precio_min?: number
-  precio_max?: number
+  guests: number
+  amenities?: string[]
+  min_price?: number
+  max_price?: number
   order_by?: SearchOrderBy
   order_dir?: SearchOrderDirection
   page?: number
@@ -17,15 +17,15 @@ export interface SearchRequest {
 
 export interface SearchResultItem {
   id: string
-  nombre: string
-  ciudad: string
-  pais: string
-  capacidad_maxima: number
-  imagen_principal_url: string
+  name: string
+  city: string
+  country: string
+  max_capacity: number
+  main_image_url: string | null
   rating: number
-  precio_desde: string
-  moneda: string
-  amenidades: readonly string[]
+  price_from: string
+  currency: string
+  amenities: readonly string[]
 }
 
 export interface SearchPagination {

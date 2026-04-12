@@ -98,7 +98,7 @@ const amenityLabelMap = computed<Record<string, string>>(() => ({
   spa: t('search.amenities.spa')
 }))
 
-const selectedAmenities = ref<string[]>(['wifi'])
+const selectedAmenities = ref<string[]>([])
 
 const parseQueryNumber = (value: QueryParamValue, fallback: number) => {
   const singleValue = Array.isArray(value) ? value[0] : value
@@ -120,6 +120,20 @@ const parseQueryAmenities = (value: QueryParamValue) => {
 
   return (Array.isArray(value) ? value : [value]).filter(
     (item): item is string => Boolean(item)
+  )
+}
+
+const hasInitialSearchQueryParams = () => {
+  return Boolean(
+    route.query.city
+    || route.query.check_in
+    || route.query.check_out
+    || route.query.guests
+    || route.query.amenities
+    || route.query.min_price
+    || route.query.max_price
+    || route.query.sort
+    || route.query.page
   )
 }
 
@@ -283,16 +297,16 @@ const validateSearchForm = () => {
 
 const mapSearchResultToCard = (item: SearchResultItem): SearchResultCard => ({
   id: item.id,
-  name: item.nombre,
-  location: `${item.ciudad}, ${item.pais}`,
+  name: item.name,
+  location: `${item.city}, ${item.country}`,
   rating: item.rating,
   reviewCount: Math.max(1, Math.round(item.rating * 200)),
-  maxGuests: item.capacidad_maxima,
-  pricePerNight: Number(item.precio_desde),
-  currency: item.moneda,
-  image: item.imagen_principal_url || '/mock/property-1.svg',
-  imageAlt: item.nombre,
-  amenities: item.amenidades.map((amenity) => amenityLabelMap.value[amenity] || amenity.replaceAll('_', ' '))
+  maxGuests: item.max_capacity,
+  pricePerNight: Number(item.price_from),
+  currency: item.currency,
+  image: item.main_image_url || '/mock/property-1.svg',
+  imageAlt: item.name,
+  amenities: item.amenities.map((amenity) => amenityLabelMap.value[amenity] || amenity.replaceAll('_', ' '))
 })
 
 const getStarFillPercent = (rating: number, index: number) => {
@@ -327,13 +341,13 @@ const formatMoney = (amount: number, currency: string) => formatCurrency(amount,
 const formatRating = (rating: number) => rating.toFixed(1)
 
 const buildSearchRequest = (): SearchRequest => ({
-  ciudad: searchState.city.trim(),
+  city: searchState.city.trim(),
   check_in: searchState.checkIn,
   check_out: searchState.checkOut,
-  huespedes: Number(searchState.guests),
-  amenidades: selectedAmenities.value.length ? selectedAmenities.value : undefined,
-  precio_min: parseFiniteNumber(searchState.minPrice) ?? undefined,
-  precio_max: parseFiniteNumber(searchState.maxPrice) ?? undefined,
+  guests: Number(searchState.guests),
+  amenities: selectedAmenities.value.length ? selectedAmenities.value : undefined,
+  min_price: parseFiniteNumber(searchState.minPrice) ?? undefined,
+  max_price: parseFiniteNumber(searchState.maxPrice) ?? undefined,
   order_by:
     searchState.sort === 'price_asc' || searchState.sort === 'price_desc'
       ? 'price'
@@ -348,13 +362,13 @@ const buildSearchRequest = (): SearchRequest => ({
 const syncQueryParams = async (mode: 'push' | 'replace' = 'push') => {
   const routeLocation = {
     query: {
-      ciudad: searchState.city,
+      city: searchState.city,
       check_in: searchState.checkIn,
       check_out: searchState.checkOut,
-      huespedes: String(searchState.guests),
-      amenidades: selectedAmenities.value,
-      precio_min: searchState.minPrice || undefined,
-      precio_max: searchState.maxPrice || undefined,
+      guests: String(searchState.guests),
+      amenities: selectedAmenities.value,
+      min_price: searchState.minPrice || undefined,
+      max_price: searchState.maxPrice || undefined,
       sort: searchState.sort,
       page: String(currentPage.value)
     }
@@ -369,15 +383,15 @@ const syncQueryParams = async (mode: 'push' | 'replace' = 'push') => {
 }
 
 const hydrateFromQuery = () => {
-  const city = parseQueryString(route.query.ciudad, searchState.city)
+  const city = parseQueryString(route.query.city, searchState.city)
   const checkIn = parseQueryString(route.query.check_in, searchState.checkIn)
   const checkOut = parseQueryString(route.query.check_out, searchState.checkOut)
-  const guests = Math.max(1, parseQueryNumber(route.query.huespedes, searchState.guests))
-  const minPrice = normalizePriceInput(parseQueryString(route.query.precio_min, ''))
-  const maxPrice = normalizePriceInput(parseQueryString(route.query.precio_max, ''))
+  const guests = Math.max(1, parseQueryNumber(route.query.guests, searchState.guests))
+  const minPrice = normalizePriceInput(parseQueryString(route.query.min_price, ''))
+  const maxPrice = normalizePriceInput(parseQueryString(route.query.max_price, ''))
   const sort = parseQueryString(route.query.sort, searchState.sort)
   const page = Math.max(1, parseQueryNumber(route.query.page, 1))
-  const queryAmenities = parseQueryAmenities(route.query.amenidades)
+  const queryAmenities = parseQueryAmenities(route.query.amenities)
 
   searchState.city = city
   searchState.checkIn = checkIn
@@ -400,11 +414,11 @@ const runSearch = async (page: number, historyMode: 'push' | 'replace' = 'push')
   }
 
   try {
-    await syncQueryParams(historyMode)
     await search.searchProperties(buildSearchRequest())
     if (search.results.value?.pagination?.page) {
       currentPage.value = search.results.value.pagination.page
     }
+    await syncQueryParams(historyMode)
   } catch {
     // Error state is already handled by useSearch composable.
   }
@@ -419,6 +433,10 @@ const goToPage = async (page: number) => {
 }
 
 onMounted(async () => {
+  if (!hasInitialSearchQueryParams()) {
+    return
+  }
+
   hydrateFromQuery()
   await runSearch(currentPage.value, 'replace')
 })

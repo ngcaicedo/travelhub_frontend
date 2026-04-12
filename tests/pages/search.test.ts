@@ -42,21 +42,30 @@ describe('SearchPage', () => {
     expect(wrapper.find('form').exists()).toBe(true)
   })
 
-  it('runs initial search with default values', async () => {
+  it('does not run initial search without query params', async () => {
     await mountSuspended(SearchPage)
+
+    expect(mockSearchProperties).toHaveBeenCalledTimes(0)
+  })
+
+  it('runs search with default values after submit', async () => {
+    const wrapper = await mountSuspended(SearchPage)
+
+    mockSearchProperties.mockClear()
+    await wrapper.find('form').trigger('submit')
 
     expect(mockSearchProperties).toHaveBeenCalledTimes(1)
     const request = mockSearchProperties.mock.calls[0]?.[0]
     const checkInDate = request?.check_in ? new Date(`${request.check_in}T00:00:00`) : null
     const checkOutDate = request?.check_out ? new Date(`${request.check_out}T00:00:00`) : null
 
-    expect(request?.ciudad).toBe('Bogota')
+    expect(request?.city).toBe('Bogota')
     expect(request?.check_in).toMatch(/^\d{4}-\d{2}-\d{2}$/)
     expect(request?.check_out).toMatch(/^\d{4}-\d{2}-\d{2}$/)
     expect(checkInDate).not.toBeNull()
     expect(checkOutDate).not.toBeNull()
     expect(checkOutDate!.getTime()).toBeGreaterThan(checkInDate!.getTime())
-    expect(request?.huespedes).toBe(2)
+    expect(request?.guests).toBe(2)
     expect(request?.page).toBe(1)
     expect(request?.page_size).toBe(8)
   })
