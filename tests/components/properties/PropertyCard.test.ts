@@ -63,10 +63,38 @@ describe('PropertyCard', () => {
     expect(img.attributes('src')).toBe('https://example.com/test.jpg')
   })
 
-  it('has button element', async () => {
+  it('renders image with alt text', async () => {
+    const wrapper = await mountSuspended(PropertyCard, {
+      props: { property: mockProperty }
+    })
+    const img = wrapper.find('img')
+    expect(img.attributes('alt')).toBe('Test image')
+  })
+
+  it('has book now button', async () => {
     const wrapper = await mountSuspended(PropertyCard, {
       props: { property: mockProperty }
     })
     expect(wrapper.find('button').exists()).toBe(true)
+  })
+
+  it('card container is clickable', async () => {
+    const wrapper = await mountSuspended(PropertyCard, {
+      props: { property: mockProperty }
+    })
+    const card = wrapper.find('.group')
+    expect(card.exists()).toBe(true)
+    expect(card.classes()).toContain('cursor-pointer')
+  })
+
+  it('handles property without images gracefully', async () => {
+    const propertyNoImages: Property = {
+      ...mockProperty,
+      images: []
+    }
+    const wrapper = await mountSuspended(PropertyCard, {
+      props: { property: propertyNoImages }
+    })
+    expect(wrapper.find('img').exists()).toBe(false)
   })
 })
