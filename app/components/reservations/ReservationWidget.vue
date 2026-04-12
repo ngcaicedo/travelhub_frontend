@@ -154,7 +154,7 @@ watch(error, (newError) => {
 </script>
 
 <template>
-  <div class="bg-white rounded-lg border border-gray-200 p-6 sticky top-6 shadow-lg space-y-6">
+  <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-lg space-y-6">
     <!-- Price Header -->
     <div>
       <h3 class="text-3xl font-bold text-gray-900">

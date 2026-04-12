@@ -13,6 +13,9 @@
     "loadMore": "Load more",
     "loading": "Loading..."
   },
+  "nav": {
+    "home": "Home"
+  },
   "navigation": {
     "login": "Login",
     "checkout": "Checkout",
@@ -264,7 +267,15 @@
     },
     "bookNow": "Book now",
     "capacity": "Capacity",
+    "host": "Host",
+    "travelHubPlus": "TravelHub Plus Property",
+    "travelHubPlusDesc": "Verified for quality, comfort, and premium service.",
+    "sortBy": "Sort by",
+    "mostRecent": "Most Recent",
+    "travelerProtection": "Traveler Protection included. Full refund if canceled within 48 hours of booking.",
+    "reportListing": "Report this listing",
     "morePhotos": "+{count} photos",
+    "showAllPhotos": "Show all photos",
     "policies": {
       "flexible": {
         "label": "Flexible",

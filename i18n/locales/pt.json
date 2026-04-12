@@ -13,6 +13,9 @@
     "loadMore": "Carregar mais",
     "loading": "Carregando..."
   },
+  "nav": {
+    "home": "Início"
+  },
   "navigation": {
     "login": "Entrar",
     "checkout": "Pagamento",
@@ -265,7 +268,15 @@
     },
     "bookNow": "Reserve agora",
     "capacity": "Capacidade",
+    "host": "Anfitrião",
+    "travelHubPlus": "Propriedade TravelHub Plus",
+    "travelHubPlusDesc": "Verificada por qualidade, conforto e serviço premium.",
+    "sortBy": "Ordenar por",
+    "mostRecent": "Mais recentes",
+    "travelerProtection": "Proteção ao viajante incluída. Reembolso total se cancelado dentro de 48 horas da reserva.",
+    "reportListing": "Denunciar este anúncio",
     "morePhotos": "+{count} fotos",
+    "showAllPhotos": "Ver todas as fotos",
     "policies": {
       "flexible": {
         "label": "Flexível",

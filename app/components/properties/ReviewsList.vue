@@ -22,14 +22,14 @@ const loadMore = () => {
 
 <template>
   <section class="space-y-6">
-    <!-- Rating Summary -->
-    <div class="bg-gray-50 rounded-lg p-6">
+    <!-- Rating Summary + Sort -->
+    <div class="flex items-center justify-between border-t border-gray-200 pt-6">
       <div class="flex items-center gap-4">
-        <div class="text-center">
-          <div class="text-5xl font-bold text-gray-900">
-            {{ props.rating.toFixed(2) }}
-          </div>
-          <div class="flex gap-1 mt-2 justify-center">
+        <div class="text-5xl font-extrabold text-gray-900">
+          {{ props.rating.toFixed(2) }}
+        </div>
+        <div>
+          <div class="flex gap-0.5">
             <UIcon
               v-for="i in 5"
               :key="i"
@@ -37,15 +37,19 @@ const loadMore = () => {
               class="w-4 h-4 fill-yellow-400 text-yellow-400"
             />
           </div>
-          <p class="text-sm text-gray-600 mt-2">
+          <p class="text-sm font-semibold text-gray-900 mt-1">
             {{ props.reviewCount }} {{ t('common.reviews') }}
           </p>
         </div>
       </div>
+      <span class="text-sm text-slate-500">
+        {{ t('property.sortBy') }}:
+        <span class="text-travelhub-500 font-medium">{{ t('property.mostRecent') }}</span>
+      </span>
     </div>
 
-    <!-- Reviews List -->
-    <div class="space-y-4">
+    <!-- Reviews Grid (2 columns) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div
         v-for="review in displayedReviews"
         :key="review.id"
