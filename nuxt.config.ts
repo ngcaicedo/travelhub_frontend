@@ -25,6 +25,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
+      paymentsApiBase: process.env.NUXT_PUBLIC_PAYMENTS_API_BASE || 'http://localhost:8003',
       usersApiUrl: process.env.USERS_API_URL || 'http://localhost:8000',
       securityApiUrl: process.env.SECURITY_API_URL || 'http://localhost:8001',
       propertiesApiUrl: process.env.PROPERTIES_API_URL || 'http://localhost:8004',

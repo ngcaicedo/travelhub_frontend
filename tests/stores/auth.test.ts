@@ -1,11 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
+import { mockNuxtImport } from '@nuxt/test-utils/runtime'
 import { useAuthStore } from '~/stores/auth'
 import * as authServiceModule from '~/services/auth'
+
+const { navigateToMock } = vi.hoisted(() => ({
+  navigateToMock: vi.fn().mockResolvedValue(undefined)
+}))
+
+mockNuxtImport('navigateTo', () => navigateToMock)
 
 describe('useAuthStore', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
+    navigateToMock.mockClear()
   })
 
   it('initializes with empty token and role', () => {
@@ -29,13 +37,10 @@ describe('useAuthStore', () => {
     const store = useAuthStore()
     const loginSpy = vi.spyOn(authServiceModule.authService, 'login').mockResolvedValue({ message: 'OTP sent' })
 
-    try {
-      await store.login('test@example.com', 'password123')
-    } catch {
-      // navigateTo throws in test environment, which is expected
-    }
+    await store.login('test@example.com', 'password123')
 
     expect(loginSpy).toHaveBeenCalledWith('test@example.com', 'password123')
+    expect(navigateToMock).toHaveBeenCalledWith('/verify-otp?email=test%40example.com')
   })
 
   it('logout clears token and role', async () => {
@@ -43,13 +48,10 @@ describe('useAuthStore', () => {
     store.token = 'test-token'
     store.role = 'traveler'
 
-    try {
-      await store.logout()
-    } catch {
-      // navigateTo throws in test environment, which is expected
-    }
+    await store.logout()
 
     expect(store.token).toBeNull()
     expect(store.role).toBeNull()
+    expect(navigateToMock).toHaveBeenCalledWith('/login')
   })
 })
