@@ -21,6 +21,7 @@ interface Props {
 const { t, locale } = useI18n()
 const router = useRouter()
 const { createReservation, loading, error } = useReservations()
+const reservationLockDurationMs = 15 * 60 * 1000
 
 const props = defineProps<Props>()
 
@@ -131,9 +132,19 @@ const handleSubmit = async () => {
     }
 
     const response = await createReservation(reservationData)
+    const lockExpiresAt = Date.now() + reservationLockDurationMs
 
-    // Navegar a página de confirmación
-    await router.push(`/reservations/${response.id}`)
+    // Redirigir al checkout para completar el pago con ventana de bloqueo.
+    await router.push({
+      path: '/checkout',
+      query: {
+        reservationId: response.id,
+        travelerId: mockUserId,
+        checkInDate: checkInDate.value,
+        checkOutDate: checkOutDate.value,
+        lockExpiresAt: String(lockExpiresAt)
+      }
+    })
   } catch (err: unknown) {
     const statusCode = (err as { statusCode?: number }).statusCode
 
