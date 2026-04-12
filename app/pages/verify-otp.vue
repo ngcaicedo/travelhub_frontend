@@ -61,9 +61,10 @@ async function onSubmit() {
         @close="error = ''"
       />
 
-      <form
+      <UForm
+        :state="{ otp }"
         class="space-y-6"
-        @submit.prevent="onSubmit"
+        @submit="onSubmit"
       >
         <UFormField :label="$t('auth.verifyOtp.otpLabel')">
           <UInput
@@ -86,7 +87,7 @@ async function onSubmit() {
           :loading="isLoading"
           data-cy="otp-submit"
         />
-      </form>
+      </UForm>
     </div>
   </div>
 </template>

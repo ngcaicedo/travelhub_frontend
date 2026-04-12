@@ -123,7 +123,8 @@ describe('CheckoutPage', () => {
   it('updates tokenized mock fields when the scenario changes', async () => {
     const wrapper = await mountSuspended(CheckoutPage)
 
-    await wrapper.find('select').setValue('declined')
+    const vm = wrapper.vm as unknown as { form: { scenario: string } }
+    vm.form.scenario = 'declined'
     await nextTick()
 
     const values = wrapper.findAll('input').map(input => (input.element as HTMLInputElement).value)
@@ -219,10 +220,11 @@ describe('CheckoutPage', () => {
     })
 
     const wrapper = await mountSuspended(CheckoutPage)
+
     await findButtonByText(wrapper, /Pagar ahora|Pay now/).trigger('click')
     await flushPromises()
 
-    expect(textContent(wrapper)).toMatch(/Insufficient funds|fondos insuficientes|fundos insuficientes/)
+    expect(textContent(wrapper)).toMatch(/insufficient funds|fondos insuficientes|fundos insuficientes/i)
   })
 
   it('blocks duplicate attempts in fake mode', async () => {

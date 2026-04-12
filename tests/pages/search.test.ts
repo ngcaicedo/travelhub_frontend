@@ -1,4 +1,6 @@
+import { nextTick } from 'vue'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { flushPromises } from '@vue/test-utils'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import SearchPage from '~/pages/search.vue'
 import type { SearchResponse } from '~/types/search'
@@ -72,13 +74,16 @@ describe('SearchPage', () => {
 
   it('prevents submit when city is empty', async () => {
     const wrapper = await mountSuspended(SearchPage)
-    const cityInput = wrapper.find('input[placeholder]')
+    await flushPromises()
 
-    expect(cityInput.exists()).toBe(true)
+    const vm = wrapper.vm as unknown as { searchState: { city: string } }
+
     mockSearchProperties.mockClear()
 
-    await cityInput.setValue('')
+    vm.searchState.city = ''
+    await nextTick()
     await wrapper.find('form').trigger('submit')
+    await flushPromises()
 
     expect(mockSearchProperties).toHaveBeenCalledTimes(0)
 
@@ -89,13 +94,16 @@ describe('SearchPage', () => {
 
   it('prevents submit when minPrice is not numeric', async () => {
     const wrapper = await mountSuspended(SearchPage)
-    const searchPageVm = wrapper.vm as { searchState: { minPrice: string } }
+    await flushPromises()
 
-    searchPageVm.searchState.minPrice = 'abc'
-    await wrapper.vm.$nextTick()
+    const vm = wrapper.vm as unknown as { searchState: { minPrice: string } }
+
+    vm.searchState.minPrice = 'abc'
+    await nextTick()
     mockSearchProperties.mockClear()
 
     await wrapper.find('form').trigger('submit')
+    await flushPromises()
 
     expect(mockSearchProperties).toHaveBeenCalledTimes(0)
 

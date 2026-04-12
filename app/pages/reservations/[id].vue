@@ -111,7 +111,7 @@ definePageMeta({
         v-if="loading"
         class="py-14 text-center"
       >
-        <USpin class="mx-auto mb-4" />
+        <UIcon name="i-lucide-loader-circle" class="mx-auto mb-4 size-8 animate-spin text-travelhub-500" />
         <p class="text-slate-600">
           {{ t('common.loading') }}
         </p>
