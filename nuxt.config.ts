@@ -11,7 +11,7 @@ export default defineNuxtConfig({
   ssr: false,
 
   devtools: {
-    enabled: true
+    enabled: process.env.NUXT_DEVTOOLS !== 'false'
   },
   app: {
     head: {
