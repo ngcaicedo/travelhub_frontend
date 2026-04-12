@@ -200,7 +200,7 @@
       "dates": "Dates",
       "guests": "Guests",
       "breakdown": "Price breakdown",
-      "total": "Total (USD)",
+      "total": "Total",
       "footer": "No hidden fees. Free cancellation until Oct 5."
     },
     "actions": {
@@ -225,13 +225,15 @@
     "booking": {
       "property": "Renaissance Estate & Private Vineyard",
       "location": "Tuscany, Italy",
+      "rating": "4.95",
       "reviews": "{count} reviews",
-      "dates": "Oct 12 - Oct 17",
       "guests": "{count} guests",
-      "line1": "Nightly rate x 5 nights",
-      "line2": "Cleaning fee",
-      "line3": "TravelHub service fee",
-      "line4": "Local taxes (VAT 10%)"
+      "lines": {
+        "accommodation": "Accommodation ({nights} nights)",
+        "cleaning": "Cleaning fee",
+        "service": "TravelHub service fee",
+        "taxes": "Local taxes"
+      }
     }
   },
   "property": {

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { nextTick, onBeforeUnmount, onMounted, shallowRef, watch } from 'vue'
 import {
+  computePaymentBreakdown,
   normalizeCheckoutSession,
   normalizeCheckoutSessionStatus,
   normalizeFinalizePaymentResponse,
@@ -35,10 +36,12 @@ const localeMap: Record<string, string> = {
   en: 'en-US',
   pt: 'pt-BR'
 }
+const stripePollMaxAttempts = 6
+const stripePollIntervalMs = 1000
 
 const form = reactive({
   scenario: 'success' as ScenarioKind,
-  cardholderName: 'John Doe',
+  cardholderName: '',
   cardNumber: scenarioPresets.success.cardNumber,
   expiration: scenarioPresets.success.expiration,
   cvv: scenarioPresets.success.cvv,
@@ -97,6 +100,33 @@ async function goToPendingVerification(paymentTransactionId: string) {
     query: { transactionId: paymentTransactionId }
   })
 }
+
+const stayNights = computed(() => {
+  const start = new Date(`${form.checkInDate}T00:00:00`)
+  const end = new Date(`${form.checkOutDate}T00:00:00`)
+
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    return 0
+  }
+
+  const diffMs = end.getTime() - start.getTime()
+  return Math.max(1, Math.round(diffMs / 86400000))
+})
+
+const bookingBreakdown = computed(() => computePaymentBreakdown(form.amountInCents).map(line => ({
+  label: t(`payments.booking.lines.${line.key}`, { nights: stayNights.value }),
+  amount: formatMoney(line.amountInCents, form.currency)
+})))
+
+const booking = computed(() => ({
+  property: t('payments.booking.property'),
+  location: t('payments.booking.location'),
+  rating: t('payments.booking.rating'),
+  reviews: t('payments.booking.reviews', { count: 128 }),
+  dates: `${formatStayDate(form.checkInDate)} - ${formatStayDate(form.checkOutDate)}`,
+  guests: t('payments.booking.guests', { count: 4 }),
+  lines: bookingBreakdown.value
+}))
 
 const isStripeMode = computed(() => paymentsConfig.value.provider === 'stripe_test' && paymentsConfig.value.stripe_enabled)
 const isFakeMode = computed(() => !complianceMode.value && !configLoading.value && !isStripeMode.value)
@@ -195,6 +225,10 @@ function formatStayDate(value: string) {
 }
 
 function buildIdempotencyKey() {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return `checkout-${crypto.randomUUID()}`
+  }
+
   return `checkout-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
 }
 function detailMessage(detail: unknown) {
@@ -331,7 +365,6 @@ function resolveRequestErrorDescription(detail: unknown) {
   ) {
     return { descriptionKey: 'payments.feedback.backendUnavailableDescription' }
   }
-
   if (isInsufficientFunds(message)) return { descriptionKey: 'payments.feedback.failureInsufficient' }
   if (isCardDeclined(message)) return { descriptionKey: 'payments.feedback.failureDeclined' }
 
@@ -354,6 +387,36 @@ function resolveRequestErrorDescription(detail: unknown) {
   return { descriptionKey: 'payments.feedback.requestErrorDescription' }
 }
 
+function resolveTransportErrorDescription(error: unknown) {
+  const statusCode = (error as { statusCode?: number })?.statusCode
+  const causeCode = (error as { cause?: { code?: string } })?.cause?.code?.toLowerCase() || ''
+  const message = (
+    (error as { message?: string })?.message
+    || (error as { statusMessage?: string })?.statusMessage
+    || ''
+  ).toLowerCase()
+
+  if (message.includes('invalid_backend_response') || statusCode === 502) {
+    return { descriptionKey: 'payments.feedback.invalidResponseDescription' }
+  }
+
+  if (causeCode.includes('timeout') || message.includes('timeout') || message.includes('timed out')) {
+    return { descriptionKey: 'payments.feedback.timeoutDescription' }
+  }
+
+  if (
+    causeCode.includes('econnrefused')
+    || causeCode.includes('fetch')
+    || message.includes('fetch failed')
+    || message.includes('network error')
+    || message.includes('failed to fetch')
+  ) {
+    return { descriptionKey: 'payments.feedback.backendUnavailableDescription' }
+  }
+
+  return null
+}
+
 function eventLabel(type: string) {
   return ({
     'payment.succeeded': t('payments.events.labels.paymentSucceeded'),
@@ -373,29 +436,20 @@ function eventDetail(event: PaymentEvent) {
   return t('payments.events.details.recorded')
 }
 
-const booking = computed(() => ({
-  property: t('payments.booking.property'),
-  location: t('payments.booking.location'),
-  rating: '4.95',
-  reviews: t('payments.booking.reviews', { count: 128 }),
-  dates: `${formatStayDate(form.checkInDate)} - ${formatStayDate(form.checkOutDate)}`,
-  guests: t('payments.booking.guests', { count: 4 }),
-  lines: [
-    { label: t('payments.booking.line1'), amount: formatMoney(225000, form.currency) },
-    { label: t('payments.booking.line2'), amount: formatMoney(12000, form.currency) },
-    { label: t('payments.booking.line3'), amount: formatMoney(24500, form.currency) },
-    { label: t('payments.booking.line4'), amount: formatMoney(26150, form.currency) }
-  ]
-}))
-
 function handleError(error: unknown) {
   const detail = (error as { data?: { detail?: unknown } })?.data?.detail
   const detailText = typeof detail === 'string' ? detail : (isDuplicate(detail) ? detail.message : '')
   const normalizedDetail = detailText.toLowerCase()
   const isDuplicateLike = isDuplicate(detail) || normalizedDetail.includes('duplicate') || normalizedDetail.includes('idempot')
 
-  feedback.value = isDuplicateLike
-    ? { tone: 'warning', titleKey: 'payments.feedback.duplicateTitle', descriptionKey: 'payments.feedback.duplicateDescription' }
+  if (isDuplicateLike) {
+    feedback.value = { tone: 'warning', titleKey: 'payments.feedback.duplicateTitle', descriptionKey: 'payments.feedback.duplicateDescription' }
+    return
+  }
+
+  const transportDescription = resolveTransportErrorDescription(error)
+  feedback.value = transportDescription
+    ? { tone: 'error', titleKey: 'payments.feedback.requestErrorTitle', ...transportDescription }
     : { tone: 'error', titleKey: 'payments.feedback.requestErrorTitle', ...resolveRequestErrorDescription(detail) }
 }
 
@@ -561,7 +615,7 @@ async function submitStripe() {
     feedback.value = { tone: 'info', titleKey: 'payments.integration.requiresActionTitle', descriptionKey: 'payments.integration.requiresActionDescription' }
     const nextAction = await stripeClient.value!.handleNextAction({ clientSecret: finalized.client_secret })
     if (nextAction.error?.message) throw createError({ statusCode: 400, data: { detail: nextAction.error.message } })
-    for (let i = 0; i < 6; i += 1) {
+    for (let i = 0; i < stripePollMaxAttempts; i += 1) {
       const status = normalizeCheckoutSessionStatus(await $fetch(`${paymentsApiBase}/checkout/${stripeSession.value!.payment_transaction_id}`, { timeout: requestTimeoutMs }))
       if (status?.payment_id) {
         await loadPaymentAndEvents(status.payment_id)
@@ -570,7 +624,7 @@ async function submitStripe() {
         }
         return
       }
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      await new Promise(resolve => setTimeout(resolve, stripePollIntervalMs))
     }
     await goToPendingVerification(stripeSession.value!.payment_transaction_id)
   }

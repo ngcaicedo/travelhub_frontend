@@ -201,7 +201,7 @@
                                      "dates":  "Datas",
                                      "guests":  "Hóspedes",
                                      "breakdown":  "Detalhamento de preço",
-                                     "total":  "Total (USD)",
+                                     "total":  "Total",
                                      "footer":  "Sem taxas ocultas. Cancelamento gratuito até 5 de outubro."
                                  },
                      "actions":  {
@@ -226,13 +226,15 @@
                      "booking":  {
                                       "property":  "Renaissance Estate \u0026 Private Vineyard",
                                      "location":  "Toscana, Itália",
+                                     "rating":  "4.95",
                                      "reviews":  "{count} avaliações",
-                                     "dates":  "12 out - 17 out",
                                      "guests":  "{count} hóspedes",
-                                     "line1":  "Diária x 5 noites",
-                                     "line2":  "Taxa de limpeza",
-                                     "line3":  "Taxa de serviço TravelHub",
-                                     "line4":  "Impostos locais (IVA 10%)"
+                                     "lines":  {
+                                                   "accommodation":  "Hospedagem ({nights} noites)",
+                                                   "cleaning":  "Taxa de limpeza",
+                                                   "service":  "Taxa de serviço TravelHub",
+                                                   "taxes":  "Impostos locais"
+                                               }
                                  }
                  },
     "property":  {
