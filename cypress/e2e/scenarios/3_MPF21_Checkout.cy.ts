@@ -1,8 +1,15 @@
-import { CheckoutPage } from '../../pages/CheckoutPage'
+type FailureScenario = {
+  transactionId: string
+  confirmationTokenId: string
+  paymentId: string
+  paymentIntentId: string
+  finalizeError: string
+  paymentFailureReason: string
+  eventFailureReason: string
+  expectedFeedback: string
+}
 
-const checkoutPage = new CheckoutPage()
-
-function stubStripeClient(win: Cypress.AUTWindow) {
+function stubStripeClient(win: Cypress.AUTWindow, confirmationTokenId: string) {
   const stripeWindow = win as Cypress.AUTWindow & {
     Stripe?: () => {
       elements: () => {
@@ -28,100 +35,152 @@ function stubStripeClient(win: Cypress.AUTWindow) {
       })
     }),
     createConfirmationToken: async () => ({
-      confirmationToken: { id: 'ctoken_cypress_insufficient' }
+      confirmationToken: { id: confirmationTokenId }
     }),
     handleNextAction: async () => ({})
   })
 }
 
+function registerStripeFailureScenario(scenario: FailureScenario) {
+  cy.intercept('GET', '**/api/payments/config', {
+    provider: 'stripe_test',
+    stripe_enabled: true,
+    publishable_key: 'pk_test_cypress'
+  }).as('getPaymentsConfig')
+
+  cy.intercept('POST', '**/api/payments/create-intent', {
+    statusCode: 201,
+    body: {
+      payment_transaction_id: scenario.transactionId,
+      amount_in_cents: 287650,
+      currency: 'COP',
+      publishable_key: 'pk_test_cypress',
+      stripe_enabled: true
+    }
+  }).as('createIntent')
+
+  cy.intercept('POST', '**/api/payments/finalize', (req) => {
+    expect(req.body).to.deep.equal({
+      payment_transaction_id: scenario.transactionId,
+      confirmation_token_id: scenario.confirmationTokenId
+    })
+
+    req.reply({
+      statusCode: 200,
+      body: {
+        status: 'failed',
+        payment_id: scenario.paymentId,
+        payment_intent_id: scenario.paymentIntentId,
+        client_secret: null,
+        error: scenario.finalizeError
+      }
+    })
+  }).as('finalizePayment')
+
+  cy.intercept('GET', `**/api/payments/${scenario.paymentId}`, {
+    statusCode: 200,
+    body: {
+      payment_id: scenario.paymentId,
+      reservation_id: '11111111-1111-1111-1111-111111111111',
+      status: 'failed',
+      amount_in_cents: 287650,
+      currency: 'COP',
+      gateway_charge_id: scenario.paymentIntentId,
+      receipt_id: null,
+      receipt_number: null,
+      failure_reason: scenario.paymentFailureReason
+    }
+  }).as('getFailedPayment')
+
+  cy.intercept('GET', `**/api/payments/${scenario.paymentId}/events`, {
+    statusCode: 200,
+    body: [
+      {
+        event_id: `evt-${scenario.paymentId}-failed`,
+        payment_id: scenario.paymentId,
+        event_type: 'payment.failed',
+        payload: {
+          failure_reason: scenario.eventFailureReason
+        },
+        created_at: '2026-04-12T12:00:00Z'
+      }
+    ]
+  }).as('getFailedPaymentEvents')
+}
+
+function runStripeFailureScenario(scenario: FailureScenario) {
+  cy.visit('/checkout', {
+    onBeforeLoad(win) {
+      stubStripeClient(win, scenario.confirmationTokenId)
+    }
+  })
+
+  cy.wait('@getPaymentsConfig')
+
+  cy.get('[data-cy=checkout-card-number]').should('not.exist')
+  cy.get('[data-cy=checkout-token]').should('not.exist')
+  cy.get('[data-cy=checkout-stripe-element]').should('exist')
+
+  cy.get('[data-cy=checkout-pay-now]').click()
+
+  cy.wait('@createIntent')
+  cy.wait('@finalizePayment')
+  cy.wait('@getFailedPayment')
+  cy.wait('@getFailedPaymentEvents')
+
+  cy.get('[data-cy=checkout-feedback]')
+    .should('contain.text', scenario.expectedFeedback)
+}
+
 describe('MPF-21 | Checkout seguro y tokenizacion', () => {
   beforeEach(() => {
-    cy.intercept('GET', '**/api/payments/config', {
-      provider: 'stripe_test',
-      stripe_enabled: true,
-      publishable_key: 'pk_test_cypress'
-    }).as('getPaymentsConfig')
-
-    cy.intercept('POST', '**/api/payments/create-intent', {
-      statusCode: 201,
-      body: {
-        payment_transaction_id: 'txn-stripe-insufficient',
-        amount_in_cents: 287650,
-        currency: 'COP',
-        publishable_key: 'pk_test_cypress',
-        stripe_enabled: true
-      }
-    }).as('createIntent')
-
-    cy.intercept('POST', '**/api/payments/finalize', (req) => {
-      expect(req.body).to.have.keys(['payment_transaction_id', 'confirmation_token_id'])
-      expect(req.body).to.have.property('payment_transaction_id', 'txn-stripe-insufficient')
-      expect(req.body).to.have.property('confirmation_token_id', 'ctoken_cypress_insufficient')
-      expect(req.body).not.to.have.property('card_number')
-      expect(req.body).not.to.have.property('cvv')
-      expect(req.body).not.to.have.property('expiration')
-
-      req.reply({
-        statusCode: 200,
-        body: {
-          status: 'failed',
-          payment_id: 'pay-stripe-insufficient',
-          payment_intent_id: 'pi_stripe_insufficient',
-          client_secret: null,
-          error: 'insufficient_funds'
-        }
-      })
-    }).as('finalizePayment')
-
-    cy.intercept('GET', '**/api/payments/pay-stripe-insufficient', {
-      statusCode: 200,
-      body: {
-        payment_id: 'pay-stripe-insufficient',
-        reservation_id: '11111111-1111-1111-1111-111111111111',
-        status: 'failed',
-        amount_in_cents: 287650,
-        currency: 'COP',
-        gateway_charge_id: 'pi_stripe_insufficient',
-        receipt_id: null,
-        receipt_number: null,
-        failure_reason: 'card_declined'
-      }
-    }).as('getFailedPayment')
-
-    cy.intercept('GET', '**/api/payments/pay-stripe-insufficient/events', {
-      statusCode: 200,
-      body: [
-        {
-          event_id: 'evt-payment-failed',
-          payment_id: 'pay-stripe-insufficient',
-          event_type: 'payment.failed',
-          payload: {
-            failure_reason: 'insufficient_funds'
-          },
-          created_at: '2026-04-12T12:00:00Z'
-        }
-      ]
-    }).as('getFailedPaymentEvents')
   })
 
   it('usa Stripe en modo seguro y muestra el mensaje de fondos insuficientes', () => {
-    checkoutPage.visit({
-      onBeforeLoad(win) {
-        stubStripeClient(win)
-      }
+    registerStripeFailureScenario({
+      transactionId: 'txn-stripe-insufficient',
+      confirmationTokenId: 'ctoken_cypress_insufficient',
+      paymentId: 'pay-stripe-insufficient',
+      paymentIntentId: 'pi_stripe_insufficient',
+      finalizeError: 'insufficient_funds',
+      paymentFailureReason: 'card_declined',
+      eventFailureReason: 'insufficient_funds',
+      expectedFeedback: 'fondos insuficientes'
     })
 
-    checkoutPage.manualCardNumberField().should('not.exist')
-    checkoutPage.manualTokenField().should('not.exist')
-    checkoutPage.secureElement().should('exist')
+    runStripeFailureScenario({
+      transactionId: 'txn-stripe-insufficient',
+      confirmationTokenId: 'ctoken_cypress_insufficient',
+      paymentId: 'pay-stripe-insufficient',
+      paymentIntentId: 'pi_stripe_insufficient',
+      finalizeError: 'insufficient_funds',
+      paymentFailureReason: 'card_declined',
+      eventFailureReason: 'insufficient_funds',
+      expectedFeedback: 'fondos insuficientes'
+    })
+  })
 
-    checkoutPage.clickPayNow()
+  it('usa Stripe en modo seguro y muestra el mensaje de tarjeta rechazada', () => {
+    registerStripeFailureScenario({
+      transactionId: 'txn-stripe-declined',
+      confirmationTokenId: 'ctoken_cypress_declined',
+      paymentId: 'pay-stripe-declined',
+      paymentIntentId: 'pi_stripe_declined',
+      finalizeError: 'card_declined',
+      paymentFailureReason: 'card_declined',
+      eventFailureReason: 'card_declined',
+      expectedFeedback: 'tarjeta fue rechazada'
+    })
 
-    cy.wait('@createIntent')
-    cy.wait('@finalizePayment')
-    cy.wait('@getFailedPayment')
-    cy.wait('@getFailedPaymentEvents')
-
-    checkoutPage.feedback().should('contain.text', 'fondos insuficientes')
+    runStripeFailureScenario({
+      transactionId: 'txn-stripe-declined',
+      confirmationTokenId: 'ctoken_cypress_declined',
+      paymentId: 'pay-stripe-declined',
+      paymentIntentId: 'pi_stripe_declined',
+      finalizeError: 'card_declined',
+      paymentFailureReason: 'card_declined',
+      eventFailureReason: 'card_declined',
+      expectedFeedback: 'tarjeta fue rechazada'
+    })
   })
 })
