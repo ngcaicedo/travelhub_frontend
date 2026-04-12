@@ -288,7 +288,11 @@ function isCardDeclined(value: string | null | undefined) {
 function isInsufficientFunds(value: string | null | undefined) {
   if (!value) return false
   const normalized = value.toLowerCase()
-  return localizedMatchers('payments.detection.insufficientFunds').some(matcher => normalized.includes(matcher))
+  const matchers = localizedMatchers('payments.detection.insufficientFunds')
+  if (matchers.length > 0) {
+    return matchers.some(matcher => normalized.includes(matcher))
+  }
+  return normalized.includes('insufficient_funds') || normalized.includes('insufficient funds')
 }
 
 function isTranslationKey(value: string) {
@@ -738,82 +742,104 @@ async function simulateDuplicate() {
         </div>
 
         <div class="grid gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:grid-cols-2">
-          <label
+          <UFormField
             v-if="isFakeMode"
-            class="space-y-2 text-sm"
-          ><span>{{ t('payments.scenarioLabel') }}</span><select
-            v-model="form.scenario"
-            class="w-full rounded-xl border border-slate-200 px-3 py-2"
-          ><option
-            v-for="option in scenarioOptions"
-            :key="option.value"
-            :value="option.value"
-          >{{ option.label }}</option></select></label>
-          <label
+            :label="t('payments.scenarioLabel')"
+          >
+            <USelect
+              v-model="form.scenario"
+              :items="scenarioOptions"
+              size="lg"
+            />
+          </UFormField>
+          <UFormField
             v-if="!configLoading"
-            class="space-y-2 text-sm"
-          ><span>{{ t('payments.form.cardholder') }}</span><input
-            v-model="form.cardholderName"
-            type="text"
-            :placeholder="t('payments.form.cardholderPlaceholder')"
-            class="w-full rounded-xl border border-slate-200 px-3 py-2"
-          ></label>
+            :label="t('payments.form.cardholder')"
+          >
+            <UInput
+              v-model="form.cardholderName"
+              type="text"
+              :placeholder="t('payments.form.cardholderPlaceholder')"
+              size="lg"
+            />
+          </UFormField>
           <template v-if="isFakeMode">
-            <label class="space-y-2 text-sm"><span>{{ t('payments.form.cardNumber') }}</span><input
-              v-model="form.cardNumber"
-              type="text"
-              class="w-full rounded-xl border border-slate-200 px-3 py-2"
-            ></label>
+            <UFormField :label="t('payments.form.cardNumber')">
+              <UInput
+                v-model="form.cardNumber"
+                type="text"
+                size="lg"
+              />
+            </UFormField>
             <div class="grid grid-cols-2 gap-4">
-              <label class="space-y-2 text-sm"><span>{{ t('payments.form.expiration') }}</span><input
-                v-model="form.expiration"
-                type="text"
-                class="w-full rounded-xl border border-slate-200 px-3 py-2"
-              ></label>
-              <label class="space-y-2 text-sm"><span>{{ t('payments.form.cvv') }}</span><input
-                v-model="form.cvv"
-                type="text"
-                class="w-full rounded-xl border border-slate-200 px-3 py-2"
-              ></label>
+              <UFormField :label="t('payments.form.expiration')">
+                <UInput
+                  v-model="form.expiration"
+                  type="text"
+                  size="lg"
+                />
+              </UFormField>
+              <UFormField :label="t('payments.form.cvv')">
+                <UInput
+                  v-model="form.cvv"
+                  type="text"
+                  size="lg"
+                />
+              </UFormField>
             </div>
-            <label class="space-y-2 text-sm md:col-span-2"><span>{{ t('payments.form.token') }}</span><input
-              v-model="form.paymentToken"
-              type="text"
-              class="w-full rounded-xl border border-slate-200 px-3 py-2"
-            ></label>
+            <UFormField :label="t('payments.form.token')" class="md:col-span-2">
+              <UInput
+                v-model="form.paymentToken"
+                type="text"
+                size="lg"
+              />
+            </UFormField>
           </template>
-          <label class="space-y-2 text-sm"><span>{{ t('payments.form.reservationId') }}</span><input
-            v-model="form.reservationId"
-            type="text"
-            class="w-full rounded-xl border border-slate-200 px-3 py-2"
-          ></label>
-          <label class="space-y-2 text-sm"><span>{{ t('payments.form.travelerId') }}</span><input
-            v-model="form.travelerId"
-            type="text"
-            class="w-full rounded-xl border border-slate-200 px-3 py-2"
-          ></label>
-          <label class="space-y-2 text-sm"><span>{{ t('payments.form.amount') }}</span><input
-            v-model.number="form.amountInCents"
-            type="number"
-            min="1"
-            class="w-full rounded-xl border border-slate-200 px-3 py-2"
-          ></label>
-          <label class="space-y-2 text-sm"><span>{{ t('payments.form.currency') }}</span><input
-            v-model="form.currency"
-            type="text"
-            maxlength="3"
-            class="w-full rounded-xl border border-slate-200 px-3 py-2 uppercase"
-          ></label>
-          <label class="space-y-2 text-sm"><span>{{ t('payments.form.checkInDate') }}</span><input
-            v-model="form.checkInDate"
-            type="date"
-            class="w-full rounded-xl border border-slate-200 px-3 py-2"
-          ></label>
-          <label class="space-y-2 text-sm"><span>{{ t('payments.form.checkOutDate') }}</span><input
-            v-model="form.checkOutDate"
-            type="date"
-            class="w-full rounded-xl border border-slate-200 px-3 py-2"
-          ></label>
+          <UFormField :label="t('payments.form.reservationId')">
+            <UInput
+              v-model="form.reservationId"
+              type="text"
+              size="lg"
+            />
+          </UFormField>
+          <UFormField :label="t('payments.form.travelerId')">
+            <UInput
+              v-model="form.travelerId"
+              type="text"
+              size="lg"
+            />
+          </UFormField>
+          <UFormField :label="t('payments.form.amount')">
+            <UInput
+              v-model.number="form.amountInCents"
+              type="number"
+              min="1"
+              size="lg"
+            />
+          </UFormField>
+          <UFormField :label="t('payments.form.currency')">
+            <UInput
+              v-model="form.currency"
+              type="text"
+              maxlength="3"
+              class="uppercase"
+              size="lg"
+            />
+          </UFormField>
+          <UFormField :label="t('payments.form.checkInDate')">
+            <UInput
+              v-model="form.checkInDate"
+              type="date"
+              size="lg"
+            />
+          </UFormField>
+          <UFormField :label="t('payments.form.checkOutDate')">
+            <UInput
+              v-model="form.checkOutDate"
+              type="date"
+              size="lg"
+            />
+          </UFormField>
         </div>
 
         <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -826,15 +852,15 @@ async function simulateDuplicate() {
                 {{ t('payments.securityNotice') }}
               </p>
             </div>
-            <button
+            <UButton
               v-if="isStripeMode"
-              type="button"
-              class="rounded-full border border-blue-200 px-4 py-2 text-sm font-medium text-blue-700"
+              variant="outline"
+              color="primary"
+              class="rounded-full"
               :disabled="stripeLoading || processing"
-              @click="prepareStripe"
-            >
-              {{ stripeReady ? t('payments.integration.sessionReady') : t('payments.actions.prepareSecureForm') }}
-            </button>
+              :label="stripeReady ? t('payments.integration.sessionReady') : t('payments.actions.prepareSecureForm')"
+              @click="() => { prepareStripe() }"
+            />
           </div>
           <p class="mt-4 text-sm text-slate-500">
             {{ isStripeMode ? t('payments.integration.stripeFieldHint') : (complianceMode ? t('payments.compliance.strictModeHint') : t('payments.tokenHint')) }}
@@ -892,23 +918,21 @@ async function simulateDuplicate() {
           </div>
 
           <div class="mt-6 flex flex-wrap gap-3">
-            <button
-              type="button"
-              class="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white disabled:bg-blue-300"
+            <UButton
+              color="primary"
+              size="lg"
               :disabled="processing || stripeLoading || configLoading"
+              :label="processing ? t('payments.actions.processing') : t('payments.actions.payNow')"
               @click="submitPayment"
-            >
-              {{ processing ? t('payments.actions.processing') : t('payments.actions.payNow') }}
-            </button>
-            <button
+            />
+            <UButton
               v-if="isFakeMode"
-              type="button"
-              class="rounded-2xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 disabled:opacity-60"
+              variant="outline"
+              size="lg"
               :disabled="processing || stripeLoading"
+              :label="t('payments.actions.testDuplicate')"
               @click="simulateDuplicate"
-            >
-              {{ t('payments.actions.testDuplicate') }}
-            </button>
+            />
           </div>
         </div>
 
@@ -962,10 +986,10 @@ async function simulateDuplicate() {
               v-if="eventsLoading"
               class="mt-4 space-y-3"
             >
-              <div
+              <USkeleton
                 v-for="i in 3"
                 :key="i"
-                class="h-16 animate-pulse rounded-2xl bg-slate-100"
+                class="h-16 rounded-2xl"
               />
             </div>
             <ul

@@ -285,7 +285,7 @@ definePageMeta({
         v-if="loading && !confirmation"
         class="py-16 text-center"
       >
-        <USpin class="mx-auto mb-4" />
+        <UIcon name="i-lucide-loader-circle" class="mx-auto mb-4 size-8 animate-spin text-travelhub-500" />
         <p class="text-slate-500">
           {{ t('common.loading') }}
         </p>
@@ -493,16 +493,13 @@ definePageMeta({
         <div class="pt-2">
           <div class="mb-7 border-t border-slate-200" />
           <div class="text-center">
-            <button
-              class="inline-flex items-center gap-2 text-[15px] font-medium text-slate-500 transition-colors hover:text-slate-700"
+            <UButton
+              variant="ghost"
+              color="neutral"
+              icon="i-lucide-arrow-left"
+              :label="t('booking.backHome')"
               @click="backToHome"
-            >
-              <UIcon
-                name="i-lucide-arrow-left"
-                class="h-4 w-4"
-              />
-              {{ t('booking.backHome') }}
-            </button>
+            />
           </div>
         </div>
       </div>

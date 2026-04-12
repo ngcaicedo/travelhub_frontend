@@ -85,9 +85,10 @@ async function onSubmit() {
         @close="error = ''"
       />
 
-      <form
+      <UForm
+        :state="form"
         class="space-y-6"
-        @submit.prevent="onSubmit"
+        @submit="onSubmit"
       >
         <UFormField :label="$t('auth.login.email')">
           <UInput
@@ -145,7 +146,7 @@ async function onSubmit() {
           :loading="isLoading"
           data-cy="login-submit"
         />
-      </form>
+      </UForm>
 
       <div class="mt-10 text-center text-base text-slate-600">
         {{ $t('auth.login.noAccount') }}

@@ -485,9 +485,10 @@ onMounted(async () => {
         </div>
 
         <UCard :ui="{ body: 'p-4 sm:p-6' }">
-          <form
+          <UForm
+            :state="searchState"
             class="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr_1fr_0.7fr_auto] gap-4 items-end"
-            @submit.prevent="submitSearch"
+            @submit="submitSearch"
           >
             <div class="space-y-2">
               <UFormField :label="t('search.fields.city')">
@@ -556,7 +557,7 @@ onMounted(async () => {
             >
               {{ t('search.searchAction') }}
             </UButton>
-          </form>
+          </UForm>
 
           <div class="mt-5 grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
             <div class="space-y-3">
@@ -570,23 +571,17 @@ onMounted(async () => {
               </div>
 
               <div class="flex flex-wrap gap-2">
-                <button
+                <UButton
                   v-for="amenity in amenities"
                   :key="amenity.id"
-                  type="button"
                   :aria-pressed="selectedAmenities.includes(amenity.id)"
-                  class="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-colors"
-                  :class="selectedAmenities.includes(amenity.id)
-                    ? 'border-travelhub-200 bg-travelhub-50 text-travelhub-700'
-                    : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900'"
+                  :variant="selectedAmenities.includes(amenity.id) ? 'soft' : 'outline'"
+                  :color="selectedAmenities.includes(amenity.id) ? 'primary' : 'neutral'"
+                  :icon="selectedAmenities.includes(amenity.id) ? 'i-lucide-check' : 'i-lucide-circle-plus'"
+                  :label="amenity.label"
+                  class="rounded-full"
                   @click="toggleAmenity(amenity.id)"
-                >
-                  <UIcon
-                    :name="selectedAmenities.includes(amenity.id) ? 'i-lucide-check' : 'i-lucide-circle-plus'"
-                    class="size-4"
-                  />
-                  {{ amenity.label }}
-                </button>
+                />
               </div>
             </div>
 
@@ -800,34 +795,33 @@ onMounted(async () => {
             </p>
 
             <div class="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 shadow-sm border border-slate-200">
-              <button
-                type="button"
-                class="rounded-full px-3 py-1 text-sm font-semibold text-slate-600 disabled:opacity-40"
+              <UButton
+                variant="ghost"
+                color="neutral"
+                class="rounded-full"
                 :disabled="pagination.page === 1"
+                :label="t('search.pagination.prev')"
                 @click="goToPage(Math.max(1, pagination.page - 1))"
-              >
-                {{ t('search.pagination.prev') }}
-              </button>
+              />
 
-              <button
+              <UButton
                 v-for="page in paginationButtons"
                 :key="page"
-                type="button"
-                class="rounded-full px-3 py-1 text-sm font-semibold transition-colors"
-                :class="page === pagination.page ? 'text-travelhub-700 bg-travelhub-50' : 'text-slate-400 hover:text-slate-600'"
+                :variant="page === pagination.page ? 'soft' : 'ghost'"
+                :color="page === pagination.page ? 'primary' : 'neutral'"
+                class="rounded-full"
+                :label="String(page)"
                 @click="goToPage(page)"
-              >
-                {{ page }}
-              </button>
+              />
 
-              <button
-                type="button"
-                class="rounded-full px-3 py-1 text-sm font-semibold text-slate-600 disabled:opacity-40"
+              <UButton
+                variant="ghost"
+                color="neutral"
+                class="rounded-full"
                 :disabled="pagination.page >= pagination.total_pages"
+                :label="t('search.pagination.next')"
                 @click="goToPage(Math.min(pagination.total_pages, pagination.page + 1))"
-              >
-                {{ t('search.pagination.next') }}
-              </button>
+              />
             </div>
           </div>
         </template>
