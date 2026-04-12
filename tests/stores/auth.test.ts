@@ -40,7 +40,7 @@ describe('useAuthStore', () => {
     await store.login('test@example.com', 'password123')
 
     expect(loginSpy).toHaveBeenCalledWith('test@example.com', 'password123')
-    expect(navigateToMock).toHaveBeenCalledWith('/verify-otp?email=test%40example.com')
+    expect(navigateToMock).toHaveBeenCalledWith({ path: '/verify-otp', query: { email: 'test@example.com' } })
   })
 
   it('logout clears token and role', async () => {
@@ -52,6 +52,6 @@ describe('useAuthStore', () => {
 
     expect(store.token).toBeNull()
     expect(store.role).toBeNull()
-    expect(navigateToMock).toHaveBeenCalledWith('/login')
+    expect(navigateToMock).toHaveBeenCalledWith('/properties')
   })
 })

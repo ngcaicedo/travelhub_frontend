@@ -123,6 +123,7 @@ const handleSubmit = async () => {
     const reservationData: ReservationRequest = {
       id_traveler: mockUserId,
       id_property: props.property.id,
+      id_room: props.property.id,
       check_in_date: checkInDateIso,
       check_out_date: checkOutDateIso,
       number_of_guests: numberOfGuests.value,
@@ -154,7 +155,7 @@ watch(error, (newError) => {
 </script>
 
 <template>
-  <div class="bg-white rounded-lg border border-gray-200 p-6 sticky top-6 shadow-lg space-y-6">
+  <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-lg space-y-6">
     <!-- Price Header -->
     <div>
       <h3 class="text-3xl font-bold text-gray-900">

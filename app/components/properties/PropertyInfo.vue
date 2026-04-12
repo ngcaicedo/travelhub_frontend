@@ -113,8 +113,24 @@ const navigateToSection = (sectionId: string) => {
       </div>
     </div>
 
+    <!-- TravelHub Plus Badge -->
+    <div class="flex items-center gap-3 bg-blue-50 border border-blue-100 rounded-lg px-4 py-3">
+      <UIcon
+        name="i-lucide-award"
+        class="w-6 h-6 text-travelhub-500 shrink-0"
+      />
+      <div>
+        <p class="text-sm font-semibold text-slate-900">
+          {{ t('property.travelHubPlus') }}
+        </p>
+        <p class="text-xs text-slate-500">
+          {{ t('property.travelHubPlusDesc') }}
+        </p>
+      </div>
+    </div>
+
     <!-- Property features grid -->
-    <div class="grid grid-cols-3 gap-4 pt-4">
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-b border-gray-200 pb-4">
       <!-- Bedrooms -->
       <div class="flex items-center gap-3">
         <div class="bg-gray-100 rounded-lg p-3">
@@ -165,6 +181,24 @@ const navigateToSection = (sectionId: string) => {
           </p>
           <p class="font-semibold text-sm text-gray-900">
             {{ props.property.max_guests }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Superhost -->
+      <div class="flex items-center gap-3">
+        <div class="bg-gray-100 rounded-lg p-3">
+          <UIcon
+            name="i-lucide-badge-check"
+            class="w-6 h-6 text-gray-700"
+          />
+        </div>
+        <div>
+          <p class="text-xs text-gray-600">
+            {{ t('property.host') }}
+          </p>
+          <p class="font-semibold text-sm text-gray-900">
+            Superhost
           </p>
         </div>
       </div>

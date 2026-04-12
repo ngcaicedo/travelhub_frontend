@@ -13,10 +13,15 @@
     "loadMore": "Carregar mais",
     "loading": "Carregando..."
   },
+  "nav": {
+    "home": "Início"
+  },
   "navigation": {
     "login": "Entrar",
+    "search": "Hotéis",
     "checkout": "Pagamento",
-    "reservations": "Minhas reservas"
+    "reservations": "Minhas reservas",
+    "logout": "Sair"
   },
   "auth": {
     "hero": {
@@ -239,6 +244,7 @@
   },
   "property": {
     "properties": "Propriedades",
+    "advancedSearch": "Pesquisa avançada",
     "discoverPlaces": "Descubra lugares incríveis",
     "discoverAmazingPlaces": "Descubra lugares incríveis para ficar",
     "exploreOurSelection": "Explore nossa seleção de propriedades de luxo e encontre o lugar perfeito para sua próxima aventura",
@@ -264,7 +270,15 @@
     },
     "bookNow": "Reserve agora",
     "capacity": "Capacidade",
+    "host": "Anfitrião",
+    "travelHubPlus": "Propriedade TravelHub Plus",
+    "travelHubPlusDesc": "Verificada por qualidade, conforto e serviço premium.",
+    "sortBy": "Ordenar por",
+    "mostRecent": "Mais recentes",
+    "travelerProtection": "Proteção ao viajante incluída. Reembolso total se cancelado dentro de 48 horas da reserva.",
+    "reportListing": "Denunciar este anúncio",
     "morePhotos": "+{count} fotos",
+    "showAllPhotos": "Ver todas as fotos",
     "policies": {
       "flexible": {
         "label": "Flexível",
@@ -424,7 +438,8 @@
       "checkOut": "Check-out",
       "guests": "Hóspedes",
       "minPrice": "Preço mínimo",
-      "maxPrice": "Preço máximo"
+      "maxPrice": "Preço máximo",
+      "priceRange": "Faixa de preço"
     },
     "placeholders": {
       "city": "Digite uma cidade"

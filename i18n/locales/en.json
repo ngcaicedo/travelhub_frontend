@@ -13,10 +13,15 @@
     "loadMore": "Load more",
     "loading": "Loading..."
   },
+  "nav": {
+    "home": "Home"
+  },
   "navigation": {
     "login": "Login",
+    "search": "Hotels",
     "checkout": "Checkout",
-    "reservations": "My reservations"
+    "reservations": "My reservations",
+    "logout": "Logout"
   },
   "auth": {
     "hero": {
@@ -238,6 +243,7 @@
   },
   "property": {
     "properties": "Properties",
+    "advancedSearch": "Advanced search",
     "discoverPlaces": "Discover Amazing Places",
     "discoverAmazingPlaces": "Discover amazing places to stay",
     "exploreOurSelection": "Explore our selection of luxury properties and find the perfect place for your next adventure",
@@ -263,7 +269,15 @@
     },
     "bookNow": "Book now",
     "capacity": "Capacity",
+    "host": "Host",
+    "travelHubPlus": "TravelHub Plus Property",
+    "travelHubPlusDesc": "Verified for quality, comfort, and premium service.",
+    "sortBy": "Sort by",
+    "mostRecent": "Most Recent",
+    "travelerProtection": "Traveler Protection included. Full refund if canceled within 48 hours of booking.",
+    "reportListing": "Report this listing",
     "morePhotos": "+{count} photos",
+    "showAllPhotos": "Show all photos",
     "policies": {
       "flexible": {
         "label": "Flexible",
@@ -423,7 +437,8 @@
       "checkOut": "Check-out",
       "guests": "Guests",
       "minPrice": "Min price",
-      "maxPrice": "Max price"
+      "maxPrice": "Max price",
+      "priceRange": "Price range"
     },
     "placeholders": {
       "city": "Enter a city"

@@ -14,6 +14,7 @@ useSeoMeta({
 })
 
 const email = computed(() => (route.query.email ?? '') as string)
+const redirect = computed(() => (route.query.redirect ?? '') as string)
 const otp = ref('')
 const error = ref('')
 const isLoading = ref(false)
@@ -28,7 +29,7 @@ async function onSubmit() {
   error.value = ''
 
   try {
-    await authStore.verifyOtp(email.value, otp.value)
+    await authStore.verifyOtp(email.value, otp.value, redirect.value || undefined)
   } catch (e) {
     error.value = getApiErrorMessage(e, t('common.unexpectedError'))
   } finally {

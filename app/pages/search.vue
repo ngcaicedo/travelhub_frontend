@@ -444,8 +444,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#f8fafc]">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8 space-y-6">
+  <div class="min-h-screen bg-slate-50">
+    <div class="max-w-7xl mx-auto px-safe py-6 lg:py-8 space-y-6">
       <nav class="flex items-center gap-2 text-sm text-slate-500">
         <NuxtLink
           to="/"
@@ -487,136 +487,139 @@ onMounted(async () => {
         <UCard :ui="{ body: 'p-4 sm:p-6' }">
           <UForm
             :state="searchState"
-            class="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr_1fr_0.7fr_auto] gap-4 items-end"
+            class="space-y-5"
             @submit="submitSearch"
           >
-            <div class="space-y-2">
+            <!-- Row 1: Main fields -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <UFormField :label="t('search.fields.city')">
                 <UInput
                   v-model="searchState.city"
                   icon="i-lucide-map-pinned"
                   :placeholder="t('search.placeholders.city')"
-                  size="xl"
+                  size="md"
                   :class="validationErrors.city ? 'ring-1 ring-error-500' : ''"
                 />
+                <p class="min-h-5 text-sm text-error-600">
+                  {{ hasAttemptedSearch && validationErrors.city ? validationErrors.city : ' ' }}
+                </p>
               </UFormField>
-              <p class="min-h-5 text-sm text-error-600">
-                {{ hasAttemptedSearch && validationErrors.city ? validationErrors.city : ' ' }}
-              </p>
-            </div>
 
-            <div class="space-y-2">
               <UFormField :label="t('search.fields.checkIn')">
                 <UInput
                   v-model="searchState.checkIn"
                   type="date"
-                  size="xl"
+                  size="md"
                   :class="validationErrors.checkIn ? 'ring-1 ring-error-500' : ''"
                 />
+                <p class="min-h-5 text-sm text-error-600">
+                  {{ hasAttemptedSearch && validationErrors.checkIn ? validationErrors.checkIn : ' ' }}
+                </p>
               </UFormField>
-              <p class="min-h-5 text-sm text-error-600">
-                {{ hasAttemptedSearch && validationErrors.checkIn ? validationErrors.checkIn : ' ' }}
-              </p>
-            </div>
 
-            <div class="space-y-2">
               <UFormField :label="t('search.fields.checkOut')">
                 <UInput
                   v-model="searchState.checkOut"
                   type="date"
-                  size="xl"
+                  size="md"
                   :class="validationErrors.checkOut ? 'ring-1 ring-error-500' : ''"
                 />
+                <p class="min-h-5 text-sm text-error-600">
+                  {{ hasAttemptedSearch && validationErrors.checkOut ? validationErrors.checkOut : ' ' }}
+                </p>
               </UFormField>
-              <p class="min-h-5 text-sm text-error-600">
-                {{ hasAttemptedSearch && validationErrors.checkOut ? validationErrors.checkOut : ' ' }}
-              </p>
-            </div>
 
-            <div class="space-y-2">
               <UFormField :label="t('search.fields.guests')">
                 <UInput
                   v-model="searchState.guests"
                   type="number"
                   min="1"
-                  size="xl"
+                  size="md"
                   :class="validationErrors.guests ? 'ring-1 ring-error-500' : ''"
                 />
+                <p class="min-h-5 text-sm text-error-600">
+                  {{ hasAttemptedSearch && validationErrors.guests ? validationErrors.guests : ' ' }}
+                </p>
               </UFormField>
-              <p class="min-h-5 text-sm text-error-600">
-                {{ hasAttemptedSearch && validationErrors.guests ? validationErrors.guests : ' ' }}
-              </p>
             </div>
 
-            <UButton
-              type="submit"
-              size="xl"
-              icon="i-lucide-search"
-              class="justify-center"
-              :loading="search.loading.value"
-            >
-              {{ t('search.searchAction') }}
-            </UButton>
-          </UForm>
+            <!-- Row 2: Filters -->
+            <div class="border-t border-slate-100 pt-5 grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-5 items-start">
+              <div class="space-y-3">
+                <div class="flex items-center gap-3">
+                  <p class="text-sm font-semibold text-slate-900">
+                    {{ t('search.amenitiesLabel') }}
+                  </p>
+                  <p class="text-xs text-slate-400">
+                    {{ t('search.amenitiesHint') }}
+                  </p>
+                </div>
 
-          <div class="mt-5 grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
-            <div class="space-y-3">
-              <div class="flex items-center justify-between gap-3">
+                <div class="flex flex-wrap gap-2">
+                  <UButton
+                    v-for="amenity in amenities"
+                    :key="amenity.id"
+                    :aria-pressed="selectedAmenities.includes(amenity.id)"
+                    :variant="selectedAmenities.includes(amenity.id) ? 'soft' : 'outline'"
+                    :color="selectedAmenities.includes(amenity.id) ? 'primary' : 'neutral'"
+                    :icon="selectedAmenities.includes(amenity.id) ? 'i-lucide-check' : 'i-lucide-circle-plus'"
+                    :label="amenity.label"
+                    class="rounded-full"
+                    size="sm"
+                    @click="toggleAmenity(amenity.id)"
+                  />
+                </div>
+              </div>
+
+              <div class="space-y-3">
                 <p class="text-sm font-semibold text-slate-900">
-                  {{ t('search.amenitiesLabel') }}
+                  {{ t('search.fields.priceRange') }}
                 </p>
-                <p class="text-xs text-slate-500">
-                  {{ t('search.amenitiesHint') }}
-                </p>
-              </div>
+                <div class="grid grid-cols-2 gap-3">
+                  <UFormField :label="t('search.fields.minPrice')">
+                    <UInput
+                      v-model="searchState.minPrice"
+                      type="number"
+                      min="0"
+                      size="md"
+                      class="w-[140px]"
+                      :class="validationErrors.minPrice ? 'ring-1 ring-error-500' : ''"
+                    />
+                    <p class="min-h-5 text-sm text-error-600">
+                      {{ hasAttemptedSearch && validationErrors.minPrice ? validationErrors.minPrice : ' ' }}
+                    </p>
+                  </UFormField>
 
-              <div class="flex flex-wrap gap-2">
-                <UButton
-                  v-for="amenity in amenities"
-                  :key="amenity.id"
-                  :aria-pressed="selectedAmenities.includes(amenity.id)"
-                  :variant="selectedAmenities.includes(amenity.id) ? 'soft' : 'outline'"
-                  :color="selectedAmenities.includes(amenity.id) ? 'primary' : 'neutral'"
-                  :icon="selectedAmenities.includes(amenity.id) ? 'i-lucide-check' : 'i-lucide-circle-plus'"
-                  :label="amenity.label"
-                  class="rounded-full"
-                  @click="toggleAmenity(amenity.id)"
-                />
+                  <UFormField :label="t('search.fields.maxPrice')">
+                    <UInput
+                      v-model="searchState.maxPrice"
+                      type="number"
+                      min="0"
+                      size="md"
+                      class="w-[140px]"
+                      :class="validationErrors.maxPrice ? 'ring-1 ring-error-500' : ''"
+                    />
+                    <p class="min-h-5 text-sm text-error-600">
+                      {{ hasAttemptedSearch && validationErrors.maxPrice ? validationErrors.maxPrice : ' ' }}
+                    </p>
+                  </UFormField>
+                </div>
               </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
-              <div class="space-y-2">
-                <UFormField :label="t('search.fields.minPrice')">
-                  <UInput
-                    v-model="searchState.minPrice"
-                    type="number"
-                    min="0"
-                    size="lg"
-                    :class="validationErrors.minPrice ? 'ring-1 ring-error-500' : ''"
-                  />
-                </UFormField>
-                <p class="min-h-5 text-sm text-error-600">
-                  {{ hasAttemptedSearch && validationErrors.minPrice ? validationErrors.minPrice : ' ' }}
-                </p>
-              </div>
-
-              <div class="space-y-2">
-                <UFormField :label="t('search.fields.maxPrice')">
-                  <UInput
-                    v-model="searchState.maxPrice"
-                    type="number"
-                    min="0"
-                    size="lg"
-                    :class="validationErrors.maxPrice ? 'ring-1 ring-error-500' : ''"
-                  />
-                </UFormField>
-                <p class="min-h-5 text-sm text-error-600">
-                  {{ hasAttemptedSearch && validationErrors.maxPrice ? validationErrors.maxPrice : ' ' }}
-                </p>
-              </div>
+            <!-- Row 3: Submit -->
+            <div class="border-t border-slate-100 pt-4">
+              <UButton
+                type="submit"
+                size="md"
+                icon="i-lucide-search"
+                class="w-full sm:w-auto justify-center"
+                :loading="search.loading.value"
+              >
+                {{ t('search.searchAction') }}
+              </UButton>
             </div>
-          </div>
+          </UForm>
         </UCard>
       </section>
 
@@ -624,14 +627,14 @@ onMounted(async () => {
         <USkeleton
           v-for="n in 4"
           :key="n"
-          class="h-[420px] rounded-[28px]"
+          class="h-96 rounded-xl"
         />
       </div>
 
       <template v-else>
         <div
           v-if="search.error.value"
-          class="rounded-3xl border border-error-200 bg-error-50 p-6 text-error-700"
+          class="rounded-xl border border-error-200 bg-error-50 p-6 text-error-700"
         >
           <p class="font-semibold">
             {{ t('search.errorTitle') }}
@@ -649,29 +652,28 @@ onMounted(async () => {
             <article
               v-for="result in results"
               :key="result.id"
-              class="overflow-hidden rounded-[28px] bg-white shadow-[0_10px_30px_rgba(15,23,42,0.08)] border border-slate-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(15,23,42,0.14)]"
+              class="overflow-hidden rounded-xl bg-white border border-slate-200 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(15,23,42,0.08)]"
             >
-              <div class="relative h-[240px] sm:h-[280px] overflow-hidden">
+              <div class="relative h-[256px] overflow-hidden">
                 <img
                   :src="result.image"
                   :alt="result.imageAlt"
                   class="h-full w-full object-cover transition-transform duration-500 hover:scale-[1.03]"
                 >
-                <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/45 to-transparent" />
               </div>
 
-              <div class="p-5 sm:p-6 space-y-5">
-                <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                  <div class="space-y-2">
+              <div class="p-5 space-y-0">
+                <div class="flex items-start justify-between pb-2">
+                  <div class="space-y-0">
                     <div
-                      class="flex items-center gap-0.5"
+                      class="flex items-center gap-1 mb-1"
                       role="img"
                       :aria-label="t('search.ratingAria', { rating: formatRating(result.rating) })"
                     >
                       <span
                         v-for="star in 5"
                         :key="star"
-                        class="inline-flex h-4 w-4 items-center justify-center text-[14px] leading-none align-middle"
+                        class="inline-flex h-[10px] w-[10px] items-center justify-center text-[10px] leading-none align-middle"
                         :style="getStarFillStyle(result.rating, star)"
                       >
                         ★
@@ -681,69 +683,50 @@ onMounted(async () => {
                       </span>
                     </div>
 
-                    <div>
-                      <h2 class="text-2xl font-bold text-slate-950 tracking-tight">
-                        {{ result.name }}
-                      </h2>
-                      <p class="mt-1 flex items-center gap-2 text-sm text-slate-500">
-                        <UIcon
-                          name="i-lucide-map-pin"
-                          class="size-4"
-                        />
-                        {{ result.location }}
-                      </p>
-                    </div>
+                    <h2 class="text-lg font-bold text-slate-900 leading-7">
+                      {{ result.name }}
+                    </h2>
+                    <p class="mt-0.5 flex items-center gap-1 text-sm text-slate-500">
+                      <UIcon
+                        name="i-lucide-map-pin"
+                        class="size-3.5"
+                      />
+                      {{ result.location }}
+                    </p>
                   </div>
 
-                  <div class="shrink-0 rounded-2xl bg-slate-50 px-4 py-3 text-center border border-slate-100">
-                    <p class="text-sm font-semibold text-travelhub-600">
-                      {{ formatRating(result.rating) }}
-                    </p>
+                  <div class="shrink-0 flex flex-col items-end gap-1">
+                    <div class="rounded bg-travelhub-500/10 px-2 py-1">
+                      <p class="text-sm font-bold text-travelhub-500">
+                        {{ formatRating(result.rating) }}
+                      </p>
+                    </div>
                     <p
                       v-if="result.reviewCount"
-                      class="text-[11px] font-medium uppercase tracking-[0.14em] text-slate-400"
+                      class="text-[10px] font-bold uppercase tracking-[0.5px] text-slate-400"
                     >
                       {{ result.reviewCount.toLocaleString() }} {{ t('search.reviews') }}
                     </p>
                   </div>
                 </div>
 
-                <div class="flex flex-wrap gap-2">
-                  <span
-                    v-for="amenity in result.amenities"
-                    :key="amenity"
-                    class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600"
-                  >
-                    {{ amenity }}
-                  </span>
-                </div>
-
-                <p class="text-sm text-slate-500 flex items-center gap-2">
-                  <UIcon
-                    name="i-lucide-users"
-                    class="size-4"
-                  />
-                  {{ t('search.maxGuests', { count: result.maxGuests }) }}
-                </p>
-
-                <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between border-t border-slate-100 pt-4">
+                <div class="flex items-end justify-between border-t border-zinc-50 pt-5">
                   <div>
-                    <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400">
+                    <p class="text-[10px] font-bold uppercase tracking-[0.5px] text-slate-400">
                       {{ t('search.pricePerNight') }}
                     </p>
-                    <div class="flex items-end gap-2">
-                      <span class="text-3xl font-bold text-slate-950">
+                    <div class="flex items-baseline gap-1">
+                      <span class="text-2xl font-extrabold text-slate-900">
                         {{ formatMoney(result.pricePerNight, result.currency) }}
                       </span>
-                      <span class="pb-1 text-sm text-slate-500">/ {{ t('search.night') }}</span>
+                      <span class="text-sm font-medium text-slate-500">/ {{ t('search.night') }}</span>
                     </div>
                   </div>
 
                   <UButton
                     :to="`/properties/${encodePropertyRouteId(result.id)}`"
                     size="lg"
-                    class="sm:min-w-[180px] justify-center"
-                    trailing-icon="i-lucide-arrow-right"
+                    class="justify-center"
                   >
                     {{ t('search.viewProperty') }}
                   </UButton>
@@ -754,7 +737,7 @@ onMounted(async () => {
 
           <div
             v-else
-            class="rounded-[28px] border border-slate-200 bg-white p-8 sm:p-10 shadow-sm"
+            class="rounded-xl border border-slate-200 bg-white p-8 sm:p-10 shadow-sm"
           >
             <div class="mx-auto max-w-2xl space-y-5 text-center">
               <div class="mx-auto flex size-14 items-center justify-center rounded-full bg-travelhub-50 text-travelhub-600">
