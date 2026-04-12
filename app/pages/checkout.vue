@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { nextTick, onBeforeUnmount, onMounted, shallowRef, watch } from 'vue'
 import {
+  computePaymentBreakdown,
   normalizeCheckoutSession,
   normalizeCheckoutSessionStatus,
   normalizeFinalizePaymentResponse,
@@ -29,10 +30,12 @@ type FeedbackState = {
 const { t, locale, tm } = useI18n()
 const paymentsApiBase = '/api/payments'
 const requestTimeoutMs = 10000
+const stripePollMaxAttempts = 6
+const stripePollIntervalMs = 1000
 
 const form = reactive({
   scenario: 'success' as ScenarioKind,
-  cardholderName: 'John Doe',
+  cardholderName: '',
   cardNumber: scenarioPresets.success.cardNumber,
   expiration: scenarioPresets.success.expiration,
   cvv: scenarioPresets.success.cvv,
@@ -63,19 +66,31 @@ const stripeClient = shallowRef<StripeClient | null>(null)
 const stripeElements = shallowRef<StripeElementsInstance | null>(null)
 const stripePaymentElement = shallowRef<{ mount: (target: string | HTMLElement) => void, unmount?: () => void, destroy?: () => void } | null>(null)
 
+const stayNights = computed(() => {
+  const start = new Date(`${form.checkInDate}T00:00:00`)
+  const end = new Date(`${form.checkOutDate}T00:00:00`)
+
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    return 0
+  }
+
+  const diffMs = end.getTime() - start.getTime()
+  return Math.max(1, Math.round(diffMs / 86400000))
+})
+
+const bookingBreakdown = computed(() => computePaymentBreakdown(form.amountInCents).map(line => ({
+  label: t(`payments.booking.lines.${line.key}`, { nights: stayNights.value }),
+  amount: formatMoney(line.amountInCents, form.currency)
+})))
+
 const booking = computed(() => ({
   property: t('payments.booking.property'),
   location: t('payments.booking.location'),
-  rating: '4.95',
-  reviews: t('payments.booking.reviews'),
-  dates: t('payments.booking.dates'),
-  guests: t('payments.booking.guests'),
-  lines: [
-    { label: t('payments.booking.line1'), amount: '$2,250.00' },
-    { label: t('payments.booking.line2'), amount: '$120.00' },
-    { label: t('payments.booking.line3'), amount: '$245.00' },
-    { label: t('payments.booking.line4'), amount: '$261.50' }
-  ]
+  rating: t('payments.booking.rating'),
+  reviews: t('payments.booking.reviews', { count: 128 }),
+  dates: `${formatStayDate(form.checkInDate)} - ${formatStayDate(form.checkOutDate)}`,
+  guests: t('payments.booking.guests', { count: 4 }),
+  lines: bookingBreakdown.value
 }))
 
 const isStripeMode = computed(() => paymentsConfig.value.provider === 'stripe_test' && paymentsConfig.value.stripe_enabled)
@@ -142,7 +157,26 @@ function formatDate(value: string | null) {
   return Number.isNaN(parsed.getTime()) ? t('payments.events.dateUnavailable') : new Intl.DateTimeFormat(locale.value, { dateStyle: 'short', timeStyle: 'short' }).format(parsed)
 }
 
+function formatStayDate(value: string) {
+  const parsed = /^\d{4}-\d{2}-\d{2}$/.test(value)
+    ? new Date(`${value}T00:00:00`)
+    : new Date(value)
+
+  if (Number.isNaN(parsed.getTime())) {
+    return value
+  }
+
+  return new Intl.DateTimeFormat(locale.value, {
+    month: 'short',
+    day: 'numeric'
+  }).format(parsed)
+}
+
 function buildIdempotencyKey() {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return `checkout-${crypto.randomUUID()}`
+  }
+
   return `checkout-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
 }
 function detailMessage(detail: unknown) {
@@ -182,9 +216,40 @@ function resolveFailureDescription(failureReason: string | null, errorMessage: s
 
 function resolveRequestErrorDescription(detail: unknown) {
   const message = detailMessage(detail)
+  if (message === 'invalid_backend_response') return { descriptionKey: 'payments.feedback.invalidResponseDescription' }
   if (isInsufficientFunds(message)) return { descriptionKey: 'payments.feedback.failureInsufficient' }
   if (isCardDeclined(message)) return { descriptionKey: 'payments.feedback.failureDeclined' }
   return { descriptionText: message }
+}
+
+function resolveTransportErrorDescription(error: unknown) {
+  const statusCode = (error as { statusCode?: number })?.statusCode
+  const causeCode = (error as { cause?: { code?: string } })?.cause?.code?.toLowerCase() || ''
+  const message = (
+    (error as { message?: string })?.message
+    || (error as { statusMessage?: string })?.statusMessage
+    || ''
+  ).toLowerCase()
+
+  if (message.includes('invalid_backend_response') || statusCode === 502) {
+    return { descriptionKey: 'payments.feedback.invalidResponseDescription' }
+  }
+
+  if (causeCode.includes('timeout') || message.includes('timeout') || message.includes('timed out')) {
+    return { descriptionKey: 'payments.feedback.timeoutDescription' }
+  }
+
+  if (
+    causeCode.includes('econnrefused')
+    || causeCode.includes('fetch')
+    || message.includes('fetch failed')
+    || message.includes('network error')
+    || message.includes('failed to fetch')
+  ) {
+    return { descriptionKey: 'payments.feedback.backendUnavailableDescription' }
+  }
+
+  return null
 }
 
 function eventLabel(type: string) {
@@ -208,8 +273,15 @@ function eventDetail(event: PaymentEvent) {
 
 function handleError(error: unknown) {
   const detail = (error as { data?: { detail?: unknown } })?.data?.detail
-  feedback.value = isDuplicate(detail)
-    ? { tone: 'warning', titleKey: 'payments.feedback.duplicateTitle', descriptionText: detail.message }
+
+  if (isDuplicate(detail)) {
+    feedback.value = { tone: 'warning', titleKey: 'payments.feedback.duplicateTitle', descriptionText: detail.message }
+    return
+  }
+
+  const transportDescription = resolveTransportErrorDescription(error)
+  feedback.value = transportDescription
+    ? { tone: 'error', titleKey: 'payments.feedback.requestErrorTitle', ...transportDescription }
     : { tone: 'error', titleKey: 'payments.feedback.requestErrorTitle', ...resolveRequestErrorDescription(detail) }
 }
 
@@ -357,10 +429,10 @@ async function submitStripe() {
     feedback.value = { tone: 'info', titleKey: 'payments.integration.requiresActionTitle', descriptionKey: 'payments.integration.requiresActionDescription' }
     const nextAction = await stripeClient.value!.handleNextAction({ clientSecret: finalized.client_secret })
     if (nextAction.error?.message) throw createError({ statusCode: 400, data: { detail: nextAction.error.message } })
-    for (let i = 0; i < 6; i += 1) {
+    for (let i = 0; i < stripePollMaxAttempts; i += 1) {
       const status = normalizeCheckoutSessionStatus(await $fetch(`${paymentsApiBase}/checkout/${stripeSession.value!.payment_transaction_id}`, { timeout: requestTimeoutMs }))
       if (status?.payment_id) return loadPaymentAndEvents(status.payment_id)
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      await new Promise(resolve => setTimeout(resolve, stripePollIntervalMs))
     }
     feedback.value = { tone: 'warning', titleKey: 'payments.feedback.requestErrorTitle', descriptionKey: 'payments.feedback.pendingVerificationDescription' }
   }
@@ -475,6 +547,7 @@ async function simulateDuplicate() {
           <label class="space-y-2 text-sm"><span>{{ t('payments.form.cardholder') }}</span><input
             v-model="form.cardholderName"
             type="text"
+            :placeholder="t('payments.form.cardholderPlaceholder')"
             class="w-full rounded-xl border border-slate-200 px-3 py-2"
           ></label>
           <template v-if="!isStripeMode">
@@ -705,7 +778,7 @@ async function simulateDuplicate() {
 
       <aside class="rounded-[2rem] border border-slate-200 bg-white p-4 shadow-sm">
         <img
-          src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80"
+          src="/mock/property-1.svg"
           :alt="booking.property"
           class="h-56 w-full rounded-[1.5rem] object-cover"
         >

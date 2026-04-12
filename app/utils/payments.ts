@@ -62,28 +62,55 @@ export type ScenarioPreset = {
   paymentToken: string
 }
 
+export type PaymentBreakdownLine = {
+  key: 'accommodation' | 'cleaning' | 'service' | 'taxes'
+  amountInCents: number
+}
+
 export const scenarioPresets: Record<ScenarioKind, ScenarioPreset> = {
   success: {
-    cardholderName: 'John Doe',
+    cardholderName: '',
     cardNumber: '4242 4242 4242 4242',
     expiration: '12/29',
     cvv: '123',
     paymentToken: 'pm_tok_visa_ok'
   },
   insufficient: {
-    cardholderName: 'John Doe',
+    cardholderName: '',
     cardNumber: '4000 0000 0000 9995',
     expiration: '11/29',
     cvv: '456',
     paymentToken: 'pm_fail_insufficient_funds'
   },
   declined: {
-    cardholderName: 'John Doe',
+    cardholderName: '',
     cardNumber: '4000 0000 0000 0002',
     expiration: '10/29',
     cvv: '789',
     paymentToken: 'pm_fail_card_declined'
   }
+}
+
+const BREAKDOWN_KEYS: PaymentBreakdownLine['key'][] = ['accommodation', 'cleaning', 'service', 'taxes']
+const BREAKDOWN_BASIS_POINTS = [7825, 417, 851, 907]
+
+export function computePaymentBreakdown(amountInCents: number): PaymentBreakdownLine[] {
+  const safeAmount = Number.isFinite(amountInCents) ? Math.max(0, Math.round(amountInCents)) : 0
+  let allocated = 0
+
+  return BREAKDOWN_KEYS.map((key, index) => {
+    const basisPoints = BREAKDOWN_BASIS_POINTS[index] ?? 0
+    const amount = index === BREAKDOWN_KEYS.length - 1
+      ? Math.max(0, safeAmount - allocated)
+      : Math.round((safeAmount * basisPoints) / 10000)
+
+    allocated += amount
+
+    return {
+      key,
+      amountInCents: amount
+    }
+  })
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
