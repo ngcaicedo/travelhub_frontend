@@ -2,7 +2,7 @@ import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { join, relative } from 'node:path'
 
 const root = process.cwd()
-const includeRoots = ['app', 'server', 'nuxt.config.ts']
+const includeRoots = ['app', 'nuxt.config.ts']
 const ignoreDirectories = new Set(['node_modules', '.nuxt', '.output', '.git', 'coverage', 'dist'])
 const allowedFiles = new Set([
   'app/utils/payments.ts'

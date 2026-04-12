@@ -17,6 +17,7 @@ import {
   type ScenarioKind
 } from '~/utils/payments'
 import { loadStripeJs, type StripeClient, type StripeElementsInstance } from '~/utils/stripe'
+import { paymentsService } from '~/services/payments'
 
 type Tone = 'info' | 'success' | 'error' | 'warning'
 type FeedbackState = {
@@ -29,8 +30,6 @@ type FeedbackState = {
 }
 
 const { t, locale, tm, getLocaleMessage } = useI18n()
-const paymentsApiBase = '/api/payments'
-const requestTimeoutMs = 10000
 const localeMap: Record<string, string> = {
   es: 'es-CO',
   en: 'en-US',
@@ -478,7 +477,7 @@ function handleError(error: unknown) {
 async function fetchConfig() {
   configLoading.value = true
   try {
-    paymentsConfig.value = normalizePaymentsConfig(await $fetch(`${paymentsApiBase}/config`, { timeout: requestTimeoutMs }))
+    paymentsConfig.value = normalizePaymentsConfig(await paymentsService.getConfig())
   } catch {
     paymentsConfig.value = { provider: 'fake_stripe', stripe_enabled: false, publishable_key: '' }
   } finally {
@@ -489,7 +488,7 @@ async function fetchConfig() {
 async function loadEvents(paymentId: string) {
   eventsLoading.value = true
   try {
-    paymentEvents.value = normalizePaymentEvents(await $fetch(`${paymentsApiBase}/${paymentId}/events`, { timeout: requestTimeoutMs }))
+    paymentEvents.value = normalizePaymentEvents(await paymentsService.getPaymentEvents(paymentId))
     eventsNotice.value = ''
   } catch {
     paymentEvents.value = []
@@ -500,7 +499,7 @@ async function loadEvents(paymentId: string) {
 }
 
 async function loadPayment(paymentId: string) {
-  const normalized = normalizePaymentResponse(await $fetch(`${paymentsApiBase}/${paymentId}`, { timeout: requestTimeoutMs }))
+  const normalized = normalizePaymentResponse(await paymentsService.getPayment(paymentId))
   if (!normalized) throw createError({ statusCode: 502, data: { detail: 'invalid_backend_response' } })
   paymentResult.value = normalized
   const failureFeedback = resolveFailureDescription(normalized.failure_reason, lastFailureMessage.value)
@@ -533,19 +532,14 @@ async function prepareStripe() {
   if (!isStripeMode.value) return false
   stripeLoading.value = true
   try {
-    const session = normalizeCheckoutSession(await $fetch(`${paymentsApiBase}/create-intent`, {
-      method: 'POST',
-      timeout: requestTimeoutMs,
-      headers: { 'x-forwarded-proto': 'https' },
-      body: {
-        reservation_id: form.reservationId,
-        traveler_id: form.travelerId,
-        amount_in_cents: form.amountInCents,
-        currency: form.currency.toUpperCase(),
-        property_name: booking.value.property,
-        check_in_date: form.checkInDate,
-        check_out_date: form.checkOutDate
-      }
+    const session = normalizeCheckoutSession(await paymentsService.createIntent({
+      reservation_id: form.reservationId,
+      traveler_id: form.travelerId,
+      amount_in_cents: form.amountInCents,
+      currency: form.currency.toUpperCase(),
+      property_name: booking.value.property,
+      check_in_date: form.checkInDate,
+      check_out_date: form.checkOutDate
     }))
     if (!session?.publishable_key) throw new Error('invalid_stripe_session')
     await loadStripeJs()
@@ -574,18 +568,13 @@ async function submitFake() {
   const idempotencyKey = buildIdempotencyKey()
   lastIdempotencyKey.value = idempotencyKey
   lastFailureMessage.value = null
-  const normalized = normalizePaymentResponse(await $fetch(`${paymentsApiBase}/charges`, {
-    method: 'POST',
-    timeout: requestTimeoutMs,
-    headers: { 'x-forwarded-proto': 'https' },
-    body: {
-      reservation_id: form.reservationId,
-      traveler_id: form.travelerId,
-      payment_method_token: form.paymentToken,
-      amount_in_cents: form.amountInCents,
-      currency: form.currency.toUpperCase(),
-      idempotency_key: idempotencyKey
-    }
+  const normalized = normalizePaymentResponse(await paymentsService.createCharge({
+    reservation_id: form.reservationId,
+    traveler_id: form.travelerId,
+    payment_method_token: form.paymentToken,
+    amount_in_cents: form.amountInCents,
+    currency: form.currency.toUpperCase(),
+    idempotency_key: idempotencyKey
   }))
   if (!normalized) throw createError({ statusCode: 502, data: { detail: 'invalid_backend_response' } })
   paymentResult.value = normalized
@@ -610,11 +599,9 @@ async function submitStripe() {
   if (!confirmation.confirmationToken?.id) throw createError({ statusCode: 400, data: { detail: confirmation.error?.message || t('payments.integration.confirmationTokenError') } })
   let finalized: FinalizePaymentResponse | null = null
   try {
-    finalized = normalizeFinalizePaymentResponse(await $fetch(`${paymentsApiBase}/finalize`, {
-      method: 'POST',
-      timeout: requestTimeoutMs,
-      headers: { 'x-forwarded-proto': 'https' },
-      body: { payment_transaction_id: stripeSession.value!.payment_transaction_id, confirmation_token_id: confirmation.confirmationToken.id }
+    finalized = normalizeFinalizePaymentResponse(await paymentsService.finalizePayment({
+      payment_transaction_id: stripeSession.value!.payment_transaction_id,
+      confirmation_token_id: confirmation.confirmationToken.id
     }))
   } catch (error) {
     if (stripeSession.value?.payment_transaction_id && isTimeoutLikeError(error)) {
@@ -638,7 +625,7 @@ async function submitStripe() {
     const nextAction = await stripeClient.value!.handleNextAction({ clientSecret: finalized.client_secret })
     if (nextAction.error?.message) throw createError({ statusCode: 400, data: { detail: nextAction.error.message } })
     for (let i = 0; i < stripePollMaxAttempts; i += 1) {
-      const status = normalizeCheckoutSessionStatus(await $fetch(`${paymentsApiBase}/checkout/${stripeSession.value!.payment_transaction_id}`, { timeout: requestTimeoutMs }))
+      const status = normalizeCheckoutSessionStatus(await paymentsService.getCheckoutStatus(stripeSession.value!.payment_transaction_id))
       if (status?.payment_id) {
         await loadPaymentAndEvents(status.payment_id)
         if (paymentResult.value?.status === 'confirmed') {
@@ -687,33 +674,17 @@ async function simulateDuplicate() {
   try {
     const key = buildIdempotencyKey()
     lastIdempotencyKey.value = key
-    const first = normalizePaymentResponse(await $fetch(`${paymentsApiBase}/charges`, {
-      method: 'POST',
-      timeout: requestTimeoutMs,
-      headers: { 'x-forwarded-proto': 'https' },
-      body: {
-        reservation_id: form.reservationId,
-        traveler_id: form.travelerId,
-        payment_method_token: form.paymentToken,
-        amount_in_cents: form.amountInCents,
-        currency: form.currency.toUpperCase(),
-        idempotency_key: key
-      }
-    }))
+    const chargeBody = {
+      reservation_id: form.reservationId,
+      traveler_id: form.travelerId,
+      payment_method_token: form.paymentToken,
+      amount_in_cents: form.amountInCents,
+      currency: form.currency.toUpperCase(),
+      idempotency_key: key
+    }
+    const first = normalizePaymentResponse(await paymentsService.createCharge(chargeBody))
     if (first) await loadPaymentAndEvents(first.payment_id)
-    await $fetch(`${paymentsApiBase}/charges`, {
-      method: 'POST',
-      timeout: requestTimeoutMs,
-      headers: { 'x-forwarded-proto': 'https' },
-      body: {
-        reservation_id: form.reservationId,
-        traveler_id: form.travelerId,
-        payment_method_token: form.paymentToken,
-        amount_in_cents: form.amountInCents,
-        currency: form.currency.toUpperCase(),
-        idempotency_key: key
-      }
-    })
+    await paymentsService.createCharge(chargeBody)
     feedback.value = { tone: 'warning', titleKey: 'payments.feedback.duplicateTitle', descriptionKey: 'payments.feedback.duplicateUnexpectedDescription' }
   } catch (error) {
     handleError(error)
