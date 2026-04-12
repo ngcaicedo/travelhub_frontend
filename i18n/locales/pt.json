@@ -438,7 +438,8 @@
       "checkOut": "Check-out",
       "guests": "Hóspedes",
       "minPrice": "Preço mínimo",
-      "maxPrice": "Preço máximo"
+      "maxPrice": "Preço máximo",
+      "priceRange": "Faixa de preço"
     },
     "placeholders": {
       "city": "Digite uma cidade"
