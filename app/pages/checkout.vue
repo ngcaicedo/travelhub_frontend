@@ -92,6 +92,12 @@ function isTimeoutLikeError(error: unknown) {
 }
 
 async function goToPaymentConfirmation(paymentId: string) {
+  // Preserve reservation dates in sessionStorage for payment-confirmation fallback
+  if (form.checkInDate && form.checkOutDate) {
+    sessionStorage.setItem('reservation_checkout_date', form.checkInDate)
+    sessionStorage.setItem('reservation_checkout_out_date', form.checkOutDate)
+  }
+
   await navigateTo({
     path: '/notifications/payment-confirmation',
     query: { paymentId }

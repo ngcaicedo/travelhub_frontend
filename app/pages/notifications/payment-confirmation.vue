@@ -122,14 +122,31 @@ const stayDates = computed(() => {
 })
 
 const checkInDate = computed(() => {
-  return confirmation.value ? formatDate(confirmation.value.check_in_date) : '-'
+  if (confirmation.value?.check_in_date) {
+    return formatDate(confirmation.value.check_in_date)
+  }
+
+  // Fallback to sessionStorage if backend didn't provide dates
+  const storedCheckIn = sessionStorage.getItem('reservation_checkout_date')
+  return storedCheckIn ? formatDate(storedCheckIn) : '-'
 })
 
 const staySummary = computed(() => {
-  if (!confirmation.value?.check_in_date || !confirmation.value?.check_out_date) return '-'
+  let checkInDate = confirmation.value?.check_in_date
+  let checkOutDate = confirmation.value?.check_out_date
 
-  const start = new Date(`${confirmation.value.check_in_date}T00:00:00`)
-  const end = new Date(`${confirmation.value.check_out_date}T00:00:00`)
+  // Fallback to sessionStorage if backend didn't provide dates
+  if (!checkInDate) {
+    checkInDate = sessionStorage.getItem('reservation_checkout_date')
+  }
+  if (!checkOutDate) {
+    checkOutDate = sessionStorage.getItem('reservation_checkout_out_date')
+  }
+
+  if (!checkInDate || !checkOutDate) return '-'
+
+  const start = new Date(`${checkInDate}T00:00:00`)
+  const end = new Date(`${checkOutDate}T00:00:00`)
 
   if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
     return stayDates.value
