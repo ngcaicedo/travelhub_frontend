@@ -15,7 +15,8 @@
   },
   "navigation": {
     "login": "Entrar",
-    "checkout": "Pagamento"
+    "checkout": "Pagamento",
+    "reservations": "Minhas reservas"
   },
   "auth": {
     "hero": {
@@ -151,6 +152,10 @@
       "eventsUnavailable": "O pagamento foi processado, mas o frontend não conseguiu carregar os eventos do backend.",
       "pendingVerificationDescription": "O pagamento está sendo verificado. Consulte novamente o último estado em alguns segundos."
     },
+    "errors": {
+      "invalidConfirmationResponse": "A resposta de confirmação do pagamento foi inválida.",
+      "invalidCheckoutStatusResponse": "A resposta do status do checkout foi inválida."
+    },
     "detection": {
       "cardDeclined": [
         "card_declined",
@@ -205,6 +210,19 @@
       "testDuplicate": "Testar duplicado",
       "prepareSecureForm": "Preparar formulário seguro"
     },
+    "compliance": {
+      "bannerTitle": "Proteção financeira ativa",
+      "bannerDescription": "Este checkout usa apenas campos de pagamento hospedados pelo Stripe. A TravelHub nunca recebe número do cartão, CVV ou data de validade quando o modo de compliance está ativo.",
+      "strictModeDescription": "O modo de compliance está ativo. Os campos manuais do cartão estão desabilitados e o pagamento deve fluir pelo Stripe Payment Element.",
+      "strictModeHint": "Prepare o formulário seguro do Stripe para continuar com um fluxo token-only.",
+      "misconfiguredTitle": "O modo seguro do Stripe não está pronto",
+      "misconfiguredDescription": "O modo de compliance está ativo, mas o serviço de payments não está expondo Stripe test mode. Revise a configuração do backend antes de processar pagamentos.",
+      "steps": {
+        "checkout": "Checkout",
+        "tokenization": "Tokenização",
+        "confirmation": "Confirmação"
+      }
+    },
     "booking": {
       "property": "Renaissance Estate & Private Vineyard",
       "location": "Toscana, Itália",
@@ -221,7 +239,7 @@
   },
   "property": {
     "properties": "Propriedades",
-    "discoverPlaces": "Descubra Lugares Incríveis",
+    "discoverPlaces": "Descubra lugares incríveis",
     "discoverAmazingPlaces": "Descubra lugares incríveis para ficar",
     "exploreOurSelection": "Explore nossa seleção de propriedades de luxo e encontre o lugar perfeito para sua próxima aventura",
     "bedrooms": "Quartos",
@@ -236,7 +254,7 @@
     "loading": "Carregando propriedade",
     "notFound": "Propriedade não encontrada",
     "noPropertiesFound": "Nenhuma propriedade disponível no momento",
-    "cancellationPolicy": "Política de Cancelamento",
+    "cancellationPolicy": "Política de cancelamento",
     "sections": {
       "overview": "Visão geral",
       "amenities": "Comodidades",
@@ -294,6 +312,67 @@
     "printConfirmation": "Imprimir confirmação",
     "nextSteps": "Próximos passos",
     "nextStepsDescription": "Sua reserva está pendente de pagamento. Por favor, visite o portal de pagamento para concluir a transação. Após a confirmação do pagamento, você receberá um email de confirmação final."
+  },
+  "notifications": {
+    "meta": {
+      "title": "Confirmação do pagamento"
+    },
+    "success": {
+      "title": "Reserva confirmada!",
+      "subtitle": "Enviamos um e-mail de confirmação para sua caixa de entrada."
+    },
+    "summary": {
+      "badge": "Detalhes da reserva",
+      "reservationId": "ID da reserva",
+      "paymentId": "ID do pagamento",
+      "dates": "Check-in",
+      "stay": "Estadia",
+      "property": "Propriedade",
+      "propertyFallback": "Hospedagem TravelHub",
+      "amountPaid": "Valor pago"
+    },
+    "actions": {
+      "viewReservations": "Ver minhas reservas",
+      "downloadReceipt": "Baixar recibo",
+      "retryVerification": "Verificar novamente",
+      "backToCheckout": "Voltar ao checkout"
+    },
+    "receipt": {
+      "title": "Recibo",
+      "label": "Recibo",
+      "pending": "Recibo pendente",
+      "paidBadge": "Pago",
+      "pdfTitle": "Recibo de pagamento",
+      "pdfSubtitle": "Seu pagamento foi confirmado com sucesso. Guarde este documento para o seu histórico de viagem.",
+      "footer": "Gerado a partir da sua página de confirmação da TravelHub."
+    },
+    "verification": {
+      "title": "Seu pagamento está sendo verificado",
+      "subtitle": "Estamos reconciliando o status final do pagamento com o Stripe.",
+      "description": "Isso pode acontecer após um timeout logo depois da confirmação do pagamento. A TravelHub continuará verificando em background por até 30 segundos.",
+      "expired": "Ainda estamos aguardando a confirmação final do Stripe. Tente verificar novamente em alguns instantes ou volte ao checkout.",
+      "failed": "Não foi possível validar o status final do pagamento."
+    },
+    "errors": {
+      "title": "Não foi possível carregar a confirmação",
+      "missingReference": "Uma referência de pagamento é necessária para exibir esta confirmação.",
+      "backendUnavailable": "Não foi possível verificar o pagamento neste momento. Tente novamente em instantes.",
+      "insufficientFunds": "Não foi possível confirmar o pagamento porque o cartão não tem fundos suficientes.",
+      "paymentDeclined": "Não foi possível confirmar o pagamento porque o cartão foi recusado.",
+      "invalidConfirmationResponse": "Não foi possível processar a confirmação do pagamento.",
+      "invalidCheckoutStatusResponse": "Não foi possível processar o status mais recente do checkout."
+    }
+  },
+  "reservationHistory": {
+    "meta": {
+      "title": "Minhas reservas"
+    },
+    "badge": "Área do viajante",
+    "title": "Minhas reservas",
+    "subtitle": "Revise as confirmações de reserva mais recentes geradas após seus pagamentos bem-sucedidos.",
+    "latestReservation": "Reserva mais recente",
+    "emptyTitle": "Você ainda não tem reservas",
+    "emptyDescription": "Quando um pagamento for confirmado, o resumo da sua reserva aparecerá aqui."
   },
   "status": {
     "pendingPayment": "Pendente de pagamento",

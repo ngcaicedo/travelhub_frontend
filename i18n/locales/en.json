@@ -1,4 +1,4 @@
-{
+﻿{
   "common": {
     "appName": "TravelHub",
     "premiumTravel": "Premium Travel",
@@ -15,7 +15,8 @@
   },
   "navigation": {
     "login": "Login",
-    "checkout": "Checkout"
+    "checkout": "Checkout",
+    "reservations": "My reservations"
   },
   "auth": {
     "hero": {
@@ -28,7 +29,7 @@
       "email": "Email Address",
       "emailPlaceholder": "alex{'@'}example.com",
       "password": "Password",
-      "passwordPlaceholder": "••••••••",
+      "passwordPlaceholder": "â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢",
       "forgotPassword": "Forgot password?",
       "submit": "Sign In",
       "noAccount": "Don't have an account?",
@@ -53,7 +54,7 @@
       "phone": "Phone Number",
       "phonePlaceholder": "3001234567",
       "password": "Password",
-      "passwordPlaceholder": "••••••••",
+      "passwordPlaceholder": "â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢",
       "passwordHint": "At least 8 characters",
       "strengthWeak": "Weak",
       "strengthMedium": "Medium Strength",
@@ -151,6 +152,10 @@
       "stripeReadyDescription": "Prepare the secure Stripe form and use a Stripe test card to validate the token-only flow.",
       "pendingVerificationDescription": "The payment is being verified. Check the latest payment status again in a few seconds."
     },
+    "errors": {
+      "invalidConfirmationResponse": "The payment confirmation response was invalid.",
+      "invalidCheckoutStatusResponse": "The checkout status response was invalid."
+    },
     "detection": {
       "cardDeclined": [
         "card_declined",
@@ -203,6 +208,19 @@
       "processing": "Processing payment",
       "testDuplicate": "Test duplicate",
       "prepareSecureForm": "Prepare secure form"
+    },
+    "compliance": {
+      "bannerTitle": "Financial data protection enabled",
+      "bannerDescription": "This checkout uses Stripe-hosted payment fields only. TravelHub never receives raw card numbers, CVV, or expiration dates in compliance mode.",
+      "strictModeDescription": "Compliance mode is active. Manual card fields are disabled and payment data must flow through Stripe Payment Element.",
+      "strictModeHint": "Prepare the secure Stripe form to continue with a token-only payment flow.",
+      "misconfiguredTitle": "Stripe secure mode is not ready",
+      "misconfiguredDescription": "Compliance mode is active, but the payments service is not exposing Stripe test mode. Review the backend configuration before processing payments.",
+      "steps": {
+        "checkout": "Checkout",
+        "tokenization": "Tokenization",
+        "confirmation": "Confirmation"
+      }
     },
     "booking": {
       "property": "Renaissance Estate & Private Vineyard",
@@ -278,8 +296,8 @@
     "total": "Total",
     "confirmBooking": "Confirm booking",
     "youWontBeCharged": "You won't be charged for now",
-    "success": "Your reservation has been confirmed!",
-    "confirmationSent": "We sent the details to your email",
+    "success": "Booking Confirmed!",
+    "confirmationSent": "A confirmation email has been sent to your inbox.",
     "reservationId": "Reservation ID",
     "reservationDetails": "Reservation details",
     "manageReservation": "Manage reservation",
@@ -293,6 +311,67 @@
     "printConfirmation": "Print confirmation",
     "nextSteps": "Next steps",
     "nextStepsDescription": "Your reservation is pending payment. Please visit the payment portal to complete the transaction. Once payment is confirmed, you will receive a final confirmation email."
+  },
+  "notifications": {
+    "meta": {
+      "title": "Payment confirmation"
+    },
+    "success": {
+      "title": "Booking Confirmed!",
+      "subtitle": "A confirmation email has been sent to your inbox."
+    },
+    "summary": {
+      "badge": "Reservation details",
+      "reservationId": "Reservation ID",
+      "paymentId": "Payment ID",
+      "dates": "Check-in",
+      "stay": "Stay",
+      "property": "Property",
+      "propertyFallback": "TravelHub stay",
+      "amountPaid": "Amount paid"
+    },
+    "actions": {
+      "viewReservations": "View my reservations",
+      "downloadReceipt": "Download receipt",
+      "retryVerification": "Check again",
+      "backToCheckout": "Back to checkout"
+    },
+    "receipt": {
+      "title": "Receipt",
+      "label": "Receipt",
+      "pending": "Receipt pending",
+      "paidBadge": "Paid",
+      "pdfTitle": "Payment receipt",
+      "pdfSubtitle": "Your payment was confirmed successfully. Keep this document for your travel records.",
+      "footer": "Generated from your TravelHub confirmation page."
+    },
+    "verification": {
+      "title": "Your payment is being verified",
+      "subtitle": "We are reconciling the final payment status with Stripe.",
+      "description": "This can happen after a timeout right after payment confirmation. TravelHub will keep checking in the background for up to 30 seconds.",
+      "expired": "We are still waiting for the final confirmation from Stripe. Please check again in a moment or return to checkout.",
+      "failed": "We could not validate the final payment status."
+    },
+    "errors": {
+      "title": "We could not load the confirmation",
+      "missingReference": "A payment reference is required to display this confirmation.",
+      "backendUnavailable": "We could not verify the payment right now. Please try again in a moment.",
+      "insufficientFunds": "The payment could not be confirmed because the card has insufficient funds.",
+      "paymentDeclined": "The payment could not be confirmed because the card was declined.",
+      "invalidConfirmationResponse": "The payment confirmation could not be processed.",
+      "invalidCheckoutStatusResponse": "The latest checkout status could not be processed."
+    }
+  },
+  "reservationHistory": {
+    "meta": {
+      "title": "My reservations"
+    },
+    "badge": "Traveler area",
+    "title": "My reservations",
+    "subtitle": "Review the latest reservation confirmations generated after your successful payments.",
+    "latestReservation": "Latest reservation",
+    "emptyTitle": "You do not have reservations yet",
+    "emptyDescription": "Once a payment is confirmed, your reservation summary will appear here."
   },
   "status": {
     "pendingPayment": "Pending payment",
@@ -391,3 +470,5 @@
     }
   }
 }
+
+

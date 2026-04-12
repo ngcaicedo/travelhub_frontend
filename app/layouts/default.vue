@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const route = useRoute()
 const { locale, locales, setLocale, t } = useI18n()
 
 const localeOptions = computed(() =>
@@ -7,6 +8,24 @@ const localeOptions = computed(() =>
     value: item.code
   }))
 )
+
+const navigationItems = computed(() => [
+  {
+    to: '/login',
+    label: t('navigation.login'),
+    active: route.path === '/login'
+  },
+  {
+    to: '/reservations',
+    label: t('navigation.reservations'),
+    active: route.path === '/reservations' || route.path.startsWith('/reservations/')
+  },
+  {
+    to: '/checkout',
+    label: t('navigation.checkout'),
+    active: route.path === '/checkout' || route.path.startsWith('/notifications/payment-confirmation')
+  }
+])
 
 function onLocaleChange(code: string) {
   setLocale(code as 'es' | 'en' | 'pt')
@@ -24,16 +43,12 @@ function onLocaleChange(code: string) {
 
           <nav class="hidden items-center gap-2 md:flex">
             <UButton
-              to="/login"
-              :label="t('navigation.login')"
-              color="neutral"
-              variant="ghost"
-            />
-            <UButton
-              to="/checkout"
-              :label="t('navigation.checkout')"
-              color="primary"
-              variant="subtle"
+              v-for="item in navigationItems"
+              :key="item.to"
+              :to="item.to"
+              :label="item.label"
+              :color="item.active ? 'primary' : 'neutral'"
+              :variant="item.active ? 'subtle' : 'ghost'"
             />
           </nav>
         </div>

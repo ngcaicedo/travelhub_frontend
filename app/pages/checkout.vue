@@ -10,6 +10,7 @@ import {
   normalizePaymentsConfig,
   scenarioPresets,
   type CheckoutSession,
+  type FinalizePaymentResponse,
   type PaymentEvent,
   type PaymentResponse,
   type PaymentsConfig,
@@ -27,9 +28,14 @@ type FeedbackState = {
   descriptionParams?: Record<string, string | number>
 }
 
-const { t, locale, tm } = useI18n()
+const { t, locale, tm, getLocaleMessage } = useI18n()
 const paymentsApiBase = '/api/payments'
 const requestTimeoutMs = 10000
+const localeMap: Record<string, string> = {
+  es: 'es-CO',
+  en: 'en-US',
+  pt: 'pt-BR'
+}
 const stripePollMaxAttempts = 6
 const stripePollIntervalMs = 1000
 
@@ -66,6 +72,35 @@ const stripeClient = shallowRef<StripeClient | null>(null)
 const stripeElements = shallowRef<StripeElementsInstance | null>(null)
 const stripePaymentElement = shallowRef<{ mount: (target: string | HTMLElement) => void, unmount?: () => void, destroy?: () => void } | null>(null)
 
+const complianceMode = usePaymentsCompliance()
+
+function isTimeoutLikeError(error: unknown) {
+  const message = (
+    (error as { message?: string })?.message
+    || (error as { statusMessage?: string })?.statusMessage
+    || ''
+  ).toLowerCase()
+
+  return message.includes('timeout')
+    || message.includes('timed out')
+    || message.includes('fetch failed')
+    || message.includes('network')
+}
+
+async function goToPaymentConfirmation(paymentId: string) {
+  await navigateTo({
+    path: '/notifications/payment-confirmation',
+    query: { paymentId }
+  })
+}
+
+async function goToPendingVerification(paymentTransactionId: string) {
+  await navigateTo({
+    path: '/notifications/payment-confirmation',
+    query: { transactionId: paymentTransactionId }
+  })
+}
+
 const stayNights = computed(() => {
   const start = new Date(`${form.checkInDate}T00:00:00`)
   const end = new Date(`${form.checkOutDate}T00:00:00`)
@@ -94,6 +129,8 @@ const booking = computed(() => ({
 }))
 
 const isStripeMode = computed(() => paymentsConfig.value.provider === 'stripe_test' && paymentsConfig.value.stripe_enabled)
+const isFakeMode = computed(() => !complianceMode.value && !configLoading.value && !isStripeMode.value)
+const isComplianceBlocked = computed(() => complianceMode.value && !configLoading.value && !isStripeMode.value)
 const scenarioOptions = computed(() => [
   { label: t('payments.scenarios.success'), value: 'success' },
   { label: t('payments.scenarios.insufficient'), value: 'insufficient' },
@@ -129,14 +166,27 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => unmountStripeElement())
-useSeoMeta({ title: () => `${t('payments.meta.title')} - TravelHub` })
+useSeoMeta({ title: () => `${t('payments.meta.title')} - ${t('common.appName')}` })
 
 function setReadyFeedback() {
+  if (isComplianceBlocked.value) {
+    feedback.value = {
+      tone: 'warning',
+      titleKey: 'payments.compliance.misconfiguredTitle',
+      descriptionKey: 'payments.compliance.misconfiguredDescription'
+    }
+    return
+  }
+
   feedback.value = {
     tone: 'info',
     titleKey: 'payments.feedback.readyTitle',
     descriptionKey: isStripeMode.value ? 'payments.feedback.stripeReadyDescription' : 'payments.feedback.readyDescription'
   }
+}
+
+function activeLocale() {
+  return localeMap[locale.value] || 'en-US'
 }
 
 function formatMoney(amountInCents: number, currency: string) {
@@ -145,7 +195,7 @@ function formatMoney(amountInCents: number, currency: string) {
     return `${(amountInCents / 100).toFixed(2)}`
   }
   try {
-    return new Intl.NumberFormat(locale.value, { style: 'currency', currency: c }).format(amountInCents / 100)
+    return new Intl.NumberFormat(activeLocale(), { style: 'currency', currency: c }).format(amountInCents / 100)
   } catch {
     return `${(amountInCents / 100).toFixed(2)} ${c}`
   }
@@ -153,8 +203,10 @@ function formatMoney(amountInCents: number, currency: string) {
 
 function formatDate(value: string | null) {
   if (!value) return t('payments.events.dateUnavailable')
-  const parsed = new Date(value)
-  return Number.isNaN(parsed.getTime()) ? t('payments.events.dateUnavailable') : new Intl.DateTimeFormat(locale.value, { dateStyle: 'short', timeStyle: 'short' }).format(parsed)
+  const parsed = /^\d{4}-\d{2}-\d{2}$/.test(value)
+    ? new Date(`${value}T00:00:00`)
+    : new Date(value)
+  return Number.isNaN(parsed.getTime()) ? t('payments.events.dateUnavailable') : new Intl.DateTimeFormat(activeLocale(), { dateStyle: 'short', timeStyle: 'short' }).format(parsed)
 }
 
 function formatStayDate(value: string) {
@@ -166,7 +218,7 @@ function formatStayDate(value: string) {
     return value
   }
 
-  return new Intl.DateTimeFormat(locale.value, {
+  return new Intl.DateTimeFormat(activeLocale(), {
     month: 'short',
     day: 'numeric'
   }).format(parsed)
@@ -179,17 +231,55 @@ function buildIdempotencyKey() {
 
   return `checkout-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
 }
-function detailMessage(detail: unknown) {
-  return typeof detail === 'string' ? detail : t('payments.feedback.requestErrorDescription')
+function detailMessage(detail: unknown): string {
+  if (typeof detail === 'string') {
+    return detail
+  }
+
+  if (Array.isArray(detail)) {
+    const nestedMessage: string | undefined = detail
+      .map(item => detailMessage(item))
+      .find(message => message !== t('payments.feedback.requestErrorDescription'))
+
+    return nestedMessage || t('payments.feedback.requestErrorDescription')
+  }
+
+  if (typeof detail === 'object' && detail !== null) {
+    const record = detail as Record<string, unknown>
+    const candidate = [record.message, record.code, record.error, record.detail]
+      .find(value => typeof value === 'string' && value.trim().length > 0)
+
+    if (typeof candidate === 'string') {
+      return candidate
+    }
+  }
+
+  return t('payments.feedback.requestErrorDescription')
 }
 function isDuplicate(detail: unknown): detail is { message: string } {
   return typeof detail === 'object' && detail !== null && 'message' in detail && typeof detail.message === 'string'
 }
 function localizedMatchers(key: string) {
-  const value = tm(key)
-  return Array.isArray(value)
-    ? value.filter((entry): entry is string => typeof entry === 'string').map(entry => entry.toLowerCase())
-    : []
+  const currentValue = tm(key)
+  const localeValues = ['es', 'en', 'pt']
+    .map((localeCode) => {
+      const segments = key.split('.')
+      let current: unknown = getLocaleMessage(localeCode)
+
+      for (const segment of segments) {
+        if (typeof current !== 'object' || current === null || !(segment in current)) {
+          return null
+        }
+        current = (current as Record<string, unknown>)[segment]
+      }
+
+      return current
+    })
+
+  return [currentValue, ...localeValues]
+    .flatMap(value => Array.isArray(value) ? value : [])
+    .filter((entry): entry is string => typeof entry === 'string')
+    .map(entry => entry.toLowerCase())
 }
 function isCardDeclined(value: string | null | undefined) {
   if (!value) return false
@@ -202,6 +292,74 @@ function isInsufficientFunds(value: string | null | undefined) {
   return localizedMatchers('payments.detection.insufficientFunds').some(matcher => normalized.includes(matcher))
 }
 
+function isTranslationKey(value: string) {
+  return /^[a-z]+(?:\.[a-zA-Z0-9_-]+)+$/.test(value)
+}
+
+function resolvePaymentMessageKey(value: string | null | undefined, fallbackKey = 'payments.feedback.requestErrorDescription') {
+  if (!value) {
+    return fallbackKey
+  }
+
+  if (isTranslationKey(value)) {
+    return value
+  }
+
+  const normalized = value.toLowerCase()
+
+  if (
+    normalized.includes('timeout')
+    || normalized.includes('timed out')
+  ) {
+    return 'payments.feedback.timeoutDescription'
+  }
+
+  if (
+    normalized.includes('fetch failed')
+    || normalized.includes('network')
+  ) {
+    return 'payments.feedback.backendUnavailableDescription'
+  }
+
+  if (isInsufficientFunds(value)) {
+    return 'payments.feedback.failureInsufficient'
+  }
+
+  if (isCardDeclined(value)) {
+    return 'payments.feedback.failureDeclined'
+  }
+
+  if (
+    normalized.includes('invalid_backend_response')
+    || normalized.includes('invalid payment confirmation response')
+    || normalized.includes('invalid checkout status response')
+  ) {
+    return 'payments.feedback.invalidResponseDescription'
+  }
+
+  if (
+    normalized.includes('invalid_stripe_session')
+    || normalized.includes('stripe_js_unavailable')
+    || normalized.includes('failed to load stripe.js')
+  ) {
+    return 'payments.integration.sessionError'
+  }
+
+  if (normalized === 'confirmed') {
+    return 'payments.result.confirmed'
+  }
+
+  if (normalized === 'failed') {
+    return 'payments.result.failed'
+  }
+
+  return fallbackKey
+}
+
+function localizePaymentMessage(value: string | null | undefined, fallbackKey = 'payments.feedback.requestErrorDescription') {
+  return t(resolvePaymentMessageKey(value, fallbackKey))
+}
+
 function resolveFailureDescription(failureReason: string | null, errorMessage: string | null) {
   if (isInsufficientFunds(failureReason) || isInsufficientFunds(errorMessage)) {
     return { descriptionKey: 'payments.feedback.failureInsufficient' }
@@ -209,17 +367,46 @@ function resolveFailureDescription(failureReason: string | null, errorMessage: s
   if (isCardDeclined(failureReason) || isCardDeclined(errorMessage)) {
     return { descriptionKey: 'payments.feedback.failureDeclined' }
   }
-  return errorMessage
-    ? { descriptionText: errorMessage }
-    : { descriptionKey: 'payments.feedback.failureDeclined' }
+  return { descriptionKey: resolvePaymentMessageKey(errorMessage, 'payments.feedback.failureDeclined') }
 }
 
 function resolveRequestErrorDescription(detail: unknown) {
   const message = detailMessage(detail)
-  if (message === 'invalid_backend_response') return { descriptionKey: 'payments.feedback.invalidResponseDescription' }
+  const normalized = message.toLowerCase()
+
+  if (
+    normalized.includes('timeout')
+    || normalized.includes('timed out')
+  ) {
+    return { descriptionKey: 'payments.feedback.timeoutDescription' }
+  }
+
+  if (
+    normalized.includes('fetch failed')
+    || normalized.includes('network')
+  ) {
+    return { descriptionKey: 'payments.feedback.backendUnavailableDescription' }
+  }
   if (isInsufficientFunds(message)) return { descriptionKey: 'payments.feedback.failureInsufficient' }
   if (isCardDeclined(message)) return { descriptionKey: 'payments.feedback.failureDeclined' }
-  return { descriptionText: message }
+
+  if (
+    normalized.includes('invalid_backend_response')
+    || normalized.includes('invalid payment confirmation response')
+    || normalized.includes('invalid checkout status response')
+  ) {
+    return { descriptionKey: 'payments.feedback.invalidResponseDescription' }
+  }
+
+  if (
+    normalized.includes('invalid_stripe_session')
+    || normalized.includes('stripe_js_unavailable')
+    || normalized.includes('failed to load stripe.js')
+  ) {
+    return { descriptionKey: 'payments.integration.sessionError' }
+  }
+
+  return { descriptionKey: 'payments.feedback.requestErrorDescription' }
 }
 
 function resolveTransportErrorDescription(error: unknown) {
@@ -265,17 +452,20 @@ function eventLabel(type: string) {
 function eventDetail(event: PaymentEvent) {
   const payload = event.payload || {}
   if (typeof payload.receipt_number === 'string') return payload.receipt_number
-  if (typeof payload.failure_reason === 'string') return payload.failure_reason
+  if (typeof payload.failure_reason === 'string') return localizePaymentMessage(payload.failure_reason, 'payments.events.details.notAvailable')
   if (typeof payload.gateway_charge_id === 'string') return payload.gateway_charge_id
-  if (typeof payload.status === 'string') return payload.status
+  if (typeof payload.status === 'string') return localizePaymentMessage(payload.status, 'payments.events.details.notAvailable')
   return t('payments.events.details.recorded')
 }
 
 function handleError(error: unknown) {
   const detail = (error as { data?: { detail?: unknown } })?.data?.detail
+  const detailText = typeof detail === 'string' ? detail : (isDuplicate(detail) ? detail.message : '')
+  const normalizedDetail = detailText.toLowerCase()
+  const isDuplicateLike = isDuplicate(detail) || normalizedDetail.includes('duplicate') || normalizedDetail.includes('idempot')
 
-  if (isDuplicate(detail)) {
-    feedback.value = { tone: 'warning', titleKey: 'payments.feedback.duplicateTitle', descriptionText: detail.message }
+  if (isDuplicateLike) {
+    feedback.value = { tone: 'warning', titleKey: 'payments.feedback.duplicateTitle', descriptionKey: 'payments.feedback.duplicateDescription' }
     return
   }
 
@@ -315,7 +505,7 @@ async function loadPayment(paymentId: string) {
   paymentResult.value = normalized
   const failureFeedback = resolveFailureDescription(normalized.failure_reason, lastFailureMessage.value)
   feedback.value = normalized.status === 'confirmed'
-    ? { tone: 'success', titleKey: 'payments.feedback.successTitle', descriptionKey: 'payments.feedback.successDescription', descriptionParams: { receipt: normalized.receipt_number || 'N/A' } }
+    ? { tone: 'success', titleKey: 'payments.feedback.successTitle', descriptionKey: 'payments.feedback.successDescription', descriptionParams: { receipt: normalized.receipt_number || t('payments.result.noReceipt') } }
     : { tone: 'error', titleKey: 'payments.feedback.failureTitle', ...failureFeedback }
   if (normalized.status === 'confirmed') lastFailureMessage.value = null
 }
@@ -400,6 +590,9 @@ async function submitFake() {
   if (!normalized) throw createError({ statusCode: 502, data: { detail: 'invalid_backend_response' } })
   paymentResult.value = normalized
   await loadPaymentAndEvents(normalized.payment_id)
+  if (normalized.status === 'confirmed') {
+    await goToPaymentConfirmation(normalized.payment_id)
+  }
 }
 
 async function submitStripe() {
@@ -415,30 +608,60 @@ async function submitStripe() {
     params: { payment_method_data: { billing_details: { name: form.cardholderName } }, return_url: window.location.href }
   })
   if (!confirmation.confirmationToken?.id) throw createError({ statusCode: 400, data: { detail: confirmation.error?.message || t('payments.integration.confirmationTokenError') } })
-  const finalized = normalizeFinalizePaymentResponse(await $fetch(`${paymentsApiBase}/finalize`, {
-    method: 'POST',
-    timeout: requestTimeoutMs,
-    headers: { 'x-forwarded-proto': 'https' },
-    body: { payment_transaction_id: stripeSession.value!.payment_transaction_id, confirmation_token_id: confirmation.confirmationToken.id }
-  }))
+  let finalized: FinalizePaymentResponse | null = null
+  try {
+    finalized = normalizeFinalizePaymentResponse(await $fetch(`${paymentsApiBase}/finalize`, {
+      method: 'POST',
+      timeout: requestTimeoutMs,
+      headers: { 'x-forwarded-proto': 'https' },
+      body: { payment_transaction_id: stripeSession.value!.payment_transaction_id, confirmation_token_id: confirmation.confirmationToken.id }
+    }))
+  } catch (error) {
+    if (stripeSession.value?.payment_transaction_id && isTimeoutLikeError(error)) {
+      await goToPendingVerification(stripeSession.value.payment_transaction_id)
+      return
+    }
+    throw error
+  }
   if (!finalized) throw createError({ statusCode: 502, data: { detail: 'invalid_backend_response' } })
   lastIdempotencyKey.value = stripeSession.value!.payment_transaction_id
   if (finalized.status === 'failed') lastFailureMessage.value = finalized.error
-  if (finalized.payment_id) return loadPaymentAndEvents(finalized.payment_id)
+  if (finalized.payment_id) {
+    await loadPaymentAndEvents(finalized.payment_id)
+    if (paymentResult.value?.status === 'confirmed') {
+      await goToPaymentConfirmation(finalized.payment_id)
+    }
+    return
+  }
   if (finalized.status === 'requires_action' && finalized.client_secret) {
     feedback.value = { tone: 'info', titleKey: 'payments.integration.requiresActionTitle', descriptionKey: 'payments.integration.requiresActionDescription' }
     const nextAction = await stripeClient.value!.handleNextAction({ clientSecret: finalized.client_secret })
     if (nextAction.error?.message) throw createError({ statusCode: 400, data: { detail: nextAction.error.message } })
     for (let i = 0; i < stripePollMaxAttempts; i += 1) {
       const status = normalizeCheckoutSessionStatus(await $fetch(`${paymentsApiBase}/checkout/${stripeSession.value!.payment_transaction_id}`, { timeout: requestTimeoutMs }))
-      if (status?.payment_id) return loadPaymentAndEvents(status.payment_id)
+      if (status?.payment_id) {
+        await loadPaymentAndEvents(status.payment_id)
+        if (paymentResult.value?.status === 'confirmed') {
+          await goToPaymentConfirmation(status.payment_id)
+        }
+        return
+      }
       await new Promise(resolve => setTimeout(resolve, stripePollIntervalMs))
     }
-    feedback.value = { tone: 'warning', titleKey: 'payments.feedback.requestErrorTitle', descriptionKey: 'payments.feedback.pendingVerificationDescription' }
+    await goToPendingVerification(stripeSession.value!.payment_transaction_id)
   }
 }
 
 async function submitPayment() {
+  if (isComplianceBlocked.value) {
+    feedback.value = {
+      tone: 'error',
+      titleKey: 'payments.compliance.misconfiguredTitle',
+      descriptionKey: 'payments.compliance.misconfiguredDescription'
+    }
+    return
+  }
+
   processing.value = true
   paymentResult.value = null
   paymentEvents.value = []
@@ -502,6 +725,8 @@ async function simulateDuplicate() {
 
 <template>
   <section class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <PaymentsCheckoutSecurityMenu class="mb-6" />
+
     <div class="mb-6 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-4 text-sm text-slate-700">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <span>{{ t('payments.timer.prefix') }} <strong>{{ t('payments.timer.value') }}</strong></span>
@@ -519,9 +744,18 @@ async function simulateDuplicate() {
             {{ t('payments.subtitle') }}
           </p>
           <p class="mt-4 text-sm text-slate-600">
-            {{ isStripeMode ? t('payments.integration.stripeModeDescription') : t('payments.integration.fakeModeDescription') }}
+            {{ isStripeMode ? t('payments.integration.stripeModeDescription') : (complianceMode ? t('payments.compliance.strictModeDescription') : t('payments.integration.fakeModeDescription')) }}
           </p>
         </div>
+
+        <UAlert
+          v-if="complianceMode"
+          color="primary"
+          variant="soft"
+          icon="i-lucide-shield-check"
+          :title="t('payments.compliance.bannerTitle')"
+          :description="isComplianceBlocked ? t('payments.compliance.misconfiguredDescription') : t('payments.compliance.bannerDescription')"
+        />
 
         <div :class="['rounded-2xl border px-4 py-4 text-sm', toneClass]">
           <p class="font-semibold">
@@ -534,7 +768,7 @@ async function simulateDuplicate() {
 
         <div class="grid gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:grid-cols-2">
           <label
-            v-if="!isStripeMode"
+            v-if="isFakeMode"
             class="space-y-2 text-sm"
           ><span>{{ t('payments.scenarioLabel') }}</span><select
             v-model="form.scenario"
@@ -544,13 +778,16 @@ async function simulateDuplicate() {
             :key="option.value"
             :value="option.value"
           >{{ option.label }}</option></select></label>
-          <label class="space-y-2 text-sm"><span>{{ t('payments.form.cardholder') }}</span><input
+          <label
+            v-if="!configLoading"
+            class="space-y-2 text-sm"
+          ><span>{{ t('payments.form.cardholder') }}</span><input
             v-model="form.cardholderName"
             type="text"
             :placeholder="t('payments.form.cardholderPlaceholder')"
             class="w-full rounded-xl border border-slate-200 px-3 py-2"
           ></label>
-          <template v-if="!isStripeMode">
+          <template v-if="isFakeMode">
             <label class="space-y-2 text-sm"><span>{{ t('payments.form.cardNumber') }}</span><input
               v-model="form.cardNumber"
               type="text"
@@ -629,7 +866,7 @@ async function simulateDuplicate() {
             </button>
           </div>
           <p class="mt-4 text-sm text-slate-500">
-            {{ isStripeMode ? t('payments.integration.stripeFieldHint') : t('payments.tokenHint') }}
+            {{ isStripeMode ? t('payments.integration.stripeFieldHint') : (complianceMode ? t('payments.compliance.strictModeHint') : t('payments.tokenHint')) }}
           </p>
 
           <div
@@ -662,23 +899,38 @@ async function simulateDuplicate() {
             </div>
           </div>
           <div
-            v-else
+            v-else-if="isFakeMode"
             class="mt-6 rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm text-slate-600"
           >
             {{ t('payments.integration.fakeModeDescription') }}
+          </div>
+          <UAlert
+            v-else-if="isComplianceBlocked"
+            class="mt-6"
+            color="warning"
+            variant="soft"
+            icon="i-lucide-shield-alert"
+            :title="t('payments.compliance.misconfiguredTitle')"
+            :description="t('payments.compliance.misconfiguredDescription')"
+          />
+          <div
+            v-else
+            class="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-500"
+          >
+            {{ t('payments.integration.loadingConfig') }}
           </div>
 
           <div class="mt-6 flex flex-wrap gap-3">
             <button
               type="button"
               class="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white disabled:bg-blue-300"
-              :disabled="processing || stripeLoading"
+              :disabled="processing || stripeLoading || configLoading"
               @click="submitPayment"
             >
               {{ processing ? t('payments.actions.processing') : t('payments.actions.payNow') }}
             </button>
             <button
-              v-if="!isStripeMode"
+              v-if="isFakeMode"
               type="button"
               class="rounded-2xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 disabled:opacity-60"
               :disabled="processing || stripeLoading"

@@ -47,6 +47,21 @@ export async function loadStripeJs(): Promise<void> {
       const existing = document.querySelector<HTMLScriptElement>('script[data-stripe-js="true"]')
 
       if (existing) {
+        if (window.Stripe) {
+          resolve()
+          return
+        }
+
+        if (existing.dataset.loadState === 'loaded') {
+          reject(new Error('Failed to load Stripe.js'))
+          return
+        }
+
+        if (existing.dataset.loadState === 'error') {
+          reject(new Error('Failed to load Stripe.js'))
+          return
+        }
+
         existing.addEventListener('load', () => resolve(), { once: true })
         existing.addEventListener('error', () => reject(new Error('Failed to load Stripe.js')), { once: true })
         return
@@ -56,8 +71,18 @@ export async function loadStripeJs(): Promise<void> {
       script.src = 'https://js.stripe.com/v3/'
       script.async = true
       script.dataset.stripeJs = 'true'
-      script.onload = () => resolve()
-      script.onerror = () => reject(new Error('Failed to load Stripe.js'))
+      script.onload = () => {
+        script.dataset.loadState = window.Stripe ? 'ready' : 'loaded'
+        if (!window.Stripe) {
+          reject(new Error('Failed to load Stripe.js'))
+          return
+        }
+        resolve()
+      }
+      script.onerror = () => {
+        script.dataset.loadState = 'error'
+        reject(new Error('Failed to load Stripe.js'))
+      }
       document.head.appendChild(script)
     })
   }

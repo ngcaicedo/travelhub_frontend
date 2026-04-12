@@ -1,9 +1,15 @@
-import { nextTick } from 'vue'
+import { computed, nextTick } from 'vue'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises } from '@vue/test-utils'
-import { mountSuspended } from '@nuxt/test-utils/runtime'
+import { mountSuspended, mockNuxtImport } from '@nuxt/test-utils/runtime'
 
 import CheckoutPage from '~/pages/checkout.vue'
+
+const { usePaymentsComplianceMock } = vi.hoisted(() => ({
+  usePaymentsComplianceMock: vi.fn(() => computed(() => false))
+}))
+
+mockNuxtImport('usePaymentsCompliance', () => usePaymentsComplianceMock)
 
 type FetchPayload = Record<string, unknown>
 type FetchOptions = {
@@ -79,6 +85,7 @@ function createFetchMock({
 
 describe('CheckoutPage', () => {
   beforeEach(() => {
+    usePaymentsComplianceMock.mockReturnValue(computed(() => false))
     vi.stubGlobal('$fetch', createFetchMock())
   })
 
@@ -114,7 +121,7 @@ describe('CheckoutPage', () => {
 
     const values = wrapper.findAll('input').map(input => (input.element as HTMLInputElement).value)
 
-    expect(values).toContain('4000 0000 0000 0002')
+    expect(values).toContain('**** **** **** 0002')
     expect(values).toContain('pm_fail_card_declined')
   })
 
@@ -165,7 +172,7 @@ describe('CheckoutPage', () => {
     }))
 
     const wrapper = await mountSuspended(CheckoutPage)
-    await wrapper.findAll('button')[0].trigger('click')
+    await findButtonByText(wrapper, /Pagar ahora|Pay now/).trigger('click')
     await flushPromises()
 
     const text = textContent(wrapper)
@@ -205,7 +212,7 @@ describe('CheckoutPage', () => {
     }))
 
     const wrapper = await mountSuspended(CheckoutPage)
-    await wrapper.findAll('button')[0].trigger('click')
+    await findButtonByText(wrapper, /Pagar ahora|Pay now/).trigger('click')
     await flushPromises()
 
     expect(textContent(wrapper)).toMatch(/Insufficient funds|fondos insuficientes|fundos insuficientes/)
@@ -251,7 +258,7 @@ describe('CheckoutPage', () => {
     }))
 
     const wrapper = await mountSuspended(CheckoutPage)
-    await wrapper.findAll('button')[1].trigger('click')
+    await findButtonByText(wrapper, /Probar duplicado|Test duplicate/).trigger('click')
     await flushPromises()
 
     expect(textContent(wrapper)).toMatch(/Duplicate payment blocked|duplicado|duplicado/)
@@ -269,13 +276,38 @@ describe('CheckoutPage', () => {
     const wrapper = await mountSuspended(CheckoutPage)
     const text = textContent(wrapper)
 
-    expect(text).toMatch(/Prepare secure form|Preparar formulario seguro|Preparar formulário seguro/)
+    expect(text).toMatch(/Prepare secure form|Preparar formulario seguro|Preparar formulario seguro|Preparar formulario/)
     expect(text).not.toMatch(/Token de pago|Payment token/)
     expect(text).not.toMatch(/Probar duplicado|Test duplicate/)
     expect(wrapper.find('#stripe-payment-element').exists()).toBe(true)
+  })
+
+  it('hides manual card flows when compliance mode is active even if backend falls back to fake mode', async () => {
+    usePaymentsComplianceMock.mockReturnValue(computed(() => true))
+
+    const wrapper = await mountSuspended(CheckoutPage)
+    const text = textContent(wrapper)
+
+    expect(text).toMatch(/Financial data protection enabled|Proteccion financiera activa|Protecao financeira ativa/)
+    expect(text).toMatch(/Stripe secure mode is not ready|El modo seguro de Stripe no esta listo|O modo seguro do Stripe nao esta pronto/)
+    expect(text).not.toMatch(/Token de pago|Payment token/)
+    expect(text).not.toMatch(/Probar duplicado|Test duplicate/)
   })
 })
 
 function textContent(wrapper: Awaited<ReturnType<typeof mountSuspended>>) {
   return wrapper.text()
+}
+
+function findButtonByText(
+  wrapper: Awaited<ReturnType<typeof mountSuspended>>,
+  pattern: RegExp
+) {
+  const button = wrapper.findAll('button').find(candidate => pattern.test(candidate.text()))
+
+  if (!button) {
+    throw new Error(`Button not found for pattern: ${pattern.toString()}`)
+  }
+
+  return button
 }

@@ -69,24 +69,24 @@ export type PaymentBreakdownLine = {
 
 export const scenarioPresets: Record<ScenarioKind, ScenarioPreset> = {
   success: {
-    cardholderName: '',
-    cardNumber: '4242 4242 4242 4242',
-    expiration: '12/29',
-    cvv: '123',
+    cardholderName: 'John Doe',
+    cardNumber: '**** **** **** 4242',
+    expiration: '**/**',
+    cvv: '***',
     paymentToken: 'pm_tok_visa_ok'
   },
   insufficient: {
-    cardholderName: '',
-    cardNumber: '4000 0000 0000 9995',
-    expiration: '11/29',
-    cvv: '456',
+    cardholderName: 'John Doe',
+    cardNumber: '**** **** **** 9995',
+    expiration: '**/**',
+    cvv: '***',
     paymentToken: 'pm_fail_insufficient_funds'
   },
   declined: {
-    cardholderName: '',
-    cardNumber: '4000 0000 0000 0002',
-    expiration: '10/29',
-    cvv: '789',
+    cardholderName: 'John Doe',
+    cardNumber: '**** **** **** 0002',
+    expiration: '**/**',
+    cvv: '***',
     paymentToken: 'pm_fail_card_declined'
   }
 }

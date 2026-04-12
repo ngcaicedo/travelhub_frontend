@@ -15,7 +15,8 @@
   },
   "navigation": {
     "login": "Iniciar sesión",
-    "checkout": "Proceso de pago"
+    "checkout": "Proceso de pago",
+    "reservations": "Mis reservas"
   },
   "auth": {
     "hero": {
@@ -151,6 +152,10 @@
       "eventsUnavailable": "El pago se procesó, pero no fue posible cargar los eventos desde el backend.",
       "pendingVerificationDescription": "El pago está siendo verificado. Consulta de nuevo el último estado en unos segundos."
     },
+    "errors": {
+      "invalidConfirmationResponse": "La respuesta de confirmación del pago no fue válida.",
+      "invalidCheckoutStatusResponse": "La respuesta del estado del checkout no fue válida."
+    },
     "detection": {
       "cardDeclined": [
         "card_declined",
@@ -203,6 +208,19 @@
       "processing": "Procesando pago",
       "testDuplicate": "Probar duplicado",
       "prepareSecureForm": "Preparar formulario seguro"
+    },
+    "compliance": {
+      "bannerTitle": "Protección financiera activa",
+      "bannerDescription": "Este checkout usa solo campos de pago hospedados por Stripe. TravelHub nunca recibe número de tarjeta, CVV ni fecha de expiración cuando el modo de cumplimiento está activo.",
+      "strictModeDescription": "El modo de cumplimiento está activo. Los campos manuales de tarjeta están deshabilitados y el pago debe fluir por Stripe Payment Element.",
+      "strictModeHint": "Prepara el formulario seguro de Stripe para continuar con un flujo token-only.",
+      "misconfiguredTitle": "El modo seguro de Stripe no está listo",
+      "misconfiguredDescription": "El modo de cumplimiento está activo, pero el servicio de payments no expone Stripe test mode. Revisa la configuración del backend antes de procesar pagos.",
+      "steps": {
+        "checkout": "Checkout",
+        "tokenization": "Tokenización",
+        "confirmation": "Confirmación"
+      }
     },
     "booking": {
       "property": "Renaissance Estate & Private Vineyard",
@@ -293,6 +311,67 @@
     "printConfirmation": "Imprimir confirmación",
     "nextSteps": "Próximos pasos",
     "nextStepsDescription": "Tu reserva está pendiente de pago. Por favor, visita el portal de pagos para completar la transacción. Una vez confirmado el pago, recibirás un email de confirmación final."
+  },
+  "notifications": {
+    "meta": {
+      "title": "Confirmación del pago"
+    },
+    "success": {
+      "title": "¡Reserva confirmada!",
+      "subtitle": "Hemos enviado un correo de confirmación a tu bandeja de entrada."
+    },
+    "summary": {
+      "badge": "Detalles de la reserva",
+      "reservationId": "ID de reserva",
+      "paymentId": "ID del pago",
+      "dates": "Check-in",
+      "stay": "Estadía",
+      "property": "Propiedad",
+      "propertyFallback": "Hospedaje TravelHub",
+      "amountPaid": "Monto pagado"
+    },
+    "actions": {
+      "viewReservations": "Ver mis reservas",
+      "downloadReceipt": "Descargar recibo",
+      "retryVerification": "Consultar de nuevo",
+      "backToCheckout": "Volver al checkout"
+    },
+    "receipt": {
+      "title": "Recibo",
+      "label": "Recibo",
+      "pending": "Recibo pendiente",
+      "paidBadge": "Pagado",
+      "pdfTitle": "Recibo de pago",
+      "pdfSubtitle": "Tu pago fue confirmado correctamente. Conserva este documento para tu historial de viaje.",
+      "footer": "Generado desde tu página de confirmación de TravelHub."
+    },
+    "verification": {
+      "title": "Tu pago está siendo verificado",
+      "subtitle": "Estamos conciliando el estado final del pago con Stripe.",
+      "description": "Esto puede ocurrir después de un timeout justo tras confirmar el pago. TravelHub seguirá consultando en background durante un máximo de 30 segundos.",
+      "expired": "Todavía estamos esperando la confirmación final de Stripe. Intenta consultar de nuevo en un momento o vuelve al checkout.",
+      "failed": "No pudimos validar el estado final del pago."
+    },
+    "errors": {
+      "title": "No pudimos cargar la confirmación",
+      "missingReference": "Se necesita una referencia del pago para mostrar esta confirmación.",
+      "backendUnavailable": "No pudimos verificar el pago en este momento. Intenta de nuevo en un instante.",
+      "insufficientFunds": "No fue posible confirmar el pago porque la tarjeta no tiene fondos suficientes.",
+      "paymentDeclined": "No fue posible confirmar el pago porque la tarjeta fue rechazada.",
+      "invalidConfirmationResponse": "No fue posible procesar la confirmación del pago.",
+      "invalidCheckoutStatusResponse": "No fue posible procesar el estado más reciente del checkout."
+    }
+  },
+  "reservationHistory": {
+    "meta": {
+      "title": "Mis reservas"
+    },
+    "badge": "Zona viajero",
+    "title": "Mis reservas",
+    "subtitle": "Revisa las confirmaciones de reserva más recientes generadas después de tus pagos exitosos.",
+    "latestReservation": "Reserva más reciente",
+    "emptyTitle": "Aún no tienes reservas",
+    "emptyDescription": "Cuando un pago quede confirmado, el resumen de tu reserva aparecerá aquí."
   },
   "status": {
     "pendingPayment": "Pendiente de pago",
@@ -391,4 +470,3 @@
     }
   }
 }
-
