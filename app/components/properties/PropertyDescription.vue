@@ -31,12 +31,14 @@ const shouldShowReadMore = computed(() => props.description.length > (props.maxL
       {{ displayText }}
     </p>
 
-    <button
+    <UButton
       v-if="shouldShowReadMore"
-      class="text-primary font-semibold hover:underline"
+      variant="link"
+      color="primary"
+      class="font-semibold p-0 h-auto"
       @click="isExpanded = !isExpanded"
     >
       {{ isExpanded ? t('common.readLess') : t('common.readMore') }}
-    </button>
+    </UButton>
   </section>
 </template>
