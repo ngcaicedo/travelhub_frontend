@@ -7,6 +7,7 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+const { t } = useI18n()
 const selectedImageIdx = ref(0)
 
 const mainImage = computed(() => props.images[selectedImageIdx.value])
@@ -63,7 +64,7 @@ const thumbnailImages = computed(() => props.images.slice(1, 5))
             name="i-lucide-images"
             class="w-6 h-6 mx-auto mb-2"
           />
-          <span class="text-xs font-semibold">{{ images.length - 5 }} more</span>
+          <span class="text-xs font-semibold">{{ t('property.morePhotos', { count: images.length - 5 }) }}</span>
         </div>
       </div>
     </div>

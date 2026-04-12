@@ -219,6 +219,10 @@
     }
   },
   "property": {
+    "properties": "Propiedades",
+    "discoverPlaces": "Descubre lugares increíbles",
+    "discoverAmazingPlaces": "Descubre lugares increíbles para hospedarte",
+    "exploreOurSelection": "Explora nuestra selección de propiedades de lujo y encuentra el lugar perfecto para tu próxima aventura",
     "bedrooms": "Habitaciones",
     "bathrooms": "Baños",
     "maxGuests": "Huéspedes máximo",
@@ -229,7 +233,41 @@
     "openInGoogleMaps": "Abrir en Google Maps",
     "verifiedStay": "Estadía verificada",
     "loading": "Cargando propiedad",
-    "notFound": "Propiedad no encontrada"
+    "notFound": "Propiedad no encontrada",
+    "noPropertiesFound": "No hay propiedades disponibles en este momento",
+    "cancellationPolicy": "Política de cancelación",
+    "sections": {
+      "overview": "Descripción",
+      "amenities": "Amenidades",
+      "reviews": "Reseñas",
+      "location": "Ubicación",
+      "policies": "Políticas"
+    },
+    "bookNow": "Reserva ya",
+    "capacity": "Capacidad",
+    "morePhotos": "+{count} fotos",
+    "policies": {
+      "flexible": {
+        "label": "Flexible",
+        "description": "Cancelación gratuita durante 48 horas. Después, se aplica cargo del 50%."
+      },
+      "moderate": {
+        "label": "Moderada",
+        "description": "Cancelación gratuita hasta 7 días antes del check-in. Después, cargo completo."
+      },
+      "strict": {
+        "label": "Estricta",
+        "description": "No reembolsable. Se aplica cargo completo."
+      },
+      "freeCancellationTitle": "Cancelación gratuita",
+      "freeCancellationDesc": "Puedes cancelar hasta 48 horas antes del check-in y recibir un reembolso completo.",
+      "dateChangeTitle": "Modificación de fechas",
+      "dateChangeDesc": "Puedes cambiar tus fechas de hospedaje sin costo adicional, sujeto a disponibilidad.",
+      "securityDepositTitle": "Depósito de seguridad",
+      "securityDepositDesc": "Se requiere un depósito de seguridad equivalente a una noche. Se reembolsará después del check-out.",
+      "propertyDamageTitle": "Daños a la propiedad",
+      "propertyDamageDesc": "El huésped es responsable de cualquier daño causado durante su estadía."
+    }
   },
   "booking": {
     "dates": "Fechas",
@@ -271,6 +309,7 @@
     "serverError": "Error del servidor, intenta más tarde",
     "unknown": "Ocurrió un error inesperado",
     "propertyNotFound": "Propiedad no encontrada",
+    "failedToLoadProperties": "Error al cargar las propiedades",
     "tryAgainLater": "Intenta más tarde",
     "checkout_after_checkin": "El check-out debe ser posterior al check-in",
     "no_past_dates": "No se pueden seleccionar fechas pasadas",
