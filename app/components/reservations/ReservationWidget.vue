@@ -16,6 +16,9 @@ interface Props {
     currency: string
     max_guests: number
   }
+  initialCheckInDate?: string
+  initialCheckOutDate?: string
+  initialNumberOfGuests?: number
 }
 
 const { t, locale } = useI18n()
@@ -25,9 +28,9 @@ const reservationLockDurationMs = 15 * 60 * 1000
 
 const props = defineProps<Props>()
 
-const checkInDate = ref<string>('')
-const checkOutDate = ref<string>('')
-const numberOfGuests = ref<number>(1)
+const checkInDate = ref<string>(props.initialCheckInDate || '')
+const checkOutDate = ref<string>(props.initialCheckOutDate || '')
+const numberOfGuests = ref<number>(props.initialNumberOfGuests || 1)
 const submitError = ref<string | null>(null)
 
 const parseLocalDate = (dateValue: string): Date | null => {

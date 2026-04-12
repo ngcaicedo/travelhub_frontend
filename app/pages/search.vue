@@ -724,7 +724,14 @@ onMounted(async () => {
                   </div>
 
                   <UButton
-                    :to="`/properties/${encodePropertyRouteId(result.id)}`"
+                    :to="{
+                      path: `/properties/${encodePropertyRouteId(result.id)}`,
+                      query: {
+                        check_in: searchState.checkIn,
+                        check_out: searchState.checkOut,
+                        guests: String(searchState.guests)
+                      }
+                    }"
                     size="lg"
                     class="justify-center"
                   >

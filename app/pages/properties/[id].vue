@@ -16,6 +16,22 @@ const route = useRoute()
 // Simulamos que recibimos el ID de la propiedad desde la ruta
 const propertyId = computed(() => decodePropertyRouteId(route.params.id as string | undefined))
 
+// Extract reservation dates from search query params
+const initialCheckInDate = computed(() => {
+  const value = route.query.check_in
+  return typeof value === 'string' ? value : ''
+})
+
+const initialCheckOutDate = computed(() => {
+  const value = route.query.check_out
+  return typeof value === 'string' ? value : ''
+})
+
+const initialNumberOfGuests = computed(() => {
+  const value = Number(route.query.guests)
+  return Number.isFinite(value) && value > 0 ? value : undefined
+})
+
 const { property, reviews, loading } = useProperty(propertyId)
 
 const breadcrumbItems = computed(() => [
@@ -142,7 +158,12 @@ definePageMeta({
           <!-- Right Column: Reservation Widget -->
           <div class="lg:col-span-1">
             <div class="sticky top-20 space-y-4">
-              <ReservationWidget :property="property" />
+              <ReservationWidget
+                :property="property"
+                :initial-check-in-date="initialCheckInDate"
+                :initial-check-out-date="initialCheckOutDate"
+                :initial-number-of-guests="initialNumberOfGuests"
+              />
 
               <!-- Traveler Protection -->
               <div class="bg-slate-50 rounded-lg p-4 flex items-start gap-3">
