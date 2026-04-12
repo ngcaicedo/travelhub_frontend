@@ -12,17 +12,33 @@ const selectedImageIdx = ref(0)
 
 const mainImage = computed(() => props.images[selectedImageIdx.value])
 const thumbnailImages = computed(() => props.images.slice(1, 5))
+
+watch(
+  () => props.images,
+  (images) => {
+    if (!images.length) {
+      selectedImageIdx.value = 0
+      return
+    }
+
+    if (selectedImageIdx.value >= images.length) {
+      selectedImageIdx.value = 0
+    }
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
-  <div class="grid grid-cols-4 gap-2 w-full h-full rounded-xl overflow-hidden bg-gray-100">
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-2 w-full rounded-xl overflow-hidden bg-gray-100">
     <!-- Main Image -->
-    <div class="col-span-4 lg:col-span-2 h-96 lg:h-full relative overflow-hidden">
+    <div class="col-span-1 lg:col-span-2 h-[320px] sm:h-[420px] lg:h-[520px] relative overflow-hidden">
       <img
         v-if="mainImage"
         :src="mainImage.url"
         :alt="mainImage.alt_text || altText || 'Property'"
-        class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+        class="w-full h-full object-cover object-center transition-transform duration-300 hover:scale-[1.02]"
+        loading="eager"
       >
       <UButton
         v-if="props.images.length > 1"
@@ -36,18 +52,19 @@ const thumbnailImages = computed(() => props.images.slice(1, 5))
     </div>
 
     <!-- Thumbnail Navigation -->
-    <div class="col-span-4 lg:col-span-2 grid grid-cols-2 lg:grid-cols-2 gap-2">
+    <div class="col-span-1 lg:col-span-2 grid grid-cols-2 gap-2 h-[220px] sm:h-[240px] lg:h-[520px] lg:grid-rows-2">
       <div
         v-for="(image, idx) in thumbnailImages"
         :key="image.id"
-        class="relative h-20 lg:h-24 rounded-lg overflow-hidden cursor-pointer group"
+        class="relative h-full min-h-0 rounded-lg overflow-hidden cursor-pointer group"
         @click="selectedImageIdx = idx + 1"
       >
         <img
           :src="image.url"
           :alt="image.alt_text || `Room image ${idx}`"
-          class="w-full h-full object-cover transition-transform duration-300"
+          class="w-full h-full object-cover object-center transition-transform duration-300"
           :class="{ 'ring-2 ring-primary': selectedImageIdx === idx + 1 }"
+          loading="lazy"
         >
         <div
           class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200"
@@ -57,7 +74,7 @@ const thumbnailImages = computed(() => props.images.slice(1, 5))
       <!-- Show all photos button -->
       <div
         v-if="images.length > 5"
-        class="relative h-20 lg:h-24 rounded-lg overflow-hidden cursor-pointer group bg-gray-200 flex items-center justify-center"
+        class="relative h-full min-h-0 rounded-lg overflow-hidden cursor-pointer group bg-gray-200 flex items-center justify-center"
       >
         <div class="text-center">
           <UIcon

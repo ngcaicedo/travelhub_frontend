@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useSearch } from '~/composables/useSearch'
 import { formatCurrency } from '~/utils/validation'
+import { encodePropertyRouteId } from '~/utils/propertyRouteId'
 import type { SearchRequest, SearchResultItem } from '~/types/search'
 
 type SortOption = 'recommended' | 'price_asc' | 'price_desc' | 'rating'
@@ -744,7 +745,7 @@ onMounted(async () => {
                   </div>
 
                   <UButton
-                    :to="`/properties/${result.id}`"
+                    :to="`/properties/${encodePropertyRouteId(result.id)}`"
                     size="lg"
                     class="sm:min-w-[180px] justify-center"
                     trailing-icon="i-lucide-arrow-right"

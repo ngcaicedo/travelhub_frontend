@@ -8,12 +8,13 @@ import ReviewsList from '~/components/properties/ReviewsList.vue'
 import LocationMap from '~/components/properties/LocationMap.vue'
 import PropertyPolicies from '~/components/properties/PropertyPolicies.vue'
 import ReservationWidget from '~/components/reservations/ReservationWidget.vue'
+import { decodePropertyRouteId } from '~/utils/propertyRouteId'
 
 const { t } = useI18n()
 const route = useRoute()
 
 // Simulamos que recibimos el ID de la propiedad desde la ruta
-const propertyId = computed(() => route.params.id as string | undefined)
+const propertyId = computed(() => decodePropertyRouteId(route.params.id as string | undefined))
 
 const { property, reviews, loading } = useProperty(propertyId)
 
