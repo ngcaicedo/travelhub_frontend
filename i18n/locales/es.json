@@ -13,6 +13,10 @@
     "loadMore": "Cargar más",
     "loading": "Cargando..."
   },
+  "navigation": {
+    "login": "Iniciar sesión",
+    "checkout": "Proceso de pago"
+  },
   "auth": {
     "hero": {
       "title": "Explora el mundo con confianza.",
@@ -73,6 +77,145 @@
       "invalidOtp": "El código debe tener 6 dígitos",
       "submit": "Verificar",
       "error": "Error al verificar OTP"
+    }
+  },
+  "payments": {
+    "meta": {
+      "title": "Proceso de pago"
+    },
+    "title": "Proceso de pago",
+    "subtitle": "Encriptación segura para tu tranquilidad",
+    "timer": {
+      "prefix": "Tu habitación está reservada durante",
+      "value": "12:45 minutos"
+    },
+    "methodTitle": "Selecciona el método de pago",
+    "scenarioLabel": "Escenario de prueba",
+    "scenarios": {
+      "success": "Tarjeta aprobada",
+      "insufficient": "Fondos insuficientes",
+      "declined": "Tarjeta rechazada"
+    },
+    "form": {
+      "cardholder": "Nombre del titular",
+      "cardholderPlaceholder": "John Doe",
+      "token": "Token de pago",
+      "cardNumber": "Número de tarjeta",
+      "expiration": "Fecha de expiración",
+      "cvv": "CVV",
+      "reservationId": "ID de reserva",
+      "travelerId": "ID del viajero",
+      "amount": "Monto en centavos",
+      "currency": "Moneda",
+      "checkInDate": "Fecha de llegada",
+      "checkOutDate": "Fecha de salida"
+    },
+    "integration": {
+      "loadingConfig": "Cargando configuración de pagos",
+      "stripeBadge": "Stripe pruebas",
+      "fakeBadge": "Modo mock",
+      "stripeModeDescription": "Este checkout carga Stripe.js en modo de pruebas y envía los datos de la tarjeta directamente a Stripe mediante Payment Element.",
+      "fakeModeDescription": "Este checkout usa el proveedor simulado del backend para validar éxito, rechazo y duplicados aunque Stripe aún no esté configurado.",
+      "secureFormTitle": "Formulario seguro de tarjeta",
+      "secureFormDescription": "Los campos de tarjeta están hospedados por Stripe. TravelHub solo recibe el token de confirmación.",
+      "stripeFieldHint": "Usa tarjetas de prueba de Stripe dentro del formulario embebido después de preparar la sesión segura.",
+      "sessionReady": "Formulario seguro listo",
+      "sessionError": "No fue posible inicializar el formulario seguro.",
+      "sessionNeedsRefresh": "La sesión segura se reinició porque cambiaron los datos de la reserva.",
+      "securityNoticeStripe": "Iframe de Stripe",
+      "securityNoticeStripeHint": "El número, la expiración y el CVV se envían directamente a Stripe desde el navegador.",
+      "requiresActionTitle": "Se requiere autenticación adicional",
+      "requiresActionDescription": "Stripe solicitó una verificación extra antes de la confirmación final.",
+      "confirmationTokenError": "Stripe no pudo generar el token de confirmación.",
+      "duplicateOnlyFake": "La prueba de duplicado solo se simula en modo mock. En modo Stripe el flujo usa otro ciclo de sesión."
+    },
+    "securityNotice": "Puedes editar estos datos mock para la demo, pero el backend recibe únicamente el token de pago.",
+    "tokenHint": "Usa tokens como pm_tok_visa_ok, pm_fail_insufficient_funds o pm_fail_card_declined para reproducir los escenarios del MVP.",
+    "feedback": {
+      "readyTitle": "Checkout seguro listo",
+      "readyDescription": "Selecciona un escenario de pago para validar el comportamiento mínimo viable de la HU.",
+      "stripeReadyDescription": "Prepara el formulario seguro de Stripe y usa una tarjeta de prueba para validar el flujo token-only.",
+      "successTitle": "Pago confirmado",
+      "successDescription": "Se generó el recibo {receipt} y el backend solicitó la confirmación de la reserva.",
+      "failureTitle": "Pago rechazado",
+      "failureInsufficient": "La tarjeta fue rechazada por fondos insuficientes. El viajero puede reintentar con otra tarjeta.",
+      "failureDeclined": "La tarjeta fue rechazada. El viajero puede reintentar con otra tarjeta.",
+      "duplicateTitle": "Cobro duplicado bloqueado",
+      "duplicateDescription": "El backend rechazó un segundo intento inmediato con la misma operación, evitando un cobro doble accidental.",
+      "duplicateUnexpectedDescription": "El segundo intento no fue bloqueado como se esperaba. Revisa el backend o cambia los datos para repetir la prueba.",
+      "requestErrorTitle": "No fue posible procesar el pago",
+      "requestErrorDescription": "El backend no pudo completar la solicitud de pago.",
+      "timeoutDescription": "La solicitud tardó demasiado. Verifica que el backend de payments esté arriba y vuelve a intentarlo.",
+      "backendUnavailableDescription": "No fue posible conectar con el backend de payments. Verifica que esté ejecutándose y que la URL configurada sea correcta.",
+      "invalidResponseDescription": "El frontend recibió una respuesta inválida del backend de payments.",
+      "eventsUnavailable": "El pago se procesó, pero no fue posible cargar los eventos desde el backend.",
+      "pendingVerificationDescription": "El pago está siendo verificado. Consulta de nuevo el último estado en unos segundos."
+    },
+    "detection": {
+      "cardDeclined": [
+        "card_declined",
+        "payment failed",
+        "tarjeta fue rechazada",
+        "tarjeta rechazada"
+      ],
+      "insufficientFunds": [
+        "insufficient_funds",
+        "fondos insuficientes"
+      ]
+    },
+    "result": {
+      "title": "Resultado del último pago",
+      "status": "Estado",
+      "confirmed": "Confirmado",
+      "failed": "Fallido",
+      "paymentId": "ID del pago",
+      "receipt": "Recibo",
+      "amount": "Monto",
+      "noReceipt": "No generado",
+      "idempotency": "Clave de idempotencia"
+    },
+    "events": {
+      "title": "Eventos del pago",
+      "caption": "Esta sección muestra el rastro real que devuelve el backend para el último pago procesado.",
+      "empty": "Aún no hay eventos. Procesa un pago o prueba un duplicado para verlos aquí.",
+      "dateUnavailable": "Fecha no disponible",
+      "details": {
+        "recorded": "Evento registrado en backend",
+        "notAvailable": "Sin detalle adicional"
+      },
+      "labels": {
+        "paymentSucceeded": "Pago confirmado",
+        "reservationConfirmationRequested": "Confirmación de reserva solicitada",
+        "inventoryUpdateRequested": "Actualización de inventario solicitada",
+        "receiptGenerated": "Recibo generado",
+        "paymentFailed": "Pago rechazado"
+      }
+    },
+    "summary": {
+      "dates": "Fechas",
+      "guests": "Huéspedes",
+      "breakdown": "Desglose de precio",
+      "total": "Total",
+      "footer": "Sin cargos ocultos. Cancelación gratuita hasta el 5 de octubre."
+    },
+    "actions": {
+      "payNow": "Pagar ahora",
+      "processing": "Procesando pago",
+      "testDuplicate": "Probar duplicado",
+      "prepareSecureForm": "Preparar formulario seguro"
+    },
+    "booking": {
+      "property": "Renaissance Estate & Private Vineyard",
+      "location": "Toscana, Italia",
+      "rating": "4.95",
+      "reviews": "{count} reseñas",
+      "guests": "{count} huéspedes",
+      "lines": {
+        "accommodation": "Alojamiento ({nights} noches)",
+        "cleaning": "Tarifa de limpieza",
+        "service": "Cargo de servicio TravelHub",
+        "taxes": "Impuestos locales"
+      }
     }
   },
   "property": {
