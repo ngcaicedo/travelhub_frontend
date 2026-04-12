@@ -212,7 +212,7 @@ describe('CheckoutPage', () => {
     }))
 
     const wrapper = await mountSuspended(CheckoutPage)
-    await wrapper.findAll('button')[0].trigger('click')
+    await findButtonByText(wrapper, /Pagar ahora|Pay now/).trigger('click')
     await flushPromises()
 
     expect(textContent(wrapper)).toMatch(/Insufficient funds|fondos insuficientes|fundos insuficientes/)

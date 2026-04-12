@@ -231,8 +231,30 @@ function buildIdempotencyKey() {
 
   return `checkout-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
 }
-function detailMessage(detail: unknown) {
-  return typeof detail === 'string' ? detail : t('payments.feedback.requestErrorDescription')
+function detailMessage(detail: unknown): string {
+  if (typeof detail === 'string') {
+    return detail
+  }
+
+  if (Array.isArray(detail)) {
+    const nestedMessage: string | undefined = detail
+      .map(item => detailMessage(item))
+      .find(message => message !== t('payments.feedback.requestErrorDescription'))
+
+    return nestedMessage || t('payments.feedback.requestErrorDescription')
+  }
+
+  if (typeof detail === 'object' && detail !== null) {
+    const record = detail as Record<string, unknown>
+    const candidate = [record.message, record.code, record.error, record.detail]
+      .find(value => typeof value === 'string' && value.trim().length > 0)
+
+    if (typeof candidate === 'string') {
+      return candidate
+    }
+  }
+
+  return t('payments.feedback.requestErrorDescription')
 }
 function isDuplicate(detail: unknown): detail is { message: string } {
   return typeof detail === 'object' && detail !== null && 'message' in detail && typeof detail.message === 'string'
