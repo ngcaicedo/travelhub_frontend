@@ -3,14 +3,17 @@ const { t } = useI18n()
 
 const steps = computed(() => [
   {
+    value: 'checkout',
     label: t('payments.compliance.steps.checkout'),
     active: true
   },
   {
+    value: 'tokenization',
     label: t('payments.compliance.steps.tokenization'),
     active: false
   },
   {
+    value: 'confirmation',
     label: t('payments.compliance.steps.confirmation'),
     active: false
   }
@@ -20,30 +23,29 @@ const steps = computed(() => [
 <template>
   <nav
     aria-label="Payment security progress"
-    class="mb-6 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm"
+    class="mb-6"
   >
-    <ol class="flex flex-wrap items-center gap-3 text-sm text-slate-600">
-      <li
-        v-for="step in steps"
-        :key="step.label"
-        class="flex items-center gap-3"
-      >
-        <div
-          :class="[
-            'inline-flex items-center gap-2 rounded-full px-3 py-2 font-medium',
-            step.active ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-200' : 'bg-slate-50 text-slate-600 ring-1 ring-slate-200'
-          ]"
-        >
-          <span>{{ step.label }}</span>
-        </div>
-
-        <span
-          v-if="step !== steps[steps.length - 1]"
-          class="text-slate-300"
-        >
-          /
+    <UNavigationMenu
+      :items="steps"
+      orientation="horizontal"
+      highlight
+      highlight-color="primary"
+      color="primary"
+      variant="pill"
+      :ui="{
+        root: 'rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm',
+        list: 'flex flex-wrap items-center gap-3',
+        item: 'relative',
+        link: 'rounded-full px-3 py-2 text-sm font-medium',
+        viewportWrapper: 'hidden',
+        indicator: 'hidden'
+      }"
+    >
+      <template #item="{ item }">
+        <span :aria-current="item.active ? 'step' : undefined">
+          {{ item.label }}
         </span>
-      </li>
-    </ol>
+      </template>
+    </UNavigationMenu>
   </nav>
 </template>

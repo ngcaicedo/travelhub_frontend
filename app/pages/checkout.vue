@@ -72,7 +72,6 @@ const stripeElements = shallowRef<StripeElementsInstance | null>(null)
 const stripePaymentElement = shallowRef<{ mount: (target: string | HTMLElement) => void, unmount?: () => void, destroy?: () => void } | null>(null)
 
 const complianceMode = usePaymentsCompliance()
-const isCypressRuntime = import.meta.client && typeof window !== 'undefined' && 'Cypress' in window
 
 function isTimeoutLikeError(error: unknown) {
   const message = (
@@ -470,14 +469,23 @@ function eventDetail(event: PaymentEvent) {
 }
 
 function latestEventFailureReason(events: PaymentEvent[]) {
-  for (let index = events.length - 1; index >= 0; index -= 1) {
-    const failureReason = events[index]?.payload?.failure_reason
-    if (typeof failureReason === 'string' && failureReason.trim().length > 0) {
-      return failureReason
+  let latestFailureReason: string | null = null
+  let latestCreatedAt = Number.NEGATIVE_INFINITY
+
+  for (const event of events) {
+    const failureReason = event?.payload?.failure_reason
+    if (typeof failureReason !== 'string' || failureReason.trim().length === 0) continue
+
+    const createdAt = typeof event?.created_at === 'string' ? Date.parse(event.created_at) : Number.NaN
+    const createdAtTime = Number.isNaN(createdAt) ? Number.NEGATIVE_INFINITY : createdAt
+
+    if (createdAtTime >= latestCreatedAt) {
+      latestCreatedAt = createdAtTime
+      latestFailureReason = failureReason
     }
   }
 
-  return null
+  return latestFailureReason
 }
 
 function handleError(error: unknown) {
@@ -525,8 +533,7 @@ async function loadPayment(paymentId: string) {
   const normalized = normalizePaymentResponse(await paymentsService.getPayment(paymentId))
   if (!normalized) throw createError({ statusCode: 502, data: { detail: 'invalid_backend_response' } })
   paymentResult.value = normalized
-  const effectiveFailureReason = lastFailureMessage.value || normalized.failure_reason
-  const failureFeedback = resolveFailureDescription(effectiveFailureReason, effectiveFailureReason)
+  const failureFeedback = resolveFailureDescription(normalized.failure_reason, lastFailureMessage.value)
   feedback.value = normalized.status === 'confirmed'
     ? { tone: 'success', titleKey: 'payments.feedback.successTitle', descriptionKey: 'payments.feedback.successDescription', descriptionParams: { receipt: normalized.receipt_number || t('payments.result.noReceipt') } }
     : { tone: 'error', titleKey: 'payments.feedback.failureTitle', ...failureFeedback }
@@ -539,13 +546,9 @@ async function loadPaymentAndEvents(paymentId: string) {
   await nextTick()
 
   if (paymentResult.value?.status === 'failed') {
-    const effectiveFailureReason = latestEventFailureReason(paymentEvents.value)
-      || lastFailureMessage.value
-      || paymentResult.value.failure_reason
-
     const failureFeedback = resolveFailureDescription(
-      effectiveFailureReason,
-      effectiveFailureReason
+      latestEventFailureReason(paymentEvents.value) || paymentResult.value.failure_reason,
+      lastFailureMessage.value
     )
 
     feedback.value = {
@@ -657,13 +660,13 @@ async function submitStripe() {
   lastIdempotencyKey.value = stripeSession.value!.payment_transaction_id
   if (finalized.status === 'failed') {
     lastFailureMessage.value = finalized.error
-    feedback.value = {
-      tone: 'error',
-      titleKey: 'payments.feedback.failureTitle',
-      ...resolveFailureDescription(finalized.error, finalized.error)
+      feedback.value = {
+        tone: 'error',
+        titleKey: 'payments.feedback.failureTitle',
+        ...resolveFailureDescription(null, finalized.error)
+      }
+      await nextTick()
     }
-    await nextTick()
-  }
   if (finalized.payment_id) {
     await loadPaymentAndEvents(finalized.payment_id)
     if (paymentResult.value?.status === 'confirmed') {
@@ -770,20 +773,8 @@ async function simulateDuplicate() {
           </p>
         </div>
 
-        <div
-          v-if="complianceMode && isCypressRuntime"
-          data-cy="checkout-compliance-banner"
-          class="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-4 text-sm text-blue-900"
-        >
-          <p class="font-semibold">
-            {{ t('payments.compliance.bannerTitle') }}
-          </p>
-          <p class="mt-1">
-            {{ isComplianceBlocked ? t('payments.compliance.misconfiguredDescription') : t('payments.compliance.bannerDescription') }}
-          </p>
-        </div>
         <UAlert
-          v-else-if="complianceMode"
+          v-if="complianceMode"
           data-cy="checkout-compliance-banner"
           color="primary"
           variant="soft"
@@ -958,17 +949,6 @@ async function simulateDuplicate() {
             class="mt-6 rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm text-slate-600"
           >
             {{ t('payments.integration.fakeModeDescription') }}
-          </div>
-          <div
-            v-else-if="isComplianceBlocked && isCypressRuntime"
-            class="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900"
-          >
-            <p class="font-semibold">
-              {{ t('payments.compliance.misconfiguredTitle') }}
-            </p>
-            <p class="mt-1">
-              {{ t('payments.compliance.misconfiguredDescription') }}
-            </p>
           </div>
           <UAlert
             v-else-if="isComplianceBlocked"

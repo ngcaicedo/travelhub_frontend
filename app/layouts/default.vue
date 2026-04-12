@@ -1,7 +1,6 @@
 <script setup lang="ts">
 const route = useRoute()
 const { locale, locales, setLocale, t } = useI18n()
-const isCypressRuntime = import.meta.client && typeof window !== 'undefined' && 'Cypress' in window
 
 const localeOptions = computed(() =>
   (locales.value as Array<{ code: string, name: string }>).map(item => ({
@@ -35,39 +34,7 @@ function onLocaleChange(code: string) {
 
 <template>
   <div class="min-h-screen bg-[#f8fafc]">
-    <header
-      v-if="isCypressRuntime"
-      class="border-b border-slate-200 bg-white/90"
-    >
-      <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-        <div class="flex items-center gap-6">
-          <NuxtLink to="/">
-            <AppLogo class="h-6 w-auto shrink-0" />
-          </NuxtLink>
-
-          <nav class="hidden items-center gap-2 md:flex">
-            <NuxtLink
-              v-for="item in navigationItems"
-              :key="item.to"
-              :to="item.to"
-              :class="[
-                'rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                item.active ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-100'
-              ]"
-            >
-              {{ item.label }}
-            </NuxtLink>
-          </nav>
-        </div>
-
-        <span class="text-sm text-slate-500">
-          {{ locale.toUpperCase() }}
-        </span>
-      </div>
-    </header>
-
     <UHeader
-      v-else
       class="border-b border-slate-200 bg-white/90 backdrop-blur"
     >
       <template #left>
