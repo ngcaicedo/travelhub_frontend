@@ -123,6 +123,7 @@ const handleSubmit = async () => {
     const reservationData: ReservationRequest = {
       id_traveler: mockUserId,
       id_property: props.property.id,
+      id_room: props.property.id,
       check_in_date: checkInDateIso,
       check_out_date: checkOutDateIso,
       number_of_guests: numberOfGuests.value,
