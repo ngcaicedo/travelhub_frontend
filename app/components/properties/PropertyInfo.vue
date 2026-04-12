@@ -1,4 +1,10 @@
 <script setup lang="ts">
+interface Section {
+  id: string
+  label: string
+  icon: string
+}
+
 interface Props {
   property: {
     name: string
@@ -9,13 +15,26 @@ interface Props {
     bathrooms: number
     max_guests: number
   }
+  sections?: Section[]
+  activeSection?: string
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  sections: () => [],
+  activeSection: 'overview'
+})
+
+const emit = defineEmits<{
+  navigate: [sectionId: string]
+}>()
 
 const { t } = useI18n()
 
 const rating = computed(() => props.property.rating.toFixed(2))
+
+const navigateToSection = (sectionId: string) => {
+  emit('navigate', sectionId)
+}
 </script>
 
 <template>
@@ -72,6 +91,28 @@ const rating = computed(() => props.property.rating.toFixed(2))
       </div>
     </div>
 
+    <!-- Navigation Tabs using UTabs -->
+    <!-- Navigation Tabs -->
+    <div v-if="props.sections && props.sections.length > 0" class="border-b border-gray-200 pt-4">
+      <div class="flex gap-6">
+        <UButton
+          v-for="section in props.sections"
+          :key="section.id"
+          :label="section.label"
+          :leading-icon="section.icon"
+          variant="ghost"
+          color="neutral"
+          class="rounded-none px-1 border-b-2 transition-colors"
+          :class="[
+            props.activeSection === section.id
+              ? 'border-primary text-primary'
+              : 'border-transparent text-gray-700 hover:text-primary hover:border-primary'
+          ]"
+          @click="navigateToSection(section.id)"
+        />
+      </div>
+    </div>
+
     <!-- Property features grid -->
     <div class="grid grid-cols-3 gap-4 pt-4">
       <!-- Bedrooms -->
@@ -83,10 +124,10 @@ const rating = computed(() => props.property.rating.toFixed(2))
           />
         </div>
         <div>
-          <p class="text-sm text-gray-600">
+          <p class="text-xs text-gray-600">
             {{ t('property.bedrooms') }}
           </p>
-          <p class="font-semibold text-lg text-gray-900">
+          <p class="font-semibold text-sm text-gray-900">
             {{ props.property.bedrooms }}
           </p>
         </div>
@@ -101,16 +142,16 @@ const rating = computed(() => props.property.rating.toFixed(2))
           />
         </div>
         <div>
-          <p class="text-sm text-gray-600">
+          <p class="text-xs text-gray-600">
             {{ t('property.bathrooms') }}
           </p>
-          <p class="font-semibold text-lg text-gray-900">
+          <p class="font-semibold text-sm text-gray-900">
             {{ props.property.bathrooms }}
           </p>
         </div>
       </div>
 
-      <!-- Guests -->
+      <!-- Capacity -->
       <div class="flex items-center gap-3">
         <div class="bg-gray-100 rounded-lg p-3">
           <UIcon
@@ -119,10 +160,10 @@ const rating = computed(() => props.property.rating.toFixed(2))
           />
         </div>
         <div>
-          <p class="text-sm text-gray-600">
-            {{ t('property.maxGuests') }}
+          <p class="text-xs text-gray-600">
+            {{ t('property.capacity') }}
           </p>
-          <p class="font-semibold text-lg text-gray-900">
+          <p class="font-semibold text-sm text-gray-900">
             {{ props.property.max_guests }}
           </p>
         </div>
