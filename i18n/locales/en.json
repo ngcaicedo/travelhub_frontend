@@ -16,7 +16,8 @@
   "navigation": {
     "login": "Login",
     "checkout": "Checkout",
-    "reservations": "My reservations"
+    "reservations": "My reservations",
+    "logout": "Logout"
   },
   "auth": {
     "hero": {

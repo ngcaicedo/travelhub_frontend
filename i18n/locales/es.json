@@ -16,7 +16,8 @@
   "navigation": {
     "login": "Iniciar sesión",
     "checkout": "Proceso de pago",
-    "reservations": "Mis reservas"
+    "reservations": "Mis reservas",
+    "logout": "Cerrar sesión"
   },
   "auth": {
     "hero": {

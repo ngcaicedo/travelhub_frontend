@@ -16,7 +16,8 @@
   "navigation": {
     "login": "Entrar",
     "checkout": "Pagamento",
-    "reservations": "Minhas reservas"
+    "reservations": "Minhas reservas",
+    "logout": "Sair"
   },
   "auth": {
     "hero": {

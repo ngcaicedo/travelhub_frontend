@@ -2,7 +2,9 @@
 import { getApiErrorMessage } from '~/utils/apiError'
 
 const { t } = useI18n()
+const route = useRoute()
 const authStore = useAuthStore()
+const redirect = computed(() => (route.query.redirect ?? '') as string)
 
 definePageMeta({
   layout: 'auth'
@@ -26,7 +28,7 @@ async function onSubmit() {
   isLoading.value = true
 
   try {
-    await authStore.login(form.email, form.password)
+    await authStore.login(form.email, form.password, redirect.value || undefined)
   } catch (e) {
     error.value = getApiErrorMessage(e, t('common.unexpectedError'))
   } finally {

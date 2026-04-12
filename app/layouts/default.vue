@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const route = useRoute()
 const { locale, locales, setLocale, t } = useI18n()
+const authStore = useAuthStore()
 
 const localeOptions = computed(() =>
   (locales.value as Array<{ code: string, name: string }>).map(item => ({
@@ -9,23 +10,32 @@ const localeOptions = computed(() =>
   }))
 )
 
-const navigationItems = computed(() => [
-  {
-    to: '/login',
-    label: t('navigation.login'),
-    active: route.path === '/login'
-  },
-  {
-    to: '/reservations',
-    label: t('navigation.reservations'),
-    active: route.path === '/reservations' || route.path.startsWith('/reservations/')
-  },
-  {
-    to: '/checkout',
-    label: t('navigation.checkout'),
-    active: route.path === '/checkout' || route.path.startsWith('/notifications/payment-confirmation')
+const navigationItems = computed(() => {
+  const items = []
+
+  if (!authStore.isAuthenticated) {
+    items.push({
+      to: '/login',
+      label: t('navigation.login'),
+      active: route.path === '/login'
+    })
   }
-])
+
+  items.push(
+    {
+      to: '/reservations',
+      label: t('navigation.reservations'),
+      active: route.path === '/reservations' || route.path.startsWith('/reservations/')
+    },
+    {
+      to: '/checkout',
+      label: t('navigation.checkout'),
+      active: route.path === '/checkout' || route.path.startsWith('/notifications/payment-confirmation')
+    }
+  )
+
+  return items
+})
 
 function onLocaleChange(code: string) {
   setLocale(code as 'es' | 'en' | 'pt')
@@ -55,7 +65,7 @@ function onLocaleChange(code: string) {
       </template>
 
       <template #right>
-        <div class="flex items-center">
+        <div class="flex items-center gap-2">
           <USelect
             :model-value="locale"
             :items="localeOptions"
@@ -65,6 +75,15 @@ function onLocaleChange(code: string) {
             size="sm"
             class="w-[138px]"
             @update:model-value="onLocaleChange"
+          />
+          <UButton
+            v-if="authStore.isAuthenticated"
+            :label="t('navigation.logout')"
+            icon="i-lucide-log-out"
+            color="neutral"
+            variant="ghost"
+            size="sm"
+            @click="authStore.logout()"
           />
         </div>
       </template>
