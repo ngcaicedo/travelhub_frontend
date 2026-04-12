@@ -13,8 +13,8 @@ phases:
   build:
     commands:
       - echo Build started on `date`
-      - echo Building Nuxt app...
-      - pnpm build
+      - echo Generating static Nuxt app...
+      - pnpm generate
 
   post_build:
     commands:
