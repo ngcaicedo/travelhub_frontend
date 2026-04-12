@@ -18,6 +18,7 @@
   },
   "navigation": {
     "login": "Iniciar sesión",
+    "search": "Hoteles",
     "checkout": "Proceso de pago",
     "reservations": "Mis reservas",
     "logout": "Cerrar sesión"
@@ -242,6 +243,7 @@
   },
   "property": {
     "properties": "Propiedades",
+    "advancedSearch": "Búsqueda avanzada",
     "discoverPlaces": "Descubre lugares increíbles",
     "discoverAmazingPlaces": "Descubre lugares increíbles para hospedarte",
     "exploreOurSelection": "Explora nuestra selección de propiedades de lujo y encuentra el lugar perfecto para tu próxima aventura",

@@ -18,6 +18,7 @@
   },
   "navigation": {
     "login": "Entrar",
+    "search": "Hotéis",
     "checkout": "Pagamento",
     "reservations": "Minhas reservas",
     "logout": "Sair"
@@ -243,6 +244,7 @@
   },
   "property": {
     "properties": "Propriedades",
+    "advancedSearch": "Pesquisa avançada",
     "discoverPlaces": "Descubra lugares incríveis",
     "discoverAmazingPlaces": "Descubra lugares incríveis para ficar",
     "exploreOurSelection": "Explore nossa seleção de propriedades de luxo e encontre o lugar perfeito para sua próxima aventura",

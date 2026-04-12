@@ -649,29 +649,28 @@ onMounted(async () => {
             <article
               v-for="result in results"
               :key="result.id"
-              class="overflow-hidden rounded-[28px] bg-white shadow-[0_10px_30px_rgba(15,23,42,0.08)] border border-slate-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(15,23,42,0.14)]"
+              class="overflow-hidden rounded-[12px] bg-white border border-slate-50 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(15,23,42,0.08)]"
             >
-              <div class="relative h-[240px] sm:h-[280px] overflow-hidden">
+              <div class="relative h-[256px] overflow-hidden">
                 <img
                   :src="result.image"
                   :alt="result.imageAlt"
                   class="h-full w-full object-cover transition-transform duration-500 hover:scale-[1.03]"
                 >
-                <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/45 to-transparent" />
               </div>
 
-              <div class="p-5 sm:p-6 space-y-5">
-                <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                  <div class="space-y-2">
+              <div class="p-5 space-y-0">
+                <div class="flex items-start justify-between pb-2">
+                  <div class="space-y-0">
                     <div
-                      class="flex items-center gap-0.5"
+                      class="flex items-center gap-1 mb-1"
                       role="img"
                       :aria-label="t('search.ratingAria', { rating: formatRating(result.rating) })"
                     >
                       <span
                         v-for="star in 5"
                         :key="star"
-                        class="inline-flex h-4 w-4 items-center justify-center text-[14px] leading-none align-middle"
+                        class="inline-flex h-[10px] w-[10px] items-center justify-center text-[10px] leading-none align-middle"
                         :style="getStarFillStyle(result.rating, star)"
                       >
                         ★
@@ -681,69 +680,50 @@ onMounted(async () => {
                       </span>
                     </div>
 
-                    <div>
-                      <h2 class="text-2xl font-bold text-slate-950 tracking-tight">
-                        {{ result.name }}
-                      </h2>
-                      <p class="mt-1 flex items-center gap-2 text-sm text-slate-500">
-                        <UIcon
-                          name="i-lucide-map-pin"
-                          class="size-4"
-                        />
-                        {{ result.location }}
-                      </p>
-                    </div>
+                    <h2 class="text-lg font-bold text-slate-900 leading-7">
+                      {{ result.name }}
+                    </h2>
+                    <p class="mt-0.5 flex items-center gap-1 text-sm text-slate-500">
+                      <UIcon
+                        name="i-lucide-map-pin"
+                        class="size-3.5"
+                      />
+                      {{ result.location }}
+                    </p>
                   </div>
 
-                  <div class="shrink-0 rounded-2xl bg-slate-50 px-4 py-3 text-center border border-slate-100">
-                    <p class="text-sm font-semibold text-travelhub-600">
-                      {{ formatRating(result.rating) }}
-                    </p>
+                  <div class="shrink-0 flex flex-col items-end gap-1">
+                    <div class="rounded bg-travelhub-500/10 px-2 py-1">
+                      <p class="text-sm font-bold text-travelhub-500">
+                        {{ formatRating(result.rating) }}
+                      </p>
+                    </div>
                     <p
                       v-if="result.reviewCount"
-                      class="text-[11px] font-medium uppercase tracking-[0.14em] text-slate-400"
+                      class="text-[10px] font-bold uppercase tracking-[0.5px] text-slate-400"
                     >
                       {{ result.reviewCount.toLocaleString() }} {{ t('search.reviews') }}
                     </p>
                   </div>
                 </div>
 
-                <div class="flex flex-wrap gap-2">
-                  <span
-                    v-for="amenity in result.amenities"
-                    :key="amenity"
-                    class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600"
-                  >
-                    {{ amenity }}
-                  </span>
-                </div>
-
-                <p class="text-sm text-slate-500 flex items-center gap-2">
-                  <UIcon
-                    name="i-lucide-users"
-                    class="size-4"
-                  />
-                  {{ t('search.maxGuests', { count: result.maxGuests }) }}
-                </p>
-
-                <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between border-t border-slate-100 pt-4">
+                <div class="flex items-end justify-between border-t border-zinc-50 pt-5">
                   <div>
-                    <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400">
+                    <p class="text-[10px] font-bold uppercase tracking-[0.5px] text-slate-400">
                       {{ t('search.pricePerNight') }}
                     </p>
-                    <div class="flex items-end gap-2">
-                      <span class="text-3xl font-bold text-slate-950">
+                    <div class="flex items-baseline gap-1">
+                      <span class="text-2xl font-extrabold text-slate-900">
                         {{ formatMoney(result.pricePerNight, result.currency) }}
                       </span>
-                      <span class="pb-1 text-sm text-slate-500">/ {{ t('search.night') }}</span>
+                      <span class="text-sm font-medium text-slate-500">/ {{ t('search.night') }}</span>
                     </div>
                   </div>
 
                   <UButton
                     :to="`/properties/${encodePropertyRouteId(result.id)}`"
                     size="lg"
-                    class="sm:min-w-[180px] justify-center"
-                    trailing-icon="i-lucide-arrow-right"
+                    class="justify-center"
                   >
                     {{ t('search.viewProperty') }}
                   </UButton>
@@ -754,7 +734,7 @@ onMounted(async () => {
 
           <div
             v-else
-            class="rounded-[28px] border border-slate-200 bg-white p-8 sm:p-10 shadow-sm"
+            class="rounded-[12px] border border-slate-200 bg-white p-8 sm:p-10 shadow-sm"
           >
             <div class="mx-auto max-w-2xl space-y-5 text-center">
               <div class="mx-auto flex size-14 items-center justify-center rounded-full bg-travelhub-50 text-travelhub-600">

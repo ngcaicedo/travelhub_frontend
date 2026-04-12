@@ -23,6 +23,11 @@ const navigationItems = computed(() => {
 
   items.push(
     {
+      to: '/properties',
+      label: t('navigation.search'),
+      active: route.path === '/properties' || route.path === '/search'
+    },
+    {
       to: '/reservations',
       label: t('navigation.reservations'),
       active: route.path === '/reservations' || route.path.startsWith('/reservations/')

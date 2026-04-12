@@ -19,6 +19,21 @@ definePageMeta({
   <div class="min-h-screen bg-white">
     <!-- Content -->
     <div class="max-w-7xl mx-auto px-safe py-12">
+      <div class="flex items-center justify-between mb-8">
+        <h1 class="text-3xl font-bold text-slate-900 tracking-tight">
+          {{ t('property.properties') }}
+        </h1>
+        <UButton
+          to="/search"
+          icon="i-lucide-search"
+          size="lg"
+          variant="outline"
+          color="primary"
+        >
+          {{ t('property.advancedSearch') }}
+        </UButton>
+      </div>
+
       <!-- Loading State -->
       <div
         v-if="loading"
