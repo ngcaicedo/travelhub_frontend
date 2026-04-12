@@ -34,7 +34,9 @@ function onLocaleChange(code: string) {
 
 <template>
   <div class="min-h-screen bg-[#f8fafc]">
-    <UHeader class="border-b border-slate-200 bg-white/90 backdrop-blur">
+    <UHeader
+      class="border-b border-slate-200 bg-white/90 backdrop-blur"
+    >
       <template #left>
         <div class="flex items-center gap-6">
           <NuxtLink to="/">

@@ -280,19 +280,26 @@ function localizedMatchers(key: string) {
     .filter((entry): entry is string => typeof entry === 'string')
     .map(entry => entry.toLowerCase())
 }
+
+function normalizePaymentErrorToken(value: string | null | undefined) {
+  return (value || '')
+    .toLowerCase()
+    .replace(/[_-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 function isCardDeclined(value: string | null | undefined) {
   if (!value) return false
-  const normalized = value.toLowerCase()
+  const normalized = normalizePaymentErrorToken(value)
+  if (normalized.includes('card declined')) return true
   return localizedMatchers('payments.detection.cardDeclined').some(matcher => normalized.includes(matcher))
 }
 function isInsufficientFunds(value: string | null | undefined) {
   if (!value) return false
-  const normalized = value.toLowerCase()
-  const matchers = localizedMatchers('payments.detection.insufficientFunds')
-  if (matchers.length > 0) {
-    return matchers.some(matcher => normalized.includes(matcher))
-  }
-  return normalized.includes('insufficient_funds') || normalized.includes('insufficient funds')
+  const normalized = normalizePaymentErrorToken(value)
+  if (normalized.includes('insufficient funds')) return true
+  return localizedMatchers('payments.detection.insufficientFunds').some(matcher => normalized.includes(matcher))
 }
 
 function isTranslationKey(value: string) {
@@ -461,6 +468,26 @@ function eventDetail(event: PaymentEvent) {
   return t('payments.events.details.recorded')
 }
 
+function latestEventFailureReason(events: PaymentEvent[]) {
+  let latestFailureReason: string | null = null
+  let latestCreatedAt = Number.NEGATIVE_INFINITY
+
+  for (const event of events) {
+    const failureReason = event?.payload?.failure_reason
+    if (typeof failureReason !== 'string' || failureReason.trim().length === 0) continue
+
+    const createdAt = typeof event?.created_at === 'string' ? Date.parse(event.created_at) : Number.NaN
+    const createdAtTime = Number.isNaN(createdAt) ? Number.NEGATIVE_INFINITY : createdAt
+
+    if (createdAtTime >= latestCreatedAt) {
+      latestCreatedAt = createdAtTime
+      latestFailureReason = failureReason
+    }
+  }
+
+  return latestFailureReason
+}
+
 function handleError(error: unknown) {
   const detail = (error as { data?: { detail?: unknown } })?.data?.detail
   const detailText = typeof detail === 'string' ? detail : (isDuplicate(detail) ? detail.message : '')
@@ -516,6 +543,21 @@ async function loadPayment(paymentId: string) {
 async function loadPaymentAndEvents(paymentId: string) {
   await loadPayment(paymentId)
   await loadEvents(paymentId)
+  await nextTick()
+
+  if (paymentResult.value?.status === 'failed') {
+    const failureFeedback = resolveFailureDescription(
+      latestEventFailureReason(paymentEvents.value) || paymentResult.value.failure_reason,
+      lastFailureMessage.value
+    )
+
+    feedback.value = {
+      tone: 'error',
+      titleKey: 'payments.feedback.failureTitle',
+      ...failureFeedback
+    }
+    await nextTick()
+  }
 }
 
 function unmountStripeElement() {
@@ -616,7 +658,15 @@ async function submitStripe() {
   }
   if (!finalized) throw createError({ statusCode: 502, data: { detail: 'invalid_backend_response' } })
   lastIdempotencyKey.value = stripeSession.value!.payment_transaction_id
-  if (finalized.status === 'failed') lastFailureMessage.value = finalized.error
+  if (finalized.status === 'failed') {
+    lastFailureMessage.value = finalized.error
+      feedback.value = {
+        tone: 'error',
+        titleKey: 'payments.feedback.failureTitle',
+        ...resolveFailureDescription(null, finalized.error)
+      }
+      await nextTick()
+    }
   if (finalized.payment_id) {
     await loadPaymentAndEvents(finalized.payment_id)
     if (paymentResult.value?.status === 'confirmed') {
@@ -725,6 +775,7 @@ async function simulateDuplicate() {
 
         <UAlert
           v-if="complianceMode"
+          data-cy="checkout-compliance-banner"
           color="primary"
           variant="soft"
           icon="i-lucide-shield-check"
@@ -732,7 +783,10 @@ async function simulateDuplicate() {
           :description="isComplianceBlocked ? t('payments.compliance.misconfiguredDescription') : t('payments.compliance.bannerDescription')"
         />
 
-        <div :class="['rounded-2xl border px-4 py-4 text-sm', toneClass]">
+        <div
+          data-cy="checkout-feedback"
+          :class="['rounded-2xl border px-4 py-4 text-sm', toneClass]"
+        >
           <p class="font-semibold">
             {{ feedbackTitle }}
           </p>
@@ -750,6 +804,7 @@ async function simulateDuplicate() {
               v-model="form.scenario"
               :items="scenarioOptions"
               size="lg"
+              data-cy="checkout-scenario"
             />
           </UFormField>
           <UFormField
@@ -761,6 +816,7 @@ async function simulateDuplicate() {
               type="text"
               :placeholder="t('payments.form.cardholderPlaceholder')"
               size="lg"
+              data-cy="checkout-cardholder"
             />
           </UFormField>
           <template v-if="isFakeMode">
@@ -769,6 +825,7 @@ async function simulateDuplicate() {
                 v-model="form.cardNumber"
                 type="text"
                 size="lg"
+                data-cy="checkout-card-number"
               />
             </UFormField>
             <div class="grid grid-cols-2 gap-4">
@@ -777,6 +834,7 @@ async function simulateDuplicate() {
                   v-model="form.expiration"
                   type="text"
                   size="lg"
+                  data-cy="checkout-expiration"
                 />
               </UFormField>
               <UFormField :label="t('payments.form.cvv')">
@@ -784,6 +842,7 @@ async function simulateDuplicate() {
                   v-model="form.cvv"
                   type="text"
                   size="lg"
+                  data-cy="checkout-cvv"
                 />
               </UFormField>
             </div>
@@ -792,6 +851,7 @@ async function simulateDuplicate() {
                 v-model="form.paymentToken"
                 type="text"
                 size="lg"
+                data-cy="checkout-token"
               />
             </UFormField>
           </template>
@@ -800,6 +860,7 @@ async function simulateDuplicate() {
               v-model="form.reservationId"
               type="text"
               size="lg"
+              data-cy="checkout-reservation-id"
             />
           </UFormField>
           <UFormField :label="t('payments.form.travelerId')">
@@ -807,6 +868,7 @@ async function simulateDuplicate() {
               v-model="form.travelerId"
               type="text"
               size="lg"
+              data-cy="checkout-traveler-id"
             />
           </UFormField>
           <UFormField :label="t('payments.form.amount')">
@@ -815,6 +877,7 @@ async function simulateDuplicate() {
               type="number"
               min="1"
               size="lg"
+              data-cy="checkout-amount"
             />
           </UFormField>
           <UFormField :label="t('payments.form.currency')">
@@ -824,6 +887,7 @@ async function simulateDuplicate() {
               maxlength="3"
               class="uppercase"
               size="lg"
+              data-cy="checkout-currency"
             />
           </UFormField>
           <UFormField :label="t('payments.form.checkInDate')">
@@ -831,6 +895,7 @@ async function simulateDuplicate() {
               v-model="form.checkInDate"
               type="date"
               size="lg"
+              data-cy="checkout-checkin"
             />
           </UFormField>
           <UFormField :label="t('payments.form.checkOutDate')">
@@ -838,6 +903,7 @@ async function simulateDuplicate() {
               v-model="form.checkOutDate"
               type="date"
               size="lg"
+              data-cy="checkout-checkout"
             />
           </UFormField>
         </div>
@@ -857,9 +923,10 @@ async function simulateDuplicate() {
               variant="outline"
               color="primary"
               class="rounded-full"
+              data-cy="checkout-prepare-secure-form"
               :disabled="stripeLoading || processing"
               :label="stripeReady ? t('payments.integration.sessionReady') : t('payments.actions.prepareSecureForm')"
-              @click="() => { prepareStripe() }"
+              @click="() => { void prepareStripe() }"
             />
           </div>
           <p class="mt-4 text-sm text-slate-500">
@@ -879,11 +946,15 @@ async function simulateDuplicate() {
             <div class="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
               <div
                 v-if="stripeLoading"
+                data-cy="checkout-stripe-loading"
                 class="text-sm text-slate-500"
               >
                 {{ t('payments.integration.loadingConfig') }}
               </div>
-              <div id="stripe-payment-element" />
+              <div
+                id="stripe-payment-element"
+                data-cy="checkout-stripe-element"
+              />
               <p
                 v-if="stripeNotice"
                 class="mt-3 text-sm text-slate-500"
@@ -921,6 +992,7 @@ async function simulateDuplicate() {
             <UButton
               color="primary"
               size="lg"
+              data-cy="checkout-pay-now"
               :disabled="processing || stripeLoading || configLoading"
               :label="processing ? t('payments.actions.processing') : t('payments.actions.payNow')"
               @click="submitPayment"
@@ -929,6 +1001,7 @@ async function simulateDuplicate() {
               v-if="isFakeMode"
               variant="outline"
               size="lg"
+              data-cy="checkout-test-duplicate"
               :disabled="processing || stripeLoading"
               :label="t('payments.actions.testDuplicate')"
               @click="simulateDuplicate"
