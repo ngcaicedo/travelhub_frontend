@@ -1,22 +1,55 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { getAllProperties, getPropertyDetails } from '~/services/propertyServices'
 
+const mockFetch = vi.fn()
+vi.stubGlobal('$fetch', mockFetch)
+
 describe('propertyServices', () => {
-  it('getAllProperties is a function that exists', () => {
-    expect(typeof getAllProperties).toBe('function')
+  beforeEach(() => {
+    mockFetch.mockReset()
   })
 
-  it('getPropertyDetails is a function that exists', () => {
-    expect(typeof getPropertyDetails).toBe('function')
+  describe('getAllProperties', () => {
+    it('returns list of properties on success', async () => {
+      const mockProperties = [{ id: '1', name: 'Hotel A' }]
+      mockFetch.mockResolvedValue(mockProperties)
+
+      const result = await getAllProperties()
+      expect(result).toEqual(mockProperties)
+      expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('/api/v1/properties'))
+    })
+
+    it('throws when fetch fails', async () => {
+      mockFetch.mockRejectedValue(new Error('Network error'))
+      await expect(getAllProperties()).rejects.toThrow('Network error')
+    })
   })
 
-  it('getPropertyDetails rejects when propertyId is undefined', async () => {
-    try {
-      await getPropertyDetails(undefined as unknown as string)
-      expect(true).toBe(false) // Should not reach here
-    } catch (error) {
-      expect(error).toBeInstanceOf(Error)
-      expect((error as Error).message).toContain('Property ID is required')
-    }
+  describe('getPropertyDetails', () => {
+    it('rejects when propertyId is undefined', async () => {
+      await expect(getPropertyDetails(undefined as unknown as string)).rejects.toThrow('Property ID is required')
+    })
+
+    it('returns property with reviews on success', async () => {
+      const mockProperty = { id: 'prop-1', name: 'Hotel B', reviews: [{ id: 'r1', text: 'Great' }] }
+      mockFetch.mockResolvedValue(mockProperty)
+
+      const result = await getPropertyDetails('prop-1')
+      expect(result.property).toEqual(mockProperty)
+      expect(result.reviews).toEqual(mockProperty.reviews)
+    })
+
+    it('returns empty reviews when property has none', async () => {
+      const mockProperty = { id: 'prop-1', name: 'Hotel C' }
+      mockFetch.mockResolvedValue(mockProperty)
+
+      const result = await getPropertyDetails('prop-1')
+      expect(result.reviews).toEqual([])
+    })
+
+    it('throws when fetch fails', async () => {
+      mockFetch.mockRejectedValue(new Error('Not found'))
+      await expect(getPropertyDetails('prop-1')).rejects.toThrow('Not found')
+    })
   })
 })

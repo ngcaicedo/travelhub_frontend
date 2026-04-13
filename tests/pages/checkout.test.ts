@@ -312,7 +312,7 @@ function findButtonByText(
   wrapper: Awaited<ReturnType<typeof mountSuspended>>,
   pattern: RegExp
 ) {
-  const button = wrapper.findAll('button').find(candidate => pattern.test(candidate.text()))
+  const button = wrapper.findAll('button').find((candidate: { text: () => string }) => pattern.test(candidate.text()))
 
   if (!button) {
     throw new Error(`Button not found for pattern: ${pattern.toString()}`)

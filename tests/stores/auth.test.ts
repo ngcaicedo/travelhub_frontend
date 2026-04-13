@@ -54,4 +54,45 @@ describe('useAuthStore', () => {
     expect(store.role).toBeNull()
     expect(navigateToMock).toHaveBeenCalledWith('/properties')
   })
+
+  it('verifyOtp sets token and role and navigates', async () => {
+    const store = useAuthStore()
+    const verifySpy = vi.spyOn(authServiceModule.authService, 'verifyOtp').mockResolvedValue({
+      access_token: 'jwt-token',
+      token_type: 'bearer',
+      role: 'traveler'
+    })
+
+    await store.verifyOtp('test@example.com', '123456')
+
+    expect(verifySpy).toHaveBeenCalledWith('test@example.com', '123456')
+    expect(store.token).toBe('jwt-token')
+    expect(store.role).toBe('traveler')
+    expect(navigateToMock).toHaveBeenCalledWith('/properties')
+  })
+
+  it('verifyOtp navigates to redirect path when provided', async () => {
+    const store = useAuthStore()
+    vi.spyOn(authServiceModule.authService, 'verifyOtp').mockResolvedValue({
+      access_token: 'jwt-token',
+      token_type: 'bearer',
+      role: 'traveler'
+    })
+
+    await store.verifyOtp('test@example.com', '123456', '/checkout')
+
+    expect(navigateToMock).toHaveBeenCalledWith('/checkout')
+  })
+
+  it('login passes redirect to query params when provided', async () => {
+    const store = useAuthStore()
+    vi.spyOn(authServiceModule.authService, 'login').mockResolvedValue({ message: 'OTP sent' })
+
+    await store.login('test@example.com', 'pass123', '/checkout')
+
+    expect(navigateToMock).toHaveBeenCalledWith({
+      path: '/verify-otp',
+      query: { email: 'test@example.com', redirect: '/checkout' }
+    })
+  })
 })

@@ -33,6 +33,7 @@
     "@nuxt/eslint": "^1.15.2",
     "@nuxt/test-utils": "^4.0.0",
     "@types/node": "^25.5.2",
+    "@vitest/coverage-v8": "^4.1.4",
     "@vue/test-utils": "^2.4.6",
     "cypress": "^15.13.1",
     "cypress-mochawesome-reporter": "^4.0.2",
