@@ -39,6 +39,12 @@ export default defineNuxtConfig({
     preference: 'light'
   },
 
+  typescript: {
+    tsConfig: {
+      include: ['../tests/**/*']
+    }
+  },
+
   compatibilityDate: '2025-01-15',
 
   i18n: {

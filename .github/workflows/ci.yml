@@ -2,6 +2,15 @@ name: ci
 
 on: push
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
 jobs:
   ci:
     runs-on: ${{ matrix.os }}
@@ -36,5 +45,25 @@ jobs:
       - name: Typecheck
         run: pnpm run typecheck
 
-      - name: Test
-        run: pnpm run test
+      - name: Test with coverage
+        run: pnpm vitest run --coverage
+
+      - name: Upload coverage artifact
+        if: always() && github.ref == 'refs/heads/develop'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: coverage/
+
+  deploy-coverage:
+    needs: ci
+    if: always() && github.ref == 'refs/heads/develop' && needs.ci.result != 'cancelled'
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
