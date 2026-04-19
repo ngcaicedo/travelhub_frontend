@@ -50,8 +50,15 @@ const defaultConfirmation = {
   receipt_id: 'receipt-123',
   receipt_number: 'RCPT-123',
   property_name: 'Renaissance Estate & Private Vineyard',
+  property_address: 'Carrera 7 # 71-21, Bogotá',
   check_in_date: '2026-10-12',
-  check_out_date: '2026-10-17'
+  check_out_date: '2026-10-17',
+  guests_count: 2,
+  nights: 5,
+  nightly_rate_in_cents: 48100,
+  taxes_in_cents: 46600,
+  total_in_cents: 287600,
+  cancellation_policy: 'Cancelación gratuita hasta 48 horas antes del check-in.'
 }
 
 function mountPage(query: Record<string, string> = { paymentId: 'payment-123' }) {
@@ -79,6 +86,29 @@ describe('PaymentConfirmationPage', () => {
     expect(text).toMatch(/Booking Confirmed|Reserva confirmada/)
     expect(text).toMatch(/View my reservations|Ver mis reservas/)
     expect(text).toMatch(/Download receipt|Descargar recibo/)
+  })
+
+  it('renders property address, guest count, nights breakdown and cancellation policy', async () => {
+    const wrapper = await mountPage()
+    const text = wrapper.text()
+
+    expect(text).toContain('Carrera 7 # 71-21, Bogotá')
+    expect(text).toMatch(/Cancelación gratuita hasta 48 horas/)
+    // Desglose de precio visible
+    expect(text).toMatch(/Resumen de precio|Price breakdown/)
+    expect(text).toMatch(/Impuestos|Taxes/)
+    expect(text).toMatch(/Total/)
+    // Huéspedes y check-out (valor o label)
+    expect(text).toMatch(/Huéspedes|Guests/)
+    expect(text).toMatch(/Check-out/)
+  })
+
+  it('renders "view full details" button', async () => {
+    const wrapper = await mountPage()
+    const button = wrapper.findAll('button').find(
+      btn => btn.text().match(/Ver detalle completo|View full details|Ver detalhes completos/)
+    )
+    expect(button).toBeTruthy()
   })
 
   it('shows loading state', async () => {

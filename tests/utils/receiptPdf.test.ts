@@ -19,8 +19,15 @@ describe('receiptPdf', () => {
         receipt_id: 'receipt-123',
         receipt_number: 'RCPT-123',
         property_name: 'Renaissance Estate & Private Vineyard',
+        property_address: null,
         check_in_date: '2026-10-12',
-        check_out_date: '2026-10-17'
+        check_out_date: '2026-10-17',
+        guests_count: null,
+        nights: null,
+        nightly_rate_in_cents: null,
+        taxes_in_cents: null,
+        total_in_cents: null,
+        cancellation_policy: null
       },
       formattedAmount: '$2,876.50',
       formattedDates: 'Oct 12, 2026 - Oct 17, 2026',
