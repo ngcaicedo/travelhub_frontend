@@ -213,7 +213,7 @@ const sortDropdownItems = computed(() =>
   sortOptions.value.map(opt => ({
     label: opt.label,
     icon: searchState.sort === opt.value ? 'i-lucide-check' : undefined,
-    click: () => { searchState.sort = opt.value as SortOption }
+    onSelect: () => { searchState.sort = opt.value as SortOption }
   }))
 )
 
@@ -493,8 +493,9 @@ onMounted(async () => {
           </div>
 
           <div class="flex items-center gap-3">
-            <UDropdownMenu :items="sortDropdownItems">
+            <UDropdownMenu :items="sortDropdownItems" size="md">
               <UButton
+                size="md"
                 variant="outline"
                 color="neutral"
                 icon="i-lucide-arrow-up-down"
