@@ -36,6 +36,10 @@ function asIsoDateOrNull(value: unknown): string | null {
   return Number.isNaN(parsed.getTime()) ? null : value
 }
 
+function asNullableNumber(value: unknown): number | null {
+  return typeof value === 'number' && Number.isFinite(value) ? value : null
+}
+
 function normalizePaymentConfirmationSummary(value: unknown): PaymentConfirmationSummary | null {
   if (!isRecord(value)) {
     return null
@@ -59,8 +63,15 @@ function normalizePaymentConfirmationSummary(value: unknown): PaymentConfirmatio
     receipt_id: asNullableString(value.receipt_id),
     receipt_number: asNullableString(value.receipt_number),
     property_name: asNullableString(value.property_name),
+    property_address: asNullableString(value.property_address),
     check_in_date: asIsoDateOrNull(value.check_in_date),
-    check_out_date: asIsoDateOrNull(value.check_out_date)
+    check_out_date: asIsoDateOrNull(value.check_out_date),
+    guests_count: asNullableNumber(value.guests_count),
+    nights: asNullableNumber(value.nights),
+    nightly_rate_in_cents: asNullableNumber(value.nightly_rate_in_cents),
+    taxes_in_cents: asNullableNumber(value.taxes_in_cents),
+    total_in_cents: asNullableNumber(value.total_in_cents),
+    cancellation_policy: asNullableString(value.cancellation_policy)
   }
 }
 

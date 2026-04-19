@@ -340,10 +340,21 @@
       "reservationId": "ID da reserva",
       "paymentId": "ID do pagamento",
       "dates": "Check-in",
+      "checkOut": "Check-out",
       "stay": "Estadia",
       "property": "Propriedade",
       "propertyFallback": "Hospedagem TravelHub",
-      "amountPaid": "Valor pago"
+      "address": "Endereço",
+      "guests": "Hóspedes",
+      "guestsValue": "{count} hóspedes",
+      "amountPaid": "Valor pago",
+      "priceBreakdown": "Detalhamento do preço",
+      "nightlyRate": "Tarifa por noite",
+      "nightlyRateWithNights": "Tarifa por noite × {nights}",
+      "taxes": "Impostos",
+      "total": "Total pago",
+      "cancellationPolicy": "Política de cancelamento",
+      "viewFullDetails": "Ver detalhes completos"
     },
     "actions": {
       "viewReservations": "Ver minhas reservas",

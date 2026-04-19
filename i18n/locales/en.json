@@ -339,10 +339,21 @@
       "reservationId": "Reservation ID",
       "paymentId": "Payment ID",
       "dates": "Check-in",
+      "checkOut": "Check-out",
       "stay": "Stay",
       "property": "Property",
       "propertyFallback": "TravelHub stay",
-      "amountPaid": "Amount paid"
+      "address": "Address",
+      "guests": "Guests",
+      "guestsValue": "{count} guests",
+      "amountPaid": "Amount paid",
+      "priceBreakdown": "Price breakdown",
+      "nightlyRate": "Nightly rate",
+      "nightlyRateWithNights": "Nightly rate × {nights}",
+      "taxes": "Taxes",
+      "total": "Total paid",
+      "cancellationPolicy": "Cancellation policy",
+      "viewFullDetails": "View full details"
     },
     "actions": {
       "viewReservations": "View my reservations",
