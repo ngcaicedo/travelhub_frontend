@@ -420,6 +420,7 @@
     "guests": "hóspedes",
     "showMap": "Mostrar mapa",
     "sortLabel": "Ordenar por",
+    "sortButton": "Ordenar por: {option}",
     "searchAction": "Buscar",
     "bookNow": "Reservar agora",
     "viewProperty": "Ver propriedade",

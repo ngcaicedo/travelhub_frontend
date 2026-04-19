@@ -419,6 +419,7 @@
     "guests": "guests",
     "showMap": "Show map",
     "sortLabel": "Sort by",
+    "sortButton": "Sort by: {option}",
     "searchAction": "Search",
     "bookNow": "Book now",
     "viewProperty": "View property",

@@ -205,6 +205,24 @@ const sortOptions = computed(() => [
   { label: t('search.sort.rating'), value: 'rating' }
 ])
 
+const activeSortLabel = computed(
+  () => sortOptions.value.find(o => o.value === searchState.sort)?.label ?? ''
+)
+
+const sortDropdownItems = computed(() =>
+  sortOptions.value.map(opt => ({
+    label: opt.label,
+    icon: searchState.sort === opt.value ? 'i-lucide-check' : undefined,
+    click: () => { searchState.sort = opt.value as SortOption }
+  }))
+)
+
+watch(() => searchState.sort, async (newSort, oldSort) => {
+  if (newSort !== oldSort && hasAttemptedSearch.value) {
+    await runSearch(1)
+  }
+})
+
 const toggleAmenity = (amenityId: string) => {
   if (selectedAmenities.value.includes(amenityId)) {
     selectedAmenities.value = selectedAmenities.value.filter(item => item !== amenityId)
@@ -475,12 +493,16 @@ onMounted(async () => {
           </div>
 
           <div class="flex items-center gap-3">
-            <USelect
-              v-model="searchState.sort"
-              :items="sortOptions"
-              :label="t('search.sortLabel')"
-              class="w-[220px]"
-            />
+            <UDropdownMenu :items="sortDropdownItems">
+              <UButton
+                variant="outline"
+                color="neutral"
+                icon="i-lucide-arrow-up-down"
+                trailing-icon="i-lucide-chevron-down"
+              >
+                {{ t('search.sortButton', { option: activeSortLabel }) }}
+              </UButton>
+            </UDropdownMenu>
           </div>
         </div>
 
