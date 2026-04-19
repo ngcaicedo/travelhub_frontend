@@ -18,6 +18,7 @@ import {
 } from '~/utils/payments'
 import { loadStripeJs, type StripeClient, type StripeElementsInstance } from '~/utils/stripe'
 import { paymentsService } from '~/services/payments'
+import { useAuthStore } from '~/stores/auth'
 
 type Tone = 'info' | 'success' | 'error' | 'warning'
 type FeedbackState = {
@@ -31,6 +32,7 @@ type FeedbackState = {
 
 const { t, locale, tm, getLocaleMessage } = useI18n()
 const route = useRoute()
+const authStore = useAuthStore()
 const localeMap: Record<string, string> = {
   es: 'es-CO',
   en: 'en-US',
@@ -47,8 +49,8 @@ const form = reactive({
   expiration: scenarioPresets.success.expiration,
   cvv: scenarioPresets.success.cvv,
   paymentToken: scenarioPresets.success.paymentToken,
-  reservationId: '11111111-1111-1111-1111-111111111111',
-  travelerId: '22222222-2222-2222-2222-222222222222',
+  reservationId: '',
+  travelerId: authStore.userId ?? '',
   amountInCents: 287650,
   currency: 'COP',
   checkInDate: '2026-10-12',
