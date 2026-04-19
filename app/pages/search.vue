@@ -217,10 +217,12 @@ const sortDropdownItems = computed(() =>
   }))
 )
 
-watch(() => searchState.sort, async (newSort, oldSort) => {
-  if (newSort !== oldSort && hasAttemptedSearch.value) {
-    await runSearch(1)
-  }
+watch(() => searchState.sort, async (newSort, oldSort, onInvalidate) => {
+  if (newSort === oldSort || !hasAttemptedSearch.value) return
+  let cancelled = false
+  onInvalidate(() => { cancelled = true })
+  await runSearch(1)
+  if (cancelled) return
 })
 
 const toggleAmenity = (amenityId: string) => {
