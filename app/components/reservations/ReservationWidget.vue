@@ -8,6 +8,7 @@ import {
   validateReservationDates
 } from '~/utils/validation'
 import { useReservations } from '~/composables/useReservations'
+import { useAuthStore } from '~/stores/auth'
 
 interface Props {
   property: {
@@ -24,6 +25,7 @@ interface Props {
 const { t, locale } = useI18n()
 const router = useRouter()
 const { createReservation, loading, error } = useReservations()
+const authStore = useAuthStore()
 const reservationLockDurationMs = 15 * 60 * 1000
 
 const props = defineProps<Props>()
@@ -115,8 +117,12 @@ const handleSubmit = async () => {
   submitError.value = null
 
   try {
-    // TODO: Obtener user ID desde autenticación
-    const mockUserId = '11111111-1111-1111-1111-111111111111'
+    const travelerId = authStore.userId
+    if (!travelerId) {
+      submitError.value = t('errors.unauthorized')
+      await router.push({ path: '/login', query: { redirect: router.currentRoute.value.fullPath } })
+      return
+    }
     const checkInDateIso = serializeDateAtUtcMidnight(checkInDate.value)
     const checkOutDateIso = serializeDateAtUtcMidnight(checkOutDate.value)
     if (!checkInDateIso || !checkOutDateIso) {
@@ -125,7 +131,7 @@ const handleSubmit = async () => {
     }
 
     const reservationData: ReservationRequest = {
-      id_traveler: mockUserId,
+      id_traveler: travelerId,
       id_property: props.property.id,
       id_room: props.property.id,
       check_in_date: checkInDateIso,
@@ -142,7 +148,7 @@ const handleSubmit = async () => {
       path: '/checkout',
       query: {
         reservationId: response.id,
-        travelerId: mockUserId,
+        travelerId: travelerId,
         checkInDate: checkInDate.value,
         checkOutDate: checkOutDate.value,
         lockExpiresAt: String(lockExpiresAt),

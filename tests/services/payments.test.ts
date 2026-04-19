@@ -149,7 +149,16 @@ describe('paymentsService', () => {
       expect(mockFetch).toHaveBeenCalledWith('/api/v1/payments/pay-1/confirmation', {
         method: 'GET'
       })
-      expect(result).toEqual(raw)
+      expect(result).toMatchObject(raw)
+      expect(result).toMatchObject({
+        property_address: null,
+        guests_count: null,
+        nights: null,
+        nightly_rate_in_cents: null,
+        taxes_in_cents: null,
+        total_in_cents: null,
+        cancellation_policy: null
+      })
     })
 
     it('throws when response is invalid', async () => {

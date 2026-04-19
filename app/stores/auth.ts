@@ -1,10 +1,28 @@
 import { defineStore } from 'pinia'
 import { authService } from '~/services/auth'
 
+function decodeJwtSub(token: string | null): string | null {
+  if (!token) return null
+  const parts = token.split('.')
+  if (parts.length !== 3) return null
+  try {
+    const payload = parts[1]!.replace(/-/g, '+').replace(/_/g, '/')
+    const padded = payload + '='.repeat((4 - (payload.length % 4)) % 4)
+    const json = typeof atob === 'function'
+      ? atob(padded)
+      : Buffer.from(padded, 'base64').toString('utf-8')
+    const claims = JSON.parse(json) as { sub?: string }
+    return claims.sub ?? null
+  } catch {
+    return null
+  }
+}
+
 export const useAuthStore = defineStore('auth', () => {
   const token = useCookie<string | null>('auth_token', { default: () => null })
   const role = useState<string | null>('auth_role', () => null)
   const isAuthenticated = computed(() => !!token.value)
+  const userId = computed(() => decodeJwtSub(token.value))
 
   async function login(email: string, password: string, redirect?: string) {
     await authService.login(email, password)
@@ -26,5 +44,5 @@ export const useAuthStore = defineStore('auth', () => {
     await navigateTo('/properties')
   }
 
-  return { token, role, isAuthenticated, login, verifyOtp, logout }
+  return { token, role, isAuthenticated, userId, login, verifyOtp, logout }
 })

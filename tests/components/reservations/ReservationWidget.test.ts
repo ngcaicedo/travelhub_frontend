@@ -16,6 +16,15 @@ vi.mock('~/composables/useReservations', () => ({
   })
 }))
 
+vi.mock('~/stores/auth', () => ({
+  useAuthStore: () => ({
+    userId: '503c561b-226e-4839-af65-940c019c0eef',
+    token: 'mock-token',
+    role: 'traveler',
+    isAuthenticated: true
+  })
+}))
+
 const defaultProps = {
   property: {
     id: 'prop-123',

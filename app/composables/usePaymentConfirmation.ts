@@ -17,8 +17,15 @@ function toReservationHistoryEntry(summary: PaymentConfirmationSummary): Reserva
     receiptId: summary.receipt_id,
     receiptNumber: summary.receipt_number,
     propertyName: summary.property_name,
+    propertyAddress: summary.property_address,
     checkInDate: summary.check_in_date,
-    checkOutDate: summary.check_out_date
+    checkOutDate: summary.check_out_date,
+    guestsCount: summary.guests_count,
+    nights: summary.nights,
+    nightlyRateInCents: summary.nightly_rate_in_cents,
+    taxesInCents: summary.taxes_in_cents,
+    totalInCents: summary.total_in_cents,
+    cancellationPolicy: summary.cancellation_policy
   }
 }
 
