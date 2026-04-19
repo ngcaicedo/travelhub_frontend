@@ -326,4 +326,57 @@ describe('SearchPage', () => {
 
     expect(mockSearchProperties).toHaveBeenCalledTimes(0)
   })
+
+  it('re-runs search when sort changes after an initial search', async () => {
+    const wrapper = await mountSuspended(SearchPage)
+    await flushPromises()
+
+    // Run initial search first
+    await wrapper.find('form').trigger('submit')
+    await flushPromises()
+    mockSearchProperties.mockClear()
+
+    // Change sort option
+    const vm = wrapper.vm as unknown as { searchState: { sort: string } }
+    vm.searchState.sort = 'price_asc'
+    await nextTick()
+    await flushPromises()
+
+    expect(mockSearchProperties).toHaveBeenCalledTimes(1)
+    const request = mockSearchProperties.mock.calls[0]?.[0]
+    expect(request?.order_by).toBe('price')
+    expect(request?.order_dir).toBe('asc')
+  })
+
+  it('does not re-run search when sort changes before any search', async () => {
+    const wrapper = await mountSuspended(SearchPage)
+    await flushPromises()
+
+    const vm = wrapper.vm as unknown as { searchState: { sort: string } }
+    vm.searchState.sort = 'price_desc'
+    await nextTick()
+    await flushPromises()
+
+    expect(mockSearchProperties).toHaveBeenCalledTimes(0)
+  })
+
+  it('sends correct order params for price_desc sort', async () => {
+    const wrapper = await mountSuspended(SearchPage)
+    await flushPromises()
+
+    // Trigger initial search to set hasAttemptedSearch = true
+    await wrapper.find('form').trigger('submit')
+    await flushPromises()
+    mockSearchProperties.mockClear()
+
+    const vm = wrapper.vm as unknown as { searchState: { sort: string } }
+    vm.searchState.sort = 'price_desc'
+    await nextTick()
+    await flushPromises()
+
+    const request = mockSearchProperties.mock.calls[0]?.[0]
+    expect(request?.order_by).toBe('price')
+    expect(request?.order_dir).toBe('desc')
+  })
 })
+
