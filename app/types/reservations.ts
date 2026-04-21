@@ -17,6 +17,7 @@ export interface ReservationResponse {
   currency: string
   check_in_date: string
   check_out_date: string
+  hold_expires_at: string
   created_at: string
 }
 
