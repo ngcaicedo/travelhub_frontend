@@ -79,6 +79,12 @@ const stripeElements = shallowRef<StripeElementsInstance | null>(null)
 const stripePaymentElement = shallowRef<{ mount: (target: string | HTMLElement) => void, unmount?: () => void, destroy?: () => void } | null>(null)
 
 const complianceMode = usePaymentsCompliance()
+const paymentTracker = usePaymentStatusTracker()
+const paymentTrackerState = paymentTracker.state
+const backgroundProcessing = computed(() =>
+  (paymentTrackerState.value.status === 'pending' || paymentTrackerState.value.status === 'processing')
+  && paymentTrackerState.value.reservationId === form.reservationId
+)
 
 function isTimeoutLikeError(error: unknown) {
   const message = (
@@ -94,6 +100,7 @@ function isTimeoutLikeError(error: unknown) {
 }
 
 async function goToPaymentConfirmation(paymentId: string) {
+  syncPaymentTrackerContext()
   // Preserve reservation dates in sessionStorage for payment-confirmation fallback
   if (form.checkInDate && form.checkOutDate) {
     sessionStorage.setItem('reservation_checkout_date', form.checkInDate)
@@ -107,6 +114,7 @@ async function goToPaymentConfirmation(paymentId: string) {
 }
 
 async function goToPendingVerification(paymentTransactionId: string) {
+  syncPaymentTrackerContext()
   await navigateTo({
     path: '/notifications/payment-confirmation',
     query: { transactionId: paymentTransactionId }
@@ -176,11 +184,13 @@ watch(() => form.scenario, (scenario) => {
 })
 
 watch(() => [form.reservationId, form.travelerId, form.amountInCents, form.currency, form.checkInDate, form.checkOutDate], () => {
+  syncPaymentTrackerContext()
   if (isStripeMode.value && stripeReady.value) resetStripe(t('payments.integration.sessionNeedsRefresh'))
 })
 
 onMounted(async () => {
   hydrateReservationFromQuery()
+  syncPaymentTrackerContext()
   startReservationLockCountdown()
   await fetchConfig()
   setReadyFeedback()
@@ -190,6 +200,32 @@ onBeforeUnmount(() => {
   unmountStripeElement()
   clearReservationLockCountdown()
 })
+
+watch(
+  () => ({
+    status: paymentTrackerState.value.status,
+    paymentId: paymentTrackerState.value.paymentId,
+    error: paymentTrackerState.value.error,
+    reservationId: paymentTrackerState.value.reservationId
+  }),
+  async (trackerSnapshot) => {
+    if (trackerSnapshot.reservationId !== form.reservationId || !trackerSnapshot.paymentId) {
+      return
+    }
+
+    if (trackerSnapshot.status === 'pending' || trackerSnapshot.status === 'processing') {
+      feedback.value = {
+        tone: 'info',
+        titleText: t('payments.actions.processing'),
+        descriptionKey: 'payments.feedback.pendingVerificationDescription'
+      }
+      return
+    }
+
+    await loadPaymentAndEvents(trackerSnapshot.paymentId)
+  },
+  { deep: true }
+)
 useSeoMeta({ title: () => `${t('payments.meta.title')} - ${t('common.appName')}` })
 
 function clearReservationLockCountdown() {
@@ -254,6 +290,15 @@ function hydrateReservationFromQuery() {
 }
 
 function setReadyFeedback() {
+  if (backgroundProcessing.value) {
+    feedback.value = {
+      tone: 'info',
+      titleText: t('payments.actions.processing'),
+      descriptionKey: 'payments.feedback.pendingVerificationDescription'
+    }
+    return
+  }
+
   if (isComplianceBlocked.value) {
     feedback.value = {
       tone: 'warning',
@@ -315,6 +360,18 @@ function buildIdempotencyKey() {
   }
 
   return `checkout-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+}
+
+function syncPaymentTrackerContext() {
+  paymentTracker.setCheckoutContext({
+    reservationId: form.reservationId,
+    travelerId: form.travelerId,
+    amountInCents: form.amountInCents,
+    currency: form.currency.toUpperCase(),
+    checkInDate: form.checkInDate,
+    checkOutDate: form.checkOutDate,
+    lockExpiresAt: reservationLockExpiresAt.value || null
+  })
 }
 function detailMessage(detail: unknown): string {
   if (typeof detail === 'string') {
@@ -530,6 +587,11 @@ function resolveTransportErrorDescription(error: unknown) {
 
 function eventLabel(type: string) {
   return ({
+    'payment.pending': t('payments.actions.processing'),
+    'payment.processing.requested': t('payments.actions.processing'),
+    'payment.processing.started': t('payments.actions.processing'),
+    'payment.processing.awaiting_provider': t('payments.actions.processing'),
+    'payment.requires_action': t('payments.integration.requiresActionTitle'),
     'payment.succeeded': t('payments.events.labels.paymentSucceeded'),
     'reservation.confirmation.requested': t('payments.events.labels.reservationConfirmationRequested'),
     'inventory.update.requested': t('payments.events.labels.inventoryUpdateRequested'),
@@ -595,7 +657,9 @@ async function loadPayment(paymentId: string) {
   const failureFeedback = resolveFailureDescription(normalized.failure_reason, lastFailureMessage.value)
   feedback.value = normalized.status === 'confirmed'
     ? { tone: 'success', titleKey: 'payments.feedback.successTitle', descriptionKey: 'payments.feedback.successDescription', descriptionParams: { receipt: normalized.receipt_number || t('payments.result.noReceipt') } }
-    : { tone: 'error', titleKey: 'payments.feedback.failureTitle', ...failureFeedback }
+    : normalized.status === 'failed'
+      ? { tone: 'error', titleKey: 'payments.feedback.failureTitle', ...failureFeedback }
+      : { tone: 'info', titleText: t('payments.actions.processing'), descriptionKey: 'payments.feedback.pendingVerificationDescription' }
   if (normalized.status === 'confirmed') lastFailureMessage.value = null
 }
 
@@ -704,9 +768,17 @@ async function submitStripe() {
   lastIdempotencyKey.value = stripeSession.value!.payment_transaction_id
   if (finalized.status === 'failed') lastFailureMessage.value = finalized.error
   if (finalized.payment_id) {
+    syncPaymentTrackerContext()
+    await paymentTracker.startTracking({
+      paymentId: finalized.payment_id,
+      paymentTransactionId: stripeSession.value!.payment_transaction_id,
+      reservationId: form.reservationId
+    })
     await loadPaymentAndEvents(finalized.payment_id)
-    if (paymentResult.value?.status === 'confirmed') {
-      await goToPaymentConfirmation(finalized.payment_id)
+    feedback.value = {
+      tone: 'info',
+      titleText: t('payments.actions.processing'),
+      descriptionKey: 'payments.feedback.pendingVerificationDescription'
     }
     return
   }
@@ -742,6 +814,7 @@ async function submitPayment() {
   processing.value = true
   paymentResult.value = null
   paymentEvents.value = []
+  syncPaymentTrackerContext()
   try {
     if (isStripeMode.value) await submitStripe()
     else await submitFake()
@@ -1007,15 +1080,15 @@ async function simulateDuplicate() {
             <UButton
               color="primary"
               size="lg"
-              :disabled="processing || stripeLoading || configLoading"
-              :label="processing ? t('payments.actions.processing') : t('payments.actions.payNow')"
+              :disabled="processing || backgroundProcessing || stripeLoading || configLoading"
+              :label="processing || backgroundProcessing ? t('payments.actions.processing') : t('payments.actions.payNow')"
               @click="submitPayment"
             />
             <UButton
               v-if="isFakeMode"
               variant="outline"
               size="lg"
-              :disabled="processing || stripeLoading"
+              :disabled="processing || backgroundProcessing || stripeLoading"
               :label="t('payments.actions.testDuplicate')"
               @click="simulateDuplicate"
             />
@@ -1032,7 +1105,7 @@ async function simulateDuplicate() {
               class="mt-4 space-y-3 text-sm"
             >
               <div class="flex justify-between gap-4">
-                <span>{{ t('payments.result.status') }}</span><span class="font-semibold">{{ paymentResult.status === 'confirmed' ? t('payments.result.confirmed') : t('payments.result.failed') }}</span>
+                <span>{{ t('payments.result.status') }}</span><span class="font-semibold">{{ paymentResult.status === 'confirmed' ? t('payments.result.confirmed') : (paymentResult.status === 'failed' ? t('payments.result.failed') : t('payments.actions.processing')) }}</span>
               </div>
               <div class="flex justify-between gap-4">
                 <span>{{ t('payments.result.paymentId') }}</span><span class="font-mono text-xs">{{ paymentResult.payment_id }}</span>
