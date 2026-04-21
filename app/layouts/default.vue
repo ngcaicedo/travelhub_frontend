@@ -94,6 +94,8 @@ function onLocaleChange(code: string) {
       </template>
     </UHeader>
 
+    <PaymentsPaymentStatusBanner />
+
     <UMain class="pb-10">
       <slot />
     </UMain>
