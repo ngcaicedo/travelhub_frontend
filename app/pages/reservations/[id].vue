@@ -118,18 +118,6 @@ const hoursToCheckIn = computed(() => {
 
 const canModifyByTimeRule = computed(() => hoursToCheckIn.value > 24)
 
-const modifyLockedReason = computed(() => {
-  if (!canManageReservation.value) {
-    return t('reservationFlow.detail.onlyConfirmed')
-  }
-
-  if (!canModifyByTimeRule.value) {
-    return t('reservationFlow.detail.modifyWindowClosed')
-  }
-
-  return null
-})
-
 const reservationAmount = computed(() => {
   if (!reservation.value) return '-'
 
