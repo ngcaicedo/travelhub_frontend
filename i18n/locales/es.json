@@ -37,6 +37,7 @@
     "myBookings": "Mis reservas",
     "upcoming": "Próximas",
     "past": "Pasadas",
+    "cancelled": "Canceladas",
     "emptyTitle": "Todavía no tienes reservas",
     "emptyDescription": "Cuando confirmes una estadía, aparecerá aquí con acceso directo para gestionarla o cancelarla.",
     "loading": "Cargando tus reservas",

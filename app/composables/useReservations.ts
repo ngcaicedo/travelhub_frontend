@@ -92,12 +92,12 @@ export const useReservations = () => {
     }
   }
 
-  const getReservationsByUser = async (userId: string): Promise<ReservationWithDetailsResponse[]> => {
+  const getReservationsByUser = async (userId: string, statusGroup?: 'active' | 'past' | 'cancelled'): Promise<ReservationWithDetailsResponse[]> => {
     loading.value = true
     error.value = null
 
     try {
-      return await getReservationsByUserService(userId)
+      return await getReservationsByUserService(userId, statusGroup)
     } catch (err: unknown) {
       const apiError = err as { message?: string }
       error.value = apiError.message ? t(apiError.message) : t('errors.unknown')

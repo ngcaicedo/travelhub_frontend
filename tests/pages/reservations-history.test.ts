@@ -3,7 +3,6 @@ import { mountSuspended } from '@nuxt/test-utils/runtime'
 import ReservationsPage from '~/pages/reservations/index.vue'
 
 const mockGetReservationsByUser = vi.fn()
-const mockGetPropertyDetails = vi.fn()
 
 vi.mock('~/composables/useReservations', () => ({
   useReservations: () => ({
@@ -11,10 +10,6 @@ vi.mock('~/composables/useReservations', () => ({
     loading: { value: false },
     error: { value: null }
   })
-}))
-
-vi.mock('~/services/propertyServices', () => ({
-  getPropertyDetails: (...args: unknown[]) => mockGetPropertyDetails(...args)
 }))
 
 vi.mock('~/stores/auth', () => ({
@@ -31,6 +26,8 @@ describe('ReservationsPage', () => {
     mockGetReservationsByUser.mockReset().mockResolvedValue([
       {
         id: 'reservation-123',
+        property_name: 'Oceanview Resort & Spa',
+        property_cover_image_url: '/mock/property-1.svg',
         reservation: {
           id: 'reservation-123',
           id_traveler: 'traveler-123',
@@ -49,6 +46,8 @@ describe('ReservationsPage', () => {
       },
       {
         id: 'reservation-456',
+        property_name: 'Mountain View Chalet',
+        property_cover_image_url: '/mock/property-2.svg',
         reservation: {
           id: 'reservation-456',
           id_traveler: 'traveler-123',
@@ -66,26 +65,6 @@ describe('ReservationsPage', () => {
         }
       }
     ])
-
-    mockGetPropertyDetails.mockReset()
-      .mockImplementation(async (propertyId: string) => ({
-        property: {
-          id: propertyId,
-          name: propertyId === 'prop-1' ? 'Oceanview Resort & Spa' : 'Mountain View Chalet',
-          description: 'Test property',
-          location: propertyId === 'prop-1' ? 'Sorrento, Italy' : 'Aspen, USA',
-          price_per_night: 100,
-          currency: 'USD',
-          rating: 4.9,
-          review_count: 120,
-          bedrooms: 2,
-          bathrooms: 2,
-          max_guests: 4,
-          amenities: [],
-          images: [{ id: `${propertyId}-img`, url: '/mock/property-1.svg', position: 1 }]
-        },
-        reviews: []
-      }))
   })
 
   it('shows the reservations dashboard and loads the user reservations', async () => {

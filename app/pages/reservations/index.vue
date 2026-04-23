@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import type { Property } from '~/types/api'
 import type { ReservationStatus, ReservationWithDetailsResponse } from '~/types/reservations'
-import { getPropertyDetails } from '~/services/propertyServices'
 
 const { t, locale } = useI18n()
 const route = useRoute()
@@ -9,7 +7,7 @@ const router = useRouter()
 const authStore = useAuthStore()
 const { getReservationsByUser } = useReservations()
 
-type ReservationTab = 'upcoming' | 'past'
+type ReservationTab = 'upcoming' | 'past' | 'cancelled'
 
 interface ReservationCardViewModel {
   id: string
@@ -39,8 +37,6 @@ const localeMap: Record<string, string> = {
   en: 'en-US',
   pt: 'pt-BR'
 }
-
-const mockImages = ['/mock/property-1.svg', '/mock/property-2.svg', '/mock/property-3.svg', '/mock/property-4.svg', '/mock/property-5.svg']
 
 const profileName = computed(() => {
   const email = authStore.email
@@ -72,6 +68,7 @@ const profileInitials = computed(() => {
 const filteredReservations = computed(() => reservations.value.filter(item => item.kind === selectedTab.value))
 const upcomingCount = computed(() => reservations.value.filter(item => item.kind === 'upcoming').length)
 const pastCount = computed(() => reservations.value.filter(item => item.kind === 'past').length)
+const cancelledCount = computed(() => reservations.value.filter(item => item.kind === 'cancelled').length)
 
 function formatDate(value: string) {
   const parsed = new Date(value)
@@ -104,12 +101,12 @@ function formatMoney(amount: string, currency: string) {
   }
 }
 
-function isUpcomingReservation(status: ReservationStatus, checkOutDate: string) {
-  if (['cancelled', 'refund_completed', 'refund_failed'].includes(status)) {
-    return false
-  }
-
-  return new Date(checkOutDate).getTime() >= Date.now()
+function getReservationKind(status: ReservationStatus, checkOutDate: string): ReservationTab {
+  const cancelledStatuses: ReservationStatus[] = [
+    'cancelled', 'cancel_requested', 'refund_pending', 'refund_completed', 'refund_failed', 'additional_charge_failed'
+  ]
+  if (cancelledStatuses.includes(status)) return 'cancelled'
+  return new Date(checkOutDate).getTime() >= Date.now() ? 'upcoming' : 'past'
 }
 
 function getStatusTone(status: ReservationStatus) {
@@ -142,42 +139,29 @@ async function loadReservations() {
 
   try {
     const userReservations = await getReservationsByUser(authStore.userId)
-    const propertyIds = [...new Set(userReservations.map(item => item.reservation.id_property))]
-    const propertyMap = new Map<string, Property | null>()
-
-    await Promise.all(propertyIds.map(async (propertyId) => {
-      try {
-        const { property } = await getPropertyDetails(propertyId)
-        propertyMap.set(propertyId, property)
-      } catch (propertyError) {
-        console.error('Failed to load property details for reservation list:', propertyError)
-        propertyMap.set(propertyId, null)
-      }
-    }))
+    const mockImages = ['/mock/property-1.svg', '/mock/property-2.svg', '/mock/property-3.svg', '/mock/property-4.svg', '/mock/property-5.svg']
 
     reservations.value = userReservations
       .map((item, index) => {
-        const property = propertyMap.get(item.reservation.id_property) ?? null
         const checkInLabel = formatDate(item.reservation.check_in_date)
         const checkOutLabel = formatDate(item.reservation.check_out_date)
         const totalLabel = formatMoney(item.reservation.total_price, item.reservation.currency)
-        const location = property?.location || t('reservationsList.locationFallback')
-        const propertyName = property?.name || t('notifications.summary.propertyFallback')
+        const propertyName = item.property_name || t('notifications.summary.propertyFallback')
 
         return {
           id: item.id,
           status: item.reservation.status,
-          imageUrl: property?.images?.[0]?.url || mockImages[index % mockImages.length] || '/mock/property-1.svg',
-          imageAlt: property?.images?.[0]?.alt_text || propertyName,
+          imageUrl: item.property_cover_image_url || mockImages[index % mockImages.length] || '/mock/property-1.svg',
+          imageAlt: propertyName,
           propertyName,
-          location,
+          location: '',
           checkInLabel,
           checkOutLabel,
           guestLabel: t('reservationsList.guestCount', { count: item.reservation.number_of_guests }),
           totalLabel,
           statusLabel: t(`status.${item.reservation.status}`),
           statusTone: getStatusTone(item.reservation.status),
-          kind: isUpcomingReservation(item.reservation.status, item.reservation.check_out_date) ? 'upcoming' : 'past',
+          kind: getReservationKind(item.reservation.status, item.reservation.check_out_date),
           canCancel: item.reservation.status === 'confirmed',
           reservation: item.reservation
         }
@@ -186,8 +170,9 @@ async function loadReservations() {
         const leftDate = new Date(left.reservation.check_in_date).getTime()
         const rightDate = new Date(right.reservation.check_in_date).getTime()
 
+        const kindOrder: Record<string, number> = { upcoming: 0, past: 1, cancelled: 2 }
         if (left.kind !== right.kind) {
-          return left.kind === 'upcoming' ? -1 : 1
+          return (kindOrder[left.kind] ?? 3) - (kindOrder[right.kind] ?? 3)
         }
 
         return left.kind === 'upcoming' ? leftDate - rightDate : rightDate - leftDate
@@ -198,8 +183,10 @@ async function loadReservations() {
       return
     }
 
-    if (!upcomingCount.value) {
+    if (!upcomingCount.value && pastCount.value) {
       selectedTab.value = 'past'
+    } else if (!upcomingCount.value && !pastCount.value) {
+      selectedTab.value = 'cancelled'
     }
   } catch (loadError) {
     error.value = t('errors.failed')
@@ -356,6 +343,27 @@ definePageMeta({
                 class="absolute inset-x-0 -bottom-px h-0.5 rounded-full bg-blue-600"
               />
             </button>
+
+            <button
+              type="button"
+              class="relative pb-4 text-sm font-semibold transition-colors"
+              :class="selectedTab === 'cancelled' ? 'text-blue-600' : 'text-slate-500 hover:text-slate-700'"
+              @click="selectedTab = 'cancelled'"
+            >
+              <span class="inline-flex items-center gap-2">
+                {{ t('reservationsList.cancelled') }}
+                <span
+                  class="rounded-full px-2 py-0.5 text-[11px] font-bold"
+                  :class="selectedTab === 'cancelled' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-500'"
+                >
+                  {{ cancelledCount }}
+                </span>
+              </span>
+              <span
+                v-if="selectedTab === 'cancelled'"
+                class="absolute inset-x-0 -bottom-px h-0.5 rounded-full bg-blue-600"
+              />
+            </button>
           </div>
 
           <UAlert
@@ -401,7 +409,8 @@ definePageMeta({
             <article
               v-for="reservation in filteredReservations"
               :key="reservation.id"
-              class="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_60px_rgba(15,23,42,0.06)]"
+              class="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_60px_rgba(15,23,42,0.06)] cursor-pointer transition-shadow hover:shadow-[0_24px_70px_rgba(15,23,42,0.11)]"
+              @click="router.push(`/reservations/${reservation.id}`)"
             >
               <div class="grid lg:grid-cols-[260px_1fr]">
                 <div class="relative min-h-[240px] overflow-hidden bg-slate-100 lg:min-h-full">
@@ -474,7 +483,7 @@ definePageMeta({
                       variant="soft"
                       icon="i-lucide-pencil"
                       class="rounded-2xl px-4 py-2.5 text-[14px] font-semibold"
-                      @click="modifyReservation(reservation.id)"
+                      @click.stop="modifyReservation(reservation.id)"
                     >
                       {{ t('reservationFlow.detail.modifyButton') }}
                     </UButton>
@@ -486,7 +495,7 @@ definePageMeta({
                       class="rounded-2xl px-4 py-2.5 text-[14px] font-semibold"
                       :disabled="!reservation.canCancel"
                       :title="reservation.canCancel ? undefined : t('reservationsList.cancelUnavailable')"
-                      @click="cancelReservation(reservation.id)"
+                      @click.stop="cancelReservation(reservation.id)"
                     >
                       {{ t('reservationsList.cancelReservation') }}
                     </UButton>
