@@ -11,7 +11,9 @@
     "showAll": "Ver todas",
     "showLess": "Ver menos",
     "loadMore": "Cargar más",
-    "loading": "Cargando..."
+    "loading": "Cargando...",
+    "yes": "Sí",
+    "no": "No"
   },
   "nav": {
     "home": "Inicio"
@@ -22,6 +24,30 @@
     "checkout": "Proceso de pago",
     "reservations": "Mis reservas",
     "logout": "Cerrar sesión"
+  },
+  "reservationsList": {
+    "meta": {
+      "title": "Mis reservas"
+    },
+    "title": "Gestión de reservas",
+    "subtitle": "Revisa tus estadías próximas, administra cancelaciones y accede al detalle completo de cada reserva.",
+    "newBooking": "Nueva reserva",
+    "sidebarTitle": "Tu cuenta",
+    "sidebarSubtitle": "Accede a tus reservas activas y pasadas",
+    "myBookings": "Mis reservas",
+    "upcoming": "Próximas",
+    "past": "Pasadas",
+    "emptyTitle": "Todavía no tienes reservas",
+    "emptyDescription": "Cuando confirmes una estadía, aparecerá aquí con acceso directo para gestionarla o cancelarla.",
+    "loading": "Cargando tus reservas",
+    "manage": "Gestionar",
+    "viewDetails": "Ver detalle",
+    "cancelReservation": "Cancelar reserva",
+    "cancelUnavailable": "Solo las reservas confirmadas pueden cancelarse.",
+    "locationFallback": "Ubicación pendiente",
+    "guestCount": "{count} huéspedes",
+    "totalPrice": "Precio total",
+    "estimatedPrice": "Precio estimado"
   },
   "auth": {
     "hero": {
@@ -402,10 +428,107 @@
     "emptyTitle": "Aún no tienes reservas",
     "emptyDescription": "Cuando un pago quede confirmado, el resumen de tu reserva aparecerá aquí."
   },
+  "reservationFlow": {
+    "detail": {
+      "modifyButton": "Modificar reserva",
+      "cancelButton": "Cancelar reserva",
+      "onlyConfirmed": "Solo las reservas confirmadas pueden modificarse.",
+      "modifyWindowClosed": "Las modificaciones están permitidas hasta 24 horas antes del check-in."
+    },
+    "policy": {
+      "title": "Detalles de la política",
+      "raw": "Política",
+      "policyType": "Tipo de política",
+      "minimumNoticeHours": "Aviso mínimo",
+      "penaltyPercentage": "Penalidad",
+      "timezone": "Zona horaria",
+      "hoursUnit": "horas",
+      "percentUnit": "%",
+      "values": {
+        "full_refund": "Reembolso total",
+        "partial_refund": "Reembolso parcial",
+        "no_refund": "Sin reembolso"
+      }
+    },
+    "polling": {
+      "pendingTitle": "La actualización sigue en proceso.",
+      "pendingDescription": "Usa reintentar para consultar el estado más reciente.",
+      "retryButton": "Reintentar consulta de estado"
+    },
+    "modify": {
+      "metaTitle": "Modificar reserva",
+      "title": "Modificar reserva",
+      "backToReservation": "Volver a mis reservas",
+      "currentStatus": "Estado actual",
+      "recalculatePreview": "Recalcular preview",
+      "confirmModification": "Confirmar modificación",
+      "previewSummary": "Resumen del preview",
+      "changeAllowed": "Cambio permitido",
+      "deltaAmount": "Diferencia",
+      "estimatedRefund": "Reembolso estimado",
+      "additionalCharge": "Cobro adicional",
+      "required": "Requerido",
+      "noPolicy": "No hay detalles de política disponibles.",
+      "runPreviewHint": "Ejecuta un preview para ver política e impacto financiero.",
+      "lastConfirmation": "Última confirmación",
+      "statusBefore": "Estado antes",
+      "statusAfter": "Estado después",
+      "action": "Acción"
+    },
+    "cancel": {
+      "metaTitle": "Cancelar reserva",
+      "title": "Cancela tu estadía",
+      "subtitle": "Revisa los detalles para conocer tu elegibilidad de reembolso.",
+      "reservationLabel": "Reserva",
+      "policyLabel": "Política",
+      "policyMissing": "No disponible",
+      "reasonLabel": "Motivo de cancelación",
+      "reasonPlaceholder": "Cuéntanos más (opcional)",
+      "refundBreakdown": "Desglose de reembolso",
+      "refundAmount": "Monto de reembolso",
+      "penaltyAmount": "Penalidad",
+      "refundType": "Tipo de reembolso",
+      "allowed": "La cancelación está permitida en este momento.",
+      "notAllowed": "La cancelación no está permitida en este momento.",
+      "confirmButton": "Confirmar cancelación",
+      "keepButton": "Conservar mi reserva",
+      "statusAfter": "Estado después de confirmar"
+    },
+    "cancelled": {
+      "metaTitle": "Estado de cancelación",
+      "imageAlt": "Imagen de reserva",
+      "returnToReservations": "Volver a reservas",
+      "findNewStay": "Buscar nueva estadía",
+      "summaryTitle": "Resumen de cancelación",
+      "reservationId": "ID de reserva",
+      "title": {
+        "refund_completed": "Reserva cancelada exitosamente",
+        "refund_failed": "Cancelación completada con incidencia de reembolso",
+        "cancelled": "Reserva cancelada",
+        "pending": "Cancelación en proceso",
+        "default": "Estado de cancelación actualizado"
+      },
+      "description": {
+        "refund_completed": "Tu reembolso está siendo enviado al método de pago original.",
+        "refund_failed": "La reserva fue cancelada, pero el reembolso requiere seguimiento.",
+        "cancelled": "Tu reserva fue cancelada sin acciones financieras pendientes.",
+        "pending": "Aún esperamos la confirmación final del pago. Intenta de nuevo en un momento.",
+        "default": "Revisa los detalles de la reserva para la información más reciente."
+      }
+    }
+  },
   "status": {
     "pendingPayment": "Pendiente de pago",
+    "pending_payment": "Pendiente de pago",
     "confirmed": "Confirmada",
     "cancelled": "Cancelada",
+    "cancel_requested": "Cancelación solicitada",
+    "refund_pending": "Reembolso pendiente",
+    "refund_completed": "Reembolso completado",
+    "refund_failed": "Reembolso fallido",
+    "modification_pending_payment": "Modificación pendiente de pago",
+    "modification_confirmed": "Modificación confirmada",
+    "additional_charge_failed": "Cobro adicional fallido",
     "unknown": "Desconocido"
   },
   "errors": {

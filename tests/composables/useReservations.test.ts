@@ -4,10 +4,22 @@ import { defineComponent } from 'vue'
 
 const mockCreateReservation = vi.fn()
 const mockGetReservation = vi.fn()
+const mockGetReservationsByUser = vi.fn()
+const mockPreviewReservationModification = vi.fn()
+const mockConfirmReservationModification = vi.fn()
+const mockPreviewReservationCancellation = vi.fn()
+const mockConfirmReservationCancellation = vi.fn()
+const mockGetReservationHistory = vi.fn()
 
 vi.mock('~/services/reservationService', () => ({
   createReservation: (...args: unknown[]) => mockCreateReservation(...args),
-  getReservation: (...args: unknown[]) => mockGetReservation(...args)
+  getReservation: (...args: unknown[]) => mockGetReservation(...args),
+  getReservationsByUser: (...args: unknown[]) => mockGetReservationsByUser(...args),
+  previewReservationModification: (...args: unknown[]) => mockPreviewReservationModification(...args),
+  confirmReservationModification: (...args: unknown[]) => mockConfirmReservationModification(...args),
+  previewReservationCancellation: (...args: unknown[]) => mockPreviewReservationCancellation(...args),
+  confirmReservationCancellation: (...args: unknown[]) => mockConfirmReservationCancellation(...args),
+  getReservationHistory: (...args: unknown[]) => mockGetReservationHistory(...args)
 }))
 
 const reservationData = {
@@ -33,6 +45,12 @@ describe('useReservations', () => {
   beforeEach(() => {
     mockCreateReservation.mockReset()
     mockGetReservation.mockReset()
+    mockGetReservationsByUser.mockReset()
+    mockPreviewReservationModification.mockReset()
+    mockConfirmReservationModification.mockReset()
+    mockPreviewReservationCancellation.mockReset()
+    mockConfirmReservationCancellation.mockReset()
+    mockGetReservationHistory.mockReset()
   })
 
   it('initializes with loading false and no error', async () => {
@@ -118,6 +136,25 @@ describe('useReservations', () => {
     expect(wrapper.vm.error).toBeTruthy()
   })
 
+  it('getReservationsByUser returns response on success', async () => {
+    const mockResponse = [{ id: 'res-123', reservation: { id: 'res-123', status: 'confirmed' } }]
+    mockGetReservationsByUser.mockResolvedValue(mockResponse)
+
+    let getByUserFn: (userId: string) => Promise<unknown>
+    const Component = createTestComponent(() => {
+      const composable = useReservations()
+      getByUserFn = composable.getReservationsByUser
+      return { loading: composable.loading, error: composable.error }
+    })
+
+    const wrapper = await mountSuspended(Component)
+    const result = await getByUserFn!('traveler-1')
+
+    expect(result).toEqual(mockResponse)
+    expect(wrapper.vm.loading).toBe(false)
+    expect(wrapper.vm.error).toBeNull()
+  })
+
   it('sets generic error when error has no message', async () => {
     mockCreateReservation.mockRejectedValue({})
 
@@ -130,5 +167,124 @@ describe('useReservations', () => {
 
     await mountSuspended(Component)
     await expect(createFn!(reservationData)).rejects.toBeTruthy()
+  })
+
+  it('previewModification returns response on success', async () => {
+    const previewResponse = { change_allowed: true, reasons: [] }
+    mockPreviewReservationModification.mockResolvedValue(previewResponse)
+
+    const Component = createTestComponent(() => {
+      const composable = useReservations()
+      return {
+        previewFn: composable.previewModification
+      }
+    })
+
+    const wrapper = await mountSuspended(Component)
+    const result = await (wrapper.vm as unknown as {
+      previewFn: (id: string, payload: {
+        check_in_date: string
+        check_out_date: string
+        number_of_guests: number
+      }) => Promise<unknown>
+    }).previewFn('res-1', {
+      check_in_date: '2026-10-12T00:00:00.000Z',
+      check_out_date: '2026-10-13T00:00:00.000Z',
+      number_of_guests: 2
+    })
+
+    expect(result).toEqual(previewResponse)
+  })
+
+  it('confirmCancellation returns response on success', async () => {
+    const confirmResponse = { status_after: 'cancel_requested' }
+    mockConfirmReservationCancellation.mockResolvedValue(confirmResponse)
+
+    const Component = createTestComponent(() => {
+      const composable = useReservations()
+      return {
+        confirmFn: composable.confirmCancellation
+      }
+    })
+
+    const wrapper = await mountSuspended(Component)
+    const result = await (wrapper.vm as unknown as {
+      confirmFn: (id: string, travelerId: string, payload: { idempotency_key: string }) => Promise<unknown>
+    }).confirmFn('res-1', 'traveler-1', {
+      idempotency_key: 'idem-1'
+    })
+
+    expect(result).toEqual(confirmResponse)
+  })
+
+  it('pollReservationUntilFinal returns completed when terminal status is reached', async () => {
+    mockGetReservation
+      .mockResolvedValueOnce({ id: 'res-1', status: 'refund_pending' })
+      .mockResolvedValueOnce({ id: 'res-1', status: 'refund_completed' })
+
+    const Component = createTestComponent(() => {
+      const composable = useReservations()
+      return {
+        pollFn: composable.pollReservationUntilFinal
+      }
+    })
+
+    const wrapper = await mountSuspended(Component)
+
+    const result = await (wrapper.vm as unknown as {
+      pollFn: (id: string, options: { maxAttempts: number, intervalMs: number }) => Promise<unknown>
+    }).pollFn('res-1', {
+      maxAttempts: 2,
+      intervalMs: 0
+    }) as { state: string, attempts: number }
+
+    expect(result.state).toBe('completed')
+    expect(result.attempts).toBe(2)
+  })
+
+  it('pollReservationUntilFinal returns timeout when terminal status is not reached', async () => {
+    mockGetReservation
+      .mockResolvedValueOnce({ id: 'res-1', status: 'refund_pending' })
+      .mockResolvedValueOnce({ id: 'res-1', status: 'refund_pending' })
+
+    const Component = createTestComponent(() => {
+      const composable = useReservations()
+      return {
+        pollFn: composable.pollReservationUntilFinal
+      }
+    })
+
+    const wrapper = await mountSuspended(Component)
+
+    const result = await (wrapper.vm as unknown as {
+      pollFn: (id: string, options: {
+        maxAttempts: number
+        intervalMs: number
+        terminalStatuses: string[]
+      }) => Promise<unknown>
+    }).pollFn('res-1', {
+      maxAttempts: 2,
+      intervalMs: 0,
+      terminalStatuses: ['refund_completed']
+    }) as { state: string, attempts: number }
+
+    expect(result.state).toBe('timeout')
+    expect(result.attempts).toBe(2)
+  })
+
+  it('buildIdempotencyKey returns a prefixed key', async () => {
+    const Component = createTestComponent(() => {
+      const composable = useReservations()
+      return {
+        buildIdempotencyKeyFn: composable.buildIdempotencyKey
+      }
+    })
+
+    const wrapper = await mountSuspended(Component)
+
+    const key = (wrapper.vm as unknown as {
+      buildIdempotencyKeyFn: (prefix?: string) => string
+    }).buildIdempotencyKeyFn('reservation-test')
+    expect(key.startsWith('reservation-test-')).toBe(true)
   })
 })

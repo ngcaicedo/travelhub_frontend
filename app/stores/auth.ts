@@ -1,7 +1,12 @@
 import { defineStore } from 'pinia'
 import { authService } from '~/services/auth'
 
-function decodeJwtSub(token: string | null): string | null {
+interface JwtClaims {
+  sub?: string
+  email?: string
+}
+
+function decodeJwtClaims(token: string | null): JwtClaims | null {
   if (!token) return null
   const parts = token.split('.')
   if (parts.length !== 3) return null
@@ -11,8 +16,7 @@ function decodeJwtSub(token: string | null): string | null {
     const json = typeof atob === 'function'
       ? atob(padded)
       : Buffer.from(padded, 'base64').toString('utf-8')
-    const claims = JSON.parse(json) as { sub?: string }
-    return claims.sub ?? null
+    return JSON.parse(json) as JwtClaims
   } catch {
     return null
   }
@@ -22,7 +26,9 @@ export const useAuthStore = defineStore('auth', () => {
   const token = useCookie<string | null>('auth_token', { default: () => null })
   const role = useState<string | null>('auth_role', () => null)
   const isAuthenticated = computed(() => !!token.value)
-  const userId = computed(() => decodeJwtSub(token.value))
+  const decodedClaims = computed(() => decodeJwtClaims(token.value))
+  const userId = computed(() => decodedClaims.value?.sub ?? null)
+  const email = computed(() => decodedClaims.value?.email ?? null)
 
   async function login(email: string, password: string, redirect?: string) {
     await authService.login(email, password)
@@ -44,5 +50,5 @@ export const useAuthStore = defineStore('auth', () => {
     await navigateTo('/properties')
   }
 
-  return { token, role, isAuthenticated, userId, login, verifyOtp, logout }
+  return { token, role, isAuthenticated, userId, email, login, verifyOtp, logout }
 })
