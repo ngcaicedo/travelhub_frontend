@@ -1,5 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { createReservation, getReservation } from '~/services/reservationService'
+import {
+  confirmReservationCancellation,
+  confirmReservationModification,
+  createReservation,
+  getReservation,
+  getReservationHistory,
+  previewReservationCancellation,
+  previewReservationModification
+} from '~/services/reservationService'
 
 const mockFetch = vi.fn()
 
@@ -33,6 +41,36 @@ const mockReservationResponse = {
   id: 'res-123',
   ...mockReservationRequest,
   status: 'confirmed'
+}
+
+const mockModificationPreviewPayload = {
+  check_in_date: '2026-10-12T00:00:00.000Z',
+  check_out_date: '2026-10-18T00:00:00.000Z',
+  number_of_guests: 3
+}
+
+const mockModificationPreviewResponse = {
+  reservation_before: mockReservationResponse,
+  reservation_after_preview: {
+    ...mockReservationResponse,
+    check_out_date: '2026-10-18T00:00:00.000Z'
+  },
+  delta_amount: '200.00',
+  requires_additional_charge: true,
+  estimated_refund_amount: '0.00',
+  policy_applied: 'Seasonal price adjustment',
+  change_allowed: true,
+  reasons: []
+}
+
+const mockConfirmResponse = {
+  reservation: mockReservationResponse,
+  status_before: 'confirmed',
+  status_after: 'modification_pending_payment',
+  action_applied: 'modification_confirmed',
+  idempotency_key: 'idem-123',
+  additional_charge_amount: '200.00',
+  refund_amount: '0.00'
 }
 
 describe('reservationService', () => {
@@ -88,6 +126,121 @@ describe('reservationService', () => {
         statusCode: 404,
         details: null
       })
+    })
+  })
+
+  describe('previewReservationModification', () => {
+    it('sends preview request with payload', async () => {
+      mockFetch.mockResolvedValue(mockModificationPreviewResponse)
+
+      const result = await previewReservationModification('res-123', mockModificationPreviewPayload)
+
+      expect(mockFetch).toHaveBeenCalledWith('/api/v1/reservations/res-123/modifications/preview', {
+        baseURL: 'http://localhost:3003',
+        method: 'POST',
+        body: mockModificationPreviewPayload,
+        headers: { 'Content-Type': 'application/json' }
+      })
+      expect(result).toEqual(mockModificationPreviewResponse)
+    })
+  })
+
+  describe('confirmReservationModification', () => {
+    it('sends confirm request with traveler header and idempotency key', async () => {
+      mockFetch.mockResolvedValue(mockConfirmResponse)
+
+      const payload = {
+        idempotency_key: 'idem-123',
+        ...mockModificationPreviewPayload
+      }
+
+      const result = await confirmReservationModification('res-123', 'traveler-1', payload)
+
+      expect(mockFetch).toHaveBeenCalledWith('/api/v1/reservations/res-123/modifications/confirm', {
+        baseURL: 'http://localhost:3003',
+        method: 'POST',
+        body: payload,
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Traveler-Id': 'traveler-1'
+        }
+      })
+      expect(result).toEqual(mockConfirmResponse)
+    })
+  })
+
+  describe('previewReservationCancellation', () => {
+    it('sends cancellation preview request', async () => {
+      const previewResponse = {
+        refund_amount: '845.00',
+        penalty_amount: '405.00',
+        refund_type: 'partial',
+        eligible_until: null,
+        policy_applied: '30% penalty after free cancellation window',
+        change_allowed: true,
+        reasons: []
+      }
+      mockFetch.mockResolvedValue(previewResponse)
+
+      const result = await previewReservationCancellation('res-123')
+
+      expect(mockFetch).toHaveBeenCalledWith('/api/v1/reservations/res-123/cancellation/preview', {
+        baseURL: 'http://localhost:3003',
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      })
+      expect(result).toEqual(previewResponse)
+    })
+  })
+
+  describe('confirmReservationCancellation', () => {
+    it('sends cancellation confirm request with traveler header', async () => {
+      mockFetch.mockResolvedValue({
+        ...mockConfirmResponse,
+        status_after: 'cancel_requested',
+        action_applied: 'cancellation_confirmed'
+      })
+
+      const payload = {
+        idempotency_key: 'idem-cancel-1',
+        reason: 'Change of plans'
+      }
+
+      await confirmReservationCancellation('res-123', 'traveler-1', payload)
+
+      expect(mockFetch).toHaveBeenCalledWith('/api/v1/reservations/res-123/cancellation/confirm', {
+        baseURL: 'http://localhost:3003',
+        method: 'POST',
+        body: payload,
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Traveler-Id': 'traveler-1'
+        }
+      })
+    })
+  })
+
+  describe('getReservationHistory', () => {
+    it('sends history request with traveler header', async () => {
+      const history = [
+        {
+          type: 'reservation.modified',
+          timestamp: '2026-10-10T00:00:00Z'
+        }
+      ]
+      mockFetch.mockResolvedValue(history)
+
+      const result = await getReservationHistory('res-123', 'traveler-1')
+
+      expect(mockFetch).toHaveBeenCalledWith('/api/v1/reservations/res-123/history', {
+        baseURL: 'http://localhost:3003',
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Traveler-Id': 'traveler-1'
+        }
+      })
+      expect(result).toEqual(history)
     })
   })
 })

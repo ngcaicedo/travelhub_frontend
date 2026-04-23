@@ -11,7 +11,9 @@
     "showAll": "Show all",
     "showLess": "Show less",
     "loadMore": "Load more",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "yes": "Yes",
+    "no": "No"
   },
   "nav": {
     "home": "Home"
@@ -398,10 +400,92 @@
     "emptyTitle": "You do not have reservations yet",
     "emptyDescription": "Once a payment is confirmed, your reservation summary will appear here."
   },
+  "reservationFlow": {
+    "detail": {
+      "modifyButton": "Modify reservation",
+      "cancelButton": "Cancel reservation",
+      "onlyConfirmed": "Only confirmed reservations can be modified.",
+      "modifyWindowClosed": "Modifications are allowed up to 24 hours before check-in."
+    },
+    "polling": {
+      "pendingTitle": "The update is still in progress.",
+      "pendingDescription": "Use retry to check the latest status.",
+      "retryButton": "Retry status check"
+    },
+    "modify": {
+      "metaTitle": "Modify reservation",
+      "title": "Modify reservation",
+      "backToReservation": "Back to reservation",
+      "currentStatus": "Current status",
+      "recalculatePreview": "Recalculate preview",
+      "confirmModification": "Confirm modification",
+      "previewSummary": "Preview summary",
+      "changeAllowed": "Change allowed",
+      "deltaAmount": "Delta amount",
+      "estimatedRefund": "Estimated refund",
+      "additionalCharge": "Additional charge",
+      "required": "Required",
+      "noPolicy": "No policy details available.",
+      "runPreviewHint": "Run a preview to see policy and financial impact.",
+      "lastConfirmation": "Last confirmation",
+      "statusBefore": "Status before",
+      "statusAfter": "Status after",
+      "action": "Action"
+    },
+    "cancel": {
+      "metaTitle": "Cancel reservation",
+      "title": "Cancel your stay",
+      "subtitle": "Review your details below to understand your refund eligibility.",
+      "reservationLabel": "Reservation",
+      "policyLabel": "Policy",
+      "policyMissing": "Not provided",
+      "reasonLabel": "Reason for cancellation",
+      "reasonPlaceholder": "Tell us more (optional)",
+      "refundBreakdown": "Refund breakdown",
+      "refundAmount": "Refund amount",
+      "penaltyAmount": "Penalty amount",
+      "refundType": "Refund type",
+      "allowed": "Cancellation is currently allowed.",
+      "notAllowed": "Cancellation is not currently allowed.",
+      "confirmButton": "Confirm cancellation",
+      "keepButton": "Keep my reservation",
+      "statusAfter": "Status after confirmation"
+    },
+    "cancelled": {
+      "metaTitle": "Cancellation status",
+      "imageAlt": "Reservation image",
+      "returnToReservations": "Return to reservations",
+      "findNewStay": "Find new stay",
+      "summaryTitle": "Cancellation summary",
+      "reservationId": "Reservation ID",
+      "title": {
+        "refund_completed": "Reservation cancelled successfully",
+        "refund_failed": "Cancellation completed with refund issue",
+        "cancelled": "Reservation cancelled",
+        "pending": "Cancellation in progress",
+        "default": "Cancellation status updated"
+      },
+      "description": {
+        "refund_completed": "Your refund is being returned to the original payment method.",
+        "refund_failed": "The reservation was cancelled, but refund processing requires follow-up.",
+        "cancelled": "Your reservation has been cancelled with no pending financial actions.",
+        "pending": "We are still waiting for final payment confirmation. Please check again shortly.",
+        "default": "Review the reservation details for the latest information."
+      }
+    }
+  },
   "status": {
     "pendingPayment": "Pending payment",
+    "pending_payment": "Pending payment",
     "confirmed": "Confirmed",
     "cancelled": "Cancelled",
+    "cancel_requested": "Cancellation requested",
+    "refund_pending": "Refund pending",
+    "refund_completed": "Refund completed",
+    "refund_failed": "Refund failed",
+    "modification_pending_payment": "Modification pending payment",
+    "modification_confirmed": "Modification confirmed",
+    "additional_charge_failed": "Additional charge failed",
     "unknown": "Unknown"
   },
   "errors": {
