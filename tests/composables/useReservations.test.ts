@@ -140,7 +140,7 @@ describe('useReservations', () => {
     const mockResponse = [{ id: 'res-123', reservation: { id: 'res-123', status: 'confirmed' } }]
     mockGetReservationsByUser.mockResolvedValue(mockResponse)
 
-    let getByUserFn: (userId: string) => Promise<unknown>
+    let getByUserFn: (userId: string, statusGroup?: string) => Promise<unknown>
     const Component = createTestComponent(() => {
       const composable = useReservations()
       getByUserFn = composable.getReservationsByUser
@@ -153,6 +153,38 @@ describe('useReservations', () => {
     expect(result).toEqual(mockResponse)
     expect(wrapper.vm.loading).toBe(false)
     expect(wrapper.vm.error).toBeNull()
+  })
+
+  it('getReservationsByUser passes statusGroup to service', async () => {
+    mockGetReservationsByUser.mockResolvedValue([])
+
+    let getByUserFn: (userId: string, statusGroup?: 'active' | 'past' | 'cancelled') => Promise<unknown>
+    const Component = createTestComponent(() => {
+      const composable = useReservations()
+      getByUserFn = composable.getReservationsByUser
+      return {}
+    })
+
+    await mountSuspended(Component)
+    await getByUserFn!('traveler-1', 'cancelled')
+
+    expect(mockGetReservationsByUser).toHaveBeenCalledWith('traveler-1', 'cancelled')
+  })
+
+  it('getReservationsByUser sets error and rethrows on failure', async () => {
+    mockGetReservationsByUser.mockRejectedValue({ message: 'errors.forbidden' })
+
+    let getByUserFn: (userId: string) => Promise<unknown>
+    const Component = createTestComponent(() => {
+      const composable = useReservations()
+      getByUserFn = composable.getReservationsByUser
+      return { error: composable.error }
+    })
+
+    const wrapper = await mountSuspended(Component)
+    await expect(getByUserFn!('traveler-1')).rejects.toBeTruthy()
+
+    expect(wrapper.vm.error).toBeTruthy()
   })
 
   it('sets generic error when error has no message', async () => {

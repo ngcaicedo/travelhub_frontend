@@ -477,7 +477,7 @@ definePageMeta({
                     </span>
                   </div>
 
-                  <div class="mt-6 flex flex-wrap gap-3 border-t border-slate-200 pt-5">
+                  <div class="mt-6 flex flex-wrap gap-3 border-t border-slate-200 pt-5" @click.stop>
                     <UButton
                       color="neutral"
                       variant="soft"
