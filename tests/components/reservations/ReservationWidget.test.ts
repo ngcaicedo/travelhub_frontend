@@ -109,11 +109,12 @@ describe('ReservationWidget', () => {
 
     const vm = wrapper.vm as unknown as {
       stayDuration: number
-      totalPrice: number
+      totalPrice: { subtotal: number; taxes: number; cleaningFee: number; total: number }
     }
 
     expect(vm.stayDuration).toBe(1)
-    expect(vm.totalPrice).toBe(150000)
+    expect(vm.totalPrice.subtotal).toBe(150000)
+    expect(vm.totalPrice.total).toBe(150000)
   })
 
   it('disables booking when dates are not set', async () => {

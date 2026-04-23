@@ -29,11 +29,23 @@ export const calculateStayDuration = (checkIn: Date, checkOut: Date): number => 
   )
 }
 
+export interface PriceBreakdown {
+  subtotal: number
+  taxes: number
+  cleaningFee: number
+  total: number
+}
+
 export const calculateTotalPrice = (
   pricePerNight: number,
-  nights: number
-): number => {
-  return pricePerNight * nights
+  nights: number,
+  taxRate: number = 0,
+  cleaningFee: number = 0
+): PriceBreakdown => {
+  const subtotal = pricePerNight * nights
+  const taxes = subtotal * taxRate
+  const total = subtotal + taxes + cleaningFee
+  return { subtotal, taxes, cleaningFee, total }
 }
 
 export const formatCurrency = (

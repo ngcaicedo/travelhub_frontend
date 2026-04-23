@@ -75,7 +75,19 @@ describe('shared/utils/validation', () => {
 
   describe('calculateTotalPrice', () => {
     it('multiplies nightly price by number of nights', () => {
-      expect(calculateTotalPrice(1240, 3)).toBe(3720)
+      const result = calculateTotalPrice(1240, 3)
+      expect(result.subtotal).toBe(3720)
+      expect(result.taxes).toBe(0)
+      expect(result.cleaningFee).toBe(0)
+      expect(result.total).toBe(3720)
+    })
+
+    it('includes tax and cleaning fee in total', () => {
+      const result = calculateTotalPrice(1000, 2, 0.19, 120)
+      expect(result.subtotal).toBe(2000)
+      expect(result.taxes).toBeCloseTo(380)
+      expect(result.cleaningFee).toBe(120)
+      expect(result.total).toBeCloseTo(2500)
     })
   })
 

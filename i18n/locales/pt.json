@@ -280,6 +280,7 @@
     "morePhotos": "+{count} fotos",
     "showAllPhotos": "Ver todas as fotos",
     "policies": {
+      "noPolicy": "Política de cancelamento não especificada.",
       "flexible": {
         "label": "Flexível",
         "description": "Cancelamento gratuito em 48 horas. Depois, aplica-se uma taxa de 50%."
@@ -309,6 +310,9 @@
     "guests": "Hóspedes",
     "adults": "adultos",
     "total": "Total",
+    "subtotal": "Subtotal",
+    "taxes": "Impostos",
+    "cleaningFee": "Taxa de limpeza",
     "confirmBooking": "Confirmar reserva",
     "youWontBeCharged": "Você não será cobrado por enquanto",
     "success": "Sua reserva foi confirmada!",
