@@ -25,6 +25,30 @@
     "reservations": "My reservations",
     "logout": "Logout"
   },
+  "reservationsList": {
+    "meta": {
+      "title": "My reservations"
+    },
+    "title": "Reservation Management",
+    "subtitle": "Review upcoming stays, manage cancellations, and open the full details for each reservation.",
+    "newBooking": "New Booking",
+    "sidebarTitle": "Your account",
+    "sidebarSubtitle": "Access active and past reservations",
+    "myBookings": "My Bookings",
+    "upcoming": "Upcoming",
+    "past": "Past",
+    "emptyTitle": "You do not have reservations yet",
+    "emptyDescription": "Once you confirm a stay, it will appear here with direct access to manage or cancel it.",
+    "loading": "Loading your reservations",
+    "manage": "Manage",
+    "viewDetails": "View details",
+    "cancelReservation": "Cancel Reservation",
+    "cancelUnavailable": "Only confirmed reservations can be canceled.",
+    "locationFallback": "Location pending",
+    "guestCount": "{count} guests",
+    "totalPrice": "Total price",
+    "estimatedPrice": "Estimated price"
+  },
   "auth": {
     "hero": {
       "title": "Explore the world with confidence.",
@@ -407,6 +431,21 @@
       "onlyConfirmed": "Only confirmed reservations can be modified.",
       "modifyWindowClosed": "Modifications are allowed up to 24 hours before check-in."
     },
+    "policy": {
+      "title": "Policy details",
+      "raw": "Policy",
+      "policyType": "Policy type",
+      "minimumNoticeHours": "Minimum notice",
+      "penaltyPercentage": "Penalty",
+      "timezone": "Timezone",
+      "hoursUnit": "hours",
+      "percentUnit": "%",
+      "values": {
+        "full_refund": "Full refund",
+        "partial_refund": "Partial refund",
+        "no_refund": "No refund"
+      }
+    },
     "polling": {
       "pendingTitle": "The update is still in progress.",
       "pendingDescription": "Use retry to check the latest status.",
@@ -415,7 +454,7 @@
     "modify": {
       "metaTitle": "Modify reservation",
       "title": "Modify reservation",
-      "backToReservation": "Back to reservation",
+      "backToReservation": "Back to my reservations",
       "currentStatus": "Current status",
       "recalculatePreview": "Recalculate preview",
       "confirmModification": "Confirm modification",

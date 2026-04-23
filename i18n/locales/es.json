@@ -25,6 +25,30 @@
     "reservations": "Mis reservas",
     "logout": "Cerrar sesión"
   },
+  "reservationsList": {
+    "meta": {
+      "title": "Mis reservas"
+    },
+    "title": "Gestión de reservas",
+    "subtitle": "Revisa tus estadías próximas, administra cancelaciones y accede al detalle completo de cada reserva.",
+    "newBooking": "Nueva reserva",
+    "sidebarTitle": "Tu cuenta",
+    "sidebarSubtitle": "Accede a tus reservas activas y pasadas",
+    "myBookings": "Mis reservas",
+    "upcoming": "Próximas",
+    "past": "Pasadas",
+    "emptyTitle": "Todavía no tienes reservas",
+    "emptyDescription": "Cuando confirmes una estadía, aparecerá aquí con acceso directo para gestionarla o cancelarla.",
+    "loading": "Cargando tus reservas",
+    "manage": "Gestionar",
+    "viewDetails": "Ver detalle",
+    "cancelReservation": "Cancelar reserva",
+    "cancelUnavailable": "Solo las reservas confirmadas pueden cancelarse.",
+    "locationFallback": "Ubicación pendiente",
+    "guestCount": "{count} huéspedes",
+    "totalPrice": "Precio total",
+    "estimatedPrice": "Precio estimado"
+  },
   "auth": {
     "hero": {
       "title": "Explora el mundo con confianza.",
@@ -407,6 +431,21 @@
       "onlyConfirmed": "Solo las reservas confirmadas pueden modificarse.",
       "modifyWindowClosed": "Las modificaciones están permitidas hasta 24 horas antes del check-in."
     },
+    "policy": {
+      "title": "Detalles de la política",
+      "raw": "Política",
+      "policyType": "Tipo de política",
+      "minimumNoticeHours": "Aviso mínimo",
+      "penaltyPercentage": "Penalidad",
+      "timezone": "Zona horaria",
+      "hoursUnit": "horas",
+      "percentUnit": "%",
+      "values": {
+        "full_refund": "Reembolso total",
+        "partial_refund": "Reembolso parcial",
+        "no_refund": "Sin reembolso"
+      }
+    },
     "polling": {
       "pendingTitle": "La actualización sigue en proceso.",
       "pendingDescription": "Usa reintentar para consultar el estado más reciente.",
@@ -415,7 +454,7 @@
     "modify": {
       "metaTitle": "Modificar reserva",
       "title": "Modificar reserva",
-      "backToReservation": "Volver a la reserva",
+      "backToReservation": "Volver a mis reservas",
       "currentStatus": "Estado actual",
       "recalculatePreview": "Recalcular preview",
       "confirmModification": "Confirmar modificación",

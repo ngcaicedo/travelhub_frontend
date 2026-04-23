@@ -10,6 +10,7 @@ import type {
   ReservationPollResult,
   ReservationRequest,
   ReservationResponse,
+  ReservationWithDetailsResponse,
   ReservationStatus
 } from '~/types/reservations'
 import {
@@ -17,6 +18,7 @@ import {
   confirmReservationModification as confirmReservationModificationService,
   createReservation as createReservationService,
   getReservation as getReservationService,
+  getReservationsByUser as getReservationsByUserService,
   getReservationHistory as getReservationHistoryService,
   previewReservationCancellation as previewReservationCancellationService,
   previewReservationModification as previewReservationModificationService
@@ -84,6 +86,22 @@ export const useReservations = () => {
       const apiError = err as { message?: string }
       error.value = apiError.message ? t(apiError.message) : t('errors.unknown')
       console.error('Get reservation error:', err)
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const getReservationsByUser = async (userId: string): Promise<ReservationWithDetailsResponse[]> => {
+    loading.value = true
+    error.value = null
+
+    try {
+      return await getReservationsByUserService(userId)
+    } catch (err: unknown) {
+      const apiError = err as { message?: string }
+      error.value = apiError.message ? t(apiError.message) : t('errors.unknown')
+      console.error('Get reservations by user error:', err)
       throw err
     } finally {
       loading.value = false
@@ -236,6 +254,7 @@ export const useReservations = () => {
   return {
     createReservation,
     getReservation,
+    getReservationsByUser,
     previewModification,
     confirmModification,
     previewCancellation,

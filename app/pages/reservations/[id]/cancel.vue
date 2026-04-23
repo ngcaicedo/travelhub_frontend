@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ReservationConfirmResponse, ReservationResponse, ReservationStatus } from '~/types/reservations'
+import { buildReservationPolicyItems, formatReservationRefundType } from '~/utils/reservationPolicy'
 
 const route = useRoute()
 const router = useRouter()
@@ -35,6 +36,14 @@ const terminalStatuses: ReservationStatus[] = ['refund_completed', 'refund_faile
 const statusLabel = computed(() => {
   if (!reservation.value) return t('status.unknown')
   return t(`status.${reservation.value.status}`)
+})
+
+const policyItems = computed(() => buildReservationPolicyItems(preview.value?.policy_applied, t))
+
+const refundTypeLabel = computed(() => {
+  if (!preview.value?.change_allowed) return ''
+
+  return formatReservationRefundType(preview.value.refund_type, t)
 })
 
 function formatMoney(value: string, currency: string) {
@@ -177,7 +186,27 @@ definePageMeta({
           <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <p class="text-sm text-slate-500">{{ t('reservationFlow.cancel.reservationLabel') }} #{{ reservation.id }}</p>
             <p class="mt-2 text-xl font-semibold text-slate-900">{{ statusLabel }}</p>
-            <p class="mt-2 text-sm text-slate-600">{{ t('reservationFlow.cancel.policyLabel') }}: {{ preview.policy_applied || t('reservationFlow.cancel.policyMissing') }}</p>
+            <div
+              v-if="policyItems.length"
+              class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4"
+            >
+              <p class="mb-3 text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
+                {{ t('reservationFlow.policy.title') }}
+              </p>
+              <ul class="space-y-2">
+                <li
+                  v-for="item in policyItems"
+                  :key="item.key"
+                  class="flex items-start justify-between gap-4 text-sm"
+                >
+                  <span class="font-medium text-slate-700">{{ item.label }}</span>
+                  <span class="text-right text-slate-600">{{ item.value }}</span>
+                </li>
+              </ul>
+            </div>
+            <p v-else class="mt-2 text-sm text-slate-600">
+              {{ t('reservationFlow.cancel.policyMissing') }}
+            </p>
           </div>
 
           <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -221,9 +250,12 @@ definePageMeta({
               <span>{{ t('reservationFlow.cancel.penaltyAmount') }}</span>
               <span class="font-medium">{{ formatMoney(preview.penalty_amount, reservation.currency) }}</span>
             </div>
-            <div class="flex justify-between text-slate-700">
+            <div
+              v-if="refundTypeLabel"
+              class="flex justify-between text-slate-700"
+            >
               <span>{{ t('reservationFlow.cancel.refundType') }}</span>
-              <span class="font-medium">{{ preview.refund_type }}</span>
+              <span class="font-medium">{{ refundTypeLabel }}</span>
             </div>
           </div>
 

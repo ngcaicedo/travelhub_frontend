@@ -78,6 +78,7 @@ describe('ReservationModifyPage', () => {
 
     expect(text).toMatch(/Modify reservation|Modificar reserva|Modificar reserva/)
     expect(text).toMatch(/Preview summary|Resumen del preview|Resumo do preview/)
+    expect(text).not.toMatch(/Recalculate preview|Recalcular preview|Recalcular prévia/)
     expect(getReservation).toHaveBeenCalled()
     expect(previewModification).toHaveBeenCalled()
   })

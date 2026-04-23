@@ -75,6 +75,27 @@ describe('ReservationCancelPage', () => {
 
     expect(text).toMatch(/Cancel your stay|Cancela tu estadía|Cancele sua estadia/)
     expect(text).toMatch(/Refund breakdown|Desglose de reembolso|Resumo do reembolso/)
+    expect(text).toMatch(/Partial refund|Reembolso parcial|Reembolso parcial/)
     expect(previewCancellation).toHaveBeenCalled()
+  })
+
+  it('hides refund type when cancellation is not allowed', async () => {
+    previewCancellation.mockResolvedValueOnce({
+      refund_amount: '0',
+      penalty_amount: '119',
+      refund_type: 'full_refund',
+      eligible_until: null,
+      policy_applied: '30% penalty',
+      change_allowed: false,
+      reasons: ['outside_window']
+    })
+
+    const wrapper = await mountSuspended(ReservationCancelPage, {
+      route: {
+        params: { id: 'res-123' }
+      }
+    })
+
+    expect(wrapper.text()).not.toMatch(/Refund type|Tipo de reembolso|Tipo de reembolso/)
   })
 })

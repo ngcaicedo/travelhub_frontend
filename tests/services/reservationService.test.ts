@@ -4,6 +4,7 @@ import {
   confirmReservationModification,
   createReservation,
   getReservation,
+  getReservationsByUser,
   getReservationHistory,
   previewReservationCancellation,
   previewReservationModification
@@ -126,6 +127,22 @@ describe('reservationService', () => {
         statusCode: 404,
         details: null
       })
+    })
+  })
+
+  describe('getReservationsByUser', () => {
+    it('sends GET request for reservations by user', async () => {
+      const mockReservations = [{ id: 'res-1', reservation: mockReservationResponse }]
+      mockFetch.mockResolvedValue(mockReservations)
+
+      const result = await getReservationsByUser('traveler-1')
+
+      expect(mockFetch).toHaveBeenCalledWith('/api/v1/reservations/users/traveler-1', {
+        baseURL: 'http://localhost:3003',
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      })
+      expect(result).toEqual(mockReservations)
     })
   })
 

@@ -4,6 +4,7 @@ import { defineComponent } from 'vue'
 
 const mockCreateReservation = vi.fn()
 const mockGetReservation = vi.fn()
+const mockGetReservationsByUser = vi.fn()
 const mockPreviewReservationModification = vi.fn()
 const mockConfirmReservationModification = vi.fn()
 const mockPreviewReservationCancellation = vi.fn()
@@ -13,6 +14,7 @@ const mockGetReservationHistory = vi.fn()
 vi.mock('~/services/reservationService', () => ({
   createReservation: (...args: unknown[]) => mockCreateReservation(...args),
   getReservation: (...args: unknown[]) => mockGetReservation(...args),
+  getReservationsByUser: (...args: unknown[]) => mockGetReservationsByUser(...args),
   previewReservationModification: (...args: unknown[]) => mockPreviewReservationModification(...args),
   confirmReservationModification: (...args: unknown[]) => mockConfirmReservationModification(...args),
   previewReservationCancellation: (...args: unknown[]) => mockPreviewReservationCancellation(...args),
@@ -43,6 +45,7 @@ describe('useReservations', () => {
   beforeEach(() => {
     mockCreateReservation.mockReset()
     mockGetReservation.mockReset()
+    mockGetReservationsByUser.mockReset()
     mockPreviewReservationModification.mockReset()
     mockConfirmReservationModification.mockReset()
     mockPreviewReservationCancellation.mockReset()
@@ -131,6 +134,25 @@ describe('useReservations', () => {
 
     expect(wrapper.vm.loading).toBe(false)
     expect(wrapper.vm.error).toBeTruthy()
+  })
+
+  it('getReservationsByUser returns response on success', async () => {
+    const mockResponse = [{ id: 'res-123', reservation: { id: 'res-123', status: 'confirmed' } }]
+    mockGetReservationsByUser.mockResolvedValue(mockResponse)
+
+    let getByUserFn: (userId: string) => Promise<unknown>
+    const Component = createTestComponent(() => {
+      const composable = useReservations()
+      getByUserFn = composable.getReservationsByUser
+      return { loading: composable.loading, error: composable.error }
+    })
+
+    const wrapper = await mountSuspended(Component)
+    const result = await getByUserFn!('traveler-1')
+
+    expect(result).toEqual(mockResponse)
+    expect(wrapper.vm.loading).toBe(false)
+    expect(wrapper.vm.error).toBeNull()
   })
 
   it('sets generic error when error has no message', async () => {

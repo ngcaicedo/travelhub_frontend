@@ -42,6 +42,11 @@ export interface ReservationResponse {
   created_at: string
 }
 
+export interface ReservationWithDetailsResponse {
+  id: string
+  reservation: ReservationResponse
+}
+
 export interface ReservationModificationPreviewRequest {
   check_in_date: string
   check_out_date: string

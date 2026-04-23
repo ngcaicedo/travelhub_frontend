@@ -7,7 +7,8 @@ import type {
   ReservationModificationPreviewRequest,
   ReservationModificationPreviewResponse,
   ReservationRequest,
-  ReservationResponse
+  ReservationResponse,
+  ReservationWithDetailsResponse
 } from '~/types/reservations'
 import { getApiBaseUrls, handleApiError } from '~/utils/api'
 
@@ -33,6 +34,22 @@ export const getReservation = async (reservationId: string): Promise<Reservation
 
   try {
     return await $fetch<ReservationResponse>(`/api/v1/reservations/${reservationId}`, {
+      baseURL: reservationsApiUrl,
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+  } catch (error: unknown) {
+    throw handleApiError(error)
+  }
+}
+
+export const getReservationsByUser = async (userId: string): Promise<ReservationWithDetailsResponse[]> => {
+  const { reservationsApiUrl } = getApiBaseUrls()
+
+  try {
+    return await $fetch<ReservationWithDetailsResponse[]>(`/api/v1/reservations/users/${userId}`, {
       baseURL: reservationsApiUrl,
       method: 'GET',
       headers: {

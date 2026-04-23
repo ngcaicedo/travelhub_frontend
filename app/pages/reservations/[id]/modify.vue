@@ -5,6 +5,7 @@ import type {
   ReservationResponse,
   ReservationStatus
 } from '~/types/reservations'
+import { buildReservationPolicyItems } from '~/utils/reservationPolicy'
 
 const route = useRoute()
 const router = useRouter()
@@ -32,6 +33,8 @@ const confirmResponse = ref<ReservationConfirmResponse | null>(null)
 const checkInDate = ref('')
 const checkOutDate = ref('')
 const numberOfGuests = ref(1)
+const isPreviewWatcherReady = ref(false)
+const lastPreviewSignature = ref<string | null>(null)
 
 const localeMap: Record<string, string> = {
   es: 'es-CO',
@@ -49,6 +52,8 @@ const statusLabel = computed(() => {
   if (!reservation.value) return t('status.unknown')
   return t(`status.${reservation.value.status}`)
 })
+
+const policyItems = computed(() => buildReservationPolicyItems(preview.value?.policy_applied, t))
 
 function formatDateInput(value: string) {
   const parsed = new Date(value)
@@ -113,6 +118,9 @@ async function loadReservation() {
 async function runPreview() {
   if (!checkInDate.value || !checkOutDate.value || !reservation.value) return
 
+  const signature = `${checkInDate.value}|${checkOutDate.value}|${numberOfGuests.value}`
+  if (lastPreviewSignature.value === signature) return
+
   previewLoading.value = true
   error.value = null
 
@@ -122,6 +130,7 @@ async function runPreview() {
       check_out_date: serializeDate(checkOutDate.value),
       number_of_guests: numberOfGuests.value
     })
+    lastPreviewSignature.value = signature
   } catch (err) {
     error.value = t('errors.failed')
     console.error('Modification preview failed:', err)
@@ -186,14 +195,23 @@ async function confirmChanges() {
 }
 
 async function goToDetail() {
-  await router.push(`/reservations/${reservationId}`)
+  await router.push('/reservations')
 }
 
 onMounted(async () => {
   await loadReservation()
   if (reservation.value?.status === 'confirmed') {
     await runPreview()
+    isPreviewWatcherReady.value = true
   }
+})
+
+watch([checkInDate, checkOutDate, numberOfGuests], async () => {
+  if (!isPreviewWatcherReady.value) return
+  if (reservation.value?.status !== 'confirmed') return
+  if (!checkInDate.value || !checkOutDate.value || numberOfGuests.value < 1) return
+
+  await runPreview()
 })
 
 useSeoMeta({
@@ -248,7 +266,7 @@ definePageMeta({
             <p class="mt-1 text-xl font-semibold text-slate-900">{{ statusLabel }}</p>
           </div>
 
-          <UForm class="space-y-4" @submit.prevent="runPreview">
+          <UForm class="space-y-4">
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
               <UFormField :label="t('booking.checkIn')" name="checkInDate">
                 <UInput v-model="checkInDate" type="date" required />
@@ -264,15 +282,6 @@ definePageMeta({
             </UFormField>
 
             <div class="flex flex-wrap gap-3 pt-2">
-              <UButton
-                type="submit"
-                color="neutral"
-                variant="soft"
-                :loading="previewLoading"
-              >
-                {{ t('reservationFlow.modify.recalculatePreview') }}
-              </UButton>
-
               <UButton
                 color="primary"
                 :disabled="!canConfirm"
@@ -325,8 +334,26 @@ definePageMeta({
                 <span>{{ t('reservationFlow.modify.additionalCharge') }}</span>
                 <span class="font-medium">{{ preview.requires_additional_charge ? t('reservationFlow.modify.required') : t('common.no') }}</span>
               </div>
-              <p class="rounded-xl bg-slate-50 p-3 text-slate-600">
-                {{ preview.policy_applied || t('reservationFlow.modify.noPolicy') }}
+              <div
+                v-if="policyItems.length"
+                class="rounded-xl border border-slate-200 bg-slate-50 p-3"
+              >
+                <p class="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
+                  {{ t('reservationFlow.policy.title') }}
+                </p>
+                <ul class="space-y-2">
+                  <li
+                    v-for="item in policyItems"
+                    :key="item.key"
+                    class="flex items-start justify-between gap-4 text-slate-600"
+                  >
+                    <span class="font-medium text-slate-700">{{ item.label }}</span>
+                    <span class="text-right">{{ item.value }}</span>
+                  </li>
+                </ul>
+              </div>
+              <p v-else class="rounded-xl bg-slate-50 p-3 text-slate-600">
+                {{ t('reservationFlow.modify.noPolicy') }}
               </p>
             </div>
 
