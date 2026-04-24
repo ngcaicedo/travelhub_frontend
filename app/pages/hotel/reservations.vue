@@ -110,6 +110,14 @@ function formatDate(value: string) {
   }).format(parsed)
 }
 
+function calculateNights(checkIn: string, checkOut: string) {
+  const start = new Date(checkIn)
+  const end = new Date(checkOut)
+  const diffMs = end.getTime() - start.getTime()
+  if (Number.isNaN(diffMs) || diffMs <= 0) return 0
+  return Math.round(diffMs / (1000 * 60 * 60 * 24))
+}
+
 function openCancelModal(reservationId: string) {
   cancelTargetId.value = reservationId
   cancelReason.value = 'maintenance'
@@ -168,6 +176,7 @@ async function cancelReservation(reservationId: string) {
     error.value = 'Debes agregar una nota cuando selecciones "Otro" como motivo.'
     return
   }
+
   actingId.value = reservationId
   error.value = null
   success.value = null
@@ -364,64 +373,77 @@ onMounted(async () => {
     <UModal
       v-model:open="isCancelModalOpen"
       title="Confirmar cancelación"
-      :close="false"
+      description="Revisa los detalles antes de cancelar la reserva."
+      close-icon="i-lucide-x"
+      :close="{
+        color: 'neutral',
+        variant: 'ghost',
+        class: 'rounded-full text-slate-400 hover:bg-transparent hover:text-slate-600'
+      }"
       :ui="{
-        content: 'max-w-[512px] rounded-[24px]',
-        header: 'border-b border-slate-200 px-6 py-5 sm:px-8',
-        body: 'px-6 py-6 sm:px-8',
-        footer: 'border-t border-slate-200 px-6 py-5 sm:px-8'
+        content: 'max-w-[512px] overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.24)]',
+        header: 'border-b border-slate-200 px-6 py-6 sm:px-8',
+        body: 'px-6 py-7 sm:px-8',
+        footer: 'border-t border-slate-200 bg-slate-50 px-6 py-6 sm:px-8'
       }"
     >
       <template #title>
         <div class="flex items-center gap-4">
-          <div class="flex h-12 w-12 items-center justify-center rounded-full bg-rose-100 text-rose-600">
+          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-rose-100 text-rose-600">
             <UIcon
               name="i-lucide-badge-x"
               class="h-6 w-6"
             />
           </div>
-          <div>
-            <p class="text-2xl font-bold text-slate-900">
-              Confirmar Cancelación
-            </p>
-          </div>
+          <p class="text-[22px] font-bold tracking-tight text-slate-900">
+            Confirmar Cancelación
+          </p>
         </div>
       </template>
 
       <template #body>
         <div
           v-if="cancelTargetReservation"
-          class="space-y-6"
+          class="space-y-7"
         >
-          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-travelhub-600">
+          <div class="rounded-2xl border border-[#d8e2f0] bg-[#f5f8ff] p-5">
+            <p class="text-xs font-semibold uppercase tracking-[0.14em] text-[#255cff]">
               Resumen de la reserva
             </p>
-            <div class="mt-3 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+            <div class="mt-3 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
-                <p class="text-xl font-bold text-slate-900">
+                <p class="max-w-[250px] text-[18px] font-bold leading-8 text-slate-900">
                   {{ propertyName(cancelTargetReservation.id_property) }}
                 </p>
-                <p class="mt-1 text-sm text-slate-500">
+                <p class="mt-1 text-[15px] text-slate-500">
                   ID: #{{ cancelTargetReservation.id }}
                 </p>
-                <p class="mt-2 text-sm text-slate-600">
-                  {{ cancelTargetReservation.number_of_guests }} huéspedes · {{ reservationStatusLabel(cancelTargetReservation.status) }}
+                <p class="mt-3 text-[15px] text-slate-600">
+                  {{ cancelTargetReservation.number_of_guests }} huéspedes • {{ reservationStatusLabel(cancelTargetReservation.status) }}
                 </p>
               </div>
-              <div class="text-sm text-slate-500 md:text-right">
-                <p>{{ formatDate(cancelTargetReservation.check_in_date) }} - {{ formatDate(cancelTargetReservation.check_out_date) }}</p>
-                <p class="mt-1 font-medium text-slate-700">
+              <div class="space-y-2 text-[15px] text-slate-500 sm:text-right">
+                <p class="flex items-center gap-2 sm:justify-end">
+                  <UIcon
+                    name="i-lucide-calendar-days"
+                    class="h-4 w-4 text-slate-400"
+                  />
+                  <span>{{ formatDate(cancelTargetReservation.check_in_date) }} - {{ formatDate(cancelTargetReservation.check_out_date) }}</span>
+                </p>
+                <p>
+                  {{ calculateNights(cancelTargetReservation.check_in_date, cancelTargetReservation.check_out_date) }} noches • {{ cancelTargetReservation.number_of_guests }} huéspedes
+                </p>
+                <p class="font-medium text-slate-700">
                   {{ formatMoney(cancelTargetReservation.total_price, cancelTargetReservation.currency) }}
                 </p>
               </div>
             </div>
           </div>
 
-          <div class="space-y-2">
+          <div class="space-y-3">
             <label
               for="reservation-cancel-reason"
-              class="text-sm font-semibold text-slate-700"
+              class="text-[15px] font-semibold text-slate-700"
             >
               Motivo de la cancelación
             </label>
@@ -429,15 +451,20 @@ onMounted(async () => {
               id="reservation-cancel-reason"
               v-model="cancelReason"
               :items="cancellationReasonOptions"
-              placeholder="Selecciona un motivo..."
+              placeholder="Seleccione un motivo..."
+              class="w-full"
+              :ui="{
+                base: 'h-12 rounded-xl border-slate-200 bg-white text-slate-700',
+                trailingIcon: 'text-slate-400'
+              }"
               data-testid="cancel-reason-select"
             />
           </div>
 
-          <div class="space-y-2">
+          <div class="space-y-3">
             <label
               for="reservation-cancel-note"
-              class="text-sm font-semibold text-slate-700"
+              class="text-[15px] font-semibold text-slate-700"
             >
               Notas adicionales {{ isCancellationNoteRequired ? '(Obligatorio)' : '(Opcional)' }}
             </label>
@@ -446,6 +473,10 @@ onMounted(async () => {
               v-model="cancelNote"
               :rows="4"
               autoresize
+              class="w-full"
+              :ui="{
+                base: 'min-h-[108px] rounded-xl border-slate-200 bg-slate-50 px-4 py-3 text-slate-700 placeholder:text-slate-400'
+              }"
               placeholder="Añade más detalles sobre la cancelación..."
               data-testid="cancel-note-textarea"
             />
@@ -462,6 +493,12 @@ onMounted(async () => {
             variant="subtle"
             icon="i-lucide-circle-alert"
             title="Aviso importante"
+            class="rounded-2xl border border-amber-200 bg-amber-50"
+            :ui="{
+              title: 'text-[15px] font-semibold text-amber-700',
+              description: 'text-[15px] leading-7 text-amber-700',
+              icon: 'text-amber-500'
+            }"
             :description="cancelTargetReservation.status === 'confirmed'
               ? 'Al confirmar, se iniciará el proceso de reembolso automático según la política de cancelación vigente. Esta acción no se puede deshacer.'
               : 'Al confirmar, la reserva quedará cancelada y la habitación volverá a estar disponible. Esta acción no se puede deshacer.'"
@@ -474,6 +511,8 @@ onMounted(async () => {
           <UButton
             color="neutral"
             variant="outline"
+            size="xl"
+            class="justify-center rounded-xl border-slate-200 px-6 py-3 font-semibold text-slate-700"
             @click="closeCancelModal()"
           >
             Mantener Reserva
@@ -483,6 +522,8 @@ onMounted(async () => {
             icon="i-lucide-ban"
             :disabled="isCancellationSubmitDisabled"
             :loading="actingId === cancelTargetId"
+            size="xl"
+            class="justify-center rounded-xl bg-red-500 px-6 py-3 font-semibold text-white hover:bg-red-600 disabled:bg-red-200"
             @click="cancelTargetReservation && cancelReservation(cancelTargetReservation.id)"
           >
             Confirmar Cancelación
