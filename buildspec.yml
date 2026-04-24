@@ -5,8 +5,9 @@ phases:
     runtime-versions:
       nodejs: 20
     commands:
-      - echo Installing pnpm...
-      - npm install -g pnpm
+      - echo Enabling Corepack and preparing pnpm 10.32.1...
+      - corepack enable
+      - corepack prepare pnpm@10.32.1 --activate
       - echo Installing dependencies...
       - pnpm install --frozen-lockfile
 

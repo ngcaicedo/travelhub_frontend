@@ -37,6 +37,27 @@ vi.mock('#app', async () => {
   }
 })
 
+const textMatchers = {
+  dashboard: ['Dashboard de reservas', 'Reservations dashboard', 'Painel de reservas'],
+  confirm: ['Confirmar', 'Confirm'],
+  cancel: ['Cancelar', 'Cancel'],
+  cancelModalTitle: ['Confirmar cancelación', 'Confirm cancellation', 'Confirmar cancelamento'],
+  reservationSummary: ['Resumen de la reserva', 'Reservation summary', 'Resumo da reserva']
+}
+
+function includesAnyText(text: string, candidates: string[]) {
+  return candidates.some(candidate => text.includes(candidate))
+}
+
+function findButtonByText(
+  wrapper: Awaited<ReturnType<typeof mountSuspended>>,
+  candidates: string[]
+) {
+  return wrapper.findAll('button').find((button: { text: () => string }) =>
+    includesAnyText(button.text(), candidates)
+  )
+}
+
 describe('HotelReservationsPage', () => {
   beforeEach(() => {
     navigateToMock.mockClear()
@@ -65,45 +86,50 @@ describe('HotelReservationsPage', () => {
     const wrapper = await mountSuspended(HotelReservationsPage)
     const text = wrapper.text()
 
-    expect(text).toContain('Dashboard de reservas')
+    expect(includesAnyText(text, textMatchers.dashboard)).toBe(true)
     expect(text).toContain('Hotel Andes')
-    expect(text).toContain('Reserva res-1')
+    expect(text).toContain('res-1')
   })
 
   it('confirms a reservation from the dashboard', async () => {
     const wrapper = await mountSuspended(HotelReservationsPage)
-    const button = wrapper.findAll('button').find(btn => btn.text().includes('Confirmar'))
+    const button = findButtonByText(wrapper, textMatchers.confirm)
 
     expect(button).toBeTruthy()
     await button!.trigger('click')
 
-    expect(confirmHotelReservationMock).toHaveBeenCalledWith('res-1', 'jwt-token', 'confirmacion manual del hotel')
+    expect(confirmHotelReservationMock).toHaveBeenCalledWith(
+      'res-1',
+      'jwt-token',
+      expect.stringMatching(/manual hotel confirmation|confirmaci.n manual del hotel|confirma..o manual do hotel/i)
+    )
   })
 
   it('opens a cancellation modal with reservation summary', async () => {
     const wrapper = await mountSuspended(HotelReservationsPage)
-    const cancelButton = wrapper.findAll('button').find(button => button.text().includes('Cancelar'))
+    const cancelButton = findButtonByText(wrapper, textMatchers.cancel)
 
     expect(cancelButton).toBeTruthy()
     await cancelButton!.trigger('click')
     await new Promise(resolve => setTimeout(resolve, 0))
 
-    expect(document.body.textContent).toContain('Confirmar Cancelación')
-    expect(document.body.textContent).toContain('Resumen de la reserva')
-    expect(document.body.textContent).toContain('Hotel Andes')
-    expect(document.body.textContent).toContain('ID: #res-1')
+    const modalText = document.body.textContent || ''
+    expect(includesAnyText(modalText, textMatchers.cancelModalTitle)).toBe(true)
+    expect(includesAnyText(modalText, textMatchers.reservationSummary)).toBe(true)
+    expect(modalText).toContain('Hotel Andes')
+    expect(modalText).toContain('ID: #res-1')
   })
 
   it('cancels a reservation from the modal', async () => {
     const wrapper = await mountSuspended(HotelReservationsPage)
-    const cancelButton = wrapper.findAll('button').find(button => button.text().includes('Cancelar'))
+    const cancelButton = findButtonByText(wrapper, textMatchers.cancel)
 
     expect(cancelButton).toBeTruthy()
     await cancelButton!.trigger('click')
     await new Promise(resolve => setTimeout(resolve, 0))
 
     const confirmCancelButton = Array.from(document.querySelectorAll('button')).find(button =>
-      button.textContent?.includes('Confirmar Cancelación')
+      includesAnyText(button.textContent || '', textMatchers.cancelModalTitle)
     ) as HTMLButtonElement | undefined
 
     expect(confirmCancelButton).toBeTruthy()

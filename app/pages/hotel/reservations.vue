@@ -13,6 +13,7 @@ import { getAllProperties } from '~/services/propertyServices'
 
 const authStore = useAuthStore()
 const route = useRoute()
+const { t, locale } = useI18n()
 
 const loading = ref(false)
 const actingId = ref<string | null>(null)
@@ -26,23 +27,29 @@ const cancelTargetId = ref<string | null>(null)
 const cancelReason = ref<ReservationCancellationReason>('maintenance')
 const cancelNote = ref('')
 
-const statusOptions = [
-  { label: 'Todos', value: 'all' },
-  { label: 'Pendiente', value: 'pending_payment' },
-  { label: 'Confirmada', value: 'confirmed' },
-  { label: 'Cancelada', value: 'cancelled' },
-  { label: 'Completada', value: 'completed' }
-]
+const localeMap: Record<string, string> = {
+  es: 'es-CO',
+  en: 'en-US',
+  pt: 'pt-BR'
+}
 
-const cancellationReasonOptions = [
-  { label: 'Mantenimiento', value: 'maintenance' },
-  { label: 'Overbooking', value: 'overbooking' },
-  { label: 'Politica del hotel', value: 'hotel_policy' },
-  { label: 'Otro', value: 'other' }
-]
+const statusOptions = computed(() => [
+  { label: t('hotelReservations.filters.allStatuses'), value: 'all' },
+  { label: t('hotelReservations.status.pending_payment'), value: 'pending_payment' },
+  { label: t('hotelReservations.status.confirmed'), value: 'confirmed' },
+  { label: t('hotelReservations.status.cancelled'), value: 'cancelled' },
+  { label: t('hotelReservations.status.completed'), value: 'completed' }
+])
+
+const cancellationReasonOptions = computed(() => [
+  { label: t('hotelReservations.cancellationReasons.maintenance'), value: 'maintenance' },
+  { label: t('hotelReservations.cancellationReasons.overbooking'), value: 'overbooking' },
+  { label: t('hotelReservations.cancellationReasons.hotel_policy'), value: 'hotel_policy' },
+  { label: t('hotelReservations.cancellationReasons.other'), value: 'other' }
+])
 
 useSeoMeta({
-  title: 'Dashboard de reservas hoteleras - TravelHub'
+  title: () => `${t('hotelReservations.metaTitle')} - TravelHub`
 })
 
 definePageMeta({
@@ -68,19 +75,12 @@ const isCancellationSubmitDisabled = computed(() =>
   (isCancellationNoteRequired.value && !cancellationNote.value)
 )
 
-const statusLabels: Record<string, string> = {
-  pending_payment: 'Pendiente',
-  confirmed: 'Confirmada',
-  cancelled: 'Cancelada',
-  completed: 'Completada'
-}
-
 function propertyName(propertyId: string) {
   return properties.value.find(property => property.id === propertyId)?.name || propertyId
 }
 
 function reservationStatusLabel(status: string) {
-  return statusLabels[status] || status
+  return t(`hotelReservations.status.${status}` as never, status)
 }
 
 function canConfirm(status: string) {
@@ -94,7 +94,7 @@ function canCancel(status: string) {
 function formatMoney(amount: string, currency: string) {
   const parsed = Number(amount)
   if (Number.isNaN(parsed)) return `${amount} ${currency}`
-  return new Intl.NumberFormat('es-CO', {
+  return new Intl.NumberFormat(localeMap[locale.value] || 'en-US', {
     style: 'currency',
     currency
   }).format(parsed)
@@ -103,7 +103,7 @@ function formatMoney(amount: string, currency: string) {
 function formatDate(value: string) {
   const parsed = new Date(value)
   if (Number.isNaN(parsed.getTime())) return value
-  return new Intl.DateTimeFormat('es-CO', {
+  return new Intl.DateTimeFormat(localeMap[locale.value] || 'en-US', {
     month: 'short',
     day: 'numeric',
     year: 'numeric'
@@ -148,7 +148,7 @@ async function loadReservations() {
       statusFilter.value === 'all' ? undefined : statusFilter.value
     )
   } catch (err) {
-    error.value = (err as { message?: string }).message || 'No fue posible cargar las reservas.'
+    error.value = (err as { message?: string }).message || t('hotelReservations.feedback.loadError')
   } finally {
     loading.value = false
   }
@@ -160,11 +160,15 @@ async function confirmReservation(reservationId: string) {
   error.value = null
   success.value = null
   try {
-    await confirmHotelReservation(reservationId, authStore.token, 'confirmacion manual del hotel')
-    success.value = 'La reserva fue confirmada y se notifico al viajero.'
+    await confirmHotelReservation(
+      reservationId,
+      authStore.token,
+      t('hotelReservations.actions.confirmReason')
+    )
+    success.value = t('hotelReservations.feedback.confirmSuccess')
     await loadReservations()
   } catch (err) {
-    error.value = (err as { message?: string }).message || 'No fue posible confirmar la reserva.'
+    error.value = (err as { message?: string }).message || t('hotelReservations.feedback.confirmError')
   } finally {
     actingId.value = null
   }
@@ -173,7 +177,7 @@ async function confirmReservation(reservationId: string) {
 async function cancelReservation(reservationId: string) {
   if (!authStore.token) return
   if (isCancellationNoteRequired.value && !cancellationNote.value) {
-    error.value = 'Debes agregar una nota cuando selecciones "Otro" como motivo.'
+    error.value = t('hotelReservations.feedback.otherReasonRequired')
     return
   }
 
@@ -188,10 +192,10 @@ async function cancelReservation(reservationId: string) {
       cancelReason.value === 'other' ? cancellationNote.value : undefined
     )
     closeCancelModal()
-    success.value = 'La reserva fue cancelada. Si aplicaba, el reembolso se inicio automaticamente.'
+    success.value = t('hotelReservations.feedback.cancelSuccess')
     await loadReservations()
   } catch (err) {
-    error.value = (err as { message?: string }).message || 'No fue posible cancelar la reserva.'
+    error.value = (err as { message?: string }).message || t('hotelReservations.feedback.cancelError')
   } finally {
     actingId.value = null
   }
@@ -220,13 +224,13 @@ onMounted(async () => {
     <div class="mx-auto max-w-[1120px] px-4">
       <div class="mb-8">
         <p class="text-sm font-semibold uppercase tracking-[0.16em] text-travelhub-600">
-          Operacion hotelera
+          {{ t('hotelReservations.hero.eyebrow') }}
         </p>
         <h1 class="mt-3 text-4xl font-bold tracking-tight text-slate-900">
-          Dashboard de reservas
+          {{ t('hotelReservations.hero.title') }}
         </h1>
         <p class="mt-2 max-w-[760px] text-base text-slate-500">
-          Confirma o cancela reservas pendientes y confirmadas sin salir del panel operativo.
+          {{ t('hotelReservations.hero.description') }}
         </p>
       </div>
 
@@ -235,7 +239,7 @@ onMounted(async () => {
         color="error"
         icon="i-lucide-alert-circle"
         class="mb-4"
-        title="No pudimos completar la accion"
+        :title="t('hotelReservations.feedback.errorTitle')"
         :description="error"
         closable
         @close="error = null"
@@ -246,7 +250,7 @@ onMounted(async () => {
         color="success"
         icon="i-lucide-check-circle-2"
         class="mb-4"
-        title="Operacion completada"
+        :title="t('hotelReservations.feedback.successTitle')"
         :description="success"
         closable
         @close="success = null"
@@ -256,12 +260,12 @@ onMounted(async () => {
         <USelect
           v-model="selectedPropertyId"
           :items="properties.map(property => ({ label: property.name, value: property.id }))"
-          placeholder="Selecciona una propiedad"
+          :placeholder="t('hotelReservations.filters.propertyPlaceholder')"
         />
         <USelect
           v-model="statusFilter"
           :items="statusOptions"
-          placeholder="Filtrar por estado"
+          :placeholder="t('hotelReservations.filters.statusPlaceholder')"
         />
       </div>
 
@@ -269,7 +273,7 @@ onMounted(async () => {
         v-if="loading"
         class="rounded-2xl border border-slate-200 bg-white p-8 text-center text-slate-500 shadow-sm"
       >
-        Cargando reservas...
+        {{ t('hotelReservations.feedback.loading') }}
       </div>
 
       <div
@@ -277,10 +281,10 @@ onMounted(async () => {
         class="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center shadow-sm"
       >
         <h2 class="text-2xl font-bold text-slate-900">
-          No hay reservas para este filtro
+          {{ t('hotelReservations.empty.title') }}
         </h2>
         <p class="mt-3 text-slate-500">
-          Ajusta la propiedad o el estado para ver reservas operables.
+          {{ t('hotelReservations.empty.description') }}
         </p>
       </div>
 
@@ -299,7 +303,7 @@ onMounted(async () => {
                 {{ propertyName(reservation.id_property) }}
               </p>
               <h2 class="mt-2 text-xl font-bold text-slate-900">
-                Reserva {{ reservation.id }}
+                {{ t('hotelReservations.card.reservationLabel', { id: reservation.id }) }}
               </h2>
               <p class="mt-1 text-sm text-slate-500">
                 {{ formatDate(reservation.check_in_date) }} - {{ formatDate(reservation.check_out_date) }}
@@ -307,14 +311,14 @@ onMounted(async () => {
             </div>
 
             <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-700">
-              {{ reservation.status }}
+              {{ reservationStatusLabel(reservation.status) }}
             </span>
           </div>
 
           <div class="mt-5 grid gap-4 md:grid-cols-4">
             <div class="rounded-xl bg-slate-50 p-4">
               <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
-                Huespedes
+                {{ t('hotelReservations.card.guests') }}
               </p>
               <p class="mt-2 text-sm font-medium text-slate-700">
                 {{ reservation.number_of_guests }}
@@ -322,7 +326,7 @@ onMounted(async () => {
             </div>
             <div class="rounded-xl bg-slate-50 p-4">
               <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
-                Monto
+                {{ t('hotelReservations.card.amount') }}
               </p>
               <p class="mt-2 text-sm font-medium text-slate-700">
                 {{ formatMoney(reservation.total_price, reservation.currency) }}
@@ -330,7 +334,7 @@ onMounted(async () => {
             </div>
             <div class="rounded-xl bg-slate-50 p-4">
               <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
-                Viajero
+                {{ t('hotelReservations.card.traveler') }}
               </p>
               <p class="mt-2 break-all text-sm font-medium text-slate-700">
                 {{ reservation.id_traveler }}
@@ -338,7 +342,7 @@ onMounted(async () => {
             </div>
             <div class="rounded-xl bg-slate-50 p-4">
               <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
-                Hold
+                {{ t('hotelReservations.card.hold') }}
               </p>
               <p class="mt-2 text-sm font-medium text-slate-700">
                 {{ formatDate(reservation.hold_expires_at) }}
@@ -354,7 +358,7 @@ onMounted(async () => {
               :loading="actingId === reservation.id"
               @click="confirmReservation(reservation.id)"
             >
-              Confirmar
+              {{ t('hotelReservations.actions.confirm') }}
             </UButton>
             <UButton
               v-if="canCancel(reservation.status)"
@@ -363,7 +367,7 @@ onMounted(async () => {
               variant="soft"
               @click="openCancelModal(reservation.id)"
             >
-              Cancelar
+              {{ t('hotelReservations.actions.cancel') }}
             </UButton>
           </div>
         </article>
@@ -372,8 +376,8 @@ onMounted(async () => {
 
     <UModal
       v-model:open="isCancelModalOpen"
-      title="Confirmar cancelación"
-      description="Revisa los detalles antes de cancelar la reserva."
+      :title="t('hotelReservations.cancelModal.title')"
+      :description="t('hotelReservations.cancelModal.description')"
       close-icon="i-lucide-x"
       :close="{
         color: 'neutral',
@@ -396,7 +400,7 @@ onMounted(async () => {
             />
           </div>
           <p class="text-[22px] font-bold tracking-tight text-slate-900">
-            Confirmar Cancelación
+            {{ t('hotelReservations.cancelModal.title') }}
           </p>
         </div>
       </template>
@@ -408,7 +412,7 @@ onMounted(async () => {
         >
           <div class="rounded-2xl border border-[#d8e2f0] bg-[#f5f8ff] p-5">
             <p class="text-xs font-semibold uppercase tracking-[0.14em] text-[#255cff]">
-              Resumen de la reserva
+              {{ t('hotelReservations.cancelModal.summaryTitle') }}
             </p>
             <div class="mt-3 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
@@ -416,10 +420,13 @@ onMounted(async () => {
                   {{ propertyName(cancelTargetReservation.id_property) }}
                 </p>
                 <p class="mt-1 text-[15px] text-slate-500">
-                  ID: #{{ cancelTargetReservation.id }}
+                  {{ t('hotelReservations.cancelModal.reservationId', { id: cancelTargetReservation.id }) }}
                 </p>
                 <p class="mt-3 text-[15px] text-slate-600">
-                  {{ cancelTargetReservation.number_of_guests }} huéspedes • {{ reservationStatusLabel(cancelTargetReservation.status) }}
+                  {{ t('hotelReservations.cancelModal.guestsAndStatus', {
+                    guests: cancelTargetReservation.number_of_guests,
+                    status: reservationStatusLabel(cancelTargetReservation.status)
+                  }) }}
                 </p>
               </div>
               <div class="space-y-2 text-[15px] text-slate-500 sm:text-right">
@@ -431,7 +438,10 @@ onMounted(async () => {
                   <span>{{ formatDate(cancelTargetReservation.check_in_date) }} - {{ formatDate(cancelTargetReservation.check_out_date) }}</span>
                 </p>
                 <p>
-                  {{ calculateNights(cancelTargetReservation.check_in_date, cancelTargetReservation.check_out_date) }} noches • {{ cancelTargetReservation.number_of_guests }} huéspedes
+                  {{ t('hotelReservations.cancelModal.staySummary', {
+                    nights: calculateNights(cancelTargetReservation.check_in_date, cancelTargetReservation.check_out_date),
+                    guests: cancelTargetReservation.number_of_guests
+                  }) }}
                 </p>
                 <p class="font-medium text-slate-700">
                   {{ formatMoney(cancelTargetReservation.total_price, cancelTargetReservation.currency) }}
@@ -445,13 +455,13 @@ onMounted(async () => {
               for="reservation-cancel-reason"
               class="text-[15px] font-semibold text-slate-700"
             >
-              Motivo de la cancelación
+              {{ t('hotelReservations.cancelModal.reasonLabel') }}
             </label>
             <USelect
               id="reservation-cancel-reason"
               v-model="cancelReason"
               :items="cancellationReasonOptions"
-              placeholder="Seleccione un motivo..."
+              :placeholder="t('hotelReservations.cancelModal.reasonPlaceholder')"
               class="w-full"
               :ui="{
                 base: 'h-12 rounded-xl border-slate-200 bg-white text-slate-700',
@@ -466,7 +476,10 @@ onMounted(async () => {
               for="reservation-cancel-note"
               class="text-[15px] font-semibold text-slate-700"
             >
-              Notas adicionales {{ isCancellationNoteRequired ? '(Obligatorio)' : '(Opcional)' }}
+              {{ t('hotelReservations.cancelModal.notesLabel') }}
+              {{ isCancellationNoteRequired
+                ? t('hotelReservations.cancelModal.requiredTag')
+                : t('hotelReservations.cancelModal.optionalTag') }}
             </label>
             <UTextarea
               id="reservation-cancel-note"
@@ -477,14 +490,14 @@ onMounted(async () => {
               :ui="{
                 base: 'min-h-[108px] rounded-xl border-slate-200 bg-slate-50 px-4 py-3 text-slate-700 placeholder:text-slate-400'
               }"
-              placeholder="Añade más detalles sobre la cancelación..."
+              :placeholder="t('hotelReservations.cancelModal.notesPlaceholder')"
               data-testid="cancel-note-textarea"
             />
             <p
               v-if="isCancellationNoteRequired && !cancellationNote"
               class="text-sm font-medium text-rose-600"
             >
-              Debes indicar el motivo específico de la cancelación.
+              {{ t('hotelReservations.cancelModal.notesRequiredMessage') }}
             </p>
           </div>
 
@@ -492,7 +505,7 @@ onMounted(async () => {
             color="warning"
             variant="subtle"
             icon="i-lucide-circle-alert"
-            title="Aviso importante"
+            :title="t('hotelReservations.cancelModal.warningTitle')"
             class="rounded-2xl border border-amber-200 bg-amber-50"
             :ui="{
               title: 'text-[15px] font-semibold text-amber-700',
@@ -500,8 +513,8 @@ onMounted(async () => {
               icon: 'text-amber-500'
             }"
             :description="cancelTargetReservation.status === 'confirmed'
-              ? 'Al confirmar, se iniciará el proceso de reembolso automático según la política de cancelación vigente. Esta acción no se puede deshacer.'
-              : 'Al confirmar, la reserva quedará cancelada y la habitación volverá a estar disponible. Esta acción no se puede deshacer.'"
+              ? t('hotelReservations.cancelModal.warningConfirmed')
+              : t('hotelReservations.cancelModal.warningPending')"
           />
         </div>
       </template>
@@ -515,7 +528,7 @@ onMounted(async () => {
             class="justify-center rounded-xl border-slate-200 px-6 py-3 font-semibold text-slate-700"
             @click="closeCancelModal()"
           >
-            Mantener Reserva
+            {{ t('hotelReservations.cancelModal.keepReservation') }}
           </UButton>
           <UButton
             color="error"
@@ -526,7 +539,7 @@ onMounted(async () => {
             class="justify-center rounded-xl bg-red-500 px-6 py-3 font-semibold text-white hover:bg-red-600 disabled:bg-red-200"
             @click="cancelTargetReservation && cancelReservation(cancelTargetReservation.id)"
           >
-            Confirmar Cancelación
+            {{ t('hotelReservations.cancelModal.confirmAction') }}
           </UButton>
         </div>
       </template>
