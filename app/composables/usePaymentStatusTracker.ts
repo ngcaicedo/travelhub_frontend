@@ -1,5 +1,4 @@
 import type {
-  PaymentResponse,
   PaymentStatus,
   PaymentTrackerCheckoutContext,
   PaymentTrackerState,

@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { ref } from 'vue'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 
 import HotelReservationsPage from '~/pages/hotel/reservations.vue'
