@@ -67,6 +67,7 @@ const fetchReservation = async () => {
       currency: 'COP',
       check_in_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
       check_out_date: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString(),
+      hold_expires_at: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
       created_at: new Date().toISOString()
     }
     reservation.value = mockReservation
