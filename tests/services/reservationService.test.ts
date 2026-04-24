@@ -1,5 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { createReservation, getReservation } from '~/services/reservationService'
+import {
+  cancelHotelReservation,
+  confirmHotelReservation,
+  createReservation,
+  getHotelReservations,
+  getReservation
+} from '~/services/reservationService'
 
 const mockFetch = vi.fn()
 
@@ -87,6 +93,53 @@ describe('reservationService', () => {
         message: 'errors.unknown',
         statusCode: 404,
         details: null
+      })
+    })
+  })
+
+  describe('hotel reservations', () => {
+    it('lists hotel reservations with auth header', async () => {
+      mockFetch.mockResolvedValue([mockReservationResponse])
+
+      const result = await getHotelReservations('prop-1', 'jwt-token', 'confirmed')
+
+      expect(mockFetch).toHaveBeenCalledWith('/api/v1/hotel/reservations?propertyId=prop-1&status=confirmed', {
+        baseURL: 'http://localhost:3003',
+        method: 'GET',
+        headers: { Authorization: 'Bearer jwt-token' }
+      })
+      expect(result).toEqual([mockReservationResponse])
+    })
+
+    it('confirms a hotel reservation', async () => {
+      mockFetch.mockResolvedValue({ reservation: mockReservationResponse, status_after: 'confirmed' })
+
+      await confirmHotelReservation('res-123', 'jwt-token', 'manual')
+
+      expect(mockFetch).toHaveBeenCalledWith('/api/v1/hotel/reservations/res-123/confirm', {
+        baseURL: 'http://localhost:3003',
+        method: 'POST',
+        body: { reason: 'manual' },
+        headers: {
+          Authorization: 'Bearer jwt-token',
+          'Content-Type': 'application/json'
+        }
+      })
+    })
+
+    it('cancels a hotel reservation with predefined reason', async () => {
+      mockFetch.mockResolvedValue({ reservation: mockReservationResponse, status_after: 'cancelled' })
+
+      await cancelHotelReservation('res-123', 'jwt-token', 'maintenance', 'room issue')
+
+      expect(mockFetch).toHaveBeenCalledWith('/api/v1/hotel/reservations/res-123/cancel', {
+        baseURL: 'http://localhost:3003',
+        method: 'POST',
+        body: { reason: 'maintenance', note: 'room issue' },
+        headers: {
+          Authorization: 'Bearer jwt-token',
+          'Content-Type': 'application/json'
+        }
       })
     })
   })

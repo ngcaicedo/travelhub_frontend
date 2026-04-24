@@ -21,6 +21,7 @@
     "search": "Hoteles",
     "checkout": "Proceso de pago",
     "reservations": "Mis reservas",
+    "hotelReservations": "Reservas hotel",
     "logout": "Cerrar sesión"
   },
   "auth": {

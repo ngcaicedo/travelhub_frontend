@@ -23,6 +23,7 @@ export const useAuthStore = defineStore('auth', () => {
   const role = useState<string | null>('auth_role', () => null)
   const isAuthenticated = computed(() => !!token.value)
   const userId = computed(() => decodeJwtSub(token.value))
+  const isHotelUser = computed(() => role.value === 'hotel' || role.value === 'hotel_partner')
 
   async function login(email: string, password: string, redirect?: string) {
     await authService.login(email, password)
@@ -44,5 +45,5 @@ export const useAuthStore = defineStore('auth', () => {
     await navigateTo('/properties')
   }
 
-  return { token, role, isAuthenticated, userId, login, verifyOtp, logout }
+  return { token, role, isAuthenticated, isHotelUser, userId, login, verifyOtp, logout }
 })

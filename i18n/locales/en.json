@@ -21,6 +21,7 @@
     "search": "Hotels",
     "checkout": "Checkout",
     "reservations": "My reservations",
+    "hotelReservations": "Hotel reservations",
     "logout": "Logout"
   },
   "auth": {

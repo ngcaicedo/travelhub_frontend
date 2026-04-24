@@ -33,6 +33,12 @@ describe('useAuthStore', () => {
     expect(store.isAuthenticated).toBe(true)
   })
 
+  it('isHotelUser is true for hotel-compatible roles', () => {
+    const store = useAuthStore()
+    store.role = 'hotel'
+    expect(store.isHotelUser).toBe(true)
+  })
+
   it('login calls authService with correct parameters', async () => {
     const store = useAuthStore()
     const loginSpy = vi.spyOn(authServiceModule.authService, 'login').mockResolvedValue({ message: 'OTP sent' })

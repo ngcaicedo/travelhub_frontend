@@ -39,6 +39,14 @@ const navigationItems = computed(() => {
     }
   )
 
+  if (authStore.isHotelUser) {
+    items.push({
+      to: '/hotel/reservations',
+      label: t('navigation.hotelReservations'),
+      active: route.path === '/hotel/reservations'
+    })
+  }
+
   return items
 })
 
