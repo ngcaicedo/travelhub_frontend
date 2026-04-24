@@ -80,4 +80,36 @@ describe('HotelReservationsPage', () => {
 
     expect(confirmHotelReservationMock).toHaveBeenCalledWith('res-1', 'jwt-token', 'confirmacion manual del hotel')
   })
+
+  it('opens a cancellation modal with reservation summary', async () => {
+    const wrapper = await mountSuspended(HotelReservationsPage)
+    const cancelButton = wrapper.findAll('button').find(button => button.text().includes('Cancelar'))
+
+    expect(cancelButton).toBeTruthy()
+    await cancelButton!.trigger('click')
+    await new Promise(resolve => setTimeout(resolve, 0))
+
+    expect(document.body.textContent).toContain('Confirmar Cancelación')
+    expect(document.body.textContent).toContain('Resumen de la reserva')
+    expect(document.body.textContent).toContain('Hotel Andes')
+    expect(document.body.textContent).toContain('ID: #res-1')
+  })
+
+  it('cancels a reservation from the modal', async () => {
+    const wrapper = await mountSuspended(HotelReservationsPage)
+    const cancelButton = wrapper.findAll('button').find(button => button.text().includes('Cancelar'))
+
+    expect(cancelButton).toBeTruthy()
+    await cancelButton!.trigger('click')
+    await new Promise(resolve => setTimeout(resolve, 0))
+
+    const confirmCancelButton = Array.from(document.querySelectorAll('button')).find(button =>
+      button.textContent?.includes('Confirmar Cancelación')
+    ) as HTMLButtonElement | undefined
+
+    expect(confirmCancelButton).toBeTruthy()
+    confirmCancelButton?.click()
+
+    expect(cancelHotelReservationMock).toHaveBeenCalledWith('res-1', 'jwt-token', 'maintenance', undefined)
+  })
 })
