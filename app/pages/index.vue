@@ -6,7 +6,7 @@
 // Para testing: Descomentar la línea siguiente para ir a property detail:
 // navigateTo('/properties/22222222-2222-2222-2222-222222222222')
 
-navigateTo('/login')
+navigateTo('/properties')
 </script>
 
 <template>

@@ -38,9 +38,9 @@ describe('Login with OTP', () => {
     // When: enter OTP code (stubbed)
     whenSteps.whenIEnterTheOtpCode('123456')
 
-    // Then: redirect to dashboard and have token
+    // Then: redirect to the authenticated landing page and have token
     cy.wait('@verifyOtp')
-    thenSteps.thenIAmOn('/dashboard')
+    thenSteps.thenIAmOn('/properties')
     thenSteps.thenIHaveAToken()
   })
 

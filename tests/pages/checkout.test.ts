@@ -1,15 +1,33 @@
-import { computed, nextTick } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises } from '@vue/test-utils'
 import { mountSuspended, mockNuxtImport } from '@nuxt/test-utils/runtime'
 
 import CheckoutPage from '~/pages/checkout.vue'
 
-const { usePaymentsComplianceMock } = vi.hoisted(() => ({
-  usePaymentsComplianceMock: vi.fn(() => computed(() => false))
+const { usePaymentsComplianceMock, usePaymentStatusTrackerMock } = vi.hoisted(() => ({
+  usePaymentsComplianceMock: vi.fn(() => computed(() => false)),
+  usePaymentStatusTrackerMock: vi.fn(() => ({
+    state: ref({
+      status: 'idle',
+      paymentId: null,
+      paymentTransactionId: null,
+      reservationId: null,
+      error: null,
+      visible: false,
+      checkoutContext: null
+    }),
+    setCheckoutContext: vi.fn(),
+    buildCheckoutQuery: vi.fn(() => ({})),
+    startTracking: vi.fn(),
+    syncPaymentSnapshot: vi.fn(),
+    dismiss: vi.fn(),
+    clear: vi.fn()
+  }))
 }))
 
 mockNuxtImport('usePaymentsCompliance', () => usePaymentsComplianceMock)
+mockNuxtImport('usePaymentStatusTracker', () => usePaymentStatusTrackerMock)
 
 const mockGetConfig = vi.fn()
 const mockCreateCharge = vi.fn()
@@ -312,7 +330,7 @@ function findButtonByText(
   wrapper: Awaited<ReturnType<typeof mountSuspended>>,
   pattern: RegExp
 ) {
-  const button = wrapper.findAll('button').find(candidate => pattern.test(candidate.text()))
+  const button = wrapper.findAll('button').find((candidate: { text: () => string }) => pattern.test(candidate.text()))
 
   if (!button) {
     throw new Error(`Button not found for pattern: ${pattern.toString()}`)

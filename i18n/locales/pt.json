@@ -11,14 +11,120 @@
     "showAll": "Mostrar tudo",
     "showLess": "Mostrar menos",
     "loadMore": "Carregar mais",
-    "loading": "Carregando..."
+    "loading": "Carregando...",
+    "yes": "Sim",
+    "no": "Não"
+  },
+  "nav": {
+    "home": "Início"
   },
   "navigation": {
     "login": "Entrar",
+    "search": "Hotéis",
     "checkout": "Pagamento",
-    "reservations": "Minhas reservas"
+    "reservations": "Minhas reservas",
+    "hotelReservations": "Reservas do hotel",
+    "logout": "Sair"
   },
-  "auth": {
+  "reservationsList": {
+    "meta": {
+      "title": "Minhas reservas"
+    },
+    "title": "Gerenciamento de reservas",
+    "subtitle": "Revise as estadias futuras, gerencie cancelamentos e abra os detalhes completos de cada reserva.",
+    "newBooking": "Nova reserva",
+    "sidebarTitle": "Sua conta",
+    "sidebarSubtitle": "Acesse reservas ativas e passadas",
+    "myBookings": "Minhas reservas",
+    "upcoming": "Próximas",
+    "past": "Passadas",
+    "cancelled": "Canceladas",
+    "emptyTitle": "Você ainda não tem reservas",
+    "emptyDescription": "Quando você confirmar uma estadia, ela aparecerá aqui com acesso direto para gerenciar ou cancelar.",
+    "loading": "Carregando suas reservas",
+    "manage": "Gerenciar",
+    "viewDetails": "Ver detalhes",
+    "cancelReservation": "Cancelar reserva",
+    "cancelUnavailable": "Somente reservas confirmadas podem ser canceladas.",
+    "modifiedReservationNoActions": "Esta reserva não pode ser modificada ou cancelada pois foi modificada.",
+    "additionalPaymentAtCheckIn": "O pagamento adicional será feito no local da reserva no momento do check-in.",
+    "locationFallback": "Localização pendente",
+    "guestCount": "{count} hóspedes",
+    "totalPrice": "Preço total",
+    "estimatedPrice": "Preço estimado"
+  },
+  "hotelReservations": {
+    "metaTitle": "Dashboard de reservas do hotel",
+    "hero": {
+      "eyebrow": "Operação hoteleira",
+      "title": "Dashboard de reservas",
+      "description": "Confirme ou cancele reservas pendentes e confirmadas sem sair do painel operacional."
+    },
+    "filters": {
+      "propertyPlaceholder": "Selecione uma propriedade",
+      "statusPlaceholder": "Filtrar por status",
+      "allStatuses": "Todos"
+    },
+    "status": {
+      "pending_payment": "Pendente",
+      "confirmed": "Confirmada",
+      "cancelled": "Cancelada",
+      "completed": "Concluída"
+    },
+    "cancellationReasons": {
+      "maintenance": "Manutenção",
+      "overbooking": "Overbooking",
+      "hotel_policy": "Política do hotel",
+      "other": "Outro"
+    },
+    "card": {
+      "reservationLabel": "Reserva {id}",
+      "guests": "Hóspedes",
+      "amount": "Valor",
+      "traveler": "Viajante",
+      "hold": "Hold"
+    },
+    "actions": {
+      "confirm": "Confirmar",
+      "cancel": "Cancelar",
+      "confirmReason": "confirmação manual do hotel"
+    },
+    "feedback": {
+      "errorTitle": "Não foi possível concluir a ação",
+      "successTitle": "Operação concluída",
+      "loading": "Carregando reservas...",
+      "loadError": "Não foi possível carregar as reservas.",
+      "confirmSuccess": "A reserva foi confirmada e o viajante foi notificado.",
+      "confirmError": "Não foi possível confirmar a reserva.",
+      "cancelSuccess": "A reserva foi cancelada. Se aplicável, o reembolso foi iniciado automaticamente.",
+      "cancelError": "Não foi possível cancelar a reserva.",
+      "otherReasonRequired": "Você deve adicionar uma nota ao selecionar \"Outro\" como motivo."
+    },
+    "empty": {
+      "title": "Não há reservas para este filtro",
+      "description": "Ajuste a propriedade ou o status para ver reservas operáveis."
+    },
+    "cancelModal": {
+      "title": "Confirmar cancelamento",
+      "description": "Revise os detalhes antes de cancelar a reserva.",
+      "summaryTitle": "Resumo da reserva",
+      "reservationId": "ID: #{id}",
+      "guestsAndStatus": "{guests} hóspedes • {status}",
+      "staySummary": "{nights} noites • {guests} hóspedes",
+      "reasonLabel": "Motivo do cancelamento",
+      "reasonPlaceholder": "Selecione um motivo...",
+      "notesLabel": "Notas adicionais",
+      "requiredTag": "(Obrigatório)",
+      "optionalTag": "(Opcional)",
+      "notesPlaceholder": "Adicione mais detalhes sobre o cancelamento...",
+      "notesRequiredMessage": "Você deve informar o motivo específico do cancelamento.",
+      "warningTitle": "Aviso importante",
+      "warningConfirmed": "Ao confirmar, o processo de reembolso automático será iniciado de acordo com a política de cancelamento vigente. Esta ação não pode ser desfeita.",
+      "warningPending": "Ao confirmar, a reserva será cancelada e o quarto voltará a ficar disponível. Esta ação não pode ser desfeita.",
+      "keepReservation": "Manter reserva",
+      "confirmAction": "Confirmar cancelamento"
+    }
+  },  "auth": {
     "hero": {
       "title": "Explore o mundo com confiança.",
       "description": "Acesse ofertas exclusivas, gerencie seus itinerários e descubra lugares incríveis ao redor do mundo."
@@ -29,7 +135,7 @@
       "email": "Endereço de e-mail",
       "emailPlaceholder": "alex{'@'}example.com",
       "password": "Senha",
-      "passwordPlaceholder": "••••••••",
+      "passwordPlaceholder": "â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢",
       "forgotPassword": "Esqueceu a senha?",
       "submit": "Entrar",
       "noAccount": "Não tem uma conta?",
@@ -54,7 +160,7 @@
       "phone": "Número de telefone",
       "phonePlaceholder": "3001234567",
       "password": "Senha",
-      "passwordPlaceholder": "••••••••",
+      "passwordPlaceholder": "â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢",
       "passwordHint": "Pelo menos 8 caracteres",
       "strengthWeak": "Fraca",
       "strengthMedium": "Força média",
@@ -239,6 +345,7 @@
   },
   "property": {
     "properties": "Propriedades",
+    "advancedSearch": "Pesquisa avançada",
     "discoverPlaces": "Descubra lugares incríveis",
     "discoverAmazingPlaces": "Descubra lugares incríveis para ficar",
     "exploreOurSelection": "Explore nossa seleção de propriedades de luxo e encontre o lugar perfeito para sua próxima aventura",
@@ -264,8 +371,17 @@
     },
     "bookNow": "Reserve agora",
     "capacity": "Capacidade",
+    "host": "Anfitrião",
+    "travelHubPlus": "Propriedade TravelHub Plus",
+    "travelHubPlusDesc": "Verificada por qualidade, conforto e serviço premium.",
+    "sortBy": "Ordenar por",
+    "mostRecent": "Mais recentes",
+    "travelerProtection": "Proteção ao viajante incluída. Reembolso total se cancelado dentro de 48 horas da reserva.",
+    "reportListing": "Denunciar este anúncio",
     "morePhotos": "+{count} fotos",
+    "showAllPhotos": "Ver todas as fotos",
     "policies": {
+      "noPolicy": "Política de cancelamento não especificada.",
       "flexible": {
         "label": "Flexível",
         "description": "Cancelamento gratuito em 48 horas. Depois, aplica-se uma taxa de 50%."
@@ -295,6 +411,9 @@
     "guests": "Hóspedes",
     "adults": "adultos",
     "total": "Total",
+    "subtotal": "Subtotal",
+    "taxes": "Impostos",
+    "cleaningFee": "Taxa de limpeza",
     "confirmBooking": "Confirmar reserva",
     "youWontBeCharged": "Você não será cobrado por enquanto",
     "success": "Sua reserva foi confirmada!",
@@ -326,10 +445,21 @@
       "reservationId": "ID da reserva",
       "paymentId": "ID do pagamento",
       "dates": "Check-in",
+      "checkOut": "Check-out",
       "stay": "Estadia",
       "property": "Propriedade",
       "propertyFallback": "Hospedagem TravelHub",
-      "amountPaid": "Valor pago"
+      "address": "Endereço",
+      "guests": "Hóspedes",
+      "guestsValue": "{count} hóspedes",
+      "amountPaid": "Valor pago",
+      "priceBreakdown": "Detalhamento do preço",
+      "nightlyRate": "Tarifa por noite",
+      "nightlyRateWithNights": "Tarifa por noite × {nights}",
+      "taxes": "Impostos",
+      "total": "Total pago",
+      "cancellationPolicy": "Política de cancelamento",
+      "viewFullDetails": "Ver detalhes completos"
     },
     "actions": {
       "viewReservations": "Ver minhas reservas",
@@ -374,10 +504,134 @@
     "emptyTitle": "Você ainda não tem reservas",
     "emptyDescription": "Quando um pagamento for confirmado, o resumo da sua reserva aparecerá aqui."
   },
+  "reservationFlow": {
+    "detail": {
+      "modifyButton": "Modificar reserva",
+      "cancelButton": "Cancelar reserva",
+      "onlyConfirmed": "Somente reservas confirmadas podem ser modificadas.",
+      "modifyWindowClosed": "As modificações são permitidas até 24 horas antes do check-in."
+    },
+    "policy": {
+      "title": "Detalhes da política",
+      "raw": "Política",
+      "policyType": "Tipo de política",
+      "minimumNoticeHours": "Aviso mínimo",
+      "penaltyPercentage": "Penalidade",
+      "timezone": "Fuso horário",
+      "hoursUnit": "horas",
+      "percentUnit": "%",
+      "values": {
+        "full_refund": "Reembolso total",
+        "partial_refund": "Reembolso parcial",
+        "no_refund": "Sem reembolso"
+      }
+    },
+    "polling": {
+      "pendingTitle": "A atualização ainda está em andamento.",
+      "pendingDescription": "Use tentar novamente para verificar o status mais recente.",
+      "retryButton": "Tentar verificar novamente"
+    },
+    "modify": {
+      "metaTitle": "Modificar reserva",
+      "title": "Modificar reserva",
+      "backToReservation": "Voltar para minhas reservas",
+      "currentStatus": "Status atual",
+      "runPreview": "Ver atualização do preço",
+      "recalculatePreview": "Recalcular preview",
+      "confirmModification": "Confirmar modificação",
+      "warningNoActions": "Uma vez realizada a modificação, a reserva não pode ser modificada ou cancelada.",
+      "previewSummary": "Resumo do preview",
+      "changeAllowed": "Alteração permitida",
+      "deltaAmount": "Diferença",
+      "estimatedRefund": "Reembolso estimado",
+      "additionalCharge": "Cobrança adicional",
+      "required": "Obrigatório",
+      "noPolicy": "Não há detalhes de política disponíveis.",
+      "runPreviewHint": "Execute um preview para ver política e impacto financeiro.",
+      "lastConfirmation": "Última confirmação",
+      "statusBefore": "Status anterior",
+      "statusAfter": "Status posterior",
+      "action": "Ação",
+      "actions": {
+        "modification_completed": "Modificação concluída"
+      }
+    },
+    "cancel": {
+      "metaTitle": "Cancelar reserva",
+      "title": "Cancele sua estadia",
+      "subtitle": "Revise os detalhes para entender sua elegibilidade de reembolso.",
+      "reservationLabel": "Reserva",
+      "policyLabel": "Política",
+      "policyMissing": "Não informado",
+      "reasonLabel": "Motivo do cancelamento",
+      "reasonPlaceholder": "Conte mais (opcional)",
+      "refundBreakdown": "Resumo do reembolso",
+      "refundAmount": "Valor do reembolso",
+      "penaltyAmount": "Valor da penalidade",
+      "refundType": "Tipo de reembolso",
+      "allowed": "O cancelamento está permitido neste momento.",
+      "notAllowed": "O cancelamento não está permitido neste momento.",
+      "confirmButton": "Confirmar cancelamento",
+      "keepButton": "Manter minha reserva",
+      "statusAfter": "Status após confirmação"
+    },
+    "cancelled": {
+      "metaTitle": "Status do cancelamento",
+      "imageAlt": "Imagem da reserva",
+      "returnToReservations": "Voltar para reservas",
+      "findNewStay": "Encontrar nova estadia",
+      "summaryTitle": "Resumo do cancelamento",
+      "reservationId": "ID da reserva",
+      "title": {
+        "refund_completed": "Reserva cancelada com sucesso",
+        "refund_failed": "Cancelamento concluído com problema de reembolso",
+        "cancelled": "Reserva cancelada",
+        "pending": "Cancelamento em andamento",
+        "default": "Status de cancelamento atualizado"
+      },
+      "description": {
+        "refund_completed": "Seu reembolso está sendo devolvido ao método de pagamento original.",
+        "refund_failed": "A reserva foi cancelada, mas o reembolso requer acompanhamento.",
+        "cancelled": "Sua reserva foi cancelada sem ações financeiras pendentes.",
+        "pending": "Ainda estamos aguardando a confirmação final do pagamento. Tente novamente em instantes.",
+        "default": "Revise os detalhes da reserva para a informação mais recente."
+      }
+    },
+    "modified": {
+      "metaTitle": "Reserva modificada",
+      "imageAlt": "Imagem da reserva modificada",
+      "returnToReservations": "Voltar para reservas",
+      "viewReservation": "Ver detalhes da reserva",
+      "summaryTitle": "Resumo da modificação",
+      "reservationId": "ID da reserva",
+      "title": {
+        "modification_confirmed": "Reserva modificada com sucesso",
+        "additional_charge_failed": "A modificação não pôde ser concluída por falha de cobrança",
+        "refund_failed": "A modificação foi aplicada com incidente de reembolso",
+        "pending": "Modificação em andamento",
+        "default": "Status da modificação atualizado"
+      },
+      "description": {
+        "modification_confirmed": "Sua reserva foi atualizada com os novos dados de estadia.",
+        "additional_charge_failed": "Não foi possível confirmar a cobrança adicional. Revise o método de pagamento e tente novamente.",
+        "refund_failed": "A reserva foi atualizada, mas o reembolso requer acompanhamento.",
+        "pending": "Ainda aguardamos a confirmação final do pagamento. Tente novamente em instantes.",
+        "default": "Revise os detalhes da reserva para a informação mais recente."
+      }
+    }
+  },
   "status": {
     "pendingPayment": "Pendente de pagamento",
+    "pending_payment": "Pendente de pagamento",
     "confirmed": "Confirmada",
     "cancelled": "Cancelada",
+    "cancel_requested": "Cancelamento solicitado",
+    "refund_pending": "Reembolso pendente",
+    "refund_completed": "Reembolso concluído",
+    "refund_failed": "Reembolso com falha",
+    "modification_pending_payment": "Modificação pendente de pagamento",
+    "modification_confirmed": "Modificação confirmada",
+    "additional_charge_failed": "Cobrança adicional com falha",
     "unknown": "Desconhecido"
   },
   "errors": {
@@ -405,7 +659,7 @@
     "resultsFound": "resultados encontrados",
     "guests": "hóspedes",
     "showMap": "Mostrar mapa",
-    "sortLabel": "Ordenar por",
+    "sortButton": "Ordenar por: {option}",
     "searchAction": "Buscar",
     "bookNow": "Reservar agora",
     "viewProperty": "Ver propriedade",
@@ -424,7 +678,8 @@
       "checkOut": "Check-out",
       "guests": "Hóspedes",
       "minPrice": "Preço mínimo",
-      "maxPrice": "Preço máximo"
+      "maxPrice": "Preço máximo",
+      "priceRange": "Faixa de preço"
     },
     "placeholders": {
       "city": "Digite uma cidade"
@@ -468,6 +723,62 @@
       "priceInvalid": "O preço deve ser um número válido",
       "priceNonNegative": "O preço não pode ser negativo",
       "priceRange": "O preço máximo deve ser maior ou igual ao mínimo"
+    }
+  },
+  "hotel": {
+    "nav": {
+      "dashboard": "Painel",
+      "portalLabel": "Portal Estratégico",
+      "adminAccount": "Conta Admin"
+    },
+    "dashboard": {
+      "headerTitle": "Painel Estratégico",
+      "welcomeTitle": "Bom dia",
+      "welcomeSubtitle": "Veja o que está acontecendo na sua propriedade hoje.",
+      "error": "Não foi possível carregar os dados",
+      "kpi": {
+        "revenue": "Receita",
+        "occupancy": "Taxa de ocupação",
+        "adr": "Diária média",
+        "activeBookings": "Reservas ativas"
+      },
+      "chart": {
+        "title": "Evolução da receita",
+        "empty": "Ainda não há dados no período"
+      },
+      "filters": {
+        "title": "Filtros",
+        "guest": "Hóspede",
+        "guestPlaceholder": "Buscar por nome",
+        "startDate": "De",
+        "endDate": "Até",
+        "status": "Estado",
+        "statusPlaceholder": "Todos",
+        "apply": "Aplicar",
+        "clear": "Limpar"
+      },
+      "status": {
+        "pendingPayment": "Pagamento pendente",
+        "confirmed": "Confirmada",
+        "cancelled": "Cancelada",
+        "completed": "Concluída"
+      },
+      "table": {
+        "title": "Reservas",
+        "totalLabel": "{total} no total",
+        "empty": "Sem reservas no período",
+        "pageOf": "Página {page} de {total}",
+        "guestsCount": "{count} hóspedes",
+        "nights": "{count} noites",
+        "headers": {
+          "guest": "Hóspede",
+          "room": "Tipo de quarto",
+          "checkIn": "Estadia",
+          "createdAt": "Criada",
+          "amount": "Valor",
+          "status": "Estado"
+        }
+      }
     }
   }
 }

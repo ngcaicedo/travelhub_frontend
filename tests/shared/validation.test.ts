@@ -74,8 +74,12 @@ describe('shared/utils/validation', () => {
   })
 
   describe('calculateTotalPrice', () => {
-    it('multiplies nightly price by number of nights', () => {
-      expect(calculateTotalPrice(1240, 3)).toBe(3720)
+    it('calculates total price including taxes', () => {
+      expect(calculateTotalPrice(1240, 3, 'COP')).toBe(4426.8)
+    })
+
+    it('calculates total price without tax for unknown currency', () => {
+      expect(calculateTotalPrice(100, 2, 'EUR')).toBe(200)
     })
   })
 

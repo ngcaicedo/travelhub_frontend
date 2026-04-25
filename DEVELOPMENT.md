@@ -112,10 +112,14 @@ window.location.href = '/properties/22222222-2222-2222-2222-222222222222'
 
 ```env
 # .env (crear si no existe)
-USERS_API_URL=http://localhost:8000
-SECURITY_API_URL=http://localhost:8001
-PROPERTIES_API_URL=http://localhost:8004
-RESERVATIONS_API_URL=http://localhost:8003
+NUXT_PUBLIC_USERS_API_BASE=http://localhost:8000
+NUXT_PUBLIC_SECURITY_API_BASE=http://localhost:8001
+NUXT_PUBLIC_PROPERTIES_API_BASE=http://localhost:8005
+NUXT_PUBLIC_RESERVATIONS_API_BASE=http://localhost:8002
+NUXT_PUBLIC_SEARCH_API_BASE=http://localhost:8006
+NUXT_PUBLIC_PAYMENTS_API_BASE=http://localhost:8003
+NUXT_PUBLIC_PAYMENTS_COMPLIANCE_MODE=false
+CYPRESS_BASE_URL=http://localhost:3000
 ```
 
 ---
@@ -151,7 +155,7 @@ RESERVATIONS_API_URL=http://localhost:8003
 → Verifica que accedas a `/properties/22222222-2222-2222-2222-222222222222`
 
 ### "El formulario de reserva no funciona"
-→ Asegúrate de que el servicio `reservations` en backend está corriendo en `http://localhost:8003`
+→ Asegúrate de que el servicio `reservations` en backend está corriendo en `http://localhost:8002`
 
 ### "Las fechas no se validan"
 → El navegador debe permitir el input de tipo `date`. Prueba con Chrome/Edge modernos.

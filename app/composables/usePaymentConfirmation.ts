@@ -17,8 +17,15 @@ function toReservationHistoryEntry(summary: PaymentConfirmationSummary): Reserva
     receiptId: summary.receipt_id,
     receiptNumber: summary.receipt_number,
     propertyName: summary.property_name,
+    propertyAddress: summary.property_address,
     checkInDate: summary.check_in_date,
-    checkOutDate: summary.check_out_date
+    checkOutDate: summary.check_out_date,
+    guestsCount: summary.guests_count,
+    nights: summary.nights,
+    nightlyRateInCents: summary.nightly_rate_in_cents,
+    taxesInCents: summary.taxes_in_cents,
+    totalInCents: summary.total_in_cents,
+    cancellationPolicy: summary.cancellation_policy
   }
 }
 
@@ -73,7 +80,7 @@ export const usePaymentConfirmation = () => {
     paymentTransactionId: string,
     options: { maxAttempts?: number, intervalMs?: number } = {}
   ): Promise<ReconciliationOutcome> => {
-    const { maxAttempts = 6, intervalMs = 5000 } = options
+    const { maxAttempts = 30, intervalMs = 1000 } = options
 
     for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
       try {

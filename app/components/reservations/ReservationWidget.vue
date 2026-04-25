@@ -8,6 +8,7 @@ import {
   validateReservationDates
 } from '~/utils/validation'
 import { useReservations } from '~/composables/useReservations'
+import { useAuthStore } from '~/stores/auth'
 
 interface Props {
   property: {
@@ -15,18 +16,25 @@ interface Props {
     price_per_night: number
     currency: string
     max_guests: number
+    tax_rate?: number
+    cleaning_fee?: number
   }
+  initialCheckInDate?: string
+  initialCheckOutDate?: string
+  initialNumberOfGuests?: number
 }
 
 const { t, locale } = useI18n()
 const router = useRouter()
 const { createReservation, loading, error } = useReservations()
+const authStore = useAuthStore()
+const reservationLockDurationMs = 15 * 60 * 1000
 
 const props = defineProps<Props>()
 
-const checkInDate = ref<string>('')
-const checkOutDate = ref<string>('')
-const numberOfGuests = ref<number>(1)
+const checkInDate = ref<string>(props.initialCheckInDate || '')
+const checkOutDate = ref<string>(props.initialCheckOutDate || '')
+const numberOfGuests = ref<number>(props.initialNumberOfGuests || 1)
 const submitError = ref<string | null>(null)
 
 const parseLocalDate = (dateValue: string): Date | null => {
@@ -77,7 +85,12 @@ const stayDuration = computed(() => {
 
 const totalPrice = computed(() => {
   if (stayDuration.value > 0) {
-    return calculateTotalPrice(props.property.price_per_night, stayDuration.value)
+    return calculateTotalPrice(
+      props.property.price_per_night,
+      stayDuration.value,
+      props.property.currency,
+      numberOfGuests.value
+    )
   }
   return 0
 })
@@ -111,8 +124,12 @@ const handleSubmit = async () => {
   submitError.value = null
 
   try {
-    // TODO: Obtener user ID desde autenticación
-    const mockUserId = '11111111-1111-1111-1111-111111111111'
+    const travelerId = authStore.userId
+    if (!travelerId) {
+      submitError.value = t('errors.unauthorized')
+      await router.push({ path: '/login', query: { redirect: router.currentRoute.value.fullPath } })
+      return
+    }
     const checkInDateIso = serializeDateAtUtcMidnight(checkInDate.value)
     const checkOutDateIso = serializeDateAtUtcMidnight(checkOutDate.value)
     if (!checkInDateIso || !checkOutDateIso) {
@@ -121,8 +138,9 @@ const handleSubmit = async () => {
     }
 
     const reservationData: ReservationRequest = {
-      id_traveler: mockUserId,
+      id_traveler: travelerId,
       id_property: props.property.id,
+      id_room: props.property.id,
       check_in_date: checkInDateIso,
       check_out_date: checkOutDateIso,
       number_of_guests: numberOfGuests.value,
@@ -130,9 +148,23 @@ const handleSubmit = async () => {
     }
 
     const response = await createReservation(reservationData)
+    const lockExpiresAt = response.hold_expires_at
+      ? new Date(response.hold_expires_at).getTime()
+      : (Date.now() + reservationLockDurationMs)
 
-    // Navegar a página de confirmación
-    await router.push(`/reservations/${response.id}`)
+    // Redirigir al checkout para completar el pago con ventana de bloqueo.
+    await router.push({
+      path: '/checkout',
+      query: {
+        reservationId: response.id,
+        travelerId: travelerId,
+        checkInDate: checkInDate.value,
+        checkOutDate: checkOutDate.value,
+        lockExpiresAt: String(lockExpiresAt),
+        amountInCents: String(Math.round(totalPrice.value * 100)),
+        currency: props.property.currency
+      }
+    })
   } catch (err: unknown) {
     const statusCode = (err as { statusCode?: number }).statusCode
 
@@ -151,10 +183,22 @@ watch(error, (newError) => {
     submitError.value = newError
   }
 })
+
+watch(() => [props.initialCheckInDate, props.initialCheckOutDate, props.initialNumberOfGuests], () => {
+  if (props.initialCheckInDate) {
+    checkInDate.value = props.initialCheckInDate
+  }
+  if (props.initialCheckOutDate) {
+    checkOutDate.value = props.initialCheckOutDate
+  }
+  if (props.initialNumberOfGuests) {
+    numberOfGuests.value = props.initialNumberOfGuests
+  }
+}, { immediate: true })
 </script>
 
 <template>
-  <div class="bg-white rounded-lg border border-gray-200 p-6 sticky top-6 shadow-lg space-y-6">
+  <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-lg space-y-6">
     <!-- Price Header -->
     <div>
       <h3 class="text-3xl font-bold text-gray-900">
@@ -248,9 +292,9 @@ watch(error, (newError) => {
       >
         <div class="flex justify-between text-gray-700">
           <span>{{ formatCurrency(props.property.price_per_night, props.property.currency, locale) }} × {{ stayDuration }} {{ t(stayDuration === 1 ? 'common.night' : 'common.nights') }}</span>
-          <span>{{ formatCurrency(totalPrice, props.property.currency, locale) }}</span>
+          <span>{{ formatCurrency(props.property.price_per_night * stayDuration, props.property.currency, locale) }}</span>
         </div>
-        <div class="flex justify-between font-semibold text-lg text-gray-900 pt-2">
+        <div class="flex justify-between font-semibold text-lg text-gray-900 pt-2 border-t border-gray-100">
           <span>{{ t('booking.total') }}</span>
           <span>{{ formatCurrency(totalPrice, props.property.currency, locale) }}</span>
         </div>

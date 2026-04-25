@@ -24,7 +24,7 @@ app/
 │   ├── default.vue            # Layout general con header
 │   └── auth.vue               # Layout para login/registro (sin navegación, con selector de idioma)
 ├── pages/
-│   ├── index.vue              # Redirige a /login
+│   ├── index.vue              # Redirige a /properties
 │   └── login.vue              # Página de login (MPF-1)
 ├── app.vue                    # Root component
 └── app.config.ts              # Tema de componentes Nuxt UI
@@ -99,15 +99,20 @@ El checkout soporta un modo de cumplimiento pensado para HU-ARQ-05:
 Variables relevantes en `.env`:
 
 ```bash
+NUXT_PUBLIC_USERS_API_BASE=
+NUXT_PUBLIC_SECURITY_API_BASE=
+NUXT_PUBLIC_PROPERTIES_API_BASE=
+NUXT_PUBLIC_RESERVATIONS_API_BASE=
+NUXT_PUBLIC_SEARCH_API_BASE=
 NUXT_PUBLIC_PAYMENTS_API_BASE=
 NUXT_PUBLIC_PAYMENTS_COMPLIANCE_MODE=false
 ```
 
 ## Evidencia de seguridad
 
-- `pnpm run security:scan` revisa `app/`, `server/` y `nuxt.config.ts` para detectar:
+- `pnpm run security:scan` revisa `app/` y `nuxt.config.ts` para detectar:
   - PAN hardcodeado
   - logs inseguros con referencias de tarjeta o token
   - patrones que contradigan el flujo token-only
-- El workflow [`ci.yml`](.\github\workflows\ci.yml) ejecuta `lint`, `security:scan`, `typecheck` y `test` en cada push.
+- El workflow [`ci.yml`](.github/workflows/ci.yml) ejecuta `lint`, `security:scan`, `typecheck` y `test` en cada push.
 

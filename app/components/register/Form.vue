@@ -52,7 +52,7 @@ async function onSubmit() {
     const payload: RegisterPayload
       = props.type === 'traveler'
         ? { ...base, full_name: (form as TravelerForm).fullName, role: 'traveler' }
-        : { ...base, full_name: (form as HotelPartnerForm).contactName, hotel_name: (form as HotelPartnerForm).hotelName, role: 'hotel_partner' }
+        : { ...base, full_name: (form as HotelPartnerForm).contactName, hotel_name: (form as HotelPartnerForm).hotelName, role: 'hotel' }
 
     await usersService.register(payload)
     await navigateTo('/login')

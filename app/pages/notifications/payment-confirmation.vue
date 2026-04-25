@@ -11,6 +11,7 @@ const {
   loadConfirmation,
   reconcilePaymentTransaction
 } = usePaymentConfirmation()
+const paymentTracker = usePaymentStatusTracker()
 
 const isReconciling = ref(false)
 const verificationExpired = ref(false)
@@ -122,14 +123,31 @@ const stayDates = computed(() => {
 })
 
 const checkInDate = computed(() => {
-  return confirmation.value ? formatDate(confirmation.value.check_in_date) : '-'
+  if (confirmation.value?.check_in_date) {
+    return formatDate(confirmation.value.check_in_date)
+  }
+
+  // Fallback to sessionStorage if backend didn't provide dates
+  const storedCheckIn = sessionStorage.getItem('reservation_checkout_date')
+  return storedCheckIn ? formatDate(storedCheckIn) : '-'
 })
 
 const staySummary = computed(() => {
-  if (!confirmation.value?.check_in_date || !confirmation.value?.check_out_date) return '-'
+  let checkInDate = confirmation.value?.check_in_date
+  let checkOutDate = confirmation.value?.check_out_date
 
-  const start = new Date(`${confirmation.value.check_in_date}T00:00:00`)
-  const end = new Date(`${confirmation.value.check_out_date}T00:00:00`)
+  // Fallback to sessionStorage if backend didn't provide dates
+  if (!checkInDate) {
+    checkInDate = sessionStorage.getItem('reservation_checkout_date')
+  }
+  if (!checkOutDate) {
+    checkOutDate = sessionStorage.getItem('reservation_checkout_out_date')
+  }
+
+  if (!checkInDate || !checkOutDate) return '-'
+
+  const start = new Date(`${checkInDate}T00:00:00`)
+  const end = new Date(`${checkOutDate}T00:00:00`)
 
   if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
     return stayDates.value
@@ -225,8 +243,8 @@ async function loadPageState() {
   if (transactionId.value) {
     isReconciling.value = true
     const outcome = await reconcilePaymentTransaction(transactionId.value, {
-      maxAttempts: 6,
-      intervalMs: 5000
+      maxAttempts: 30,
+      intervalMs: 1000
     })
     isReconciling.value = false
 
@@ -259,8 +277,42 @@ async function goToReservations() {
   await navigateTo('/reservations')
 }
 
+async function goToReservationDetail() {
+  if (!confirmation.value?.reservation_id) return
+  await navigateTo(`/reservations/${confirmation.value.reservation_id}`)
+}
+
+const checkOutDate = computed(() => {
+  if (confirmation.value?.check_out_date) {
+    return formatDate(confirmation.value.check_out_date)
+  }
+  const storedCheckOut = sessionStorage.getItem('reservation_checkout_out_date')
+  return storedCheckOut ? formatDate(storedCheckOut) : '-'
+})
+
+const nightlyRateDisplay = computed(() => {
+  const cents = confirmation.value?.nightly_rate_in_cents
+  if (cents == null) return null
+  return formatMoney(cents, confirmation.value!.currency)
+})
+
+const taxesDisplay = computed(() => {
+  const cents = confirmation.value?.taxes_in_cents
+  if (cents == null) return null
+  return formatMoney(cents, confirmation.value!.currency)
+})
+
+const totalDisplay = computed(() => {
+  if (!confirmation.value) return ''
+  const cents = confirmation.value.total_in_cents ?? confirmation.value.amount_in_cents
+  return formatMoney(cents, confirmation.value.currency)
+})
+
 async function goToCheckout() {
-  await navigateTo('/checkout')
+  await navigateTo({
+    path: '/checkout',
+    query: paymentTracker.buildCheckoutQuery()
+  })
 }
 
 async function backToHome() {
@@ -387,14 +439,21 @@ definePageMeta({
                 </p>
               </div>
 
-              <h2 class="mb-5 max-w-[400px] text-[18px] font-semibold leading-[1.35] text-slate-900 md:text-[19px]">
+              <h2 class="mb-1 max-w-[400px] text-[18px] font-semibold leading-[1.35] text-slate-900 md:text-[19px]">
                 {{ confirmation.property_name || t('notifications.summary.propertyFallback') }}
               </h2>
+              <p
+                v-if="confirmation.property_address"
+                class="mb-5 text-[13px] text-slate-500"
+              >
+                {{ confirmation.property_address }}
+              </p>
+              <div v-else class="mb-5" />
 
-              <div class="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div class="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <div class="flex items-start gap-2.5">
                   <UIcon
-                    name="i-lucide-calendar-range"
+                    name="i-lucide-calendar-check"
                     class="mt-0.5 h-4.5 w-4.5 text-[#2563eb]"
                   />
                   <div>
@@ -409,18 +468,82 @@ definePageMeta({
 
                 <div class="flex items-start gap-2.5">
                   <UIcon
-                    name="i-lucide-wallet"
+                    name="i-lucide-calendar-x"
                     class="mt-0.5 h-4.5 w-4.5 text-[#2563eb]"
                   />
                   <div>
                     <p class="text-[11px] font-medium uppercase tracking-wide text-slate-400">
-                      {{ t('notifications.summary.amountPaid') }}
+                      {{ t('notifications.summary.checkOut') }}
                     </p>
                     <p class="text-[14px] leading-5 font-medium text-slate-700">
-                      {{ formatMoney(confirmation.amount_in_cents, confirmation.currency) }}
+                      {{ checkOutDate }}
                     </p>
                   </div>
                 </div>
+
+                <div class="flex items-start gap-2.5">
+                  <UIcon
+                    name="i-lucide-users"
+                    class="mt-0.5 h-4.5 w-4.5 text-[#2563eb]"
+                  />
+                  <div>
+                    <p class="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                      {{ t('notifications.summary.guests') }}
+                    </p>
+                    <p class="text-[14px] leading-5 font-medium text-slate-700">
+                      {{ confirmation.guests_count ?? '-' }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-5 rounded-xl border border-slate-100 bg-slate-50/60 px-4 py-3">
+                <p class="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                  {{ t('notifications.summary.priceBreakdown') }}
+                </p>
+                <dl class="space-y-1 text-[13px]">
+                  <div
+                    v-if="nightlyRateDisplay"
+                    class="flex justify-between text-slate-600"
+                  >
+                    <dt>
+                      <template v-if="confirmation.nights">
+                        {{ t('notifications.summary.nightlyRateWithNights', { nights: confirmation.nights }) }}
+                      </template>
+                      <template v-else>
+                        {{ t('notifications.summary.nightlyRate') }}
+                      </template>
+                    </dt>
+                    <dd class="font-medium text-slate-700">
+                      {{ nightlyRateDisplay }}
+                    </dd>
+                  </div>
+                  <div
+                    v-if="taxesDisplay"
+                    class="flex justify-between text-slate-600"
+                  >
+                    <dt>{{ t('notifications.summary.taxes') }}</dt>
+                    <dd class="font-medium text-slate-700">
+                      {{ taxesDisplay }}
+                    </dd>
+                  </div>
+                  <div class="mt-2 flex justify-between border-t border-slate-200 pt-2 text-[14px] font-semibold text-slate-900">
+                    <dt>{{ t('notifications.summary.total') }}</dt>
+                    <dd>{{ totalDisplay }}</dd>
+                  </div>
+                </dl>
+              </div>
+
+              <div
+                v-if="confirmation.cancellation_policy"
+                class="mb-5 rounded-xl border border-[#dbe4ef] bg-white px-4 py-3"
+              >
+                <p class="mb-1 text-[11px] font-semibold uppercase tracking-wide text-[#2563eb]">
+                  {{ t('notifications.summary.cancellationPolicy') }}
+                </p>
+                <p class="text-[13px] leading-5 text-slate-600">
+                  {{ confirmation.cancellation_policy }}
+                </p>
               </div>
 
               <div class="mb-4 rounded-xl bg-slate-50/80 px-3 py-2.5">
@@ -451,6 +574,15 @@ definePageMeta({
                   @click="goToReservations"
                 >
                   {{ t('notifications.actions.viewReservations') }}
+                </UButton>
+                <UButton
+                  icon="i-lucide-external-link"
+                  color="neutral"
+                  variant="outline"
+                  class="rounded-xl px-4 py-2 text-[14px] font-semibold text-slate-700"
+                  @click="goToReservationDetail"
+                >
+                  {{ t('notifications.summary.viewFullDetails') }}
                 </UButton>
                 <UButton
                   data-cy="payment-confirmation-download-receipt"

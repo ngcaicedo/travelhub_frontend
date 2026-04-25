@@ -28,3 +28,5 @@ cypress/screenshots
 cypress/videos
 cypress/reports
 tsconfig.cypress.tsbuildinfo
+
+/coverage

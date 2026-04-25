@@ -33,7 +33,11 @@ export default defineConfig({
     },
     env: {
       usersApiUrl: process.env.NUXT_PUBLIC_USERS_API_BASE || 'http://localhost:8000',
-      securityApiUrl: process.env.NUXT_PUBLIC_SECURITY_API_BASE || 'http://localhost:8001'
+      securityApiUrl: process.env.NUXT_PUBLIC_SECURITY_API_BASE || 'http://localhost:8001',
+      propertiesApiUrl: process.env.NUXT_PUBLIC_PROPERTIES_API_BASE || 'http://localhost:8005',
+      reservationsApiUrl: process.env.NUXT_PUBLIC_RESERVATIONS_API_BASE || 'http://localhost:8002',
+      searchApiUrl: process.env.NUXT_PUBLIC_SEARCH_API_BASE || 'http://localhost:8006',
+      paymentsApiBase: process.env.NUXT_PUBLIC_PAYMENTS_API_BASE || 'http://localhost:8003'
     },
     setupNodeEvents(on) {
       mochawesomePlugin(on)
