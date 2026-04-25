@@ -3,7 +3,7 @@ import type {
   ReservationCancellationConfirmRequest,
   ReservationCancellationPreviewResponse,
   ReservationConfirmResponse,
-  ReservationHistoryEvent,
+  ReservationHistoryResponse,
   ReservationModificationConfirmRequest,
   ReservationModificationPreviewRequest,
   ReservationModificationPreviewResponse,
@@ -33,8 +33,6 @@ const DEFAULT_TERMINAL_STATUSES: ReservationStatus[] = [
   'refund_completed',
   'refund_failed',
   'modification_confirmed',
-  'modification_pending_payment',
-  'refund_pending',
   'additional_charge_failed'
 ]
 
@@ -196,7 +194,7 @@ export const useReservations = () => {
   const getReservationHistory = async (
     reservationId: string,
     travelerId: string
-  ): Promise<ReservationHistoryEvent[]> => {
+  ): Promise<ReservationHistoryResponse> => {
     loading.value = true
     error.value = null
 

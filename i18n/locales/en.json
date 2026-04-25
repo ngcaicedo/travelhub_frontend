@@ -473,7 +473,10 @@
       "lastConfirmation": "Last confirmation",
       "statusBefore": "Status before",
       "statusAfter": "Status after",
-      "action": "Action"
+      "action": "Action",
+      "actions": {
+        "modification_completed": "Modification completed"
+      }
     },
     "cancel": {
       "metaTitle": "Cancel reservation",
@@ -512,6 +515,28 @@
         "refund_completed": "Your refund is being returned to the original payment method.",
         "refund_failed": "The reservation was cancelled, but refund processing requires follow-up.",
         "cancelled": "Your reservation has been cancelled with no pending financial actions.",
+        "pending": "We are still waiting for final payment confirmation. Please check again shortly.",
+        "default": "Review the reservation details for the latest information."
+      }
+    },
+    "modified": {
+      "metaTitle": "Modified reservation",
+      "imageAlt": "Modified reservation image",
+      "returnToReservations": "Return to reservations",
+      "viewReservation": "View reservation details",
+      "summaryTitle": "Modification summary",
+      "reservationId": "Reservation ID",
+      "title": {
+        "modification_confirmed": "Reservation updated successfully",
+        "additional_charge_failed": "Modification could not be completed due to payment failure",
+        "refund_failed": "Modification was applied with a refund issue",
+        "pending": "Modification in progress",
+        "default": "Modification status updated"
+      },
+      "description": {
+        "modification_confirmed": "Your reservation has been updated with the new stay details.",
+        "additional_charge_failed": "We could not confirm the additional charge. Please review your payment method and try again.",
+        "refund_failed": "The reservation was updated, but refund processing requires follow-up.",
         "pending": "We are still waiting for final payment confirmation. Please check again shortly.",
         "default": "Review the reservation details for the latest information."
       }

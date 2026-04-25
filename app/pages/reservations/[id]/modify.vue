@@ -46,10 +46,12 @@ const localeMap: Record<string, string> = {
 const terminalStatuses: ReservationStatus[] = [
   'modification_confirmed',
   'additional_charge_failed',
-  'refund_failed',
-  'refund_pending',
-  'modification_pending_payment'
+  'refund_failed'
 ]
+
+const normalizedActionMap: Record<string, string> = {
+  modification_confirmed: 'modification_completed'
+}
 
 const statusLabel = computed(() => {
   if (!reservation.value) return t('status.unknown')
@@ -57,6 +59,20 @@ const statusLabel = computed(() => {
 })
 
 const policyItems = computed(() => buildReservationPolicyItems(preview.value?.policy_applied, t))
+
+function getNormalizedActionLabel(actionApplied: string | undefined): string {
+  if (!actionApplied) return t('status.unknown')
+
+  const normalized = normalizedActionMap[actionApplied] || actionApplied
+  const translationKey = `reservationFlow.modify.actions.${normalized}`
+  const translated = t(translationKey)
+
+  if (translated !== translationKey) {
+    return translated
+  }
+
+  return normalized.replace(/_/g, ' ')
+}
 
 function formatDateInput(value: string) {
   const parsed = new Date(value)
@@ -164,6 +180,7 @@ async function pollUntilFinal() {
   }
 
   await loadReservation()
+  await router.push(`/reservations/${reservationId}/modified`)
 }
 
 async function confirmChanges() {
@@ -188,9 +205,15 @@ async function confirmChanges() {
 
     confirmResponse.value = response
 
+    if (response.status_after === 'modification_pending_payment') {
+      await loadReservation()
+      await router.push(`/reservations/${reservationId}/modified`)
+      return
+    }
+
     if (terminalStatuses.includes(response.status_after)) {
-      // await loadReservation()
-      await router.push('/reservations')
+      await loadReservation()
+      await router.push(`/reservations/${reservationId}/modified`)
       return
     }
 
@@ -392,7 +415,7 @@ definePageMeta({
               <h3 class="text-base font-semibold text-slate-900">{{ t('reservationFlow.modify.lastConfirmation') }}</h3>
               <p class="mt-2 text-sm text-slate-600">{{ t('reservationFlow.modify.statusBefore') }}: {{ t(`status.${confirmResponse.status_before}`) }}</p>
               <p class="text-sm text-slate-600">{{ t('reservationFlow.modify.statusAfter') }}: {{ t(`status.${confirmResponse.status_after}`) }}</p>
-              <p class="text-sm text-slate-600">{{ t('reservationFlow.modify.action') }}: {{ confirmResponse.action_applied }}</p>
+              <p class="text-sm text-slate-600">{{ t('reservationFlow.modify.action') }}: {{ getNormalizedActionLabel(confirmResponse.action_applied) }}</p>
           </div>
         </div>
       </div>

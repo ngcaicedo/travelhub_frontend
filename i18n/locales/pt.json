@@ -474,7 +474,10 @@
       "lastConfirmation": "Última confirmação",
       "statusBefore": "Status anterior",
       "statusAfter": "Status posterior",
-      "action": "Ação"
+      "action": "Ação",
+      "actions": {
+        "modification_completed": "Modificação concluída"
+      }
     },
     "cancel": {
       "metaTitle": "Cancelar reserva",
@@ -514,6 +517,28 @@
         "refund_failed": "A reserva foi cancelada, mas o reembolso requer acompanhamento.",
         "cancelled": "Sua reserva foi cancelada sem ações financeiras pendentes.",
         "pending": "Ainda estamos aguardando a confirmação final do pagamento. Tente novamente em instantes.",
+        "default": "Revise os detalhes da reserva para a informação mais recente."
+      }
+    },
+    "modified": {
+      "metaTitle": "Reserva modificada",
+      "imageAlt": "Imagem da reserva modificada",
+      "returnToReservations": "Voltar para reservas",
+      "viewReservation": "Ver detalhes da reserva",
+      "summaryTitle": "Resumo da modificação",
+      "reservationId": "ID da reserva",
+      "title": {
+        "modification_confirmed": "Reserva modificada com sucesso",
+        "additional_charge_failed": "A modificação não pôde ser concluída por falha de cobrança",
+        "refund_failed": "A modificação foi aplicada com incidente de reembolso",
+        "pending": "Modificação em andamento",
+        "default": "Status da modificação atualizado"
+      },
+      "description": {
+        "modification_confirmed": "Sua reserva foi atualizada com os novos dados de estadia.",
+        "additional_charge_failed": "Não foi possível confirmar a cobrança adicional. Revise o método de pagamento e tente novamente.",
+        "refund_failed": "A reserva foi atualizada, mas o reembolso requer acompanhamento.",
+        "pending": "Ainda aguardamos a confirmação final do pagamento. Tente novamente em instantes.",
         "default": "Revise os detalhes da reserva para a informação mais recente."
       }
     }

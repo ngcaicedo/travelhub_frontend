@@ -1,14 +1,14 @@
 import type {
-  ReservationCancellationConfirmRequest,
-  ReservationCancellationPreviewResponse,
-  ReservationConfirmResponse,
-  ReservationHistoryEvent,
-  ReservationModificationConfirmRequest,
-  ReservationModificationPreviewRequest,
-  ReservationModificationPreviewResponse,
   ReservationRequest,
   ReservationResponse,
-  ReservationWithDetailsResponse
+  ReservationHistoryResponse,
+  ReservationModificationPreviewRequest,
+  ReservationModificationPreviewResponse,
+  ReservationModificationConfirmRequest,
+  ReservationCancellationPreviewResponse,
+  ReservationCancellationConfirmRequest,
+  ReservationConfirmResponse,
+  ReservationWithDetailsResponse,
 } from '~/types/reservations'
 import { getApiBaseUrls, handleApiError } from '~/utils/api'
 
@@ -155,11 +155,11 @@ export const confirmReservationCancellation = async (
 export const getReservationHistory = async (
   reservationId: string,
   travelerId: string
-): Promise<ReservationHistoryEvent[]> => {
+): Promise<ReservationHistoryResponse> => {
   const { reservationsApiUrl } = getApiBaseUrls()
 
   try {
-    return await $fetch<ReservationHistoryEvent[]>(`/api/v1/reservations/${reservationId}/history`, {
+    return await $fetch<ReservationHistoryResponse>(`/api/v1/reservations/${reservationId}/history`, {
       baseURL: reservationsApiUrl,
       method: 'GET',
       headers: {

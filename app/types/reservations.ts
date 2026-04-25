@@ -103,6 +103,11 @@ export interface ReservationHistoryEvent {
   metadata?: Record<string, unknown>
 }
 
+export interface ReservationHistoryResponse {
+  reservation_id: string
+  events: ReservationHistoryEvent[]
+}
+
 export interface ReservationPollResult {
   state: 'completed' | 'timeout'
   reservation: ReservationResponse

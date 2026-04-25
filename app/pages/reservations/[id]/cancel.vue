@@ -34,8 +34,7 @@ const localeMap: Record<string, string> = {
 const terminalStatuses: ReservationStatus[] = [
   'refund_completed',
   'refund_failed',
-  'cancelled',
-  'cancel_requested'
+  'cancelled'
 ]
 
 const statusLabel = computed(() => {

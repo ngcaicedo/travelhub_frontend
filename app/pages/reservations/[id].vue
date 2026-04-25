@@ -120,6 +120,10 @@ const hoursToCheckIn = computed(() => {
 
 const canModifyByTimeRule = computed(() => hoursToCheckIn.value > 24)
 
+const showOnsitePaymentMessage = computed(() => {
+  return reservation.value?.status === 'modification_pending_payment'
+})
+
 const reservationAmount = computed(() => {
   if (!reservation.value) return '-'
 
@@ -200,6 +204,13 @@ definePageMeta({
             icon="i-lucide-alert-triangle"
             color="warning"
             :title="warning"
+          />
+
+          <UAlert
+            v-if="showOnsitePaymentMessage"
+            icon="i-lucide-info"
+            color="warning"
+            title="El pago adicional se realizará en el lugar de la reserva al momento de realizar check-in."
           />
 
           <div class="pt-1 text-center">
