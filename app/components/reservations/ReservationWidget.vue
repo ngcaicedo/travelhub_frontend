@@ -88,7 +88,8 @@ const totalPrice = computed(() => {
     return calculateTotalPrice(
       props.property.price_per_night,
       stayDuration.value,
-      props.property.currency
+      props.property.currency,
+      numberOfGuests.value
     )
   }
   return 0

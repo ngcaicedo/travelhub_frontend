@@ -48,9 +48,10 @@ export interface PriceBreakdown {
 export const calculateTotalPrice = (
   pricePerNight: number,
   nights: number,
-  currency: string = 'COP'
+  currency: string = 'COP',
+  numberOfGuests: number = 1
 ): number => {
-  const subtotal = pricePerNight * nights
+  const subtotal = pricePerNight * numberOfGuests * nights
   const rate = TAX_RATES[currency] ?? 0
   return Math.round(subtotal * (1 + rate) * 100) / 100
 }

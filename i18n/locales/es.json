@@ -531,7 +531,7 @@
       "summaryTitle": "Resumen de modificación",
       "reservationId": "ID de reserva",
       "title": {
-        "modification_confirmed": "Reserva modificada exitosamente",
+        "modification_confirmed": "Modificación confirmada",
         "additional_charge_failed": "La modificación no pudo completarse por fallo de cobro",
         "refund_failed": "La modificación fue aplicada con incidencia de reembolso",
         "pending": "Modificación en proceso",
@@ -541,7 +541,7 @@
         "modification_confirmed": "Tu reserva se actualizó con los nuevos datos de estadía.",
         "additional_charge_failed": "No se pudo confirmar el cobro adicional. Revisa el método de pago e intenta nuevamente.",
         "refund_failed": "La reserva fue actualizada, pero el reembolso requiere seguimiento.",
-        "pending": "Aún esperamos la confirmación final del pago. Intenta de nuevo en un momento.",
+        "pending": "Tu modificación está siendo procesada.",
         "default": "Revisa los detalles de la reserva para ver la información más reciente."
       }
     }
