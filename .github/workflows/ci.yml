@@ -49,14 +49,14 @@ jobs:
         run: pnpm vitest run --coverage
 
       - name: Upload coverage artifact
-        if: always() && github.ref == 'refs/heads/develop'
+        if: success() && github.ref == 'refs/heads/develop'
         uses: actions/upload-pages-artifact@v3
         with:
           path: coverage/
 
   deploy-coverage:
     needs: ci
-    if: always() && github.ref == 'refs/heads/develop' && needs.ci.result != 'cancelled'
+    if: github.ref == 'refs/heads/develop' && needs.ci.result == 'success'
     runs-on: ubuntu-latest
 
     environment:

@@ -21,8 +21,9 @@ export const useAuthStore = defineStore('auth', () => {
   const token = useCookie<string | null>('auth_token', { default: () => null })
   const claims = computed(() => decodeJwtClaims(token.value))
   const isAuthenticated = computed(() => !!token.value)
-  const userId = computed(() => claims.value?.sub ?? null)
   const role = computed(() => claims.value?.role ?? null)
+  const userId = computed(() => claims.value?.sub ?? null)
+  const isHotelUser = computed(() => role.value === 'hotel' || role.value === 'hotel_partner')
 
   async function login(email: string, password: string, redirect?: string) {
     await authService.login(email, password)
@@ -44,5 +45,5 @@ export const useAuthStore = defineStore('auth', () => {
     await navigateTo('/properties')
   }
 
-  return { token, role, isAuthenticated, userId, login, verifyOtp, logout }
+  return { token, role, isAuthenticated, isHotelUser, userId, login, verifyOtp, logout }
 })

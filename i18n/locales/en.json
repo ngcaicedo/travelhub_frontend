@@ -21,9 +21,81 @@
     "search": "Hotels",
     "checkout": "Checkout",
     "reservations": "My reservations",
+    "hotelReservations": "Hotel reservations",
     "logout": "Logout"
   },
-  "auth": {
+  "hotelReservations": {
+    "metaTitle": "Hotel reservations dashboard",
+    "hero": {
+      "eyebrow": "Hotel operations",
+      "title": "Reservations dashboard",
+      "description": "Confirm or cancel pending and confirmed reservations without leaving the operations panel."
+    },
+    "filters": {
+      "propertyPlaceholder": "Select a property",
+      "statusPlaceholder": "Filter by status",
+      "allStatuses": "All"
+    },
+    "status": {
+      "pending_payment": "Pending",
+      "confirmed": "Confirmed",
+      "cancelled": "Cancelled",
+      "completed": "Completed"
+    },
+    "cancellationReasons": {
+      "maintenance": "Maintenance",
+      "overbooking": "Overbooking",
+      "hotel_policy": "Hotel policy",
+      "other": "Other"
+    },
+    "card": {
+      "reservationLabel": "Reservation {id}",
+      "guests": "Guests",
+      "amount": "Amount",
+      "traveler": "Traveler",
+      "hold": "Hold"
+    },
+    "actions": {
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "confirmReason": "manual hotel confirmation"
+    },
+    "feedback": {
+      "errorTitle": "We couldn't complete the action",
+      "successTitle": "Operation completed",
+      "loading": "Loading reservations...",
+      "loadError": "Reservations could not be loaded.",
+      "confirmSuccess": "The reservation was confirmed and the traveler was notified.",
+      "confirmError": "The reservation could not be confirmed.",
+      "cancelSuccess": "The reservation was cancelled. If applicable, the refund was started automatically.",
+      "cancelError": "The reservation could not be cancelled.",
+      "otherReasonRequired": "You must add a note when selecting \"Other\" as the reason."
+    },
+    "empty": {
+      "title": "There are no reservations for this filter",
+      "description": "Adjust the property or status to view operable reservations."
+    },
+    "cancelModal": {
+      "title": "Confirm cancellation",
+      "description": "Review the details before cancelling the reservation.",
+      "summaryTitle": "Reservation summary",
+      "reservationId": "ID: #{id}",
+      "guestsAndStatus": "{guests} guests • {status}",
+      "staySummary": "{nights} nights • {guests} guests",
+      "reasonLabel": "Cancellation reason",
+      "reasonPlaceholder": "Select a reason...",
+      "notesLabel": "Additional notes",
+      "requiredTag": "(Required)",
+      "optionalTag": "(Optional)",
+      "notesPlaceholder": "Add more details about the cancellation...",
+      "notesRequiredMessage": "You must provide the specific cancellation reason.",
+      "warningTitle": "Important notice",
+      "warningConfirmed": "Once confirmed, the automatic refund process will begin according to the active cancellation policy. This action cannot be undone.",
+      "warningPending": "Once confirmed, the reservation will be cancelled and the room will become available again. This action cannot be undone.",
+      "keepReservation": "Keep reservation",
+      "confirmAction": "Confirm cancellation"
+    }
+  },  "auth": {
     "hero": {
       "title": "Explore the world with confidence.",
       "description": "Access exclusive deals, manage your itineraries, and discover hidden gems around the globe."

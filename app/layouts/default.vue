@@ -39,6 +39,14 @@ const navigationItems = computed(() => {
     }
   )
 
+  if (authStore.isHotelUser) {
+    items.push({
+      to: '/hotel/reservations',
+      label: t('navigation.hotelReservations'),
+      active: route.path === '/hotel/reservations'
+    })
+  }
+
   return items
 })
 
@@ -93,6 +101,8 @@ function onLocaleChange(code: string) {
         </div>
       </template>
     </UHeader>
+
+    <PaymentsPaymentStatusBanner />
 
     <UMain class="pb-10">
       <slot />

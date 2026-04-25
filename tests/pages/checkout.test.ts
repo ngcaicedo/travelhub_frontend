@@ -1,15 +1,33 @@
-import { computed, nextTick } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises } from '@vue/test-utils'
 import { mountSuspended, mockNuxtImport } from '@nuxt/test-utils/runtime'
 
 import CheckoutPage from '~/pages/checkout.vue'
 
-const { usePaymentsComplianceMock } = vi.hoisted(() => ({
-  usePaymentsComplianceMock: vi.fn(() => computed(() => false))
+const { usePaymentsComplianceMock, usePaymentStatusTrackerMock } = vi.hoisted(() => ({
+  usePaymentsComplianceMock: vi.fn(() => computed(() => false)),
+  usePaymentStatusTrackerMock: vi.fn(() => ({
+    state: ref({
+      status: 'idle',
+      paymentId: null,
+      paymentTransactionId: null,
+      reservationId: null,
+      error: null,
+      visible: false,
+      checkoutContext: null
+    }),
+    setCheckoutContext: vi.fn(),
+    buildCheckoutQuery: vi.fn(() => ({})),
+    startTracking: vi.fn(),
+    syncPaymentSnapshot: vi.fn(),
+    dismiss: vi.fn(),
+    clear: vi.fn()
+  }))
 }))
 
 mockNuxtImport('usePaymentsCompliance', () => usePaymentsComplianceMock)
+mockNuxtImport('usePaymentStatusTracker', () => usePaymentStatusTrackerMock)
 
 const mockGetConfig = vi.fn()
 const mockCreateCharge = vi.fn()
