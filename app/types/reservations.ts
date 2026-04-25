@@ -45,6 +45,8 @@ export interface ReservationResponse {
 
 export interface ReservationWithDetailsResponse {
   id: string
+  property_name: string | null
+  property_cover_image_url: string | null
   reservation: ReservationResponse
 }
 

@@ -55,11 +55,12 @@ export const getReservation = async (reservationId: string, travelerId?: string)
   }
 }
 
-export const getReservationsByUser = async (userId: string): Promise<ReservationWithDetailsResponse[]> => {
+export const getReservationsByUser = async (userId: string, statusGroup?: 'active' | 'past' | 'cancelled'): Promise<ReservationWithDetailsResponse[]> => {
   const { reservationsApiUrl } = getApiBaseUrls()
 
   try {
-    return await $fetch<ReservationWithDetailsResponse[]>(`/api/v1/reservations/users/${userId}`, {
+    const query = statusGroup ? `?status_group=${statusGroup}` : ''
+    return await $fetch<ReservationWithDetailsResponse[]>(`/api/v1/reservations/users/${userId}${query}`, {
       baseURL: reservationsApiUrl,
       method: 'GET',
       headers: {
