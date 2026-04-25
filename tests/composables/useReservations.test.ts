@@ -251,7 +251,7 @@ describe('useReservations', () => {
 
   it('pollReservationUntilFinal returns completed when terminal status is reached', async () => {
     mockGetReservation
-      .mockResolvedValueOnce({ id: 'res-1', status: 'refund_pending' })
+      .mockResolvedValueOnce({ id: 'res-1', status: 'refund_completed' })
 
     const Component = createTestComponent(() => {
       const composable = useReservations()

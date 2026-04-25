@@ -2,6 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import {
   cancelHotelReservation,
   confirmHotelReservation,
+  confirmReservationCancellation,
+  confirmReservationModification,
   createReservation,
   getHotelReservations,
   getReservation,

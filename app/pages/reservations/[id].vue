@@ -54,6 +54,7 @@ const buildFallbackReservation = (): ReservationResponse => ({
   check_in_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
   check_out_date: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString(),
   number_of_guests: 2,
+  hold_expires_at: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
   created_at: new Date().toISOString()
 })
 

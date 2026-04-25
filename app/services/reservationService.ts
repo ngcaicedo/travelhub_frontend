@@ -3,7 +3,7 @@ import type {
   HotelReservationListItem,
   ReservationCancellationReason,
   ReservationRequest,
-  ReservationResponse
+  ReservationResponse,
   ReservationHistoryResponse,
   ReservationModificationPreviewRequest,
   ReservationModificationPreviewResponse,
