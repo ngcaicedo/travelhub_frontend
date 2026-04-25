@@ -44,6 +44,7 @@
     "viewDetails": "View details",
     "cancelReservation": "Cancel Reservation",
     "cancelUnavailable": "Only confirmed reservations can be canceled.",
+    "modifiedReservationNoActions": "This reservation cannot be modified or canceled as it has been modified.",
     "locationFallback": "Location pending",
     "guestCount": "{count} guests",
     "totalPrice": "Total price",

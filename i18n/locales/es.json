@@ -44,6 +44,7 @@
     "viewDetails": "Ver detalle",
     "cancelReservation": "Cancelar reserva",
     "cancelUnavailable": "Solo las reservas confirmadas pueden cancelarse.",
+    "modifiedReservationNoActions": "No se puede modificar o cancelar esta reserva dado que ha sido modificada.",
     "locationFallback": "Ubicación pendiente",
     "guestCount": "{count} huéspedes",
     "totalPrice": "Precio total",
