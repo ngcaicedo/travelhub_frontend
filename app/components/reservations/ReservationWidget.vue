@@ -148,7 +148,9 @@ const handleSubmit = async () => {
     }
 
     const response = await createReservation(reservationData)
-    const lockExpiresAt = Date.now() + reservationLockDurationMs
+    const lockExpiresAt = response.hold_expires_at
+      ? new Date(response.hold_expires_at).getTime()
+      : (Date.now() + reservationLockDurationMs)
 
     // Redirigir al checkout para completar el pago con ventana de bloqueo.
     await router.push({

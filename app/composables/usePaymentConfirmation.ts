@@ -80,7 +80,7 @@ export const usePaymentConfirmation = () => {
     paymentTransactionId: string,
     options: { maxAttempts?: number, intervalMs?: number } = {}
   ): Promise<ReconciliationOutcome> => {
-    const { maxAttempts = 6, intervalMs = 5000 } = options
+    const { maxAttempts = 30, intervalMs = 1000 } = options
 
     for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
       try {

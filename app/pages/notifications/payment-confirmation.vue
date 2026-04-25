@@ -11,6 +11,7 @@ const {
   loadConfirmation,
   reconcilePaymentTransaction
 } = usePaymentConfirmation()
+const paymentTracker = usePaymentStatusTracker()
 
 const isReconciling = ref(false)
 const verificationExpired = ref(false)
@@ -242,8 +243,8 @@ async function loadPageState() {
   if (transactionId.value) {
     isReconciling.value = true
     const outcome = await reconcilePaymentTransaction(transactionId.value, {
-      maxAttempts: 6,
-      intervalMs: 5000
+      maxAttempts: 30,
+      intervalMs: 1000
     })
     isReconciling.value = false
 
@@ -308,7 +309,10 @@ const totalDisplay = computed(() => {
 })
 
 async function goToCheckout() {
-  await navigateTo('/checkout')
+  await navigateTo({
+    path: '/checkout',
+    query: paymentTracker.buildCheckoutQuery()
+  })
 }
 
 async function backToHome() {

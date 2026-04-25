@@ -1,4 +1,5 @@
-export type PaymentStatus = 'confirmed' | 'failed'
+export type PaymentStatus = 'pending' | 'confirmed' | 'failed'
+export type PaymentTrackerStatus = 'idle' | 'pending' | 'processing' | 'confirmed' | 'failed'
 export type ScenarioKind = 'success' | 'insufficient' | 'declined'
 
 export type PaymentsProvider = 'fake_stripe' | 'stripe_test' | string
@@ -52,6 +53,26 @@ export type PaymentEvent = {
   event_type: string
   payload: Record<string, unknown>
   created_at: string | null
+}
+
+export type PaymentTrackerCheckoutContext = {
+  reservationId: string
+  travelerId: string
+  amountInCents: number
+  currency: string
+  checkInDate: string
+  checkOutDate: string
+  lockExpiresAt: number | null
+}
+
+export type PaymentTrackerState = {
+  status: PaymentTrackerStatus
+  paymentId: string | null
+  paymentTransactionId: string | null
+  reservationId: string | null
+  error: string | null
+  visible: boolean
+  checkoutContext: PaymentTrackerCheckoutContext | null
 }
 
 export type ScenarioPreset = {
@@ -136,7 +157,9 @@ function asCurrency(value: unknown): string {
 }
 
 function asStatus(value: unknown): PaymentStatus {
-  return value === 'failed' ? 'failed' : 'confirmed'
+  if (value === 'failed') return 'failed'
+  if (value === 'pending') return 'pending'
+  return 'confirmed'
 }
 
 function asIsoDateOrNull(value: unknown): string | null {

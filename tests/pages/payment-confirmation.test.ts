@@ -1,8 +1,24 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref } from 'vue'
 import { flushPromises } from '@vue/test-utils'
-import { mountSuspended } from '@nuxt/test-utils/runtime'
+import { mountSuspended, mockNuxtImport } from '@nuxt/test-utils/runtime'
 import PaymentConfirmationPage from '~/pages/notifications/payment-confirmation.vue'
+
+const { usePaymentStatusTrackerMock } = vi.hoisted(() => ({
+  usePaymentStatusTrackerMock: vi.fn(() => ({
+    buildCheckoutQuery: vi.fn(() => ({
+      reservationId: 'reservation-123',
+      travelerId: 'traveler-123',
+      amountInCents: '287600',
+      currency: 'COP',
+      checkInDate: '2026-10-12',
+      checkOutDate: '2026-10-17',
+      lockExpiresAt: '1760000000000'
+    }))
+  }))
+}))
+
+mockNuxtImport('usePaymentStatusTracker', () => usePaymentStatusTrackerMock)
 
 vi.mock('~/utils/receiptPdf', () => ({
   buildReceiptFilename: (receiptNumber: string | null) => receiptNumber ? `receipt-${receiptNumber}.pdf` : 'receipt.pdf',
@@ -268,8 +284,8 @@ describe('PaymentConfirmationPage', () => {
     await flushPromises()
 
     expect(reconcilePaymentTransaction).toHaveBeenCalledWith('tx-123', {
-      maxAttempts: 6,
-      intervalMs: 5000
+      maxAttempts: 30,
+      intervalMs: 1000
     })
   })
 

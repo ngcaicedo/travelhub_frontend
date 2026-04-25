@@ -1,14 +1,14 @@
 # TravelHub Frontend
 
-Frontend de la plataforma de reservas hoteleras **TravelHub**, una empresa de tecnología de viajes con presencia en 6 países de Latinoamérica (Colombia, Perú, Ecuador, México, Chile y Argentina).
+Frontend de la plataforma de reservas hoteleras **TravelHub**, una empresa de tecnologÃ­a de viajes con presencia en 6 paÃ­ses de LatinoamÃ©rica (Colombia, PerÃº, Ecuador, MÃ©xico, Chile y Argentina).
 
-## Stack tecnológico
+## Stack tecnolÃ³gico
 
 - **Framework:** Nuxt 4 (Vue 3, Composition API, TypeScript)
 - **UI:** Nuxt UI + Tailwind CSS v4
 - **Iconos:** Lucide (via `@iconify-json/lucide`)
-- **Tipografía:** Plus Jakarta Sans (variable)
-- **Internacionalización:** `@nuxtjs/i18n` — español (por defecto), inglés, portugués
+- **TipografÃ­a:** Plus Jakarta Sans (variable)
+- **InternacionalizaciÃ³n:** `@nuxtjs/i18n` â€” espaÃ±ol (por defecto), inglÃ©s, portuguÃ©s
 - **Testing:** Vitest + `@nuxt/test-utils` + `@vue/test-utils` + Happy DOM
 - **Linting:** ESLint con `@nuxt/eslint`
 - **Package manager:** pnpm
@@ -17,29 +17,29 @@ Frontend de la plataforma de reservas hoteleras **TravelHub**, una empresa de te
 
 ```
 app/
-├── assets/css/main.css        # Tokens de diseño (colores, tipografía)
-├── components/
-│   └── AppLogo.vue            # Logo de TravelHub (icono + texto)
-├── layouts/
-│   ├── default.vue            # Layout general con header
-│   └── auth.vue               # Layout para login/registro (sin navegación, con selector de idioma)
-├── pages/
-│   ├── index.vue              # Redirige a /login
-│   └── login.vue              # Página de login (MPF-1)
-├── app.vue                    # Root component
-└── app.config.ts              # Tema de componentes Nuxt UI
+â”œâ”€â”€ assets/css/main.css        # Tokens de diseÃ±o (colores, tipografÃ­a)
+â”œâ”€â”€ components/
+â”‚   â””â”€â”€ AppLogo.vue            # Logo de TravelHub (icono + texto)
+â”œâ”€â”€ layouts/
+â”‚   â”œâ”€â”€ default.vue            # Layout general con header
+â”‚   â””â”€â”€ auth.vue               # Layout para login/registro (sin navegaciÃ³n, con selector de idioma)
+â”œâ”€â”€ pages/
+â”‚   â”œâ”€â”€ index.vue              # Redirige a /properties
+â”‚   â””â”€â”€ login.vue              # PÃ¡gina de login (MPF-1)
+â”œâ”€â”€ app.vue                    # Root component
+â””â”€â”€ app.config.ts              # Tema de componentes Nuxt UI
 i18n/
-└── locales/
-    ├── es.json                # Traducciones en español
-    ├── en.json                # Traducciones en inglés
-    └── pt.json                # Traducciones en portugués
+â””â”€â”€ locales/
+    â”œâ”€â”€ es.json                # Traducciones en espaÃ±ol
+    â”œâ”€â”€ en.json                # Traducciones en inglÃ©s
+    â””â”€â”€ pt.json                # Traducciones en portuguÃ©s
 tests/
-├── components/                # Tests de componentes
-├── layouts/                   # Tests de layouts
-└── pages/                     # Tests de páginas
+â”œâ”€â”€ components/                # Tests de componentes
+â”œâ”€â”€ layouts/                   # Tests de layouts
+â””â”€â”€ pages/                     # Tests de pÃ¡ginas
 ```
 
-## Tokens de diseño
+## Tokens de diseÃ±o
 
 Los colores fueron  configurados como paletas en `main.css`:
 
@@ -65,10 +65,10 @@ pnpm install
 # Servidor de desarrollo en http://localhost:3000
 pnpm dev
 
-# Build de producción
+# Build de producciÃ³n
 pnpm build
 
-# Preview del build de producción
+# Preview del build de producciÃ³n
 pnpm preview
 
 # Ejecutar tests
@@ -110,9 +110,9 @@ NUXT_PUBLIC_PAYMENTS_COMPLIANCE_MODE=false
 
 ## Evidencia de seguridad
 
-- `pnpm run security:scan` revisa `app/`, `server/` y `nuxt.config.ts` para detectar:
+- `pnpm run security:scan` revisa `app/` y `nuxt.config.ts` para detectar:
   - PAN hardcodeado
   - logs inseguros con referencias de tarjeta o token
   - patrones que contradigan el flujo token-only
-- El workflow [`ci.yml`](.\github\workflows\ci.yml) ejecuta `lint`, `security:scan`, `typecheck` y `test` en cada push.
+- El workflow [`ci.yml`](.github/workflows/ci.yml) ejecuta `lint`, `security:scan`, `typecheck` y `test` en cada push.
 

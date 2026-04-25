@@ -4,6 +4,7 @@ import { authService } from '~/services/auth'
 interface JwtClaims {
   sub?: string
   email?: string
+  role?: string
 }
 
 function decodeJwtClaims(token: string | null): JwtClaims | null {
@@ -24,11 +25,13 @@ function decodeJwtClaims(token: string | null): JwtClaims | null {
 
 export const useAuthStore = defineStore('auth', () => {
   const token = useCookie<string | null>('auth_token', { default: () => null })
-  const role = useState<string | null>('auth_role', () => null)
+  const claims = computed(() => decodeJwtClaims(token.value))
   const isAuthenticated = computed(() => !!token.value)
   const decodedClaims = computed(() => decodeJwtClaims(token.value))
   const userId = computed(() => decodedClaims.value?.sub ?? null)
   const email = computed(() => decodedClaims.value?.email ?? null)
+  const role = computed(() => decodedClaims.value?.role ?? null)
+  const isHotelUser = computed(() => role.value === 'hotel' || role.value === 'hotel_partner')
 
   async function login(email: string, password: string, redirect?: string) {
     await authService.login(email, password)
@@ -40,15 +43,15 @@ export const useAuthStore = defineStore('auth', () => {
   async function verifyOtp(email: string, otp: string, redirect?: string) {
     const res = await authService.verifyOtp(email, otp)
     token.value = res.access_token
-    role.value = res.role
-    await navigateTo(redirect || '/properties')
+    const effectiveRole = claims.value?.role ?? res.role
+    const fallback = effectiveRole === 'hotel' ? '/hotel/dashboard' : '/properties'
+    await navigateTo(redirect || fallback)
   }
 
   async function logout() {
     token.value = null
-    role.value = null
     await navigateTo('/properties')
   }
 
-  return { token, role, isAuthenticated, userId, email, login, verifyOtp, logout }
+  return { token, role, isAuthenticated, isHotelUser, userId, email, login, verifyOtp, logout }
 })
