@@ -35,6 +35,7 @@ const checkOutDate = ref('')
 const numberOfGuests = ref(1)
 const isPreviewWatcherReady = ref(false)
 const lastPreviewSignature = ref<string | null>(null)
+const hasRunPreview = ref(false)
 
 const localeMap: Record<string, string> = {
   es: 'es-CO',
@@ -45,7 +46,9 @@ const localeMap: Record<string, string> = {
 const terminalStatuses: ReservationStatus[] = [
   'modification_confirmed',
   'additional_charge_failed',
-  'refund_failed'
+  'refund_failed',
+  'refund_pending',
+  'modification_pending_payment'
 ]
 
 const statusLabel = computed(() => {
@@ -94,6 +97,7 @@ function formatMoney(value: string, currency: string) {
 
 const canConfirm = computed(() => {
   if (!reservation.value || !preview.value) return false
+  if (!hasRunPreview.value) return false
   return preview.value.change_allowed && !!checkInDate.value && !!checkOutDate.value && numberOfGuests.value > 0
 })
 
@@ -132,6 +136,7 @@ async function runPreview() {
       number_of_guests: numberOfGuests.value
     })
     lastPreviewSignature.value = signature
+    hasRunPreview.value = true
   } catch (err) {
     error.value = t('errors.failed')
     console.error('Modification preview failed:', err)
@@ -185,6 +190,7 @@ async function confirmChanges() {
 
     if (terminalStatuses.includes(response.status_after)) {
       await loadReservation()
+      await router.push('/reservations')
       return
     }
 
@@ -212,14 +218,6 @@ onMounted(async () => {
     await runPreview()
     isPreviewWatcherReady.value = true
   }
-})
-
-watch([checkInDate, checkOutDate, numberOfGuests], async () => {
-  if (!isPreviewWatcherReady.value) return
-  if (reservation.value?.status !== 'confirmed') return
-  if (!checkInDate.value || !checkOutDate.value || numberOfGuests.value < 1) return
-
-  await runPreview()
 })
 
 useSeoMeta({
@@ -291,6 +289,14 @@ definePageMeta({
 
             <div class="flex flex-wrap gap-3 pt-2">
               <UButton
+                color="neutral"
+                :loading="previewLoading"
+                @click="runPreview"
+              >
+                {{ t('reservationFlow.modify.runPreview') }}
+              </UButton>
+
+              <UButton
                 color="primary"
                 :disabled="!canConfirm"
                 :loading="submitLoading"
@@ -299,6 +305,14 @@ definePageMeta({
                 {{ t('reservationFlow.modify.confirmModification') }}
               </UButton>
             </div>
+
+            <UAlert
+              v-if="hasRunPreview"
+              icon="i-lucide-alert-circle"
+              color="warning"
+              :title="t('reservationFlow.modify.warningNoActions')"
+              class="mt-4"
+            />
           </UForm>
 
           <UAlert

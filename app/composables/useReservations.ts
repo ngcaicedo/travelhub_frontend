@@ -33,6 +33,8 @@ const DEFAULT_TERMINAL_STATUSES: ReservationStatus[] = [
   'refund_completed',
   'refund_failed',
   'modification_confirmed',
+  'modification_pending_payment',
+  'refund_pending',
   'additional_charge_failed'
 ]
 

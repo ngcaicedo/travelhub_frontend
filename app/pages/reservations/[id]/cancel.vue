@@ -31,7 +31,12 @@ const localeMap: Record<string, string> = {
   pt: 'pt-BR'
 }
 
-const terminalStatuses: ReservationStatus[] = ['refund_completed', 'refund_failed', 'cancelled']
+const terminalStatuses: ReservationStatus[] = [
+  'refund_completed',
+  'refund_failed',
+  'cancelled',
+  'cancel_requested'
+]
 
 const statusLabel = computed(() => {
   if (!reservation.value) return t('status.unknown')

@@ -28,6 +28,7 @@ interface ReservationCardViewModel {
   canCancel: boolean
   canModify: boolean
   isModified: boolean
+  isModificationPendingPayment: boolean
   reservation: ReservationWithDetailsResponse['reservation']
 }
 
@@ -167,14 +168,17 @@ const property = propertyMap.get(item.reservation.id_property) ?? null
         const location = property?.location || t('reservationsList.locationFallback')
         const propertyName = property?.name || t('notifications.summary.propertyFallback')
         const canCancel = item.reservation.status === 'confirmed'
-        const isModified = item.reservation.status === 'modification_confirmed'
+        const canModify = item.reservation.status === 'confirmed'
+        const isModified = item.reservation.status !== 'confirmed'
+        const isModificationPendingPayment = item.reservation.status === 'modification_pending_payment'
 
         return {
           id: item.id,
           status: item.reservation.status,
           canCancel,
-          canModify: canCancel,
+          canModify,
           isModified,
+          isModificationPendingPayment,
           imageUrl: property?.images?.[0]?.url || mockImages[index % mockImages.length] || '/mock/property-1.svg',
           imageAlt: property?.images?.[0]?.alt_text || propertyName,
           propertyName,
@@ -476,7 +480,10 @@ definePageMeta({
                   </div>
 
                   <div class="mt-6 flex flex-wrap gap-3 border-t border-slate-200 pt-5">
-                    <template v-if="reservation.isModified">
+                    <template v-if="reservation.isModificationPendingPayment">
+                      <p class="w-full text-sm text-slate-500">{{ t('reservationsList.additionalPaymentAtCheckIn') }}</p>
+                    </template>
+                    <template v-else-if="reservation.isModified">
                       <p class="w-full text-sm text-slate-500">{{ t('reservationsList.modifiedReservationNoActions') }}</p>
                     </template>
                     <template v-else>
