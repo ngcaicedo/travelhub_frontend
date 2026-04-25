@@ -4,6 +4,7 @@ import type { ReservationResponse } from '~/types/reservations'
 const { t, locale } = useI18n()
 const route = useRoute()
 const router = useRouter()
+const authStore = useAuthStore()
 const { getReservation } = useReservations()
 
 const reservationId = route.params.id as string
@@ -46,6 +47,7 @@ const reservationReference = computed(() => reservation.value ? `#TH-${buildRese
 
 const buildFallbackReservation = (): ReservationResponse => ({
   id: reservationId,
+  id_property: 'mock-property',
   status: 'confirmed',
   total_price: '3720',
   currency: 'COP',
@@ -84,7 +86,7 @@ const fetchReservation = async () => {
       return
     }
 
-    reservation.value = await getReservation(reservationId)
+    reservation.value = await getReservation(reservationId, authStore.userId || undefined)
   } catch (err: unknown) {
     // Fallback local to keep the page usable if backend is unavailable in local setup.
     reservation.value = buildFallbackReservation()
@@ -149,6 +151,11 @@ const backToHome = async () => {
 }
 
 onMounted(async () => {
+  if (!authStore.userId) {
+    await router.push({ path: '/login', query: { redirect: route.fullPath } })
+    return
+  }
+
   await fetchReservation()
 })
 

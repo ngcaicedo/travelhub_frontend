@@ -4,6 +4,7 @@ import type { ReservationResponse } from '~/types/reservations'
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
+const authStore = useAuthStore()
 const { getReservation } = useReservations()
 
 const reservationId = route.params.id as string
@@ -55,7 +56,7 @@ async function loadReservation() {
   error.value = null
 
   try {
-    reservation.value = await getReservation(reservationId)
+    reservation.value = await getReservation(reservationId, authStore.userId || undefined)
   } catch (err) {
     error.value = t('errors.failed')
     console.error('Failed to load cancelled reservation details:', err)
@@ -73,6 +74,11 @@ async function goToSearch() {
 }
 
 onMounted(async () => {
+  if (!authStore.userId) {
+    await router.push({ path: '/login', query: { redirect: route.fullPath } })
+    return
+  }
+
   await loadReservation()
 })
 

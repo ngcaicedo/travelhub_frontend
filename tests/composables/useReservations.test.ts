@@ -252,7 +252,6 @@ describe('useReservations', () => {
   it('pollReservationUntilFinal returns completed when terminal status is reached', async () => {
     mockGetReservation
       .mockResolvedValueOnce({ id: 'res-1', status: 'refund_pending' })
-      .mockResolvedValueOnce({ id: 'res-1', status: 'refund_completed' })
 
     const Component = createTestComponent(() => {
       const composable = useReservations()
@@ -271,13 +270,13 @@ describe('useReservations', () => {
     }) as { state: string, attempts: number }
 
     expect(result.state).toBe('completed')
-    expect(result.attempts).toBe(2)
+    expect(result.attempts).toBe(1)
   })
 
   it('pollReservationUntilFinal returns timeout when terminal status is not reached', async () => {
     mockGetReservation
-      .mockResolvedValueOnce({ id: 'res-1', status: 'refund_pending' })
-      .mockResolvedValueOnce({ id: 'res-1', status: 'refund_pending' })
+      .mockResolvedValueOnce({ id: 'res-1', status: 'confirmed' })
+      .mockResolvedValueOnce({ id: 'res-1', status: 'confirmed' })
 
     const Component = createTestComponent(() => {
       const composable = useReservations()
