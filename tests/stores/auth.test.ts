@@ -47,6 +47,15 @@ describe('useAuthStore', () => {
     expect(store.isHotelUser).toBe(true)
   })
 
+  it('decodes email and userId from token claims', () => {
+    const store = useAuthStore()
+    const payload = Buffer.from(JSON.stringify({ sub: 'user-123', email: 'traveler@example.com' }), 'utf-8').toString('base64')
+    store.token = `header.${payload}.signature`
+
+    expect(store.userId).toBe('user-123')
+    expect(store.email).toBe('traveler@example.com')
+  })
+
   it('login calls authService with correct parameters', async () => {
     const store = useAuthStore()
     const loginSpy = vi.spyOn(authServiceModule.authService, 'login').mockResolvedValue({ message: 'OTP sent' })

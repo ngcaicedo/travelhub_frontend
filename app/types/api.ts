@@ -32,8 +32,10 @@ export interface UserResponse {
 export interface PropertyImage {
   id: string
   url: string
+  url_hires?: string | null
   alt_text?: string
   position: number
+  is_cover?: boolean
 }
 
 export interface Property {
@@ -54,13 +56,16 @@ export interface Property {
   images: PropertyImage[]
   reviews?: Review[]
   status?: number
+  cancellation_policy?: string
+  tax_rate?: number
+  cleaning_fee?: number
 }
 
 export interface Review {
   id: string
   author: string
   rating: number
-  date: string
+  review_date: string
   comment: string
   verified_stay: boolean
 }

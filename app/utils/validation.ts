@@ -29,11 +29,31 @@ export const calculateStayDuration = (checkIn: Date, checkOut: Date): number => 
   )
 }
 
+const TAX_RATES: Record<string, number> = {
+  COP: 0.19,
+  USD: 0.08,
+  ARS: 0.21,
+  CLP: 0.19,
+  PEN: 0.18,
+  MXN: 0.16
+}
+
+export interface PriceBreakdown {
+  subtotal: number
+  taxes: number
+  cleaningFee: number
+  total: number
+}
+
 export const calculateTotalPrice = (
   pricePerNight: number,
-  nights: number
+  nights: number,
+  currency: string = 'COP',
+  numberOfGuests: number = 1
 ): number => {
-  return pricePerNight * nights
+  const subtotal = pricePerNight * numberOfGuests * nights
+  const rate = TAX_RATES[currency] ?? 0
+  return Math.round(subtotal * (1 + rate) * 100) / 100
 }
 
 export const formatCurrency = (

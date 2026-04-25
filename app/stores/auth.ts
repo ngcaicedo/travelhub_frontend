@@ -1,7 +1,13 @@
 import { defineStore } from 'pinia'
 import { authService } from '~/services/auth'
 
-function decodeJwtClaims(token: string | null): { sub?: string, role?: string } | null {
+interface JwtClaims {
+  sub?: string
+  email?: string
+  role?: string
+}
+
+function decodeJwtClaims(token: string | null): JwtClaims | null {
   if (!token) return null
   const parts = token.split('.')
   if (parts.length !== 3) return null
@@ -11,7 +17,7 @@ function decodeJwtClaims(token: string | null): { sub?: string, role?: string } 
     const json = typeof atob === 'function'
       ? atob(padded)
       : Buffer.from(padded, 'base64').toString('utf-8')
-    return JSON.parse(json) as { sub?: string, role?: string }
+    return JSON.parse(json) as JwtClaims
   } catch {
     return null
   }
@@ -21,8 +27,10 @@ export const useAuthStore = defineStore('auth', () => {
   const token = useCookie<string | null>('auth_token', { default: () => null })
   const claims = computed(() => decodeJwtClaims(token.value))
   const isAuthenticated = computed(() => !!token.value)
-  const role = computed(() => claims.value?.role ?? null)
-  const userId = computed(() => claims.value?.sub ?? null)
+  const decodedClaims = computed(() => decodeJwtClaims(token.value))
+  const userId = computed(() => decodedClaims.value?.sub ?? null)
+  const email = computed(() => decodedClaims.value?.email ?? null)
+  const role = computed(() => decodedClaims.value?.role ?? null)
   const isHotelUser = computed(() => role.value === 'hotel' || role.value === 'hotel_partner')
 
   async function login(email: string, password: string, redirect?: string) {
@@ -45,5 +53,5 @@ export const useAuthStore = defineStore('auth', () => {
     await navigateTo('/properties')
   }
 
-  return { token, role, isAuthenticated, isHotelUser, userId, login, verifyOtp, logout }
+  return { token, role, isAuthenticated, isHotelUser, userId, email, login, verifyOtp, logout }
 })

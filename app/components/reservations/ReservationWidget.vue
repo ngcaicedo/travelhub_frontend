@@ -16,6 +16,8 @@ interface Props {
     price_per_night: number
     currency: string
     max_guests: number
+    tax_rate?: number
+    cleaning_fee?: number
   }
   initialCheckInDate?: string
   initialCheckOutDate?: string
@@ -83,7 +85,12 @@ const stayDuration = computed(() => {
 
 const totalPrice = computed(() => {
   if (stayDuration.value > 0) {
-    return calculateTotalPrice(props.property.price_per_night, stayDuration.value)
+    return calculateTotalPrice(
+      props.property.price_per_night,
+      stayDuration.value,
+      props.property.currency,
+      numberOfGuests.value
+    )
   }
   return 0
 })
@@ -285,9 +292,9 @@ watch(() => [props.initialCheckInDate, props.initialCheckOutDate, props.initialN
       >
         <div class="flex justify-between text-gray-700">
           <span>{{ formatCurrency(props.property.price_per_night, props.property.currency, locale) }} × {{ stayDuration }} {{ t(stayDuration === 1 ? 'common.night' : 'common.nights') }}</span>
-          <span>{{ formatCurrency(totalPrice, props.property.currency, locale) }}</span>
+          <span>{{ formatCurrency(props.property.price_per_night * stayDuration, props.property.currency, locale) }}</span>
         </div>
-        <div class="flex justify-between font-semibold text-lg text-gray-900 pt-2">
+        <div class="flex justify-between font-semibold text-lg text-gray-900 pt-2 border-t border-gray-100">
           <span>{{ t('booking.total') }}</span>
           <span>{{ formatCurrency(totalPrice, props.property.currency, locale) }}</span>
         </div>
