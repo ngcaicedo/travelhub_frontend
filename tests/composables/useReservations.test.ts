@@ -140,7 +140,7 @@ describe('useReservations', () => {
     const mockResponse = [{ id: 'res-123', reservation: { id: 'res-123', status: 'confirmed' } }]
     mockGetReservationsByUser.mockResolvedValue(mockResponse)
 
-    let getByUserFn: (userId: string, statusGroup?: string) => Promise<unknown>
+    let getByUserFn: (userId: string, statusGroup?: 'active' | 'past' | 'cancelled') => Promise<unknown>
     const Component = createTestComponent(() => {
       const composable = useReservations()
       getByUserFn = composable.getReservationsByUser

@@ -147,12 +147,11 @@ async function loadReservations() {
 
     reservations.value = userReservations
       .map<ReservationCardViewModel>((item, index) => {
-const property = propertyMap.get(item.reservation.id_property) ?? null
         const checkInLabel = formatDate(item.reservation.check_in_date)
         const checkOutLabel = formatDate(item.reservation.check_out_date)
         const totalLabel = formatMoney(item.reservation.total_price, item.reservation.currency)
-        const location = property?.location || t('reservationsList.locationFallback')
-        const propertyName = property?.name || t('notifications.summary.propertyFallback')
+        const location = t('reservationsList.locationFallback')
+        const propertyName = item.property_name || t('notifications.summary.propertyFallback')
         const canCancel = item.reservation.status === 'confirmed'
         const canModify = item.reservation.status === 'confirmed'
         const isModified = item.reservation.status !== 'confirmed'
@@ -165,18 +164,18 @@ const property = propertyMap.get(item.reservation.id_property) ?? null
           canModify,
           isModified,
           isModificationPendingPayment,
-          imageUrl: property?.images?.[0]?.url || mockImages[index % mockImages.length] || '/mock/property-1.svg',
-          imageAlt: property?.images?.[0]?.alt_text || propertyName,
+          imageUrl: item.property_cover_image_url || mockImages[index % mockImages.length] || '/mock/property-1.svg',
+          imageAlt: propertyName,
           propertyName,
-          location: '',
+          location,
           checkInLabel,
           checkOutLabel,
           guestLabel: t('reservationsList.guestCount', { count: item.reservation.number_of_guests }),
           totalLabel,
           statusLabel: t(`status.${item.reservation.status}`),
           statusTone: getStatusTone(item.reservation.status),
-          kind: isUpcomingReservation(item.reservation.status, item.reservation.check_out_date) ? 'upcoming' : 'past',
-reservation: item.reservation
+          kind: getReservationKind(item.reservation.status, item.reservation.check_out_date),
+          reservation: item.reservation
         }
       })
       .sort((left, right) => {
