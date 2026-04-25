@@ -61,7 +61,8 @@ const profileName = computed(() => {
 
 const profileInitials = computed(() => {
   if (authStore.email) {
-    const parts = authStore.email.split('@')[0].split(/[._-]+/).filter(Boolean)
+    const localPart = authStore.email.split('@')[0] ?? ''
+    const parts = localPart.split(/[._-]+/).filter(Boolean)
     const initials = parts.slice(0, 2).map(part => part[0]?.toUpperCase() ?? '').join('')
     if (initials) return initials
   }
@@ -156,7 +157,7 @@ async function loadReservations() {
     }))
 
     reservations.value = userReservations
-      .map((item, index) => {
+      .map<ReservationCardViewModel>((item, index) => {
         const property = propertyMap.get(item.reservation.id_property) ?? null
         const checkInLabel = formatDate(item.reservation.check_in_date)
         const checkOutLabel = formatDate(item.reservation.check_out_date)

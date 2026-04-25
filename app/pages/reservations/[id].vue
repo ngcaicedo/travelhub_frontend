@@ -46,6 +46,7 @@ const reservationReference = computed(() => reservation.value ? `#TH-${buildRese
 
 const buildFallbackReservation = (): ReservationResponse => ({
   id: reservationId,
+  id_property: 'mock-property',
   status: 'confirmed',
   total_price: '3720',
   currency: 'COP',
