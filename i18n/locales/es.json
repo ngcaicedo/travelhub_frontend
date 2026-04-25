@@ -494,5 +494,61 @@
       "priceNonNegative": "El precio no puede ser negativo",
       "priceRange": "El precio máximo debe ser mayor o igual al mínimo"
     }
+  },
+  "hotel": {
+    "nav": {
+      "dashboard": "Panel",
+      "portalLabel": "Portal Estratégico",
+      "adminAccount": "Cuenta Admin"
+    },
+    "dashboard": {
+      "headerTitle": "Panel Estratégico",
+      "welcomeTitle": "Buenos días",
+      "welcomeSubtitle": "Esto es lo que sucede en tu propiedad hoy.",
+      "error": "No pudimos cargar la información",
+      "kpi": {
+        "revenue": "Ingresos",
+        "occupancy": "Tasa de ocupación",
+        "adr": "Tarifa diaria promedio",
+        "activeBookings": "Reservas activas"
+      },
+      "chart": {
+        "title": "Evolución de ingresos",
+        "empty": "Aún no hay datos en el periodo seleccionado"
+      },
+      "filters": {
+        "title": "Filtros",
+        "guest": "Huésped",
+        "guestPlaceholder": "Buscar por nombre",
+        "startDate": "Desde",
+        "endDate": "Hasta",
+        "status": "Estado",
+        "statusPlaceholder": "Todos",
+        "apply": "Aplicar",
+        "clear": "Limpiar"
+      },
+      "status": {
+        "pendingPayment": "Pendiente de pago",
+        "confirmed": "Confirmada",
+        "cancelled": "Cancelada",
+        "completed": "Completada"
+      },
+      "table": {
+        "title": "Reservas",
+        "totalLabel": "{total} en total",
+        "empty": "No hay reservas en el periodo seleccionado",
+        "pageOf": "Página {page} de {total}",
+        "guestsCount": "{count} huéspedes",
+        "nights": "{count} noches",
+        "headers": {
+          "guest": "Huésped",
+          "room": "Tipo de habitación",
+          "checkIn": "Estadía",
+          "createdAt": "Creada",
+          "amount": "Monto",
+          "status": "Estado"
+        }
+      }
+    }
   }
 }

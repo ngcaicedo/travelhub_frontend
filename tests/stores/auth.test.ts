@@ -10,6 +10,14 @@ const { navigateToMock } = vi.hoisted(() => ({
 
 mockNuxtImport('navigateTo', () => navigateToMock)
 
+function fakeJwt(payload: Record<string, unknown>): string {
+  const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+  const body = btoa(JSON.stringify(payload))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+  return `${header}.${body}.signature`
+}
+
 describe('useAuthStore', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
@@ -45,8 +53,8 @@ describe('useAuthStore', () => {
 
   it('logout clears token and role', async () => {
     const store = useAuthStore()
-    store.token = 'test-token'
-    store.role = 'traveler'
+    store.token = fakeJwt({ sub: 'u1', role: 'traveler' })
+    expect(store.role).toBe('traveler')
 
     await store.logout()
 
@@ -57,8 +65,9 @@ describe('useAuthStore', () => {
 
   it('verifyOtp sets token and role and navigates', async () => {
     const store = useAuthStore()
+    const travelerToken = fakeJwt({ sub: 'u1', role: 'traveler' })
     const verifySpy = vi.spyOn(authServiceModule.authService, 'verifyOtp').mockResolvedValue({
-      access_token: 'jwt-token',
+      access_token: travelerToken,
       token_type: 'bearer',
       role: 'traveler'
     })
@@ -66,15 +75,44 @@ describe('useAuthStore', () => {
     await store.verifyOtp('test@example.com', '123456')
 
     expect(verifySpy).toHaveBeenCalledWith('test@example.com', '123456')
-    expect(store.token).toBe('jwt-token')
+    expect(store.token).toBe(travelerToken)
     expect(store.role).toBe('traveler')
     expect(navigateToMock).toHaveBeenCalledWith('/properties')
+  })
+
+  it('verifyOtp redirects hotel role to /hotel/dashboard by default', async () => {
+    const store = useAuthStore()
+    const hotelToken = fakeJwt({ sub: 'h1', role: 'hotel' })
+    vi.spyOn(authServiceModule.authService, 'verifyOtp').mockResolvedValue({
+      access_token: hotelToken,
+      token_type: 'bearer',
+      role: 'hotel'
+    })
+
+    await store.verifyOtp('hotel-a@travelhub.demo', '000000')
+
+    expect(store.role).toBe('hotel')
+    expect(navigateToMock).toHaveBeenCalledWith('/hotel/dashboard')
+  })
+
+  it('verifyOtp deriva el fallback del claim del JWT, no de res.role', async () => {
+    const store = useAuthStore()
+    const hotelToken = fakeJwt({ sub: 'h1', role: 'hotel' })
+    vi.spyOn(authServiceModule.authService, 'verifyOtp').mockResolvedValue({
+      access_token: hotelToken,
+      token_type: 'bearer',
+      role: 'traveler'
+    })
+
+    await store.verifyOtp('hotel@travelhub.demo', '000000')
+
+    expect(navigateToMock).toHaveBeenCalledWith('/hotel/dashboard')
   })
 
   it('verifyOtp navigates to redirect path when provided', async () => {
     const store = useAuthStore()
     vi.spyOn(authServiceModule.authService, 'verifyOtp').mockResolvedValue({
-      access_token: 'jwt-token',
+      access_token: fakeJwt({ sub: 'u1', role: 'traveler' }),
       token_type: 'bearer',
       role: 'traveler'
     })
