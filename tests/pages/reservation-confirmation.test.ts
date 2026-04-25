@@ -1,7 +1,13 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 
 import ReservationConfirmationPage from '~/pages/reservations/[id].vue'
+
+vi.mock('~/stores/auth', () => ({
+  useAuthStore: () => ({
+    userId: 'traveler-1'
+  })
+}))
 
 describe('ReservationConfirmationPage', () => {
   it('renders the reservation confirmation layout', async () => {

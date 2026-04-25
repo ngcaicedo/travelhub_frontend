@@ -10,6 +10,12 @@ vi.mock('~/composables/useReservations', () => ({
   })
 }))
 
+vi.mock('~/stores/auth', () => ({
+  useAuthStore: () => ({
+    userId: 'traveler-1'
+  })
+}))
+
 describe('ReservationCancelledPage', () => {
   beforeEach(() => {
     getReservation.mockReset().mockResolvedValue({

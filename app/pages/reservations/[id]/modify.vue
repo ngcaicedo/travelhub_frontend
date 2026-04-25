@@ -102,7 +102,8 @@ async function loadReservation() {
   error.value = null
 
   try {
-    const response = await getReservation(reservationId)
+    const travelerId = authStore.userId || undefined
+    const response = await getReservation(reservationId, travelerId)
     reservation.value = response
     checkInDate.value = formatDateInput(response.check_in_date)
     checkOutDate.value = formatDateInput(response.check_out_date)
@@ -142,11 +143,13 @@ async function runPreview() {
 async function pollUntilFinal() {
   pollTimeout.value = false
 
+  const travelerId = authStore.userId || undefined
+
   const result = await pollReservationUntilFinal(reservationId, {
     maxAttempts: 8,
     intervalMs: 3000,
     terminalStatuses
-  })
+  }, travelerId)
 
   reservation.value = result.reservation
 
@@ -199,6 +202,11 @@ async function goToDetail() {
 }
 
 onMounted(async () => {
+  if (!authStore.userId) {
+    await router.push({ path: '/login', query: { redirect: route.fullPath } })
+    return
+  }
+
   await loadReservation()
   if (reservation.value?.status === 'confirmed') {
     await runPreview()
@@ -300,17 +308,18 @@ definePageMeta({
             :title="t('reservationFlow.polling.pendingTitle')"
             :description="t('reservationFlow.polling.pendingDescription')"
             class="mt-6"
+          />
+
+          <UButton
+            v-if="pollTimeout"
+            color="warning"
+            variant="soft"
+            icon="i-lucide-refresh-cw"
+            class="mt-3"
+            @click="pollUntilFinal"
           >
-            <template #actions>
-              <UButton
-                color="warning"
-                variant="soft"
-                @click="pollUntilFinal"
-              >
-                {{ t('reservationFlow.polling.retryButton') }}
-              </UButton>
-            </template>
-          </UAlert>
+            {{ t('reservationFlow.polling.retryButton') }}
+          </UButton>
         </div>
 
         <div class="space-y-4">

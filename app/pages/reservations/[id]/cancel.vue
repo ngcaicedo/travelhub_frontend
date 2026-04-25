@@ -65,9 +65,11 @@ async function loadData() {
   error.value = null
 
   try {
+    const travelerId = authStore.userId || undefined
+
     const [reservationResponse, previewResponse] = await Promise.all([
-      getReservation(reservationId),
-      previewCancellation(reservationId)
+      getReservation(reservationId, travelerId),
+      previewCancellation(reservationId, travelerId)
     ])
 
     reservation.value = reservationResponse
@@ -83,11 +85,13 @@ async function loadData() {
 async function pollUntilFinal() {
   pollTimeout.value = false
 
+  const travelerId = authStore.userId || undefined
+
   const result = await pollReservationUntilFinal(reservationId, {
     maxAttempts: 8,
     intervalMs: 3000,
     terminalStatuses
-  })
+  }, travelerId)
 
   reservation.value = result.reservation
 
@@ -138,6 +142,11 @@ async function keepReservation() {
 }
 
 onMounted(async () => {
+  if (!authStore.userId) {
+    await router.push({ path: '/login', query: { redirect: route.fullPath } })
+    return
+  }
+
   await loadData()
 })
 
@@ -225,17 +234,17 @@ definePageMeta({
             color="warning"
             :title="t('reservationFlow.polling.pendingTitle')"
             :description="t('reservationFlow.polling.pendingDescription')"
+          />
+
+          <UButton
+            v-if="pollTimeout"
+            color="warning"
+            variant="soft"
+            icon="i-lucide-refresh-cw"
+            @click="pollUntilFinal"
           >
-            <template #actions>
-              <UButton
-                color="warning"
-                variant="soft"
-                @click="pollUntilFinal"
-              >
-                {{ t('reservationFlow.polling.retryButton') }}
-              </UButton>
-            </template>
-          </UAlert>
+            {{ t('reservationFlow.polling.retryButton') }}
+          </UButton>
         </div>
 
         <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
