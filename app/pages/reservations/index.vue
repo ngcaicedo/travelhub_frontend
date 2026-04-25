@@ -398,7 +398,7 @@ definePageMeta({
             class="rounded-[28px] border border-dashed border-slate-300 bg-white px-8 py-14 text-center shadow-[0_18px_60px_rgba(15,23,42,0.04)]"
           >
             <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-slate-100">
-              <UIcon name="i-lucide-suitcase" class="h-8 w-8 text-slate-500" />
+              <UIcon name="i-lucide-luggage" class="h-8 w-8 text-slate-500" />
             </div>
             <h2 class="mt-5 text-2xl font-bold tracking-tight text-slate-900">
               {{ t('reservationsList.emptyTitle') }}

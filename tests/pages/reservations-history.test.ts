@@ -180,7 +180,10 @@ describe('ReservationsPage', () => {
     expect(text).not.toContain('Mountain View Chalet')
   })
 
-  it('clicking a card navigates to the reservation detail page', async () => {
+  it('clicking the card does not navigate (action lives on explicit buttons)', async () => {
+    // Behavior intentionally removed in commit 0b47338 to keep the card surface
+    // free of click hijacking; navigation now lives on the explicit modify /
+    // detail buttons instead.
     const wrapper = await mountSuspended(ReservationsPage, {
       route: { path: '/reservations' }
     })
@@ -191,7 +194,7 @@ describe('ReservationsPage', () => {
 
     await wrapper.find('article').trigger('click')
 
-    expect(pushSpy).toHaveBeenCalledWith('/reservations/reservation-123')
+    expect(pushSpy).not.toHaveBeenCalled()
   })
 
   it('clicking the modify button navigates to the modify page', async () => {

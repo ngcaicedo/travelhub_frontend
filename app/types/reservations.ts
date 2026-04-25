@@ -31,6 +31,17 @@ export interface ReservationRequest {
   currency: string
 }
 
+export interface ReservationPriceBreakdown {
+  accommodation_in_cents: number
+  cleaning_fee_in_cents: number
+  service_fee_in_cents: number
+  taxes_in_cents: number
+  total_in_cents: number
+  currency: string
+  nights: number
+  nightly_rate_in_cents: number
+}
+
 export interface ReservationResponse {
   id: string
   id_property: string
@@ -42,6 +53,7 @@ export interface ReservationResponse {
   number_of_guests?: number
   hold_expires_at: string
   created_at: string
+  price_breakdown?: ReservationPriceBreakdown | null
 }
 
 export type ReservationCancellationReason =

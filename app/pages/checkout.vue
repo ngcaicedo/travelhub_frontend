@@ -18,6 +18,8 @@ import {
 } from '~/utils/payments'
 import { loadStripeJs, type StripeClient, type StripeElementsInstance } from '~/utils/stripe'
 import { paymentsService } from '~/services/payments'
+import { getReservation } from '~/services/reservationService'
+import { getPropertyDetails } from '~/services/propertyServices'
 import { useAuthStore } from '~/stores/auth'
 
 type Tone = 'info' | 'success' | 'error' | 'warning'
@@ -57,6 +59,24 @@ const form = reactive({
   checkOutDate: '2026-10-17'
 })
 
+type PropertyInfo = {
+  name: string
+  location: string
+  rating: number
+  reviewCount: number
+  coverUrl: string | null
+}
+type ReservationBreakdown = {
+  accommodation_in_cents: number
+  cleaning_fee_in_cents: number
+  service_fee_in_cents: number
+  taxes_in_cents: number
+  total_in_cents: number
+  nights: number
+}
+const propertyInfo = ref<PropertyInfo | null>(null)
+const reservationBreakdown = ref<ReservationBreakdown | null>(null)
+const reservationGuests = ref<number | null>(null)
 const paymentResult = ref<PaymentResponse | null>(null)
 const paymentEvents = ref<PaymentEvent[]>([])
 const paymentsConfig = ref<PaymentsConfig>({ provider: 'fake_stripe', stripe_enabled: false, publishable_key: '' })
@@ -133,20 +153,41 @@ const stayNights = computed(() => {
   return Math.max(1, Math.round(diffMs / 86400000))
 })
 
-const bookingBreakdown = computed(() => computePaymentBreakdown(form.amountInCents).map(line => ({
-  label: t(`payments.booking.lines.${line.key}`, { nights: stayNights.value }),
-  amount: formatMoney(line.amountInCents, form.currency)
-})))
+const bookingBreakdown = computed(() => {
+  const canonical = reservationBreakdown.value
+  if (canonical) {
+    const nights = canonical.nights || stayNights.value
+    return [
+      { key: 'accommodation', amountInCents: canonical.accommodation_in_cents },
+      { key: 'cleaning', amountInCents: canonical.cleaning_fee_in_cents },
+      { key: 'service', amountInCents: canonical.service_fee_in_cents },
+      { key: 'taxes', amountInCents: canonical.taxes_in_cents }
+    ]
+      .filter(line => line.amountInCents > 0)
+      .map(line => ({
+        label: t(`payments.booking.lines.${line.key}`, { nights }),
+        amount: formatMoney(line.amountInCents, form.currency)
+      }))
+  }
+  return computePaymentBreakdown(form.amountInCents).map(line => ({
+    label: t(`payments.booking.lines.${line.key}`, { nights: stayNights.value }),
+    amount: formatMoney(line.amountInCents, form.currency)
+  }))
+})
 
-const booking = computed(() => ({
-  property: t('payments.booking.property'),
-  location: t('payments.booking.location'),
-  rating: t('payments.booking.rating'),
-  reviews: t('payments.booking.reviews', { count: 128 }),
-  dates: `${formatStayDate(form.checkInDate)} - ${formatStayDate(form.checkOutDate)}`,
-  guests: t('payments.booking.guests', { count: 4 }),
-  lines: bookingBreakdown.value
-}))
+const booking = computed(() => {
+  const info = propertyInfo.value
+  return {
+    property: info?.name || t('payments.booking.property'),
+    location: info?.location || t('payments.booking.location'),
+    rating: info ? info.rating.toFixed(2) : t('payments.booking.rating'),
+    reviews: t('payments.booking.reviews', { count: info?.reviewCount ?? 128 }),
+    dates: `${formatStayDate(form.checkInDate)} - ${formatStayDate(form.checkOutDate)}`,
+    guests: t('payments.booking.guests', { count: reservationGuests.value ?? 4 }),
+    coverUrl: info?.coverUrl || '/mock/property-1.svg',
+    lines: bookingBreakdown.value
+  }
+})
 
 const isStripeMode = computed(() => paymentsConfig.value.provider === 'stripe_test' && paymentsConfig.value.stripe_enabled)
 const isFakeMode = computed(() => !complianceMode.value && !configLoading.value && !isStripeMode.value)
@@ -192,7 +233,7 @@ onMounted(async () => {
   hydrateReservationFromQuery()
   syncPaymentTrackerContext()
   startReservationLockCountdown()
-  await fetchConfig()
+  await Promise.all([fetchConfig(), loadPropertyInfo()])
   setReadyFeedback()
 })
 
@@ -634,6 +675,42 @@ async function fetchConfig() {
     paymentsConfig.value = { provider: 'fake_stripe', stripe_enabled: false, publishable_key: '' }
   } finally {
     configLoading.value = false
+  }
+}
+
+async function loadPropertyInfo() {
+  if (!form.reservationId) return
+  let propertyId: string | undefined
+  try {
+    const reservation = await getReservation(form.reservationId, form.travelerId || undefined)
+    propertyId = (reservation as { id_property?: string }).id_property
+    const guests = (reservation as { number_of_guests?: number }).number_of_guests
+    if (typeof guests === 'number') {
+      reservationGuests.value = guests
+    }
+    const breakdown = (reservation as { price_breakdown?: ReservationBreakdown | null }).price_breakdown
+    if (breakdown && breakdown.total_in_cents > 0) {
+      reservationBreakdown.value = breakdown
+      form.amountInCents = breakdown.total_in_cents
+    }
+  } catch (error) {
+    console.error('Failed to load reservation for checkout summary:', error)
+  }
+  if (!propertyId) return
+  try {
+    const { property } = await getPropertyDetails(propertyId)
+    const cover = property.images?.find(img => img.is_cover)?.url
+      ?? property.images?.[0]?.url
+      ?? null
+    propertyInfo.value = {
+      name: property.name,
+      location: property.location,
+      rating: property.rating,
+      reviewCount: property.review_count,
+      coverUrl: cover
+    }
+  } catch (error) {
+    console.error('Failed to load property for checkout summary:', error)
   }
 }
 
@@ -1184,7 +1261,7 @@ async function simulateDuplicate() {
 
       <aside class="rounded-[2rem] border border-slate-200 bg-white p-4 shadow-sm">
         <img
-          src="/mock/property-1.svg"
+          :src="booking.coverUrl"
           :alt="booking.property"
           class="h-56 w-full rounded-[1.5rem] object-cover"
         >
