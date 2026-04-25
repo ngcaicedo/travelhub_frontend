@@ -421,8 +421,7 @@ definePageMeta({
             <article
               v-for="reservation in filteredReservations"
               :key="reservation.id"
-              class="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_60px_rgba(15,23,42,0.06)] cursor-pointer transition-shadow hover:shadow-[0_24px_70px_rgba(15,23,42,0.11)]"
-              @click="router.push(`/reservations/${reservation.id}`)"
+              class="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_60px_rgba(15,23,42,0.06)]"
             >
               <div class="grid lg:grid-cols-[260px_1fr]">
                 <div class="relative min-h-[240px] overflow-hidden bg-slate-100 lg:min-h-full">
