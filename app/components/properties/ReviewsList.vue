@@ -9,7 +9,7 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const visibleReviews = ref(2)
 
 const displayedReviews = computed(() => props.reviews.slice(0, visibleReviews.value))
@@ -17,6 +17,13 @@ const hasMore = computed(() => props.reviews.length > visibleReviews.value)
 
 const loadMore = () => {
   visibleReviews.value += 2
+}
+
+const formatReviewDate = (isoDate: string): string => {
+  const [yearStr, monthStr, dayStr] = isoDate.split('-')
+  if (!yearStr || !monthStr || !dayStr) return isoDate
+  const date = new Date(Number(yearStr), Number(monthStr) - 1, Number(dayStr))
+  return new Intl.DateTimeFormat(locale.value, { year: 'numeric', month: 'long' }).format(date)
 }
 </script>
 
@@ -75,7 +82,7 @@ const loadMore = () => {
                   class="w-4 h-4"
                 />
               </div>
-              <span class="text-sm text-gray-600">{{ review.date }}</span>
+              <span class="text-sm text-gray-600">{{ formatReviewDate(review.review_date) }}</span>
             </div>
           </div>
           <UBadge
