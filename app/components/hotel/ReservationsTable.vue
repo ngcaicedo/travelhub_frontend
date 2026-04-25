@@ -54,21 +54,24 @@ function initials(name: string | null | undefined) {
     .join('')
 }
 
-const columns: TableColumn<HostReservationItem>[] = [
-  { accessorKey: 'guest_full_name', header: t('hotel.dashboard.table.headers.guest') },
-  { accessorKey: 'room_type', header: t('hotel.dashboard.table.headers.room') },
-  {
-    accessorKey: 'check_in_date',
-    header: t('hotel.dashboard.table.headers.checkIn'),
-    enableSorting: true,
-  },
-  {
-    accessorKey: 'total_price',
-    header: t('hotel.dashboard.table.headers.amount'),
-    enableSorting: true,
-    meta: { class: { td: 'text-right', th: 'text-right' } },
-  },
-]
+const columns = computed<TableColumn<HostReservationItem>[]>(() => {
+  void locale.value
+  return [
+    { accessorKey: 'guest_full_name', header: t('hotel.dashboard.table.headers.guest') },
+    { accessorKey: 'room_type', header: t('hotel.dashboard.table.headers.room') },
+    {
+      accessorKey: 'check_in_date',
+      header: t('hotel.dashboard.table.headers.checkIn'),
+      enableSorting: true
+    },
+    {
+      accessorKey: 'total_price',
+      header: t('hotel.dashboard.table.headers.amount'),
+      enableSorting: true,
+      meta: { class: { td: 'text-right', th: 'text-right' } }
+    }
+  ]
+})
 
 const sorting = computed({
   get: () => [{ id: props.sortBy, desc: props.sortDir === 'desc' }],

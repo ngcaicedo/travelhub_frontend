@@ -34,7 +34,8 @@ export const useAuthStore = defineStore('auth', () => {
   async function verifyOtp(email: string, otp: string, redirect?: string) {
     const res = await authService.verifyOtp(email, otp)
     token.value = res.access_token
-    const fallback = res.role === 'hotel' ? '/hotel/dashboard' : '/properties'
+    const effectiveRole = claims.value?.role ?? res.role
+    const fallback = effectiveRole === 'hotel' ? '/hotel/dashboard' : '/properties'
     await navigateTo(redirect || fallback)
   }
 

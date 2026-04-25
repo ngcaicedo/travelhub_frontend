@@ -32,6 +32,28 @@ describe('HotelReservationFilters', () => {
     })
   })
 
+  it('no muta el array status del padre al limpiar filtros', async () => {
+    const parentStatus = ['confirmed' as const, 'pending_payment' as const]
+    const parentFilters: HostReservationsFilters = {
+      ...defaultFilters,
+      status: parentStatus
+    }
+    const wrapper = await mountSuspended(ReservationFilters, {
+      props: { modelValue: parentFilters }
+    })
+
+    const buttons = wrapper.findAll('button')
+    const clearBtn = buttons[buttons.length - 2]
+    await clearBtn?.trigger('click')
+
+    expect(parentStatus).toEqual(['confirmed', 'pending_payment'])
+    expect(parentFilters.status).toBe(parentStatus)
+
+    const events = wrapper.emitted('update:modelValue')!
+    const payload = events[0]![0] as HostReservationsFilters
+    expect(payload.status).not.toBe(parentStatus)
+  })
+
   it('emits cleared filters when clear is clicked', async () => {
     const wrapper = await mountSuspended(ReservationFilters, {
       props: { modelValue: defaultFilters },

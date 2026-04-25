@@ -13,18 +13,22 @@ const statusOptions = computed<{ value: ReservationStatus, label: string }[]>(()
   { value: 'completed', label: t('hotel.dashboard.status.completed') },
 ])
 
-const local = reactive<HostReservationsFilters>({ ...props.modelValue })
+function cloneFilters(value: HostReservationsFilters): HostReservationsFilters {
+  return { ...value, status: [...(value.status ?? [])] }
+}
+
+const local = reactive<HostReservationsFilters>(cloneFilters(props.modelValue))
 
 watch(
   () => props.modelValue,
   (val) => {
-    Object.assign(local, val)
+    Object.assign(local, cloneFilters(val))
   },
-  { deep: true },
+  { deep: true }
 )
 
 function apply() {
-  emit('update:modelValue', { ...local })
+  emit('update:modelValue', cloneFilters(local))
 }
 
 function clear() {

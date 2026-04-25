@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterAll } from 'vitest'
 import {
   getHostMetrics,
   getRevenueTrends,
@@ -26,6 +26,10 @@ vi.mock('~/utils/api', () => ({
 describe('hostReservationsService', () => {
   beforeEach(() => {
     mockFetch.mockReset()
+  })
+
+  afterAll(() => {
+    vi.unstubAllGlobals()
   })
 
   describe('listHostReservations', () => {

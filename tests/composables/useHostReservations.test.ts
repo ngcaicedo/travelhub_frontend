@@ -103,6 +103,37 @@ describe('useHostReservations', () => {
     expect(wrapper.vm.metrics).toEqual(metrics)
   })
 
+  it('loading sigue true hasta que terminan los tres refreshers concurrentes', async () => {
+    let resolveRes!: (v: unknown) => void
+    let resolveMet!: (v: unknown) => void
+    let resolveTre!: (v: unknown) => void
+    mockListHostReservations.mockReturnValue(new Promise((r) => { resolveRes = r }))
+    mockGetHostMetrics.mockReturnValue(new Promise((r) => { resolveMet = r }))
+    mockGetRevenueTrends.mockReturnValue(new Promise((r) => { resolveTre = r }))
+
+    const Comp = harness(() => useHostReservations())
+    const wrapper = await mountSuspended(Comp)
+
+    const p1 = (wrapper.vm.refreshReservations as (f: object) => Promise<void>)({})
+    const p2 = (wrapper.vm.refreshMetrics as (r: object) => Promise<void>)({})
+    const p3 = (wrapper.vm.refreshTrends as (r: object) => Promise<void>)({})
+
+    await wrapper.vm.$nextTick()
+    expect(wrapper.vm.loading).toBe(true)
+
+    resolveMet({ active_reservations: 0, occupancy_rate: 0, revenue_amount: '0', revenue_currency: null, average_daily_rate: '0', total_nights: 0, available_currencies: [] })
+    await p2
+    expect(wrapper.vm.loading).toBe(true)
+
+    resolveTre({ granularity: 'week', currency: null, available_currencies: [], buckets: [] })
+    await p3
+    expect(wrapper.vm.loading).toBe(true)
+
+    resolveRes({ items: [], total: 0, page: 1, page_size: 10 })
+    await p1
+    expect(wrapper.vm.loading).toBe(false)
+  })
+
   it('refreshTrends stores buckets', async () => {
     const trends = { granularity: 'week', currency: 'cop', buckets: [] }
     mockGetRevenueTrends.mockResolvedValue(trends)

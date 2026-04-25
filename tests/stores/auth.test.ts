@@ -95,6 +95,20 @@ describe('useAuthStore', () => {
     expect(navigateToMock).toHaveBeenCalledWith('/hotel/dashboard')
   })
 
+  it('verifyOtp deriva el fallback del claim del JWT, no de res.role', async () => {
+    const store = useAuthStore()
+    const hotelToken = fakeJwt({ sub: 'h1', role: 'hotel' })
+    vi.spyOn(authServiceModule.authService, 'verifyOtp').mockResolvedValue({
+      access_token: hotelToken,
+      token_type: 'bearer',
+      role: 'traveler'
+    })
+
+    await store.verifyOtp('hotel@travelhub.demo', '000000')
+
+    expect(navigateToMock).toHaveBeenCalledWith('/hotel/dashboard')
+  })
+
   it('verifyOtp navigates to redirect path when provided', async () => {
     const store = useAuthStore()
     vi.spyOn(authServiceModule.authService, 'verifyOtp').mockResolvedValue({
