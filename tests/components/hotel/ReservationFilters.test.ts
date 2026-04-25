@@ -45,8 +45,9 @@ describe('HotelReservationFilters', () => {
     expect(events).toBeTruthy()
     const payload = events![0]![0] as HostReservationsFilters
     expect(payload.status).toEqual([])
-    expect(payload.start_date).toBeUndefined()
-    expect(payload.end_date).toBeUndefined()
     expect(payload.guest_name).toBe('')
+    // Date range is now a global control outside this component, so dates pass through unchanged.
+    expect(payload.start_date).toBe('2026-04-01')
+    expect(payload.end_date).toBe('2026-04-30')
   })
 })

@@ -11,6 +11,14 @@ mockNuxtImport('navigateTo', () => navigateToMock)
 
 type MiddlewareFn = (to: { fullPath: string }, from: object) => unknown
 
+function fakeJwt(payload: Record<string, unknown>): string {
+  const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+  const body = btoa(JSON.stringify(payload))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+  return `${header}.${body}.signature`
+}
+
 describe('hotel-only middleware', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
@@ -28,8 +36,7 @@ describe('hotel-only middleware', () => {
 
   it('redirects authenticated travelers to /properties', () => {
     const store = useAuthStore()
-    store.token = 'jwt-token'
-    store.role = 'traveler'
+    store.token = fakeJwt({ sub: 'u1', role: 'traveler' })
 
     ;(middleware as MiddlewareFn)({ fullPath: '/hotel/dashboard' }, {})
 
@@ -38,8 +45,7 @@ describe('hotel-only middleware', () => {
 
   it('allows hotel role through', () => {
     const store = useAuthStore()
-    store.token = 'jwt-token'
-    store.role = 'hotel'
+    store.token = fakeJwt({ sub: 'h1', role: 'hotel' })
 
     const result = (middleware as MiddlewareFn)({ fullPath: '/hotel/dashboard' }, {})
 
