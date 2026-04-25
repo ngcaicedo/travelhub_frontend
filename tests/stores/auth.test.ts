@@ -43,7 +43,7 @@ describe('useAuthStore', () => {
 
   it('isHotelUser is true for hotel-compatible roles', () => {
     const store = useAuthStore()
-    store.role = 'hotel'
+    store.token = fakeJwt({ sub: 'h1', role: 'hotel' })
     expect(store.isHotelUser).toBe(true)
   })
 
