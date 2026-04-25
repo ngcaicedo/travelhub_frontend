@@ -1,4 +1,4 @@
-﻿{
+{
   "common": {
     "appName": "TravelHub",
     "premiumTravel": "Premium Travel",
@@ -494,7 +494,61 @@
       "priceNonNegative": "Price cannot be negative",
       "priceRange": "Max price must be greater than or equal to min price"
     }
+  },
+  "hotel": {
+    "nav": {
+      "dashboard": "Dashboard",
+      "portalLabel": "Strategic Portal",
+      "adminAccount": "Admin Account"
+    },
+    "dashboard": {
+      "headerTitle": "Strategic Dashboard",
+      "welcomeTitle": "Good morning",
+      "welcomeSubtitle": "Here is what's happening with your property today.",
+      "error": "We could not load the data",
+      "kpi": {
+        "revenue": "Period revenue",
+        "occupancy": "Occupancy rate",
+        "adr": "Average daily rate",
+        "activeBookings": "Active bookings"
+      },
+      "chart": {
+        "title": "Revenue trends",
+        "empty": "No data yet in the selected period"
+      },
+      "filters": {
+        "title": "Filters",
+        "guest": "Guest",
+        "guestPlaceholder": "Search by name",
+        "startDate": "From",
+        "endDate": "To",
+        "status": "Status",
+        "statusPlaceholder": "All",
+        "apply": "Apply",
+        "clear": "Clear"
+      },
+      "status": {
+        "pendingPayment": "Pending payment",
+        "confirmed": "Confirmed",
+        "cancelled": "Cancelled",
+        "completed": "Completed"
+      },
+      "table": {
+        "title": "Reservations",
+        "totalLabel": "{total} total",
+        "empty": "No reservations in the selected period",
+        "pageOf": "Page {page} of {total}",
+        "guestsCount": "{count} guests",
+        "nights": "{count} nights",
+        "headers": {
+          "guest": "Guest",
+          "room": "Room type",
+          "checkIn": "Stay",
+          "createdAt": "Created",
+          "amount": "Amount",
+          "status": "Status"
+        }
+      }
+    }
   }
 }
-
-
