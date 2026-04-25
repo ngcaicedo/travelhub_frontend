@@ -151,7 +151,7 @@ definePageMeta({
 
             <!-- Policies Section -->
             <div ref="policiesRef">
-              <PropertyPolicies cancellation-policy="flexible" />
+              <PropertyPolicies :cancellation-policy="property.cancellation_policy" />
             </div>
           </div>
 

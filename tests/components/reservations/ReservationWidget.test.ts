@@ -113,7 +113,7 @@ describe('ReservationWidget', () => {
     }
 
     expect(vm.stayDuration).toBe(1)
-    expect(vm.totalPrice).toBe(178500) // 150000 * 1 (night) * 1 (guest) + 19% tax
+    expect(vm.totalPrice).toBe(178500) // 150000 * 1 (night) + 19% COP tax
   })
 
   it('disables booking when dates are not set', async () => {

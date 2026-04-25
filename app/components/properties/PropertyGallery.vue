@@ -26,9 +26,8 @@ watch(
       return
     }
 
-    if (selectedImageIdx.value >= images.length) {
-      selectedImageIdx.value = 0
-    }
+    const coverIdx = images.findIndex(img => img.is_cover)
+    selectedImageIdx.value = coverIdx >= 0 ? coverIdx : 0
   },
   { immediate: true }
 )
@@ -41,7 +40,7 @@ watch(
       <div class="relative overflow-hidden min-h-0">
         <img
           v-if="mainImage"
-          :src="mainImage.url"
+          :src="mainImage.url_hires ?? mainImage.url"
           :alt="mainImage.alt_text || altText || 'Property'"
           class="w-full h-full object-cover object-center transition-transform duration-300 hover:scale-[1.02]"
           loading="eager"
