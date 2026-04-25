@@ -88,11 +88,10 @@ const totalPrice = computed(() => {
     return calculateTotalPrice(
       props.property.price_per_night,
       stayDuration.value,
-      props.property.tax_rate ?? 0,
-      props.property.cleaning_fee ?? 0
+      props.property.currency
     )
   }
-  return { subtotal: 0, taxes: 0, cleaningFee: 0, total: 0 }
+  return 0
 })
 
 const canBook = computed(() => {
@@ -159,7 +158,7 @@ const handleSubmit = async () => {
         checkInDate: checkInDate.value,
         checkOutDate: checkOutDate.value,
         lockExpiresAt: String(lockExpiresAt),
-        amountInCents: String(Math.round(totalPrice.value.total * 100)),
+        amountInCents: String(Math.round(totalPrice.value * 100)),
         currency: props.property.currency
       }
     })
@@ -290,25 +289,11 @@ watch(() => [props.initialCheckInDate, props.initialCheckOutDate, props.initialN
       >
         <div class="flex justify-between text-gray-700">
           <span>{{ formatCurrency(props.property.price_per_night, props.property.currency, locale) }} × {{ stayDuration }} {{ t(stayDuration === 1 ? 'common.night' : 'common.nights') }}</span>
-          <span>{{ formatCurrency(totalPrice.subtotal, props.property.currency, locale) }}</span>
-        </div>
-        <div
-          v-if="totalPrice.taxes > 0"
-          class="flex justify-between text-gray-700"
-        >
-          <span>{{ t('booking.taxes') }}</span>
-          <span>{{ formatCurrency(totalPrice.taxes, props.property.currency, locale) }}</span>
-        </div>
-        <div
-          v-if="totalPrice.cleaningFee > 0"
-          class="flex justify-between text-gray-700"
-        >
-          <span>{{ t('booking.cleaningFee') }}</span>
-          <span>{{ formatCurrency(totalPrice.cleaningFee, props.property.currency, locale) }}</span>
+          <span>{{ formatCurrency(props.property.price_per_night * stayDuration, props.property.currency, locale) }}</span>
         </div>
         <div class="flex justify-between font-semibold text-lg text-gray-900 pt-2 border-t border-gray-100">
           <span>{{ t('booking.total') }}</span>
-          <span>{{ formatCurrency(totalPrice.total, props.property.currency, locale) }}</span>
+          <span>{{ formatCurrency(totalPrice, props.property.currency, locale) }}</span>
         </div>
       </div>
 

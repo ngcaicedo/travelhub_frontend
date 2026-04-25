@@ -35,6 +35,7 @@ const checkOutDate = ref('')
 const numberOfGuests = ref(1)
 const isPreviewWatcherReady = ref(false)
 const lastPreviewSignature = ref<string | null>(null)
+const hasRunPreview = ref(false)
 
 const localeMap: Record<string, string> = {
   es: 'es-CO',
@@ -45,7 +46,9 @@ const localeMap: Record<string, string> = {
 const terminalStatuses: ReservationStatus[] = [
   'modification_confirmed',
   'additional_charge_failed',
-  'refund_failed'
+  'refund_failed',
+  'refund_pending',
+  'modification_pending_payment'
 ]
 
 const statusLabel = computed(() => {
@@ -94,6 +97,7 @@ function formatMoney(value: string, currency: string) {
 
 const canConfirm = computed(() => {
   if (!reservation.value || !preview.value) return false
+  if (!hasRunPreview.value) return false
   return preview.value.change_allowed && !!checkInDate.value && !!checkOutDate.value && numberOfGuests.value > 0
 })
 
@@ -102,7 +106,8 @@ async function loadReservation() {
   error.value = null
 
   try {
-    const response = await getReservation(reservationId)
+    const travelerId = authStore.userId || undefined
+    const response = await getReservation(reservationId, travelerId)
     reservation.value = response
     checkInDate.value = formatDateInput(response.check_in_date)
     checkOutDate.value = formatDateInput(response.check_out_date)
@@ -131,6 +136,7 @@ async function runPreview() {
       number_of_guests: numberOfGuests.value
     })
     lastPreviewSignature.value = signature
+    hasRunPreview.value = true
   } catch (err) {
     error.value = t('errors.failed')
     console.error('Modification preview failed:', err)
@@ -142,11 +148,13 @@ async function runPreview() {
 async function pollUntilFinal() {
   pollTimeout.value = false
 
+  const travelerId = authStore.userId || undefined
+
   const result = await pollReservationUntilFinal(reservationId, {
     maxAttempts: 8,
     intervalMs: 3000,
     terminalStatuses
-  })
+  }, travelerId)
 
   reservation.value = result.reservation
 
@@ -181,7 +189,8 @@ async function confirmChanges() {
     confirmResponse.value = response
 
     if (terminalStatuses.includes(response.status_after)) {
-      await loadReservation()
+      // await loadReservation()
+      await router.push('/reservations')
       return
     }
 
@@ -199,19 +208,16 @@ async function goToDetail() {
 }
 
 onMounted(async () => {
+  if (!authStore.userId) {
+    await router.push({ path: '/login', query: { redirect: route.fullPath } })
+    return
+  }
+
   await loadReservation()
   if (reservation.value?.status === 'confirmed') {
     await runPreview()
     isPreviewWatcherReady.value = true
   }
-})
-
-watch([checkInDate, checkOutDate, numberOfGuests], async () => {
-  if (!isPreviewWatcherReady.value) return
-  if (reservation.value?.status !== 'confirmed') return
-  if (!checkInDate.value || !checkOutDate.value || numberOfGuests.value < 1) return
-
-  await runPreview()
 })
 
 useSeoMeta({
@@ -283,6 +289,14 @@ definePageMeta({
 
             <div class="flex flex-wrap gap-3 pt-2">
               <UButton
+                color="neutral"
+                :loading="previewLoading"
+                @click="runPreview"
+              >
+                {{ t('reservationFlow.modify.runPreview') }}
+              </UButton>
+
+              <UButton
                 color="primary"
                 :disabled="!canConfirm"
                 :loading="submitLoading"
@@ -291,6 +305,14 @@ definePageMeta({
                 {{ t('reservationFlow.modify.confirmModification') }}
               </UButton>
             </div>
+
+            <UAlert
+              v-if="hasRunPreview"
+              icon="i-lucide-alert-circle"
+              color="warning"
+              :title="t('reservationFlow.modify.warningNoActions')"
+              class="mt-4"
+            />
           </UForm>
 
           <UAlert
@@ -300,17 +322,18 @@ definePageMeta({
             :title="t('reservationFlow.polling.pendingTitle')"
             :description="t('reservationFlow.polling.pendingDescription')"
             class="mt-6"
+          />
+
+          <UButton
+            v-if="pollTimeout"
+            color="warning"
+            variant="soft"
+            icon="i-lucide-refresh-cw"
+            class="mt-3"
+            @click="pollUntilFinal"
           >
-            <template #actions>
-              <UButton
-                color="warning"
-                variant="soft"
-                @click="pollUntilFinal"
-              >
-                {{ t('reservationFlow.polling.retryButton') }}
-              </UButton>
-            </template>
-          </UAlert>
+            {{ t('reservationFlow.polling.retryButton') }}
+          </UButton>
         </div>
 
         <div class="space-y-4">

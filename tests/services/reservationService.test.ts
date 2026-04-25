@@ -128,6 +128,21 @@ describe('reservationService', () => {
         details: null
       })
     })
+
+    it('includes traveler header when traveler ID is provided', async () => {
+      mockFetch.mockResolvedValue(mockReservationResponse)
+
+      await getReservation('res-123', 'traveler-1')
+
+      expect(mockFetch).toHaveBeenCalledWith('/api/v1/reservations/res-123', {
+        baseURL: 'http://localhost:3003',
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Traveler-Id': 'traveler-1'
+        }
+      })
+    })
   })
 
   describe('getReservationsByUser', () => {
@@ -207,6 +222,29 @@ describe('reservationService', () => {
         headers: { 'Content-Type': 'application/json' }
       })
       expect(result).toEqual(previewResponse)
+    })
+
+    it('includes traveler header when traveler ID is provided', async () => {
+      mockFetch.mockResolvedValue({
+        refund_amount: '845.00',
+        penalty_amount: '405.00',
+        refund_type: 'partial',
+        eligible_until: null,
+        policy_applied: 'policy',
+        change_allowed: true,
+        reasons: []
+      })
+
+      await previewReservationCancellation('res-123', 'traveler-1')
+
+      expect(mockFetch).toHaveBeenCalledWith('/api/v1/reservations/res-123/cancellation/preview', {
+        baseURL: 'http://localhost:3003',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Traveler-Id': 'traveler-1'
+        }
+      })
     })
   })
 

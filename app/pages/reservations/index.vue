@@ -26,6 +26,9 @@ interface ReservationCardViewModel {
   statusTone: string
   kind: ReservationTab
   canCancel: boolean
+  canModify: boolean
+  isModified: boolean
+  isModificationPendingPayment: boolean
   reservation: ReservationWithDetailsResponse['reservation']
 }
 
@@ -61,7 +64,8 @@ const profileName = computed(() => {
 
 const profileInitials = computed(() => {
   if (authStore.email) {
-    const parts = authStore.email.split('@')[0].split(/[._-]+/).filter(Boolean)
+    const localPart = authStore.email.split('@')[0] ?? ''
+    const parts = localPart.split(/[._-]+/).filter(Boolean)
     const initials = parts.slice(0, 2).map(part => part[0]?.toUpperCase() ?? '').join('')
     if (initials) return initials
   }
@@ -156,17 +160,25 @@ async function loadReservations() {
     }))
 
     reservations.value = userReservations
-      .map((item, index) => {
-        const property = propertyMap.get(item.reservation.id_property) ?? null
+      .map<ReservationCardViewModel>((item, index) => {
+const property = propertyMap.get(item.reservation.id_property) ?? null
         const checkInLabel = formatDate(item.reservation.check_in_date)
         const checkOutLabel = formatDate(item.reservation.check_out_date)
         const totalLabel = formatMoney(item.reservation.total_price, item.reservation.currency)
         const location = property?.location || t('reservationsList.locationFallback')
         const propertyName = property?.name || t('notifications.summary.propertyFallback')
+        const canCancel = item.reservation.status === 'confirmed'
+        const canModify = item.reservation.status === 'confirmed'
+        const isModified = item.reservation.status !== 'confirmed'
+        const isModificationPendingPayment = item.reservation.status === 'modification_pending_payment'
 
         return {
           id: item.id,
           status: item.reservation.status,
+          canCancel,
+          canModify,
+          isModified,
+          isModificationPendingPayment,
           imageUrl: property?.images?.[0]?.url || mockImages[index % mockImages.length] || '/mock/property-1.svg',
           imageAlt: property?.images?.[0]?.alt_text || propertyName,
           propertyName,
@@ -178,8 +190,7 @@ async function loadReservations() {
           statusLabel: t(`status.${item.reservation.status}`),
           statusTone: getStatusTone(item.reservation.status),
           kind: isUpcomingReservation(item.reservation.status, item.reservation.check_out_date) ? 'upcoming' : 'past',
-          canCancel: item.reservation.status === 'confirmed',
-          reservation: item.reservation
+reservation: item.reservation
         }
       })
       .sort((left, right) => {
@@ -469,27 +480,36 @@ definePageMeta({
                   </div>
 
                   <div class="mt-6 flex flex-wrap gap-3 border-t border-slate-200 pt-5">
-                    <UButton
-                      color="neutral"
-                      variant="soft"
-                      icon="i-lucide-pencil"
-                      class="rounded-2xl px-4 py-2.5 text-[14px] font-semibold"
-                      @click="modifyReservation(reservation.id)"
-                    >
-                      {{ t('reservationFlow.detail.modifyButton') }}
-                    </UButton>
+                    <template v-if="reservation.isModificationPendingPayment">
+                      <p class="w-full text-sm text-slate-500">{{ t('reservationsList.additionalPaymentAtCheckIn') }}</p>
+                    </template>
+                    <template v-else-if="reservation.isModified">
+                      <p class="w-full text-sm text-slate-500">{{ t('reservationsList.modifiedReservationNoActions') }}</p>
+                    </template>
+                    <template v-else>
+                      <UButton
+                        color="neutral"
+                        variant="soft"
+                        icon="i-lucide-pencil"
+                        class="rounded-2xl px-4 py-2.5 text-[14px] font-semibold"
+                        :disabled="!reservation.canModify"
+                        @click="modifyReservation(reservation.id)"
+                      >
+                        {{ t('reservationFlow.detail.modifyButton') }}
+                      </UButton>
 
-                    <UButton
-                      color="error"
-                      variant="soft"
-                      icon="i-lucide-x-circle"
-                      class="rounded-2xl px-4 py-2.5 text-[14px] font-semibold"
-                      :disabled="!reservation.canCancel"
-                      :title="reservation.canCancel ? undefined : t('reservationsList.cancelUnavailable')"
-                      @click="cancelReservation(reservation.id)"
-                    >
-                      {{ t('reservationsList.cancelReservation') }}
-                    </UButton>
+                      <UButton
+                        color="error"
+                        variant="soft"
+                        icon="i-lucide-x-circle"
+                        class="rounded-2xl px-4 py-2.5 text-[14px] font-semibold"
+                        :disabled="!reservation.canCancel"
+                        :title="reservation.canCancel ? undefined : t('reservationsList.cancelUnavailable')"
+                        @click="cancelReservation(reservation.id)"
+                      >
+                        {{ t('reservationsList.cancelReservation') }}
+                      </UButton>
+                    </template>
                   </div>
                 </div>
               </div>

@@ -33,6 +33,7 @@ export interface ReservationRequest {
 
 export interface ReservationResponse {
   id: string
+  id_property: string
   status: ReservationStatus
   total_price: string
   currency: string
