@@ -189,7 +189,7 @@ async function confirmChanges() {
     confirmResponse.value = response
 
     if (terminalStatuses.includes(response.status_after)) {
-      await loadReservation()
+      // await loadReservation()
       await router.push('/reservations')
       return
     }
