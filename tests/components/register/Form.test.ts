@@ -135,7 +135,7 @@ describe('RegisterForm', () => {
       expect(wrapper.find('[data-cy="register-fullname"]').exists()).toBe(false)
     })
 
-    it('calls register with hotel_partner role', async () => {
+    it('calls register with hotel role', async () => {
       mockRegister.mockResolvedValue({ id: 'user-1' })
 
       const wrapper = await mountSuspended(RegisterForm, { props: { type: 'hotelPartner' } })
@@ -157,7 +157,7 @@ describe('RegisterForm', () => {
 
       expect(mockRegister).toHaveBeenCalledWith(
         expect.objectContaining({
-          role: 'hotel_partner',
+          role: 'hotel',
           hotel_name: 'My Hotel',
           full_name: 'Jane Smith'
         })
