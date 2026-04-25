@@ -33,6 +33,7 @@ export interface HostMetrics {
   occupancy_rate: number
   revenue_amount: string
   revenue_currency: string | null
+  available_currencies: string[]
   average_daily_rate: string
   total_nights: number
 }
@@ -46,6 +47,7 @@ export interface HostRevenueBucket {
 export interface HostRevenueTrends {
   granularity: 'day' | 'week' | 'month'
   currency: string | null
+  available_currencies: string[]
   buckets: HostRevenueBucket[]
 }
 

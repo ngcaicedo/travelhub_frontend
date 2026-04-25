@@ -44,6 +44,16 @@ function nights(item: HostReservationItem) {
   return Math.max(Math.round((outDate - inDate) / (1000 * 60 * 60 * 24)), 0)
 }
 
+function initials(name: string | null | undefined) {
+  if (!name) return '—'
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map(part => part[0]?.toUpperCase() ?? '')
+    .join('')
+}
+
 const columns: TableColumn<HostReservationItem>[] = [
   { accessorKey: 'guest_full_name', header: t('hotel.dashboard.table.headers.guest') },
   { accessorKey: 'room_type', header: t('hotel.dashboard.table.headers.room') },
@@ -53,17 +63,11 @@ const columns: TableColumn<HostReservationItem>[] = [
     enableSorting: true,
   },
   {
-    accessorKey: 'created_at',
-    header: t('hotel.dashboard.table.headers.createdAt'),
-    enableSorting: true,
-  },
-  {
     accessorKey: 'total_price',
     header: t('hotel.dashboard.table.headers.amount'),
     enableSorting: true,
     meta: { class: { td: 'text-right', th: 'text-right' } },
   },
-  { accessorKey: 'status', header: t('hotel.dashboard.table.headers.status') },
 ]
 
 const sorting = computed({
@@ -91,14 +95,18 @@ const currentPage = computed({
   <UCard>
     <template #header>
       <div class="flex items-center justify-between">
-        <h3 class="text-base font-bold text-slate-900">
+        <h3 class="text-base font-bold text-(--ui-text-highlighted)">
           {{ t('hotel.dashboard.table.title') }}
         </h3>
-        <span class="text-xs text-slate-500">
+        <span class="text-xs text-(--ui-text-muted)">
           {{ t('hotel.dashboard.table.totalLabel', { total: data?.total ?? 0 }) }}
         </span>
       </div>
     </template>
+
+    <div v-if="$slots.filters" class="-mt-2 mb-2">
+      <slot name="filters" />
+    </div>
 
     <UTable
       v-model:sorting="sorting"
@@ -113,15 +121,16 @@ const currentPage = computed({
     >
       <template #guest_full_name-cell="{ row }">
         <div class="flex items-center gap-3">
-          <UAvatar
-            :alt="row.original.guest_full_name ?? ''"
-            size="sm"
-          />
+          <span
+            class="flex size-8 shrink-0 items-center justify-center rounded-full bg-(--ui-bg-elevated) text-xs font-bold text-(--ui-text-highlighted)"
+          >
+            {{ initials(row.original.guest_full_name) }}
+          </span>
           <div class="flex flex-col">
-            <span class="font-bold text-slate-900">
+            <span class="font-bold text-(--ui-text-highlighted)">
               {{ row.original.guest_full_name ?? '—' }}
             </span>
-            <span class="text-xs text-slate-500">
+            <span class="text-xs text-(--ui-text-muted)">
               ID: #{{ row.original.reservation_number }}
             </span>
           </div>
@@ -130,8 +139,8 @@ const currentPage = computed({
 
       <template #room_type-cell="{ row }">
         <div class="flex flex-col">
-          <span class="text-slate-900">{{ row.original.room_type ?? '—' }}</span>
-          <span class="text-xs text-slate-500">
+          <span class="text-(--ui-text-highlighted)">{{ row.original.room_type ?? '—' }}</span>
+          <span class="text-xs text-(--ui-text-muted)">
             {{ t('hotel.dashboard.table.guestsCount', { count: row.original.number_of_guests }) }}
           </span>
         </div>
@@ -139,31 +148,26 @@ const currentPage = computed({
 
       <template #check_in_date-cell="{ row }">
         <div class="flex flex-col">
-          <span class="text-slate-900">{{ formatRange(row.original) }}</span>
-          <span class="text-xs text-slate-500">
+          <span class="text-(--ui-text-highlighted)">{{ formatRange(row.original) }}</span>
+          <span class="text-xs text-(--ui-text-muted)">
             {{ t('hotel.dashboard.table.nights', { count: nights(row.original) }) }}
           </span>
         </div>
       </template>
 
-      <template #created_at-cell="{ row }">
-        {{ new Date(row.original.created_at).toLocaleDateString(locale) }}
-      </template>
-
       <template #total_price-cell="{ row }">
-        <span class="font-bold text-slate-900">
-          {{ formatPrice(row.original) }}
-        </span>
-      </template>
-
-      <template #status-cell="{ row }">
-        <HotelStatusBadge :status="row.original.status" />
+        <div class="flex flex-col items-end gap-1">
+          <span class="font-bold text-(--ui-text-highlighted)">
+            {{ formatPrice(row.original) }}
+          </span>
+          <HotelStatusBadge :status="row.original.status" />
+        </div>
       </template>
     </UTable>
 
     <template v-if="data && data.items.length > 0" #footer>
       <div class="flex items-center justify-between">
-        <span class="text-xs text-slate-500">
+        <span class="text-xs text-(--ui-text-muted)">
           {{ t('hotel.dashboard.table.pageOf', { page: currentPage, total: totalPages }) }}
         </span>
         <UPagination

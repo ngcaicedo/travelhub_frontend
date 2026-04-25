@@ -4,14 +4,23 @@ import type { HostRevenueTrends } from '~/types/hotel'
 const props = defineProps<{
   data: HostRevenueTrends | null
   loading: boolean
+  rangeLabel?: string
+  currencyOptions?: { label: string, value: string }[]
+  selectedCurrency?: string
+}>()
+
+const emit = defineEmits<{
+  'update:currency': [string]
 }>()
 
 const { t, locale } = useI18n()
 
 const option = computed(() => {
   const buckets = props.data?.buckets ?? []
+  const values = buckets.map(b => Number(b.revenue))
+  const maxValue = values.length ? Math.max(...values) : 0
   return {
-    grid: { left: 40, right: 16, top: 16, bottom: 32 },
+    grid: { left: 56, right: 24, top: 24, bottom: 32 },
     tooltip: {
       trigger: 'axis',
       formatter: (params: { name: string, value: number }[]) => {
@@ -27,6 +36,7 @@ const option = computed(() => {
     },
     xAxis: {
       type: 'category',
+      boundaryGap: false,
       data: buckets.map(b => new Date(b.bucket).toLocaleDateString(locale.value, {
         month: 'short',
         day: '2-digit',
@@ -36,6 +46,8 @@ const option = computed(() => {
     },
     yAxis: {
       type: 'value',
+      min: 0,
+      max: values.length === 1 ? Math.ceil(maxValue * 1.5) : undefined,
       axisLabel: { color: '#94a3b8', fontSize: 10 },
       splitLine: { lineStyle: { color: '#f1f5f9' } },
     },
@@ -43,8 +55,10 @@ const option = computed(() => {
       {
         type: 'line',
         smooth: true,
-        showSymbol: false,
+        showSymbol: true,
+        symbolSize: 10,
         lineStyle: { color: '#135bec', width: 3 },
+        itemStyle: { color: '#135bec' },
         areaStyle: {
           color: {
             type: 'linear',
@@ -68,18 +82,38 @@ const option = computed(() => {
 <template>
   <UCard>
     <template #header>
-      <h3 class="text-base font-bold text-slate-900">
-        {{ t('hotel.dashboard.chart.title') }}
-      </h3>
+      <div class="flex items-center justify-between gap-2">
+        <h3 class="text-base font-bold text-(--ui-text-highlighted)">
+          {{ t('hotel.dashboard.chart.title') }}
+        </h3>
+        <div class="flex items-center gap-2">
+          <USelect
+            v-if="currencyOptions && currencyOptions.length > 1"
+            :model-value="selectedCurrency"
+            :items="currencyOptions"
+            size="xs"
+            class="w-[90px]"
+            @update:model-value="(value: string) => emit('update:currency', value)"
+          />
+          <span
+            v-if="rangeLabel"
+            class="rounded-lg bg-(--ui-bg-elevated) px-3 py-1 text-xs font-bold text-(--ui-text-highlighted)"
+          >
+            {{ rangeLabel }}
+          </span>
+        </div>
+      </div>
     </template>
-    <div v-if="loading" class="h-[260px]">
+    <div v-if="loading" class="h-[220px]">
       <USkeleton class="h-full w-full" />
     </div>
-    <div v-else-if="!data || data.buckets.length === 0" class="h-[260px] flex items-center justify-center text-sm text-slate-500">
+    <div v-else-if="!data || data.buckets.length === 0" class="h-[220px] flex items-center justify-center text-sm text-(--ui-text-muted)">
       {{ t('hotel.dashboard.chart.empty') }}
     </div>
     <ClientOnly v-else>
-      <VChart class="h-[260px]" :option="option" autoresize />
+      <div class="h-[220px] w-full">
+        <VChart class="h-full w-full" :option="option" autoresize />
+      </div>
     </ClientOnly>
   </UCard>
 </template>

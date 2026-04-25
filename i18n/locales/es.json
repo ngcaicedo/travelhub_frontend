@@ -507,7 +507,7 @@
       "welcomeSubtitle": "Esto es lo que sucede en tu propiedad hoy.",
       "error": "No pudimos cargar la información",
       "kpi": {
-        "revenue": "Ingresos del periodo",
+        "revenue": "Ingresos",
         "occupancy": "Tasa de ocupación",
         "adr": "Tarifa diaria promedio",
         "activeBookings": "Reservas activas"

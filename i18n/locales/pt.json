@@ -508,7 +508,7 @@
       "welcomeSubtitle": "Veja o que está acontecendo na sua propriedade hoje.",
       "error": "Não foi possível carregar os dados",
       "kpi": {
-        "revenue": "Receita do período",
+        "revenue": "Receita",
         "occupancy": "Taxa de ocupação",
         "adr": "Diária média",
         "activeBookings": "Reservas ativas"

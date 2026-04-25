@@ -32,7 +32,7 @@ export function useHostReservations() {
     }
   }
 
-  async function refreshMetrics(range: { start_date?: string, end_date?: string }) {
+  async function refreshMetrics(range: { start_date?: string, end_date?: string, currency?: string }) {
     try {
       metrics.value = await getHostMetrics(auth.token, range)
     } catch (e: unknown) {
@@ -41,7 +41,7 @@ export function useHostReservations() {
     }
   }
 
-  async function refreshTrends(range: { start_date?: string, end_date?: string, granularity?: 'day' | 'week' | 'month' }) {
+  async function refreshTrends(range: { start_date?: string, end_date?: string, granularity?: 'day' | 'week' | 'month', currency?: string }) {
     try {
       trends.value = await getRevenueTrends(auth.token, range)
     } catch (e: unknown) {

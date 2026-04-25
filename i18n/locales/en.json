@@ -507,7 +507,7 @@
       "welcomeSubtitle": "Here is what's happening with your property today.",
       "error": "We could not load the data",
       "kpi": {
-        "revenue": "Period revenue",
+        "revenue": "Revenue",
         "occupancy": "Occupancy rate",
         "adr": "Average daily rate",
         "activeBookings": "Active bookings"

@@ -42,7 +42,7 @@ export async function listHostReservations(
 
 export async function getHostMetrics(
   token: string | null,
-  range: { start_date?: string, end_date?: string } = {},
+  range: { start_date?: string, end_date?: string, currency?: string } = {},
 ): Promise<HostMetrics> {
   const { reservationsApiUrl } = getApiBaseUrls()
   try {
@@ -59,7 +59,7 @@ export async function getHostMetrics(
 
 export async function getRevenueTrends(
   token: string | null,
-  range: { start_date?: string, end_date?: string, granularity?: 'day' | 'week' | 'month' } = {},
+  range: { start_date?: string, end_date?: string, granularity?: 'day' | 'week' | 'month', currency?: string } = {},
 ): Promise<HostRevenueTrends> {
   const { reservationsApiUrl } = getApiBaseUrls()
   try {

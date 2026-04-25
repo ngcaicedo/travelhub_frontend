@@ -29,53 +29,44 @@ function apply() {
 
 function clear() {
   local.status = []
-  local.start_date = undefined
-  local.end_date = undefined
   local.guest_name = ''
   apply()
 }
 </script>
 
 <template>
-  <div class="grid gap-4 md:grid-cols-4">
-    <UFormField :label="t('hotel.dashboard.filters.guest')">
+  <div class="flex flex-wrap items-end gap-3">
+    <label class="flex flex-1 min-w-[200px] flex-col gap-1">
+      <span class="text-xs font-medium text-(--ui-text-muted)">
+        {{ t('hotel.dashboard.filters.guest') }}
+      </span>
       <UInput
         v-model="local.guest_name"
         :placeholder="t('hotel.dashboard.filters.guestPlaceholder')"
         icon="i-lucide-search"
       />
-    </UFormField>
-    <UFormField :label="t('hotel.dashboard.filters.startDate')">
-      <UInput
-        v-model="local.start_date"
-        type="date"
-      />
-    </UFormField>
-    <UFormField :label="t('hotel.dashboard.filters.endDate')">
-      <UInput
-        v-model="local.end_date"
-        type="date"
-      />
-    </UFormField>
-    <UFormField :label="t('hotel.dashboard.filters.status')">
+    </label>
+    <label class="flex flex-col gap-1">
+      <span class="text-xs font-medium text-(--ui-text-muted)">
+        {{ t('hotel.dashboard.filters.status') }}
+      </span>
       <USelectMenu
         v-model="local.status"
         :items="statusOptions"
         value-key="value"
         multiple
         :placeholder="t('hotel.dashboard.filters.statusPlaceholder')"
+        class="w-[180px]"
       />
-    </UFormField>
-    <div class="md:col-span-4 flex justify-end gap-2">
-      <UButton
-        variant="ghost"
-        :label="t('hotel.dashboard.filters.clear')"
-        @click="clear"
-      />
-      <UButton
-        :label="t('hotel.dashboard.filters.apply')"
-        @click="apply"
-      />
-    </div>
+    </label>
+    <UButton
+      variant="ghost"
+      :label="t('hotel.dashboard.filters.clear')"
+      @click="clear"
+    />
+    <UButton
+      :label="t('hotel.dashboard.filters.apply')"
+      @click="apply"
+    />
   </div>
 </template>
