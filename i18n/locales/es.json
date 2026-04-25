@@ -33,6 +33,7 @@
       "title": "Dashboard de reservas",
       "description": "Confirma o cancela reservas pendientes y confirmadas sin salir del panel operativo."
     },
+<<<<<<< HEAD
     "filters": {
       "propertyPlaceholder": "Selecciona una propiedad",
       "statusPlaceholder": "Filtrar por estado",
@@ -98,6 +99,32 @@
       "confirmAction": "Confirmar cancelación"
     }
   },  "auth": {
+=======
+    "title": "Gestión de reservas",
+    "subtitle": "Revisa tus estadías próximas, administra cancelaciones y accede al detalle completo de cada reserva.",
+    "newBooking": "Nueva reserva",
+    "sidebarTitle": "Tu cuenta",
+    "sidebarSubtitle": "Accede a tus reservas activas y pasadas",
+    "myBookings": "Mis reservas",
+    "upcoming": "Próximas",
+    "past": "Pasadas",
+    "cancelled": "Canceladas",
+    "emptyTitle": "Todavía no tienes reservas",
+    "emptyDescription": "Cuando confirmes una estadía, aparecerá aquí con acceso directo para gestionarla o cancelarla.",
+    "loading": "Cargando tus reservas",
+    "manage": "Gestionar",
+    "viewDetails": "Ver detalle",
+    "cancelReservation": "Cancelar reserva",
+    "cancelUnavailable": "Solo las reservas confirmadas pueden cancelarse.",
+    "modifiedReservationNoActions": "No se puede modificar o cancelar esta reserva dado que ha sido modificada.",
+    "additionalPaymentAtCheckIn": "El pago adicional se realizará en el lugar de la reserva al momento de realizar check-in.",
+    "locationFallback": "Ubicación pendiente",
+    "guestCount": "{count} huéspedes",
+    "totalPrice": "Precio total",
+    "estimatedPrice": "Precio estimado"
+  },
+  "auth": {
+>>>>>>> b7150ce5fde77a8febe77c32778b1ef0870b4ccb
     "hero": {
       "title": "Explora el mundo con confianza.",
       "description": "Accede a ofertas exclusivas, gestiona tus itinerarios y descubre lugares increÃ­bles alrededor del mundo."

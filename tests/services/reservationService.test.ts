@@ -147,7 +147,7 @@ describe('reservationService', () => {
   })
 
   describe('getReservationsByUser', () => {
-    it('sends GET request for reservations by user', async () => {
+    it('sends GET request without query string when statusGroup is omitted', async () => {
       const mockReservations = [{ id: 'res-1', reservation: mockReservationResponse }]
       mockFetch.mockResolvedValue(mockReservations)
 
@@ -159,6 +159,52 @@ describe('reservationService', () => {
         headers: { 'Content-Type': 'application/json' }
       })
       expect(result).toEqual(mockReservations)
+    })
+
+    it('appends ?status_group=active when statusGroup is "active"', async () => {
+      mockFetch.mockResolvedValue([])
+
+      await getReservationsByUser('traveler-1', 'active')
+
+      expect(mockFetch).toHaveBeenCalledWith('/api/v1/reservations/users/traveler-1?status_group=active', {
+        baseURL: 'http://localhost:3003',
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      })
+    })
+
+    it('appends ?status_group=past when statusGroup is "past"', async () => {
+      mockFetch.mockResolvedValue([])
+
+      await getReservationsByUser('traveler-1', 'past')
+
+      expect(mockFetch).toHaveBeenCalledWith('/api/v1/reservations/users/traveler-1?status_group=past', {
+        baseURL: 'http://localhost:3003',
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      })
+    })
+
+    it('appends ?status_group=cancelled when statusGroup is "cancelled"', async () => {
+      mockFetch.mockResolvedValue([])
+
+      await getReservationsByUser('traveler-1', 'cancelled')
+
+      expect(mockFetch).toHaveBeenCalledWith('/api/v1/reservations/users/traveler-1?status_group=cancelled', {
+        baseURL: 'http://localhost:3003',
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      })
+    })
+
+    it('throws API error when request fails', async () => {
+      mockFetch.mockRejectedValue({ statusCode: 403 })
+
+      await expect(getReservationsByUser('traveler-1')).rejects.toEqual({
+        message: 'errors.unknown',
+        statusCode: 403,
+        details: null
+      })
     })
   })
 
