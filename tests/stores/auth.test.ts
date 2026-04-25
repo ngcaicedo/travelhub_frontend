@@ -71,6 +71,20 @@ describe('useAuthStore', () => {
     expect(navigateToMock).toHaveBeenCalledWith('/properties')
   })
 
+  it('verifyOtp redirects hotel role to /hotel/dashboard by default', async () => {
+    const store = useAuthStore()
+    vi.spyOn(authServiceModule.authService, 'verifyOtp').mockResolvedValue({
+      access_token: 'jwt-token',
+      token_type: 'bearer',
+      role: 'hotel'
+    })
+
+    await store.verifyOtp('hotel-a@travelhub.demo', '000000')
+
+    expect(store.role).toBe('hotel')
+    expect(navigateToMock).toHaveBeenCalledWith('/hotel/dashboard')
+  })
+
   it('verifyOtp navigates to redirect path when provided', async () => {
     const store = useAuthStore()
     vi.spyOn(authServiceModule.authService, 'verifyOtp').mockResolvedValue({
