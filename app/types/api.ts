@@ -1,4 +1,4 @@
-export type UserRole = 'traveler' | 'hotel_partner' | 'hotel' | 'admin'
+export type UserRole = 'traveler' | 'hotel' | 'admin'
 
 export interface RegisterPayload {
   email: string
