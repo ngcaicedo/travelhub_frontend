@@ -56,9 +56,14 @@ const wait = async (ms: number) => {
 
 export const useReservations = () => {
   const { t } = useI18n()
+  const authStore = useAuthStore()
 
   const loading = ref(false)
   const error = ref<string | null>(null)
+
+  const resolveTravelerId = (travelerId?: string): string | undefined => {
+    return travelerId || authStore.userId || undefined
+  }
 
   const createReservation = async (data: ReservationRequest): Promise<ReservationResponse> => {
     loading.value = true
@@ -76,12 +81,12 @@ export const useReservations = () => {
     }
   }
 
-  const getReservation = async (reservationId: string): Promise<ReservationResponse> => {
+  const getReservation = async (reservationId: string, travelerId?: string): Promise<ReservationResponse> => {
     loading.value = true
     error.value = null
 
     try {
-      return await getReservationService(reservationId)
+      return await getReservationService(reservationId, resolveTravelerId(travelerId))
     } catch (err: unknown) {
       const apiError = err as { message?: string }
       error.value = apiError.message ? t(apiError.message) : t('errors.unknown')
@@ -147,12 +152,15 @@ export const useReservations = () => {
     }
   }
 
-  const previewCancellation = async (reservationId: string): Promise<ReservationCancellationPreviewResponse> => {
+  const previewCancellation = async (
+    reservationId: string,
+    travelerId?: string
+  ): Promise<ReservationCancellationPreviewResponse> => {
     loading.value = true
     error.value = null
 
     try {
-      return await previewReservationCancellationService(reservationId)
+      return await previewReservationCancellationService(reservationId, resolveTravelerId(travelerId))
     } catch (err: unknown) {
       const apiError = err as { message?: string }
       error.value = apiError.message ? t(apiError.message) : t('errors.unknown')
@@ -204,7 +212,8 @@ export const useReservations = () => {
 
   const pollReservationUntilFinal = async (
     reservationId: string,
-    options: PollReservationOptions = {}
+    options: PollReservationOptions = {},
+    travelerId?: string
   ): Promise<ReservationPollResult> => {
     const maxAttempts = options.maxAttempts ?? DEFAULT_POLL_ATTEMPTS
     const intervalMs = options.intervalMs ?? DEFAULT_POLL_INTERVAL_MS
@@ -215,9 +224,11 @@ export const useReservations = () => {
 
     let lastReservation: ReservationResponse | null = null
 
+    const resolvedTravelerId = resolveTravelerId(travelerId)
+
     try {
       for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
-        lastReservation = await getReservationService(reservationId)
+        lastReservation = await getReservationService(reservationId, resolvedTravelerId)
 
         if (terminalStatuses.includes(lastReservation.status)) {
           return {
@@ -233,7 +244,7 @@ export const useReservations = () => {
       }
 
       if (!lastReservation) {
-        lastReservation = await getReservationService(reservationId)
+        lastReservation = await getReservationService(reservationId, resolvedTravelerId)
       }
 
       return {
