@@ -1,31 +1,51 @@
 <script setup lang="ts">
-import type { NavigationMenuItem } from '@nuxt/ui'
-
 const { t } = useI18n()
 
-const items = computed<NavigationMenuItem[]>(() => [
+const steps = computed(() => [
   {
+    value: 'checkout',
     label: t('payments.compliance.steps.checkout'),
-    icon: 'i-lucide-credit-card',
     active: true
   },
   {
+    value: 'tokenization',
     label: t('payments.compliance.steps.tokenization'),
-    icon: 'i-lucide-shield-check'
+    active: false
   },
   {
+    value: 'confirmation',
     label: t('payments.compliance.steps.confirmation'),
-    icon: 'i-lucide-badge-check'
+    active: false
   }
 ])
 </script>
 
 <template>
-  <UNavigationMenu
-    :items="items"
-    highlight
-    color="primary"
-    variant="link"
-    class="w-full"
-  />
+  <nav
+    aria-label="Payment security progress"
+    class="mb-6"
+  >
+    <UNavigationMenu
+      :items="steps"
+      orientation="horizontal"
+      highlight
+      highlight-color="primary"
+      color="primary"
+      variant="pill"
+      :ui="{
+        root: 'rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm',
+        list: 'flex flex-wrap items-center gap-3',
+        item: 'relative',
+        link: 'rounded-full px-3 py-2 text-sm font-medium',
+        viewportWrapper: 'hidden',
+        indicator: 'hidden'
+      }"
+    >
+      <template #item="{ item }">
+        <span :aria-current="item.active ? 'step' : undefined">
+          {{ item.label }}
+        </span>
+      </template>
+    </UNavigationMenu>
+  </nav>
 </template>
