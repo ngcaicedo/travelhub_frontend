@@ -569,7 +569,7 @@ definePageMeta({
               <div class="flex flex-wrap gap-3">
                 <UButton
                   data-cy="payment-confirmation-view-reservations"
-                  icon="i-lucide-suitcase"
+                  icon="i-lucide-luggage"
                   class="rounded-xl px-4 py-2 text-[14px] font-semibold"
                   @click="goToReservations"
                 >

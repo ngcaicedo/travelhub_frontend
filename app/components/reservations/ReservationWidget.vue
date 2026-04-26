@@ -3,10 +3,10 @@ import { useI18n } from '#imports'
 import type { ReservationRequest } from '~/types/reservations'
 import {
   calculateStayDuration,
-  calculateTotalPrice,
   formatCurrency,
   validateReservationDates
 } from '~/utils/validation'
+import { computeCanonicalBreakdown } from '~/utils/pricing'
 import { useReservations } from '~/composables/useReservations'
 import { useAuthStore } from '~/stores/auth'
 
@@ -83,17 +83,22 @@ const stayDuration = computed(() => {
   return 0
 })
 
-const totalPrice = computed(() => {
-  if (stayDuration.value > 0) {
-    return calculateTotalPrice(
-      props.property.price_per_night,
-      stayDuration.value,
-      props.property.currency,
-      numberOfGuests.value
-    )
-  }
-  return 0
+const breakdown = computed(() => {
+  if (stayDuration.value <= 0) return null
+  return computeCanonicalBreakdown({
+    pricePerNight: props.property.price_per_night,
+    cleaningFee: props.property.cleaning_fee ?? 0,
+    taxRate: props.property.tax_rate ?? 0,
+    nights: stayDuration.value,
+    guests: numberOfGuests.value
+  })
 })
+
+const totalPrice = computed(() => (breakdown.value ? breakdown.value.totalInCents / 100 : 0))
+const accommodationAmount = computed(() => (breakdown.value ? breakdown.value.accommodationInCents / 100 : 0))
+const cleaningAmount = computed(() => (breakdown.value ? breakdown.value.cleaningFeeInCents / 100 : 0))
+const serviceFeeAmount = computed(() => (breakdown.value ? breakdown.value.serviceFeeInCents / 100 : 0))
+const taxesAmount = computed(() => (breakdown.value ? breakdown.value.taxesInCents / 100 : 0))
 
 const canBook = computed(() => {
   if (!checkInDateObj.value || !checkOutDateObj.value) return false
@@ -291,8 +296,29 @@ watch(() => [props.initialCheckInDate, props.initialCheckOutDate, props.initialN
         class="space-y-2 text-sm border-t border-b border-gray-200 py-4"
       >
         <div class="flex justify-between text-gray-700">
-          <span>{{ formatCurrency(props.property.price_per_night, props.property.currency, locale) }} × {{ stayDuration }} {{ t(stayDuration === 1 ? 'common.night' : 'common.nights') }}</span>
-          <span>{{ formatCurrency(props.property.price_per_night * stayDuration, props.property.currency, locale) }}</span>
+          <span>{{ formatCurrency(props.property.price_per_night, props.property.currency, locale) }} × {{ stayDuration }} {{ t(stayDuration === 1 ? 'common.night' : 'common.nights') }} × {{ numberOfGuests }} {{ t(numberOfGuests === 1 ? 'common.guest' : 'common.guests') }}</span>
+          <span>{{ formatCurrency(accommodationAmount, props.property.currency, locale) }}</span>
+        </div>
+        <div
+          v-if="cleaningAmount > 0"
+          class="flex justify-between text-gray-700"
+        >
+          <span>{{ t('payments.booking.lines.cleaning') }}</span>
+          <span>{{ formatCurrency(cleaningAmount, props.property.currency, locale) }}</span>
+        </div>
+        <div
+          v-if="serviceFeeAmount > 0"
+          class="flex justify-between text-gray-700"
+        >
+          <span>{{ t('payments.booking.lines.service') }}</span>
+          <span>{{ formatCurrency(serviceFeeAmount, props.property.currency, locale) }}</span>
+        </div>
+        <div
+          v-if="taxesAmount > 0"
+          class="flex justify-between text-gray-700"
+        >
+          <span>{{ t('payments.booking.lines.taxes') }}</span>
+          <span>{{ formatCurrency(taxesAmount, props.property.currency, locale) }}</span>
         </div>
         <div class="flex justify-between font-semibold text-lg text-gray-900 pt-2 border-t border-gray-100">
           <span>{{ t('booking.total') }}</span>

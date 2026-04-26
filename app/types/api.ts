@@ -61,6 +61,17 @@ export interface Property {
   cleaning_fee?: number
 }
 
+export interface PriceBreakdown {
+  accommodation_in_cents: number
+  cleaning_fee_in_cents: number
+  service_fee_in_cents: number
+  taxes_in_cents: number
+  total_in_cents: number
+  currency: string
+  nights: number
+  nightly_rate_in_cents: number
+}
+
 export interface Review {
   id: string
   author: string

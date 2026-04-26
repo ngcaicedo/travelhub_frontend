@@ -398,7 +398,7 @@ definePageMeta({
             class="rounded-[28px] border border-dashed border-slate-300 bg-white px-8 py-14 text-center shadow-[0_18px_60px_rgba(15,23,42,0.04)]"
           >
             <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-slate-100">
-              <UIcon name="i-lucide-suitcase" class="h-8 w-8 text-slate-500" />
+              <UIcon name="i-lucide-luggage" class="h-8 w-8 text-slate-500" />
             </div>
             <h2 class="mt-5 text-2xl font-bold tracking-tight text-slate-900">
               {{ t('reservationsList.emptyTitle') }}
@@ -421,8 +421,7 @@ definePageMeta({
             <article
               v-for="reservation in filteredReservations"
               :key="reservation.id"
-              class="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_60px_rgba(15,23,42,0.06)] cursor-pointer transition-shadow hover:shadow-[0_24px_70px_rgba(15,23,42,0.11)]"
-              @click="router.push(`/reservations/${reservation.id}`)"
+              class="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_60px_rgba(15,23,42,0.06)]"
             >
               <div class="grid lg:grid-cols-[260px_1fr]">
                 <div class="relative min-h-[240px] overflow-hidden bg-slate-100 lg:min-h-full">
