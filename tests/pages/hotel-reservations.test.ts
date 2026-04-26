@@ -41,7 +41,7 @@ const textMatchers = {
   dashboard: ['Dashboard de reservas', 'Reservations dashboard', 'Painel de reservas'],
   confirm: ['Confirmar', 'Confirm'],
   cancel: ['Cancelar', 'Cancel'],
-  cancelModalTitle: ['Confirmar cancelación', 'Confirm cancellation', 'Confirmar cancelamento'],
+  cancelModalTitle: ['Confirmar cancelaciÃ³n', 'Confirm cancellation', 'Confirmar cancelamento'],
   reservationSummary: ['Resumen de la reserva', 'Reservation summary', 'Resumo da reserva']
 }
 
@@ -101,7 +101,8 @@ describe('HotelReservationsPage', () => {
     expect(confirmHotelReservationMock).toHaveBeenCalledWith(
       'res-1',
       'jwt-token',
-      expect.stringMatching(/manual hotel confirmation|confirmaci.n manual del hotel|confirma..o manual do hotel/i)
+      expect.stringMatching(/manual hotel confirmation|confirmaci.n manual del hotel|confirma..o manual do hotel/i),
+      expect.any(String)
     )
   })
 
@@ -135,6 +136,35 @@ describe('HotelReservationsPage', () => {
     expect(confirmCancelButton).toBeTruthy()
     confirmCancelButton?.click()
 
-    expect(cancelHotelReservationMock).toHaveBeenCalledWith('res-1', 'jwt-token', 'maintenance', undefined)
+    expect(cancelHotelReservationMock).toHaveBeenCalledWith('res-1', 'jwt-token', 'maintenance', undefined, expect.any(String))
+  })
+
+  it('passes cancellation note for predefined reasons', async () => {
+    const wrapper = await mountSuspended(HotelReservationsPage)
+    const cancelButton = findButtonByText(wrapper, textMatchers.cancel)
+
+    expect(cancelButton).toBeTruthy()
+    await cancelButton!.trigger('click')
+    await new Promise(resolve => setTimeout(resolve, 0))
+
+    const textarea = document.querySelector('textarea') as HTMLTextAreaElement | null
+    expect(textarea).toBeTruthy()
+    textarea!.value = 'Hubo un ajuste operativo interno.'
+    textarea!.dispatchEvent(new Event('input'))
+
+    const confirmCancelButton = Array.from(document.querySelectorAll('button')).find(button =>
+      includesAnyText(button.textContent || '', textMatchers.cancelModalTitle)
+    ) as HTMLButtonElement | undefined
+
+    expect(confirmCancelButton).toBeTruthy()
+    confirmCancelButton?.click()
+
+    expect(cancelHotelReservationMock).toHaveBeenCalledWith(
+      'res-1',
+      'jwt-token',
+      'maintenance',
+      'Hubo un ajuste operativo interno.',
+      expect.any(String)
+    )
   })
 })
