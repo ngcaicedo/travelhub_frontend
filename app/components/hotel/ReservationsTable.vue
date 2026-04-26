@@ -15,6 +15,7 @@ const emit = defineEmits<{
   'update:page': [number]
   'update:sortBy': ['check_in_date' | 'created_at' | 'total_price']
   'update:sortDir': ['asc' | 'desc']
+  'select': [HostReservationItem]
 }>()
 
 const { t, locale } = useI18n()
@@ -68,8 +69,11 @@ const columns = computed<TableColumn<HostReservationItem>[]>(() => {
       accessorKey: 'total_price',
       header: t('hotel.dashboard.table.headers.amount'),
       enableSorting: true,
-      meta: { class: { td: 'text-right', th: 'text-right' } }
-    }
+      meta: { class: { td: 'text-right', th: 'text-right' } }    },
+    {
+      id: 'actions',
+      header: '',
+      meta: { class: { td: 'w-10 text-right', th: 'w-10' } }    }
   ]
 })
 
@@ -165,6 +169,17 @@ const currentPage = computed({
           </span>
           <HotelStatusBadge :status="row.original.status" />
         </div>
+      </template>
+
+      <template #actions-cell="{ row }">
+        <UButton
+          variant="ghost"
+          color="neutral"
+          size="xs"
+          icon="i-lucide-chevron-right"
+          :aria-label="t('hotel.detail.viewDetail')"
+          @click="emit('select', row.original)"
+        />
       </template>
     </UTable>
 
