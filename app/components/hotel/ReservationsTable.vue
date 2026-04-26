@@ -174,14 +174,16 @@ const currentPage = computed({
       </template>
 
       <template #actions-cell="{ row }">
-        <UButton
-          variant="ghost"
-          color="neutral"
-          size="xs"
-          icon="i-lucide-chevron-right"
-          :aria-label="t('hotel.detail.viewDetail')"
-          @click="emit('select', row.original)"
-        />
+        <slot name="actions" :reservation="row.original">
+          <UButton
+            variant="ghost"
+            color="neutral"
+            size="xs"
+            icon="i-lucide-chevron-right"
+            :aria-label="t('hotel.detail.viewDetail')"
+            @click="emit('select', row.original)"
+          />
+        </slot>
       </template>
     </UTable>
 

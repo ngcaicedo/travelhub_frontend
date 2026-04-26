@@ -4,7 +4,6 @@ import type {
   HotelReservationListItem,
   ReservationCancellationReason
 } from '~/types/reservations'
-import type { HostReservationItem } from '~/types/hotel'
 import {
   cancelHotelReservation,
   confirmHotelReservation,
