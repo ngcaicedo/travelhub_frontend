@@ -7,6 +7,7 @@ import {
   validateReservationDates
 } from '~/utils/validation'
 import { computeCanonicalBreakdown } from '~/utils/pricing'
+import { parseApiDateToTimestamp } from '~/utils/dates'
 import { useReservations } from '~/composables/useReservations'
 import { useAuthStore } from '~/stores/auth'
 
@@ -153,9 +154,8 @@ const handleSubmit = async () => {
     }
 
     const response = await createReservation(reservationData)
-    const lockExpiresAt = response.hold_expires_at
-      ? new Date(response.hold_expires_at).getTime()
-      : (Date.now() + reservationLockDurationMs)
+    const lockExpiresAt = parseApiDateToTimestamp(response.hold_expires_at)
+      ?? (Date.now() + reservationLockDurationMs)
 
     // Redirigir al checkout para completar el pago con ventana de bloqueo.
     await router.push({

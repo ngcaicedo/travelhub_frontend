@@ -124,9 +124,11 @@
       "warningConfirmed": "Once confirmed, the automatic refund process will begin according to the active cancellation policy. This action cannot be undone.",
       "warningPending": "Once confirmed, the reservation will be cancelled and the room will become available again. This action cannot be undone.",
       "keepReservation": "Keep reservation",
-      "confirmAction": "Confirm cancellation"
+      "confirmAction": "Confirm cancellation",
+      "staySummaryWithRoom": "{nights} nights • {room}"
     }
-  },  "auth": {
+  },
+  "auth": {
     "hero": {
       "title": "Explore the world with confidence.",
       "description": "Access exclusive deals, manage your itineraries, and discover hidden gems around the globe."

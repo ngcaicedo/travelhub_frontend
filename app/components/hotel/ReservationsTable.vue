@@ -69,11 +69,13 @@ const columns = computed<TableColumn<HostReservationItem>[]>(() => {
       accessorKey: 'total_price',
       header: t('hotel.dashboard.table.headers.amount'),
       enableSorting: true,
-      meta: { class: { td: 'text-right', th: 'text-right' } }    },
+      meta: { class: { td: 'text-right', th: 'text-right' } }
+    },
     {
       id: 'actions',
       header: '',
-      meta: { class: { td: 'w-10 text-right', th: 'w-10' } }    }
+      meta: { class: { td: 'w-10 text-right', th: 'w-10' } }
+    }
   ]
 })
 
@@ -172,14 +174,16 @@ const currentPage = computed({
       </template>
 
       <template #actions-cell="{ row }">
-        <UButton
-          variant="ghost"
-          color="neutral"
-          size="xs"
-          icon="i-lucide-chevron-right"
-          :aria-label="t('hotel.detail.viewDetail')"
-          @click="emit('select', row.original)"
-        />
+        <slot name="actions" :reservation="row.original">
+          <UButton
+            variant="ghost"
+            color="neutral"
+            size="xs"
+            icon="i-lucide-chevron-right"
+            :aria-label="t('hotel.detail.viewDetail')"
+            @click="emit('select', row.original)"
+          />
+        </slot>
       </template>
     </UTable>
 

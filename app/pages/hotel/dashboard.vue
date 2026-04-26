@@ -1,5 +1,10 @@
 <script setup lang="ts">
 import type { HostReservationItem, HostReservationsFilters } from '~/types/hotel'
+import type { ReservationCancellationReason } from '~/types/reservations'
+import {
+  cancelHotelReservation,
+  confirmHotelReservation,
+} from '~/services/reservationService'
 
 definePageMeta({
   layout: 'hotel',
@@ -8,6 +13,7 @@ definePageMeta({
 
 const router = useRouter()
 const { t, locale } = useI18n()
+const authStore = useAuthStore()
 const {
   reservations,
   metrics,
@@ -31,8 +37,6 @@ const initialEnd = today.toISOString().slice(0, 10)
 
 const filters = reactive<HostReservationsFilters>({
   status: [],
-  start_date: initialStart,
-  end_date: initialEnd,
   guest_name: '',
   sort_by: 'check_in_date',
   sort_dir: 'desc',
@@ -45,19 +49,33 @@ const dateRangeDraft = reactive({
   end_date: initialEnd,
 })
 
+const analyticsRange = reactive({
+  start_date: initialStart,
+  end_date: initialEnd,
+})
+
 const selectedCurrency = ref<string | undefined>(undefined)
+const actingId = ref<string | null>(null)
+const success = ref<string | null>(null)
+const cancelTargetId = ref<string | null>(null)
+const cancelReason = ref<ReservationCancellationReason>('maintenance')
+const cancelNote = ref('')
 
 function buildFilters(): HostReservationsFilters {
-  const out: HostReservationsFilters = { ...filters }
-  if (out.start_date) out.start_date = new Date(out.start_date).toISOString()
-  if (out.end_date) out.end_date = new Date(out.end_date).toISOString()
-  return out
+  return {
+    status: [...(filters.status ?? [])],
+    guest_name: filters.guest_name,
+    sort_by: filters.sort_by,
+    sort_dir: filters.sort_dir,
+    page: filters.page,
+    page_size: filters.page_size,
+  }
 }
 
 function buildRange() {
   return {
-    start_date: filters.start_date ? new Date(filters.start_date).toISOString() : undefined,
-    end_date: filters.end_date ? new Date(filters.end_date).toISOString() : undefined,
+    start_date: analyticsRange.start_date ? new Date(analyticsRange.start_date).toISOString() : undefined,
+    end_date: analyticsRange.end_date ? new Date(analyticsRange.end_date).toISOString() : undefined,
     currency: selectedCurrency.value,
   }
 }
@@ -77,10 +95,11 @@ watch(
 )
 
 function applyDateRange() {
-  filters.start_date = dateRangeDraft.start_date
-  filters.end_date = dateRangeDraft.end_date
-  filters.page = 1
-  reload()
+  analyticsRange.start_date = dateRangeDraft.start_date
+  analyticsRange.end_date = dateRangeDraft.end_date
+  const range = buildRange()
+  refreshMetrics(range)
+  refreshTrends({ ...range, granularity: 'week' })
 }
 
 function resetDateRange() {
@@ -92,10 +111,131 @@ function resetDateRange() {
 function onTableFiltersUpdate(value: HostReservationsFilters) {
   Object.assign(filters, value, {
     page: 1,
-    start_date: filters.start_date,
-    end_date: filters.end_date,
   })
   refreshReservations(buildFilters())
+}
+
+const cancellationReasonOptions = computed(() => [
+  { label: t('hotelReservations.cancellationReasons.maintenance'), value: 'maintenance' },
+  { label: t('hotelReservations.cancellationReasons.overbooking'), value: 'overbooking' },
+  { label: t('hotelReservations.cancellationReasons.hotel_policy'), value: 'hotel_policy' },
+  { label: t('hotelReservations.cancellationReasons.other'), value: 'other' },
+])
+
+const cancelTargetReservation = computed(() =>
+  reservations.value?.items.find(reservation => reservation.id === cancelTargetId.value) || null
+)
+
+const isCancelModalOpen = computed({
+  get: () => !!cancelTargetId.value,
+  set: (open: boolean) => {
+    if (!open) closeCancelModal()
+  }
+})
+
+const isCancellationNoteRequired = computed(() => cancelReason.value === 'other')
+const cancellationNote = computed(() => cancelNote.value.trim())
+const isCancellationSubmitDisabled = computed(() =>
+  !cancelTargetReservation.value ||
+  actingId.value === cancelTargetId.value ||
+  (isCancellationNoteRequired.value && !cancellationNote.value)
+)
+
+function canConfirm(status: string) {
+  return status === 'pending_payment'
+}
+
+function canCancel(status: string) {
+  return status === 'pending_payment' || status === 'confirmed' || status === 'modification_confirmed'
+}
+
+function reservationStatusLabel(status: string) {
+  return t(`hotelReservations.status.${status}` as never, status)
+}
+
+
+
+function formatDate(value: string) {
+  return new Date(value).toLocaleDateString(locale.value, {
+    month: 'short',
+    day: '2-digit',
+    year: 'numeric',
+  })
+}
+
+function calculateNights(checkIn: string, checkOut: string) {
+  const inDate = new Date(checkIn).getTime()
+  const outDate = new Date(checkOut).getTime()
+  return Math.max(Math.round((outDate - inDate) / (1000 * 60 * 60 * 24)), 0)
+}
+
+function cancelSummaryPrimary(reservation: HostReservationItem) {
+  return reservation.guest_full_name?.trim() || reservation.room_type?.trim() || '—'
+}
+
+function cancelSummarySecondary(reservation: HostReservationItem) {
+  return reservation.room_type?.trim() || '—'
+}
+
+function openCancelModal(reservationId: string) {
+  cancelTargetId.value = reservationId
+  cancelReason.value = 'maintenance'
+  cancelNote.value = ''
+}
+
+function closeCancelModal() {
+  cancelTargetId.value = null
+  cancelReason.value = 'maintenance'
+  cancelNote.value = ''
+}
+
+async function confirmReservation(reservation: HostReservationItem) {
+  if (!authStore.token) return
+  actingId.value = reservation.id
+  error.value = null
+  success.value = null
+  try {
+    await confirmHotelReservation(
+      reservation.id,
+      authStore.token,
+      t('hotelReservations.actions.confirmReason'),
+      locale.value
+    )
+    success.value = t('hotelReservations.feedback.confirmSuccess')
+    await reload()
+  } catch (err) {
+    error.value = (err as { message?: string }).message || t('hotelReservations.feedback.confirmError')
+  } finally {
+    actingId.value = null
+  }
+}
+
+async function cancelReservation(reservationId: string) {
+  if (!authStore.token) return
+  if (isCancellationNoteRequired.value && !cancellationNote.value) {
+    error.value = t('hotelReservations.feedback.otherReasonRequired')
+    return
+  }
+
+  actingId.value = reservationId
+  error.value = null
+  success.value = null
+  try {
+    await cancelHotelReservation(
+      reservationId,
+      authStore.token,
+      cancelReason.value,
+      cancellationNote.value || undefined,
+      locale.value
+    )
+    closeCancelModal()
+    success.value = t('hotelReservations.feedback.cancelSuccess')
+    await reload()
+  } catch (err) {
+    error.value = (err as { message?: string }).message || t('hotelReservations.feedback.cancelError')
+  } finally {
+    actingId.value = null
+  }
 }
 
 onMounted(() => reload())
@@ -124,9 +264,9 @@ const occupancyPct = computed(() => {
 })
 
 const rangeLabel = computed(() => {
-  if (!filters.start_date || !filters.end_date) return ''
+  if (!analyticsRange.start_date || !analyticsRange.end_date) return ''
   const fmt = (iso: string) => new Date(iso).toLocaleDateString(locale.value, { month: 'short', day: '2-digit' })
-  return `${fmt(filters.start_date)} – ${fmt(filters.end_date)}`
+  return `${fmt(analyticsRange.start_date)} – ${fmt(analyticsRange.end_date)}`
 })
 
 const currencyOptions = computed(() => {
@@ -147,7 +287,9 @@ watch(
 
 function onCurrencyChange(value: string) {
   selectedCurrency.value = value
-  reload()
+  const range = buildRange()
+  refreshMetrics(range)
+  refreshTrends({ ...range, granularity: 'week' })
 }
 </script>
 
@@ -168,6 +310,16 @@ function onCurrencyChange(value: string) {
       color="error"
       :title="t('hotel.dashboard.error')"
       :description="error"
+    />
+
+    <UAlert
+      v-if="success"
+      icon="i-lucide-check-circle-2"
+      color="success"
+      :title="t('hotelReservations.feedback.successTitle')"
+      :description="success"
+      closable
+      @close="success = null"
     />
 
     <UCard :ui="{ body: 'p-4' }">
@@ -249,6 +401,195 @@ function onCurrencyChange(value: string) {
           @update:model-value="onTableFiltersUpdate"
         />
       </template>
+
+      <template #actions="{ reservation }">
+        <div class="flex justify-end gap-2">
+          <UButton
+            v-if="canConfirm(reservation.status)"
+            icon="i-lucide-check"
+            color="primary"
+            size="xs"
+            :loading="actingId === reservation.id"
+            @click="confirmReservation(reservation)"
+          >
+            {{ t('hotelReservations.actions.confirm') }}
+          </UButton>
+          <UButton
+            v-if="canCancel(reservation.status)"
+            icon="i-lucide-ban"
+            color="error"
+            variant="soft"
+            size="xs"
+            @click="openCancelModal(reservation.id)"
+          >
+            {{ t('hotelReservations.actions.cancel') }}
+          </UButton>
+        </div>
+      </template>
     </HotelReservationsTable>
+
+    <UModal
+      v-model:open="isCancelModalOpen"
+      :title="t('hotelReservations.cancelModal.title')"
+      :description="t('hotelReservations.cancelModal.description')"
+      close-icon="i-lucide-x"
+      :close="{
+        color: 'neutral',
+        variant: 'ghost',
+        class: 'rounded-full text-slate-400 hover:bg-transparent hover:text-slate-600'
+      }"
+      :ui="{
+        content: 'max-w-[512px] overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.24)]',
+        header: 'border-b border-slate-200 px-6 py-6 sm:px-8',
+        body: 'px-6 py-7 sm:px-8',
+        footer: 'border-t border-slate-200 bg-slate-50 px-6 py-6 sm:px-8'
+      }"
+    >
+      <template #title>
+        <div class="flex items-center gap-4">
+          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-rose-100 text-rose-600">
+            <UIcon
+              name="i-lucide-badge-x"
+              class="h-6 w-6"
+            />
+          </div>
+          <p class="text-[22px] font-bold tracking-tight text-slate-900">
+            {{ t('hotelReservations.cancelModal.title') }}
+          </p>
+        </div>
+      </template>
+
+      <template #body>
+        <div
+          v-if="cancelTargetReservation"
+          class="space-y-7"
+        >
+          <div class="rounded-2xl border border-[#d8e2f0] bg-[#f5f8ff] px-4 py-4 sm:px-5">
+            <p class="text-xs font-semibold uppercase tracking-[0.14em] text-[#255cff]">
+              {{ t('hotelReservations.cancelModal.summaryTitle') }}
+            </p>
+            <div class="mt-3 space-y-2.5">
+              <p class="text-[18px] font-bold leading-7 text-slate-900">
+                {{ cancelSummaryPrimary(cancelTargetReservation) }}
+              </p>
+              <p class="text-sm font-medium leading-6 text-slate-500 break-words">
+                {{ t('hotelReservations.cancelModal.reservationId', { id: cancelTargetReservation.id }) }}
+              </p>
+              <p class="flex items-center gap-2 text-sm font-medium leading-6 text-slate-700">
+                <UIcon
+                  name="i-lucide-calendar-days"
+                  class="h-4 w-4 shrink-0 text-slate-400"
+                />
+                <span>{{ formatDate(cancelTargetReservation.check_in_date) }} - {{ formatDate(cancelTargetReservation.check_out_date) }}</span>
+              </p>
+              <p class="text-sm leading-6 text-slate-500">
+                {{ t('hotelReservations.cancelModal.staySummaryWithRoom', {
+                  nights: calculateNights(cancelTargetReservation.check_in_date, cancelTargetReservation.check_out_date),
+                  room: cancelSummarySecondary(cancelTargetReservation)
+                }) }}
+              </p>
+              <p class="text-sm leading-6 text-slate-600">
+                {{ t('hotelReservations.cancelModal.guestsAndStatus', {
+                  guests: cancelTargetReservation.number_of_guests,
+                  status: reservationStatusLabel(cancelTargetReservation.status)
+                }) }}
+              </p>
+            </div>
+          </div>
+
+          <div class="space-y-3">
+            <label
+              for="dashboard-reservation-cancel-reason"
+              class="text-[15px] font-semibold text-slate-700"
+            >
+              {{ t('hotelReservations.cancelModal.reasonLabel') }}
+            </label>
+            <USelect
+              id="dashboard-reservation-cancel-reason"
+              v-model="cancelReason"
+              :items="cancellationReasonOptions"
+              :placeholder="t('hotelReservations.cancelModal.reasonPlaceholder')"
+              class="w-full"
+              :ui="{
+                base: 'h-12 rounded-xl border-slate-200 bg-white text-slate-700',
+                trailingIcon: 'text-slate-400'
+              }"
+              data-testid="dashboard-cancel-reason-select"
+            />
+          </div>
+
+          <div class="space-y-3">
+            <label
+              for="dashboard-reservation-cancel-note"
+              class="text-[15px] font-semibold text-slate-700"
+            >
+              {{ t('hotelReservations.cancelModal.notesLabel') }}
+              {{ isCancellationNoteRequired
+                ? t('hotelReservations.cancelModal.requiredTag')
+                : t('hotelReservations.cancelModal.optionalTag') }}
+            </label>
+            <UTextarea
+              id="dashboard-reservation-cancel-note"
+              v-model="cancelNote"
+              :rows="4"
+              autoresize
+              class="w-full"
+              :ui="{
+                base: 'min-h-[108px] rounded-xl border-slate-200 bg-slate-50 px-4 py-3 text-slate-700 placeholder:text-slate-400'
+              }"
+              :placeholder="t('hotelReservations.cancelModal.notesPlaceholder')"
+              data-testid="dashboard-cancel-note-textarea"
+            />
+            <p
+              v-if="isCancellationNoteRequired && !cancellationNote"
+              class="text-sm font-medium text-rose-600"
+            >
+              {{ t('hotelReservations.cancelModal.notesRequiredMessage') }}
+            </p>
+          </div>
+
+          <UAlert
+            color="warning"
+            variant="subtle"
+            icon="i-lucide-circle-alert"
+            :title="t('hotelReservations.cancelModal.warningTitle')"
+            class="rounded-2xl border border-amber-200 bg-amber-50"
+            :ui="{
+              title: 'text-[15px] font-semibold text-amber-700',
+              description: 'text-[15px] leading-7 text-amber-700',
+              icon: 'text-amber-500'
+            }"
+            :description="cancelTargetReservation.status === 'confirmed'
+              ? t('hotelReservations.cancelModal.warningConfirmed')
+              : t('hotelReservations.cancelModal.warningPending')"
+          />
+        </div>
+      </template>
+
+      <template #footer>
+        <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+          <UButton
+            color="neutral"
+            variant="outline"
+            size="xl"
+            class="justify-center rounded-xl border-slate-200 px-6 py-3 font-semibold text-slate-700"
+            @click="closeCancelModal()"
+          >
+            {{ t('hotelReservations.cancelModal.keepReservation') }}
+          </UButton>
+          <UButton
+            color="error"
+            icon="i-lucide-ban"
+            :disabled="isCancellationSubmitDisabled"
+            :loading="actingId === cancelTargetId"
+            size="xl"
+            class="justify-center rounded-xl bg-red-500 px-6 py-3 font-semibold text-white hover:bg-red-600 disabled:bg-red-200"
+            @click="cancelTargetReservation && cancelReservation(cancelTargetReservation.id)"
+          >
+            {{ t('hotelReservations.cancelModal.confirmAction') }}
+          </UButton>
+        </div>
+      </template>
+    </UModal>
   </div>
 </template>
