@@ -69,7 +69,12 @@ const columns = computed<TableColumn<HostReservationItem>[]>(() => {
       header: t('hotel.dashboard.table.headers.amount'),
       enableSorting: true,
       meta: { class: { td: 'text-right', th: 'text-right' } }
-    }
+    },
+    {
+      id: 'actions',
+      header: '',
+      meta: { class: { td: 'text-right', th: 'w-[1%]' } }
+    },
   ]
 })
 
@@ -165,6 +170,13 @@ const currentPage = computed({
           </span>
           <HotelStatusBadge :status="row.original.status" />
         </div>
+      </template>
+
+      <template #actions-cell="{ row }">
+        <slot
+          name="actions"
+          :reservation="row.original"
+        />
       </template>
     </UTable>
 

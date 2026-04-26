@@ -189,7 +189,7 @@ async function cancelReservation(reservationId: string) {
       reservationId,
       authStore.token,
       cancelReason.value,
-      cancelReason.value === 'other' ? cancellationNote.value : undefined
+      cancellationNote.value || undefined
     )
     closeCancelModal()
     success.value = t('hotelReservations.feedback.cancelSuccess')
