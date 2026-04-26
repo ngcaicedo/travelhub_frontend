@@ -3,6 +3,7 @@ import { setActivePinia, createPinia } from 'pinia'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { defineComponent } from 'vue'
 import { useAuthStore } from '~/stores/auth'
+import type { HostReservationDetail } from '~/types/hotel'
 
 const mockGetHostReservationDetail = vi.fn()
 const mockAddHostReservationNote = vi.fn()
@@ -126,8 +127,9 @@ describe('useHostReservationDetail', () => {
     )
 
     expect(result).toEqual(newNote)
-    expect((wrapper.vm.detail as typeof baseDetail).internal_notes).toHaveLength(1)
-    expect((wrapper.vm.detail as typeof baseDetail).internal_notes[0].content).toBe('Necesita cuna extra.')
+    const notes = (wrapper.vm.detail as HostReservationDetail).internal_notes
+    expect(notes).toHaveLength(1)
+    expect(notes[0]?.content).toBe('Necesita cuna extra.')
   })
 
   it('addNote returns null and sets error on failure', async () => {
