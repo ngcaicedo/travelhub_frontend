@@ -153,13 +153,7 @@ function reservationStatusLabel(status: string) {
   return t(`hotelReservations.status.${status}` as never, status)
 }
 
-function formatMoney(amount: string, currency: string) {
-  return new Intl.NumberFormat(locale.value, {
-    style: 'currency',
-    currency: currency || 'COP',
-    maximumFractionDigits: 2,
-  }).format(Number(amount))
-}
+
 
 function formatDate(value: string) {
   return new Date(value).toLocaleDateString(locale.value, {
