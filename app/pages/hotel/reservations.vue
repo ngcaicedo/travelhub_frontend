@@ -58,7 +58,7 @@ definePageMeta({
 })
 
 const cancelTargetReservation = computed(() =>
-  reservations.value.find(reservation => reservation.id === cancelTargetId.value) || null
+  reservations.value.find(reservation => reservation.id === cancelTargetId.value)
 )
 
 const isCancelModalOpen = computed({
@@ -119,12 +119,12 @@ function calculateNights(checkIn: string, checkOut: string) {
   return Math.round(diffMs / (1000 * 60 * 60 * 24))
 }
 
-function cancelSummaryPrimary(reservation: HostReservationItem) {
-  return reservation.guest_full_name?.trim() || reservation.room_type?.trim() || propertyName(reservation.id_property) || '—'
+function cancelSummaryPrimary(reservation: HotelReservationListItem) {
+  return propertyName(reservation.id_property) || '—'
 }
 
-function cancelSummarySecondary(reservation: HostReservationItem) {
-  return reservation.room_type?.trim() || propertyName(reservation.id_property) || '—'
+function cancelSummarySecondary(reservation: HotelReservationListItem) {
+  return propertyName(reservation.id_property) || '—'
 }
 
 function openCancelModal(reservationId: string) {
