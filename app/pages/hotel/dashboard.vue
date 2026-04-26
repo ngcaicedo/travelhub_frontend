@@ -424,6 +424,14 @@ function onCurrencyChange(value: string) {
           >
             {{ t('hotelReservations.actions.cancel') }}
           </UButton>
+          <UButton
+            variant="ghost"
+            color="neutral"
+            size="xs"
+            icon="i-lucide-chevron-right"
+            :aria-label="t('hotel.detail.viewDetail')"
+            @click="onReservationSelect(reservation)"
+          />
         </div>
       </template>
     </HotelReservationsTable>
