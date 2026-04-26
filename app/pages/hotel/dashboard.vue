@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import type { HostReservationsFilters } from '~/types/hotel'
+import type { HostReservationItem, HostReservationsFilters } from '~/types/hotel'
 
 definePageMeta({
   layout: 'hotel',
   middleware: 'hotel-only',
 })
 
+const router = useRouter()
 const { t, locale } = useI18n()
 const {
   reservations,
@@ -17,6 +18,10 @@ const {
   refreshMetrics,
   refreshTrends,
 } = useHostReservations()
+
+function onReservationSelect(item: HostReservationItem) {
+  router.push(`/hotel/reservations/${item.id}`)
+}
 
 const today = new Date()
 const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000)
@@ -236,6 +241,7 @@ function onCurrencyChange(value: string) {
       @update:page="(value) => (filters.page = value)"
       @update:sort-by="(value) => (filters.sort_by = value)"
       @update:sort-dir="(value) => (filters.sort_dir = value)"
+      @select="onReservationSelect"
     >
       <template #filters>
         <HotelReservationFilters

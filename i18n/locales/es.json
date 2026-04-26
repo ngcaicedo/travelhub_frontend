@@ -781,6 +781,76 @@
           "status": "Estado"
         }
       }
+    },
+    "detail": {
+      "metaTitle": "Detalle de reserva",
+      "backToDashboard": "Volver al panel",
+      "viewDetail": "Ver detalle",
+      "reservationNumber": "Reserva #{number}",
+      "sections": {
+        "guest": "Datos del huésped",
+        "reservation": "Detalle de la reserva",
+        "payment": "Desglose del pago",
+        "history": "Historial de cambios",
+        "notes": "Notas internas"
+      },
+      "guest": {
+        "name": "Nombre",
+        "email": "Correo electrónico",
+        "phone": "Teléfono",
+        "noPhone": "No registrado",
+        "noInfo": "Información no disponible"
+      },
+      "reservation": {
+        "checkIn": "Check-in",
+        "checkOut": "Check-out",
+        "nights": "{count} noche | {count} noches",
+        "roomType": "Tipo de habitación",
+        "guests": "Número de huéspedes",
+        "specialRequests": "Solicitudes especiales",
+        "noSpecialRequests": "Sin solicitudes especiales",
+        "status": "Estado"
+      },
+      "payment": {
+        "accommodation": "Alojamiento ({nights} noches)",
+        "cleaningFee": "Limpieza",
+        "serviceFee": "Servicio",
+        "taxes": "Impuestos",
+        "total": "Total",
+        "noBreakdown": "Desglose no disponible"
+      },
+      "history": {
+        "empty": "Sin cambios registrados",
+        "action": "Acción",
+        "from": "De",
+        "to": "A",
+        "reason": "Motivo",
+        "date": "Fecha"
+      },
+      "notes": {
+        "placeholder": "Escribe una nota interna...",
+        "add": "Agregar nota",
+        "adding": "Guardando...",
+        "empty": "Sin notas internas",
+        "by": "Por",
+        "validationError": "La nota debe tener entre 1 y 1000 caracteres."
+      },
+      "actions": {
+        "confirm": "Confirmar reserva",
+        "cancel": "Cancelar reserva",
+        "confirmTitle": "¿Confirmar reserva?",
+        "confirmDesc": "Esta acción cambiará el estado de la reserva a Confirmada.",
+        "cancelTitle": "¿Cancelar reserva?",
+        "cancelDesc": "Esta acción cancelará la reserva. Por favor selecciona el motivo.",
+        "cancelReason": "Motivo de cancelación",
+        "proceed": "Proceder",
+        "abort": "Volver",
+        "success": "Acción realizada correctamente."
+      },
+      "errors": {
+        "notFound": "No se encontró la reserva.",
+        "load": "No se pudo cargar el detalle de la reserva."
+      }
     }
   }
 }
