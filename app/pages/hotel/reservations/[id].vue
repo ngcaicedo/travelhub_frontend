@@ -51,14 +51,6 @@ function formatCents(cents: number, currency: string) {
   }).format(cents / 100)
 }
 
-const nights = computed(() => {
-  if (!detail.value) return 0
-  const r = detail.value.reservation
-  const inDate = new Date(r.check_in_date).getTime()
-  const outDate = new Date(r.check_out_date).getTime()
-  return Math.max(Math.round((outDate - inDate) / (1000 * 60 * 60 * 24)), 0)
-})
-
 // ── Actions ───────────────────────────────────────────────────────────────────
 
 const showConfirmModal = ref(false)
