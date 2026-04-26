@@ -15,6 +15,7 @@ const emit = defineEmits<{
   'update:page': [number]
   'update:sortBy': ['check_in_date' | 'created_at' | 'total_price']
   'update:sortDir': ['asc' | 'desc']
+  'select': [HostReservationItem]
 }>()
 
 const { t, locale } = useI18n()
@@ -73,8 +74,8 @@ const columns = computed<TableColumn<HostReservationItem>[]>(() => {
     {
       id: 'actions',
       header: '',
-      meta: { class: { td: 'text-right', th: 'w-[1%]' } }
-    },
+      meta: { class: { td: 'w-10 text-right', th: 'w-10' } }
+    }
   ]
 })
 
@@ -173,9 +174,13 @@ const currentPage = computed({
       </template>
 
       <template #actions-cell="{ row }">
-        <slot
-          name="actions"
-          :reservation="row.original"
+        <UButton
+          variant="ghost"
+          color="neutral"
+          size="xs"
+          icon="i-lucide-chevron-right"
+          :aria-label="t('hotel.detail.viewDetail')"
+          @click="emit('select', row.original)"
         />
       </template>
     </UTable>

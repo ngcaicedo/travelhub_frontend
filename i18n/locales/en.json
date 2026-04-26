@@ -782,6 +782,76 @@
           "status": "Status"
         }
       }
+    },
+    "detail": {
+      "metaTitle": "Reservation detail",
+      "backToDashboard": "Back to dashboard",
+      "viewDetail": "View detail",
+      "reservationNumber": "Reservation #{number}",
+      "sections": {
+        "guest": "Guest information",
+        "reservation": "Reservation details",
+        "payment": "Payment breakdown",
+        "history": "Change history",
+        "notes": "Internal notes"
+      },
+      "guest": {
+        "name": "Name",
+        "email": "Email",
+        "phone": "Phone",
+        "noPhone": "Not registered",
+        "noInfo": "Information not available"
+      },
+      "reservation": {
+        "checkIn": "Check-in",
+        "checkOut": "Check-out",
+        "nights": "{count} night | {count} nights",
+        "roomType": "Room type",
+        "guests": "Number of guests",
+        "specialRequests": "Special requests",
+        "noSpecialRequests": "No special requests",
+        "status": "Status"
+      },
+      "payment": {
+        "accommodation": "Accommodation ({nights} nights)",
+        "cleaningFee": "Cleaning",
+        "serviceFee": "Service",
+        "taxes": "Taxes",
+        "total": "Total",
+        "noBreakdown": "Breakdown not available"
+      },
+      "history": {
+        "empty": "No changes recorded",
+        "action": "Action",
+        "from": "From",
+        "to": "To",
+        "reason": "Reason",
+        "date": "Date"
+      },
+      "notes": {
+        "placeholder": "Write an internal note...",
+        "add": "Add note",
+        "adding": "Saving...",
+        "empty": "No internal notes",
+        "by": "By",
+        "validationError": "Note must be between 1 and 1000 characters."
+      },
+      "actions": {
+        "confirm": "Confirm reservation",
+        "cancel": "Cancel reservation",
+        "confirmTitle": "Confirm reservation?",
+        "confirmDesc": "This action will change the reservation status to Confirmed.",
+        "cancelTitle": "Cancel reservation?",
+        "cancelDesc": "This action will cancel the reservation. Please select a reason.",
+        "cancelReason": "Cancellation reason",
+        "proceed": "Proceed",
+        "abort": "Go back",
+        "success": "Action completed successfully."
+      },
+      "errors": {
+        "notFound": "Reservation not found.",
+        "load": "Could not load reservation detail."
+      }
     }
   }
 }

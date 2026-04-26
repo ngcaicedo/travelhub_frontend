@@ -1,5 +1,7 @@
 import type {
   HostMetrics,
+  HostReservationDetail,
+  HostReservationInternalNote,
   HostReservationsFilters,
   HostReservationsPage,
   HostRevenueTrends,
@@ -72,6 +74,43 @@ export async function getRevenueTrends(
         headers: authHeaders(token),
       },
     )
+  } catch (error) {
+    throw handleApiError(error)
+  }
+}
+
+export async function getHostReservationDetail(
+  token: string | null,
+  reservationId: string,
+): Promise<HostReservationDetail> {
+  const { reservationsApiUrl } = getApiBaseUrls()
+  try {
+    return await $fetch<HostReservationDetail>(`/api/v1/hotel/reservations/${reservationId}`, {
+      baseURL: reservationsApiUrl,
+      method: 'GET',
+      headers: authHeaders(token),
+    })
+  } catch (error) {
+    throw handleApiError(error)
+  }
+}
+
+export async function addHostReservationNote(
+  token: string | null,
+  reservationId: string,
+  content: string,
+): Promise<HostReservationInternalNote> {
+  const { reservationsApiUrl } = getApiBaseUrls()
+  try {
+    return await $fetch<HostReservationInternalNote>(`/api/v1/hotel/reservations/${reservationId}/notes`, {
+      baseURL: reservationsApiUrl,
+      method: 'POST',
+      body: { content },
+      headers: {
+        ...authHeaders(token),
+        'Content-Type': 'application/json',
+      },
+    })
   } catch (error) {
     throw handleApiError(error)
   }

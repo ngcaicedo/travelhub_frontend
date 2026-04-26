@@ -41,7 +41,7 @@ const textMatchers = {
   dashboard: ['Dashboard de reservas', 'Reservations dashboard', 'Painel de reservas'],
   confirm: ['Confirmar', 'Confirm'],
   cancel: ['Cancelar', 'Cancel'],
-  cancelModalTitle: ['Confirmar cancelación', 'Confirm cancellation', 'Confirmar cancelamento'],
+  cancelModalTitle: ['Confirmar cancelaciÃ³n', 'Confirm cancellation', 'Confirmar cancelamento'],
   reservationSummary: ['Resumen de la reserva', 'Reservation summary', 'Resumo da reserva']
 }
 
