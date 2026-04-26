@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 
-import HotelReservationsPage from '~/pages/hotel/reservations.vue'
+import HotelReservationsPage from '~/pages/hotel/reservations/index.vue'
 
 const navigateToMock = vi.fn().mockResolvedValue(undefined)
 
