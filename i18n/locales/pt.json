@@ -116,7 +116,7 @@
       "reasonLabel": "Motivo do cancelamento",
       "reasonPlaceholder": "Selecione um motivo...",
       "notesLabel": "Notas adicionais",
-      "requiredTag": "(Obrigatório)",
+      "requiredTag": "(Obrigat?rio)",
       "optionalTag": "(Opcional)",
       "notesPlaceholder": "Adicione mais detalhes sobre o cancelamento...",
       "notesRequiredMessage": "Você deve informar o motivo específico do cancelamento.",
@@ -124,9 +124,11 @@
       "warningConfirmed": "Ao confirmar, o processo de reembolso automático será iniciado de acordo com a política de cancelamento vigente. Esta ação não pode ser desfeita.",
       "warningPending": "Ao confirmar, a reserva será cancelada e o quarto voltará a ficar disponível. Esta ação não pode ser desfeita.",
       "keepReservation": "Manter reserva",
-      "confirmAction": "Confirmar cancelamento"
+      "confirmAction": "Confirmar cancelamento",
+      "staySummaryWithRoom": "{nights} noites • {room}"
     }
-  },  "auth": {
+  },
+  "auth": {
     "hero": {
       "title": "Explore o mundo com confiança.",
       "description": "Acesse ofertas exclusivas, gerencie seus itinerários e descubra lugares incríveis ao redor do mundo."

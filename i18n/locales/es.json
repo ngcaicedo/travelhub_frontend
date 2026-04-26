@@ -97,7 +97,8 @@
       "warningConfirmed": "Al confirmar, se iniciará el proceso de reembolso automático según la política de cancelación vigente. Esta acción no se puede deshacer.",
       "warningPending": "Al confirmar, la reserva quedará cancelada y la habitación volverá a estar disponible. Esta acción no se puede deshacer.",
       "keepReservation": "Mantener reserva",
-      "confirmAction": "Confirmar cancelación"
+      "confirmAction": "Confirmar cancelación",
+      "staySummaryWithRoom": "{nights} noches • {room}"
     }
   },
   "reservationsList": {

@@ -120,7 +120,8 @@ export const getHotelReservations = async (
 export const confirmHotelReservation = async (
   reservationId: string,
   token: string,
-  reason?: string
+  reason?: string,
+  locale?: string
 ): Promise<HotelReservationActionResponse> => {
   const { reservationsApiUrl } = getApiBaseUrls()
 
@@ -128,7 +129,7 @@ export const confirmHotelReservation = async (
     return await $fetch<HotelReservationActionResponse>(`/api/v1/hotel/reservations/${reservationId}/confirm`, {
       baseURL: reservationsApiUrl,
       method: 'POST',
-      body: { reason },
+      body: { reason, locale },
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -143,7 +144,8 @@ export const cancelHotelReservation = async (
   reservationId: string,
   token: string,
   reason: ReservationCancellationReason,
-  note?: string
+  note?: string,
+  locale?: string
 ): Promise<HotelReservationActionResponse> => {
   const { reservationsApiUrl } = getApiBaseUrls()
 
@@ -151,7 +153,7 @@ export const cancelHotelReservation = async (
     return await $fetch<HotelReservationActionResponse>(`/api/v1/hotel/reservations/${reservationId}/cancel`, {
       baseURL: reservationsApiUrl,
       method: 'POST',
-      body: { reason, note },
+      body: { reason, note, locale },
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json'

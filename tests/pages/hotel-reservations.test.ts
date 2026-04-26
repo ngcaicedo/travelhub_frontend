@@ -101,7 +101,8 @@ describe('HotelReservationsPage', () => {
     expect(confirmHotelReservationMock).toHaveBeenCalledWith(
       'res-1',
       'jwt-token',
-      expect.stringMatching(/manual hotel confirmation|confirmaci.n manual del hotel|confirma..o manual do hotel/i)
+      expect.stringMatching(/manual hotel confirmation|confirmaci.n manual del hotel|confirma..o manual do hotel/i),
+      expect.any(String)
     )
   })
 
@@ -135,7 +136,7 @@ describe('HotelReservationsPage', () => {
     expect(confirmCancelButton).toBeTruthy()
     confirmCancelButton?.click()
 
-    expect(cancelHotelReservationMock).toHaveBeenCalledWith('res-1', 'jwt-token', 'maintenance', undefined)
+    expect(cancelHotelReservationMock).toHaveBeenCalledWith('res-1', 'jwt-token', 'maintenance', undefined, expect.any(String))
   })
 
   it('passes cancellation note for predefined reasons', async () => {
@@ -162,7 +163,9 @@ describe('HotelReservationsPage', () => {
       'res-1',
       'jwt-token',
       'maintenance',
-      'Hubo un ajuste operativo interno.'
+      'Hubo un ajuste operativo interno.',
+      expect.any(String)
     )
   })
 })
+

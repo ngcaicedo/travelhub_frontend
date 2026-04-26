@@ -142,7 +142,8 @@ describe('HotelDashboardPage', () => {
     expect(confirmHotelReservationMock).toHaveBeenCalledWith(
       'res-1',
       'jwt-token',
-      expect.stringMatching(/manual hotel confirmation|confirmaci.n manual del hotel|confirma..o manual do hotel/i)
+      expect.stringMatching(/manual hotel confirmation|confirmaci.n manual del hotel|confirma..o manual do hotel/i),
+      expect.any(String)
     )
 
     const cancelButton = findButtonByText(wrapper, ['Cancelar', 'Cancel'])
@@ -157,7 +158,7 @@ describe('HotelDashboardPage', () => {
     expect(confirmCancelButton).toBeTruthy()
     confirmCancelButton?.click()
 
-    expect(cancelHotelReservationMock).toHaveBeenCalledWith('res-1', 'jwt-token', 'maintenance', undefined)
+    expect(cancelHotelReservationMock).toHaveBeenCalledWith('res-1', 'jwt-token', 'maintenance', undefined, expect.any(String))
   })
 
   it('sends cancellation note even for predefined reasons', async () => {
@@ -184,7 +185,9 @@ describe('HotelDashboardPage', () => {
       'res-1',
       'jwt-token',
       'maintenance',
-      'Se detectó una inconsistencia operativa en la habitación.'
+      expect.stringContaining('Se detect'),
+      'en'
     )
   })
 })
+

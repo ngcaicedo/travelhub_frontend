@@ -118,6 +118,14 @@ function calculateNights(checkIn: string, checkOut: string) {
   return Math.round(diffMs / (1000 * 60 * 60 * 24))
 }
 
+function cancelSummaryPrimary(reservation: HostReservationItem) {
+  return reservation.guest_full_name?.trim() || reservation.room_type?.trim() || propertyName(reservation.id_property) || '—'
+}
+
+function cancelSummarySecondary(reservation: HostReservationItem) {
+  return reservation.room_type?.trim() || propertyName(reservation.id_property) || '—'
+}
+
 function openCancelModal(reservationId: string) {
   cancelTargetId.value = reservationId
   cancelReason.value = 'maintenance'
@@ -163,7 +171,8 @@ async function confirmReservation(reservationId: string) {
     await confirmHotelReservation(
       reservationId,
       authStore.token,
-      t('hotelReservations.actions.confirmReason')
+      t('hotelReservations.actions.confirmReason'),
+      locale.value
     )
     success.value = t('hotelReservations.feedback.confirmSuccess')
     await loadReservations()
@@ -189,7 +198,8 @@ async function cancelReservation(reservationId: string) {
       reservationId,
       authStore.token,
       cancelReason.value,
-      cancellationNote.value || undefined
+      cancellationNote.value || undefined,
+      locale.value
     )
     closeCancelModal()
     success.value = t('hotelReservations.feedback.cancelSuccess')
@@ -410,43 +420,36 @@ onMounted(async () => {
           v-if="cancelTargetReservation"
           class="space-y-7"
         >
-          <div class="rounded-2xl border border-[#d8e2f0] bg-[#f5f8ff] p-5">
+          <div class="rounded-2xl border border-[#d8e2f0] bg-[#f5f8ff] px-4 py-4 sm:px-5">
             <p class="text-xs font-semibold uppercase tracking-[0.14em] text-[#255cff]">
               {{ t('hotelReservations.cancelModal.summaryTitle') }}
             </p>
-            <div class="mt-3 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-              <div>
-                <p class="max-w-[250px] text-[18px] font-bold leading-8 text-slate-900">
-                  {{ propertyName(cancelTargetReservation.id_property) }}
-                </p>
-                <p class="mt-1 text-[15px] text-slate-500">
-                  {{ t('hotelReservations.cancelModal.reservationId', { id: cancelTargetReservation.id }) }}
-                </p>
-                <p class="mt-3 text-[15px] text-slate-600">
-                  {{ t('hotelReservations.cancelModal.guestsAndStatus', {
-                    guests: cancelTargetReservation.number_of_guests,
-                    status: reservationStatusLabel(cancelTargetReservation.status)
-                  }) }}
-                </p>
-              </div>
-              <div class="space-y-2 text-[15px] text-slate-500 sm:text-right">
-                <p class="flex items-center gap-2 sm:justify-end">
-                  <UIcon
-                    name="i-lucide-calendar-days"
-                    class="h-4 w-4 text-slate-400"
-                  />
-                  <span>{{ formatDate(cancelTargetReservation.check_in_date) }} - {{ formatDate(cancelTargetReservation.check_out_date) }}</span>
-                </p>
-                <p>
-                  {{ t('hotelReservations.cancelModal.staySummary', {
-                    nights: calculateNights(cancelTargetReservation.check_in_date, cancelTargetReservation.check_out_date),
-                    guests: cancelTargetReservation.number_of_guests
-                  }) }}
-                </p>
-                <p class="font-medium text-slate-700">
-                  {{ formatMoney(cancelTargetReservation.total_price, cancelTargetReservation.currency) }}
-                </p>
-              </div>
+            <div class="mt-3 space-y-2.5">
+              <p class="text-[18px] font-bold leading-7 text-slate-900">
+                {{ cancelSummaryPrimary(cancelTargetReservation) }}
+              </p>
+              <p class="text-sm font-medium leading-6 text-slate-500 break-words">
+                {{ t('hotelReservations.cancelModal.reservationId', { id: cancelTargetReservation.id }) }}
+              </p>
+              <p class="flex items-center gap-2 text-sm font-medium leading-6 text-slate-700">
+                <UIcon
+                  name="i-lucide-calendar-days"
+                  class="h-4 w-4 shrink-0 text-slate-400"
+                />
+                <span>{{ formatDate(cancelTargetReservation.check_in_date) }} - {{ formatDate(cancelTargetReservation.check_out_date) }}</span>
+              </p>
+              <p class="text-sm leading-6 text-slate-500">
+                {{ t('hotelReservations.cancelModal.staySummaryWithRoom', {
+                  nights: calculateNights(cancelTargetReservation.check_in_date, cancelTargetReservation.check_out_date),
+                  room: cancelSummarySecondary(cancelTargetReservation)
+                }) }}
+              </p>
+              <p class="text-sm leading-6 text-slate-600">
+                {{ t('hotelReservations.cancelModal.guestsAndStatus', {
+                  guests: cancelTargetReservation.number_of_guests,
+                  status: reservationStatusLabel(cancelTargetReservation.status)
+                }) }}
+              </p>
             </div>
           </div>
 
