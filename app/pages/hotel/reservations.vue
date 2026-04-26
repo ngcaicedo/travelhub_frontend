@@ -88,7 +88,7 @@ function canConfirm(status: string) {
 }
 
 function canCancel(status: string) {
-  return status === 'pending_payment' || status === 'confirmed'
+  return status === 'pending_payment' || status === 'confirmed' || status === 'modification_confirmed'
 }
 
 function formatMoney(amount: string, currency: string) {

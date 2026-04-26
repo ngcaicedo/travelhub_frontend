@@ -152,7 +152,7 @@ async function loadReservations() {
         const totalLabel = formatMoney(item.reservation.total_price, item.reservation.currency)
         const location = t('reservationsList.locationFallback')
         const propertyName = item.property_name || t('notifications.summary.propertyFallback')
-        const canCancel = item.reservation.status === 'confirmed'
+        const canCancel = item.reservation.status === 'confirmed' || item.reservation.status === 'modification_confirmed'
         const canModify = item.reservation.status === 'confirmed'
         const isModified = item.reservation.status !== 'confirmed'
         const isModificationPendingPayment = item.reservation.status === 'modification_pending_payment'
