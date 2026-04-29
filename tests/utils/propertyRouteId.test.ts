@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { afterEach, describe, it, expect, vi } from 'vitest'
 import { encodePropertyRouteId, decodePropertyRouteId } from '~/utils/propertyRouteId'
 
 describe('propertyRouteId', () => {
@@ -59,6 +59,32 @@ describe('propertyRouteId', () => {
       const encoded = encodePropertyRouteId(id)
       const decoded = decodePropertyRouteId(encoded)
       expect(decoded).toBe(id)
+    })
+  })
+
+  describe('without Buffer global (browser-like fallback)', () => {
+    afterEach(() => {
+      vi.unstubAllGlobals()
+      vi.resetModules()
+    })
+
+    it('round-trips using TextEncoder/TextDecoder + btoa/atob', async () => {
+      vi.stubGlobal('Buffer', undefined)
+      vi.resetModules()
+
+      const mod = await import('~/utils/propertyRouteId')
+      const id = 'propiedad-café-ñoño'
+      const encoded = mod.encodePropertyRouteId(id)
+      expect(encoded.startsWith('ph_')).toBe(true)
+      expect(mod.decodePropertyRouteId(encoded)).toBe(id)
+    })
+
+    it('returns undefined when atob throws on garbage payload', async () => {
+      vi.stubGlobal('Buffer', undefined)
+      vi.resetModules()
+
+      const mod = await import('~/utils/propertyRouteId')
+      expect(mod.decodePropertyRouteId('ph_!!!@@@###')).toBeUndefined()
     })
   })
 })
