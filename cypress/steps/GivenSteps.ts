@@ -1,8 +1,10 @@
 import { LoginPage } from '../pages/LoginPage'
+import { PropertyDetailPage } from '../pages/PropertyDetailPage'
 import { RegisterPage } from '../pages/RegisterPage'
 import { SearchPage } from '../pages/SearchPage'
 
 const loginPage = new LoginPage()
+const propertyDetailPage = new PropertyDetailPage()
 const registerPage = new RegisterPage()
 const searchPage = new SearchPage()
 
@@ -42,6 +44,10 @@ export const givenSteps = {
 
   givenIAmOnSearch() {
     searchPage.visit()
+  },
+
+  givenIAmOnPropertyDetail(propertyId: string) {
+    propertyDetailPage.visit(propertyId)
   },
 
   givenOtpServiceResponds(statusCode = 200, fixture = 'responses/otpSuccess.json') {

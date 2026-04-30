@@ -1,11 +1,14 @@
 import { LoginPage } from '../pages/LoginPage'
 import { PaymentConfirmationPage } from '../pages/PaymentConfirmationPage'
+import { PropertyDetailPage } from '../pages/PropertyDetailPage'
 import { RegisterPage } from '../pages/RegisterPage'
 import { SearchPage } from '../pages/SearchPage'
 import { VerifyOtpPage } from '../pages/VerifyOtpPage'
+import { screenshot } from '../support/screenshots'
 
 const loginPage = new LoginPage()
 const paymentConfirmationPage = new PaymentConfirmationPage()
+const propertyDetailPage = new PropertyDetailPage()
 const registerPage = new RegisterPage()
 const searchPage = new SearchPage()
 const verifyOtpPage = new VerifyOtpPage()
@@ -104,5 +107,41 @@ export const thenSteps = {
 
   thenISeeCheckoutFeedback(text: string) {
     cy.get('[data-cy=checkout-feedback]').should('contain.text', text)
+  },
+
+  thenISeeThePropertyName(name: string) {
+    propertyDetailPage.name().should('be.visible').and('contain.text', name)
+    screenshot.take('property_name_verified')
+  },
+
+  thenISeeThePropertyLocation(location: string) {
+    propertyDetailPage.location().should('contain.text', location)
+    screenshot.take('property_location_verified')
+  },
+
+  thenISeeThePropertyRatingMatches(pattern: RegExp) {
+    propertyDetailPage.rating().invoke('text').should('match', pattern)
+    screenshot.take('property_rating_verified')
+  },
+
+  thenISeeThePropertyDescriptionContains(text: string) {
+    propertyDetailPage.description().scrollIntoView().should('contain.text', text)
+    screenshot.take('property_description_verified')
+  },
+
+  thenISeeAtLeastOneAmenity() {
+    propertyDetailPage.amenitiesSection().scrollIntoView().should('be.visible')
+    propertyDetailPage.amenityItems().its('length').should('be.gte', 1)
+    screenshot.take('property_amenities_verified')
+  },
+
+  thenISeeThePropertyHasMaxGuests(maxGuests: number) {
+    propertyDetailPage.features().should('have.attr', 'data-cy-max-guests', String(maxGuests))
+    screenshot.take('property_features_verified')
+  },
+
+  thenISeeTheReserveCallToAction() {
+    propertyDetailPage.reserveButton().scrollIntoView().should('be.visible')
+    screenshot.take('property_reserve_cta_verified')
   }
 }

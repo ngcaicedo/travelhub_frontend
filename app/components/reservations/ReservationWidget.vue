@@ -334,6 +334,7 @@ watch(() => [props.initialCheckInDate, props.initialCheckOutDate, props.initialN
         block
         size="lg"
         icon="i-lucide-check"
+        data-cy="reservation-confirm"
       >
         {{ t('booking.confirmBooking') }}
       </UButton>
