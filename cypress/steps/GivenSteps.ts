@@ -52,6 +52,15 @@ export const givenSteps = {
     propertyDetailPage.visit(propertyId)
   },
 
+  givenIAmOnPropertyDetailWithDates(
+    propertyId: string,
+    checkIn: string,
+    checkOut: string,
+    guests: number
+  ) {
+    cy.visit(`/properties/${propertyId}?check_in=${checkIn}&check_out=${checkOut}&guests=${guests}`)
+  },
+
   givenIAmOnReservationsList() {
     reservationsListPage.visit()
   },

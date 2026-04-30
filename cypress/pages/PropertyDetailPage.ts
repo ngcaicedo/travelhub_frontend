@@ -37,4 +37,19 @@ export class PropertyDetailPage {
   reserveButton() {
     return cy.get('[data-cy=reservation-confirm]')
   }
+
+  fillReservationDates(checkIn: string, checkOut: string) {
+    cy.get('[data-cy=reservation-check-in]').clear().type(checkIn)
+    cy.get('[data-cy=reservation-check-out]').clear().type(checkOut)
+    screenshot.take('reservation_widget_dates_filled')
+  }
+
+  setGuests(guests: number) {
+    cy.get('[data-cy=reservation-guests] input').clear().type(String(guests))
+  }
+
+  clickReserve() {
+    this.reserveButton().scrollIntoView().click()
+    screenshot.take('reservation_widget_reserve_clicked')
+  }
 }

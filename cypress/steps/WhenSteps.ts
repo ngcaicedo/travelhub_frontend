@@ -1,6 +1,7 @@
 import { CheckoutPage } from '../pages/CheckoutPage'
 import { LoginPage } from '../pages/LoginPage'
 import { PaymentConfirmationPage } from '../pages/PaymentConfirmationPage'
+import { PropertyDetailPage } from '../pages/PropertyDetailPage'
 import { RegisterPage } from '../pages/RegisterPage'
 import { ReservationsListPage } from '../pages/ReservationsListPage'
 import { SearchPage, type SearchFilters } from '../pages/SearchPage'
@@ -28,6 +29,7 @@ interface StripeStubScenario {
 const checkoutPage = new CheckoutPage()
 const loginPage = new LoginPage()
 const paymentConfirmationPage = new PaymentConfirmationPage()
+const propertyDetailPage = new PropertyDetailPage()
 const registerPage = new RegisterPage()
 const reservationsListPage = new ReservationsListPage()
 const searchPage = new SearchPage()
@@ -145,5 +147,24 @@ export const whenSteps = {
 
   whenISelectReservationsTab(tab: 'upcoming' | 'past' | 'cancelled') {
     reservationsListPage.selectTab(tab)
+  },
+
+  whenIOpenSearchResultProperty(propertyId: string) {
+    cy.get(`[data-cy=search-result-card][data-cy-property-id="${propertyId}"]`)
+      .find('[data-cy=search-result-view-property]')
+      .click()
+  },
+
+  whenIClickReserveOnWidget() {
+    propertyDetailPage.clickReserve()
+  },
+
+  whenIFillReservationWidget(checkIn: string, checkOut: string, guests: number) {
+    propertyDetailPage.fillReservationDates(checkIn, checkOut)
+    propertyDetailPage.setGuests(guests)
+  },
+
+  whenISelectCheckoutScenario(scenario: 'success' | 'insufficient' | 'declined') {
+    checkoutPage.chooseScenario(scenario)
   }
 }

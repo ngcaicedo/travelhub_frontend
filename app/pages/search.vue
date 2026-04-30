@@ -772,6 +772,7 @@ onMounted(async () => {
                     }"
                     size="lg"
                     class="justify-center"
+                    data-cy="search-result-view-property"
                   >
                     {{ t('search.viewProperty') }}
                   </UButton>

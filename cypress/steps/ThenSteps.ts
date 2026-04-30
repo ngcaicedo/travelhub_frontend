@@ -166,5 +166,17 @@ export const thenSteps = {
 
   thenTheReservationCardContains(reservationId: string, text: string) {
     reservationsListPage.cardById(reservationId).should('contain.text', text)
+  },
+
+  thenIAmOnCheckoutWithReservation() {
+    cy.location('pathname').should('eq', '/checkout')
+    cy.location('search').should('include', 'reservationId=')
+    screenshot.take('checkout_url_verified')
+  },
+
+  thenIAmOnPaymentConfirmationPage() {
+    cy.location('pathname').should('eq', '/notifications/payment-confirmation')
+    cy.location('search').should('match', /paymentId=/)
+    screenshot.take('payment_confirmation_url_verified')
   }
 }
