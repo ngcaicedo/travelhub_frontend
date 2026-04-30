@@ -2,7 +2,11 @@ import { screenshot } from '../support/screenshots'
 
 export class VerifyOtpPage {
   assertOnUrl(email: string) {
-    cy.url().should('include', `/verify-otp?email=${encodeURIComponent(email)}`)
+    cy.location('pathname').should('eq', '/verify-otp')
+    cy.location('search').then((search) => {
+      const params = new URLSearchParams(search)
+      expect(params.get('email')).to.eq(email)
+    })
     screenshot.take('otp_page_loaded')
   }
 
