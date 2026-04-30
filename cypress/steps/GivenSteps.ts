@@ -1,11 +1,13 @@
 import { LoginPage } from '../pages/LoginPage'
 import { PropertyDetailPage } from '../pages/PropertyDetailPage'
 import { RegisterPage } from '../pages/RegisterPage'
+import { ReservationsListPage } from '../pages/ReservationsListPage'
 import { SearchPage } from '../pages/SearchPage'
 
 const loginPage = new LoginPage()
 const propertyDetailPage = new PropertyDetailPage()
 const registerPage = new RegisterPage()
+const reservationsListPage = new ReservationsListPage()
 const searchPage = new SearchPage()
 
 export interface StripeFailureScenario {
@@ -48,6 +50,10 @@ export const givenSteps = {
 
   givenIAmOnPropertyDetail(propertyId: string) {
     propertyDetailPage.visit(propertyId)
+  },
+
+  givenIAmOnReservationsList() {
+    reservationsListPage.visit()
   },
 
   givenOtpServiceResponds(statusCode = 200, fixture = 'responses/otpSuccess.json') {

@@ -2,6 +2,7 @@ import { LoginPage } from '../pages/LoginPage'
 import { PaymentConfirmationPage } from '../pages/PaymentConfirmationPage'
 import { PropertyDetailPage } from '../pages/PropertyDetailPage'
 import { RegisterPage } from '../pages/RegisterPage'
+import { ReservationsListPage } from '../pages/ReservationsListPage'
 import { SearchPage } from '../pages/SearchPage'
 import { VerifyOtpPage } from '../pages/VerifyOtpPage'
 import { screenshot } from '../support/screenshots'
@@ -10,6 +11,7 @@ const loginPage = new LoginPage()
 const paymentConfirmationPage = new PaymentConfirmationPage()
 const propertyDetailPage = new PropertyDetailPage()
 const registerPage = new RegisterPage()
+const reservationsListPage = new ReservationsListPage()
 const searchPage = new SearchPage()
 const verifyOtpPage = new VerifyOtpPage()
 
@@ -143,5 +145,26 @@ export const thenSteps = {
   thenISeeTheReserveCallToAction() {
     propertyDetailPage.reserveButton().scrollIntoView().should('be.visible')
     screenshot.take('property_reserve_cta_verified')
+  },
+
+  thenISeeReservationCount(count: number) {
+    if (count === 0) {
+      reservationsListPage.cards().should('not.exist')
+      return
+    }
+    reservationsListPage.list().should('be.visible')
+    reservationsListPage.cards().should('have.length', count)
+    screenshot.take(`reservations_count_${count}_verified`)
+  },
+
+  thenISeeReservationWithStatus(reservationId: string, status: string) {
+    reservationsListPage.cardById(reservationId)
+      .should('be.visible')
+      .and('have.attr', 'data-cy-reservation-status', status)
+    screenshot.take(`reservation_${status}_verified`)
+  },
+
+  thenTheReservationCardContains(reservationId: string, text: string) {
+    reservationsListPage.cardById(reservationId).should('contain.text', text)
   }
 }

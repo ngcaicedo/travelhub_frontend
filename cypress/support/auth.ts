@@ -15,6 +15,21 @@ export interface SessionUser {
   phone: string
   role: SessionRole
   hotelName?: string
+  userId?: string
+}
+
+function base64UrlEncode(value: string): string {
+  return btoa(value).replace(/=+$/, '').replace(/\+/g, '-').replace(/\//g, '_')
+}
+
+function buildFakeJwt(user: SessionUser): string {
+  const header = base64UrlEncode(JSON.stringify({ alg: 'HS256', typ: 'JWT' }))
+  const payload = base64UrlEncode(JSON.stringify({
+    sub: user.userId ?? '00000000-0000-0000-0000-000000000000',
+    email: user.email,
+    role: user.role
+  }))
+  return `${header}.${payload}.cypress-signature`
 }
 
 export function fromDemoHotel(hotel: DemoHotel): SessionUser {
@@ -62,7 +77,7 @@ export function buildHotelPartner(opts: BuildOptions = {}): SessionUser {
   }
 }
 
-export function seedUser(user: SessionUser): Cypress.Chainable {
+export function seedUser(user: SessionUser): Cypress.Chainable<SessionUser> {
   const body: Record<string, string> = {
     email: user.email,
     phone: user.phone,
@@ -78,6 +93,12 @@ export function seedUser(user: SessionUser): Cypress.Chainable {
     url: `${Cypress.env('usersApiUrl')}/api/v1/users`,
     body,
     failOnStatusCode: false
+  }).then((response) => {
+    const created = (response.body && typeof response.body === 'object')
+      ? response.body as { id?: string }
+      : null
+    const merged: SessionUser = { ...user, userId: created?.id ?? user.userId }
+    return merged
   })
 }
 
@@ -101,12 +122,6 @@ function shouldStubOtpByDefault(role: SessionRole): boolean {
   return role !== 'hotel'
 }
 
-function fixtureFor(role: SessionRole): string {
-  return role === 'hotel'
-    ? 'responses/otpSuccessHotel.json'
-    : 'responses/otpSuccess.json'
-}
-
 function expectedLandingPath(role: SessionRole): string {
   return role === 'hotel' ? '/hotel/dashboard' : '/properties'
 }
@@ -118,7 +133,11 @@ function performLogin(user: SessionUser, opts: LoginOptions) {
   if (stub) {
     cy.intercept('POST', '**/api/v1/auth/verify-otp', {
       statusCode: 200,
-      fixture: fixtureFor(user.role)
+      body: {
+        access_token: buildFakeJwt(user),
+        token_type: 'bearer',
+        role: user.role
+      }
     }).as('verifyOtp')
   }
 

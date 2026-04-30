@@ -2,6 +2,7 @@ import { CheckoutPage } from '../pages/CheckoutPage'
 import { LoginPage } from '../pages/LoginPage'
 import { PaymentConfirmationPage } from '../pages/PaymentConfirmationPage'
 import { RegisterPage } from '../pages/RegisterPage'
+import { ReservationsListPage } from '../pages/ReservationsListPage'
 import { SearchPage, type SearchFilters } from '../pages/SearchPage'
 import { VerifyOtpPage } from '../pages/VerifyOtpPage'
 
@@ -28,6 +29,7 @@ const checkoutPage = new CheckoutPage()
 const loginPage = new LoginPage()
 const paymentConfirmationPage = new PaymentConfirmationPage()
 const registerPage = new RegisterPage()
+const reservationsListPage = new ReservationsListPage()
 const searchPage = new SearchPage()
 const verifyOtpPage = new VerifyOtpPage()
 
@@ -139,5 +141,9 @@ export const whenSteps = {
 
   whenIClickViewReservations() {
     paymentConfirmationPage.clickViewReservations()
+  },
+
+  whenISelectReservationsTab(tab: 'upcoming' | 'past' | 'cancelled') {
+    reservationsListPage.selectTab(tab)
   }
 }
