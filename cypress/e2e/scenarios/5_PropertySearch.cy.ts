@@ -1,7 +1,7 @@
-import { SearchPage } from '../../pages/SearchPage'
+import { givenSteps } from '../../steps/GivenSteps'
+import { whenSteps } from '../../steps/WhenSteps'
+import { thenSteps } from '../../steps/ThenSteps'
 import { DEMO_PROPERTY_ALPINE, DEMO_PROPERTY_RENAISSANCE } from '../../support/demoData'
-
-const searchPage = new SearchPage()
 
 // Las disponibilidades del search service estan seedeadas para los dias 10-16
 // de cada mes de 2026 (ver travelhub_miso/services/search/src/db/seed.py).
@@ -10,51 +10,50 @@ const CHECK_OUT = '2026-12-12'
 
 describe('Busqueda de hospedaje | filtros ciudad/fechas/capacidad', () => {
   beforeEach(() => {
-    searchPage.visit()
+    // Given
+    givenSteps.givenIAmOnSearch()
   })
 
   it('devuelve la propiedad seedeada en Bogota cuando los filtros son validos', () => {
-    searchPage.search({
+    // When
+    whenSteps.whenISearchProperties({
       city: 'Bogota',
       checkIn: CHECK_IN,
       checkOut: CHECK_OUT,
       guests: 2
     })
 
-    searchPage.resultsContainer().should('be.visible')
-    searchPage.resultCards().should('have.length', 1)
-    searchPage.resultCards()
-      .first()
-      .should('have.attr', 'data-cy-property-id', DEMO_PROPERTY_RENAISSANCE.id)
-      .and('contain.text', DEMO_PROPERTY_RENAISSANCE.name)
-
-    searchPage.summary().should('contain.text', '1')
+    // Then
+    thenSteps.thenISeeSearchResultCount(1)
+    thenSteps.thenTheFirstSearchResultIs(DEMO_PROPERTY_RENAISSANCE.id, DEMO_PROPERTY_RENAISSANCE.name)
+    thenSteps.thenTheSearchSummaryContains('1')
   })
 
   it('respeta el filtro de ciudad al cambiar a Cali', () => {
-    searchPage.search({
+    // When
+    whenSteps.whenISearchProperties({
       city: 'Cali',
       checkIn: CHECK_IN,
       checkOut: CHECK_OUT,
       guests: 2
     })
 
-    searchPage.resultCards().should('have.length', 1)
-    searchPage.resultCards()
-      .first()
-      .should('have.attr', 'data-cy-property-id', DEMO_PROPERTY_ALPINE.id)
-      .and('contain.text', DEMO_PROPERTY_ALPINE.name)
+    // Then
+    thenSteps.thenISeeSearchResultCount(1)
+    thenSteps.thenTheFirstSearchResultIs(DEMO_PROPERTY_ALPINE.id, DEMO_PROPERTY_ALPINE.name)
   })
 
   it('muestra empty state cuando los huespedes superan la capacidad disponible', () => {
-    searchPage.search({
+    // When
+    whenSteps.whenISearchProperties({
       city: 'Bogota',
       checkIn: CHECK_IN,
       checkOut: CHECK_OUT,
       guests: 20
     })
 
-    searchPage.emptyState().should('be.visible')
-    searchPage.resultCards().should('not.exist')
+    // Then
+    thenSteps.thenISeeTheSearchEmptyState()
+    thenSteps.thenISeeSearchResultCount(0)
   })
 })

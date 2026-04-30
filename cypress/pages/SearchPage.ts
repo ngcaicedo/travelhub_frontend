@@ -62,4 +62,14 @@ export class SearchPage {
   summary() {
     return cy.get('[data-cy=search-summary]')
   }
+
+  sortTrigger() {
+    return cy.get('[data-cy=search-sort-trigger]')
+  }
+
+  selectSort(optionLabel: string) {
+    this.sortTrigger().click()
+    cy.get('[role=menu]').contains(optionLabel).click()
+    screenshot.take(`search_sort_${optionLabel.replace(/\s+/g, '_').toLowerCase()}`)
+  }
 }

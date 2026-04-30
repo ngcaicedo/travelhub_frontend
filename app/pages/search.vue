@@ -505,6 +505,7 @@ onMounted(async () => {
                 color="neutral"
                 icon="i-lucide-arrow-up-down"
                 trailing-icon="i-lucide-chevron-down"
+                data-cy="search-sort-trigger"
               >
                 {{ t('search.sortButton', { option: activeSortLabel }) }}
               </UButton>
