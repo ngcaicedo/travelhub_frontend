@@ -10,15 +10,16 @@
  * x 12 meses = 36 slots no-overlapping.
  *
  * Estrategia:
+ *  - Filtramos los 36 slots a los que producen fechas futuras (check-in
+ *    al menos MIN_DAYS_AHEAD dias despues de hoy).
  *  - El minuto-epoca actual define un offset base que rota cada minuto.
  *  - El testIndex (0-based) suma para que tests dentro del mismo run usen
- *    slots distintos.
- *  - El slot final es ((minuto * 3) + testIndex) % 36 → garantiza 3 slots
- *    distintos por minuto y cobertura completa cada 12 minutos.
+ *    slots distintos. El indice se aplica sobre la lista filtrada,
+ *    garantizando unicidad.
  *
- * Limite: si la DB persiste y se corre la suite >36 veces sin reset, los
- * slots se llenan. Para CI con DB ephemeral no aplica. Para dev local
- * intensivo, reiniciar el contenedor postgres.
+ * Limite: si la DB persiste y se corre la suite muchas veces sin reset, los
+ * slots vigentes se llenan. Para CI con DB ephemeral no aplica. Para dev
+ * local intensivo, reiniciar el contenedor postgres.
  */
 
 export interface DateRange {
@@ -26,18 +27,47 @@ export interface DateRange {
   checkOut: string
 }
 
-const TOTAL_SLOTS = 36
 const RANGES_PER_MONTH = 3 // 10-12, 12-14, 14-16
+const MIN_DAYS_AHEAD = 1
+
+interface SlotCoords {
+  month: number // 1-12
+  dayStart: number // 10, 12 o 14
+  dayEnd: number
+}
+
+function buildAllSlots(): SlotCoords[] {
+  const result: SlotCoords[] = []
+  for (let month = 1; month <= 12; month++) {
+    for (let i = 0; i < RANGES_PER_MONTH; i++) {
+      const dayStart = 10 + i * 2
+      result.push({ month, dayStart, dayEnd: dayStart + 2 })
+    }
+  }
+  return result
+}
+
+function isFutureSlot(coords: SlotCoords, now: Date): boolean {
+  const slotDate = new Date(Date.UTC(2026, coords.month - 1, coords.dayStart))
+  const cutoff = new Date(now.getTime() + MIN_DAYS_AHEAD * 24 * 60 * 60 * 1000)
+  return slotDate.getTime() > cutoff.getTime()
+}
 
 export function uniqueDateRange(testIndex: number): DateRange {
-  const minute = Math.floor(Date.now() / 60_000)
-  const slot = ((minute * RANGES_PER_MONTH) + testIndex) % TOTAL_SLOTS
-  const month = Math.floor(slot / RANGES_PER_MONTH) + 1 // 1-12
-  const dayStart = 10 + (slot % RANGES_PER_MONTH) * 2 // 10, 12 o 14
-  const dayEnd = dayStart + 2
-  const mm = String(month).padStart(2, '0')
-  const ddIn = String(dayStart).padStart(2, '0')
-  const ddOut = String(dayEnd).padStart(2, '0')
+  const now = new Date()
+  const futureSlots = buildAllSlots().filter(coords => isFutureSlot(coords, now))
+
+  if (futureSlots.length === 0) {
+    throw new Error('uniqueDateRange: no future slots available in 2026 seed window')
+  }
+
+  const minute = Math.floor(now.getTime() / 60_000)
+  const index = ((minute * RANGES_PER_MONTH) + testIndex) % futureSlots.length
+  const coords = futureSlots[index]!
+
+  const mm = String(coords.month).padStart(2, '0')
+  const ddIn = String(coords.dayStart).padStart(2, '0')
+  const ddOut = String(coords.dayEnd).padStart(2, '0')
   return {
     checkIn: `2026-${mm}-${ddIn}`,
     checkOut: `2026-${mm}-${ddOut}`

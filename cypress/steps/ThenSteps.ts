@@ -2,6 +2,8 @@ import { LoginPage } from '../pages/LoginPage'
 import { PaymentConfirmationPage } from '../pages/PaymentConfirmationPage'
 import { PropertyDetailPage } from '../pages/PropertyDetailPage'
 import { RegisterPage } from '../pages/RegisterPage'
+import { ReservationCancelPage } from '../pages/ReservationCancelPage'
+import { ReservationModifyPage } from '../pages/ReservationModifyPage'
 import { ReservationsListPage } from '../pages/ReservationsListPage'
 import { SearchPage } from '../pages/SearchPage'
 import { VerifyOtpPage } from '../pages/VerifyOtpPage'
@@ -11,6 +13,8 @@ const loginPage = new LoginPage()
 const paymentConfirmationPage = new PaymentConfirmationPage()
 const propertyDetailPage = new PropertyDetailPage()
 const registerPage = new RegisterPage()
+const reservationCancelPage = new ReservationCancelPage()
+const reservationModifyPage = new ReservationModifyPage()
 const reservationsListPage = new ReservationsListPage()
 const searchPage = new SearchPage()
 const verifyOtpPage = new VerifyOtpPage()
@@ -178,5 +182,52 @@ export const thenSteps = {
     cy.location('pathname').should('eq', '/notifications/payment-confirmation')
     cy.location('search').should('match', /paymentId=/)
     screenshot.take('payment_confirmation_url_verified')
+  },
+
+  thenIAmOnReservationCancelPage(reservationId: string) {
+    cy.location('pathname').should('eq', `/reservations/${reservationId}/cancel`)
+    reservationCancelPage.root().should('be.visible')
+    screenshot.take('reservation_cancel_page_verified')
+  },
+
+  thenISeeRefundBreakdown() {
+    reservationCancelPage.refundAmount().should('be.visible')
+    reservationCancelPage.penaltyAmount().should('be.visible')
+  },
+
+  thenIAmOnReservationCancelledPage(reservationId: string) {
+    cy.location('pathname', { timeout: 30000 }).should('eq', `/reservations/${reservationId}/cancelled`)
+    cy.get('[data-cy=reservation-cancelled]', { timeout: 30000 }).should('be.visible')
+    screenshot.take('reservation_cancelled_page_verified')
+  },
+
+  thenTheReservationIsCancelled() {
+    cy.get('[data-cy=reservation-cancelled]')
+      .invoke('attr', 'data-cy-status')
+      .should('match', /^(cancelled|refund_completed|refund_failed|refund_pending|cancel_requested)$/)
+  },
+
+  thenTheReservationCardHasCancelledStatus(reservationId: string) {
+    reservationsListPage.cardById(reservationId)
+      .should('be.visible')
+      .invoke('attr', 'data-cy-reservation-status')
+      .should('match', /^(cancelled|refund_completed|refund_failed|refund_pending|cancel_requested)$/)
+  },
+
+  thenTheReservationIsNotInUpcomingTab(reservationId: string) {
+    reservationsListPage.selectTab('upcoming')
+    cy.get(`[data-cy=reservation-card][data-cy-reservation-id="${reservationId}"]`)
+      .should('not.exist')
+  },
+
+  thenIAmOnReservationModifyPage(reservationId: string) {
+    cy.location('pathname').should('eq', `/reservations/${reservationId}/modify`)
+    reservationModifyPage.root().should('be.visible')
+    screenshot.take('reservation_modify_page_verified')
+  },
+
+  thenTheModificationPreviewIsAllowed() {
+    reservationModifyPage.preview()
+      .should('have.attr', 'data-cy-change-allowed', 'true')
   }
 }

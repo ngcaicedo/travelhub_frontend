@@ -3,6 +3,8 @@ import { screenshot } from '../support/screenshots'
 export class ReservationsListPage {
   visit() {
     cy.visit('/reservations')
+    cy.get('[data-cy=reservation-list], [data-cy=reservation-empty]', { timeout: 15000 })
+      .should('be.visible')
     screenshot.take('reservations_list_loaded')
   }
 

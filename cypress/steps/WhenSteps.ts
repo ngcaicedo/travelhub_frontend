@@ -3,6 +3,8 @@ import { LoginPage } from '../pages/LoginPage'
 import { PaymentConfirmationPage } from '../pages/PaymentConfirmationPage'
 import { PropertyDetailPage } from '../pages/PropertyDetailPage'
 import { RegisterPage } from '../pages/RegisterPage'
+import { ReservationCancelPage } from '../pages/ReservationCancelPage'
+import { ReservationModifyPage } from '../pages/ReservationModifyPage'
 import { ReservationsListPage } from '../pages/ReservationsListPage'
 import { SearchPage, type SearchFilters } from '../pages/SearchPage'
 import { VerifyOtpPage } from '../pages/VerifyOtpPage'
@@ -31,6 +33,8 @@ const loginPage = new LoginPage()
 const paymentConfirmationPage = new PaymentConfirmationPage()
 const propertyDetailPage = new PropertyDetailPage()
 const registerPage = new RegisterPage()
+const reservationCancelPage = new ReservationCancelPage()
+const reservationModifyPage = new ReservationModifyPage()
 const reservationsListPage = new ReservationsListPage()
 const searchPage = new SearchPage()
 const verifyOtpPage = new VerifyOtpPage()
@@ -166,5 +170,29 @@ export const whenSteps = {
 
   whenISelectCheckoutScenario(scenario: 'success' | 'insufficient' | 'declined') {
     checkoutPage.chooseScenario(scenario)
+  },
+
+  whenIClickModifyOnReservationCard(reservationId: string) {
+    reservationsListPage.cardById(reservationId)
+      .find('[data-cy=reservation-card-modify]')
+      .click()
+  },
+
+  whenIClickCancelOnReservationCard(reservationId: string) {
+    reservationsListPage.cardById(reservationId)
+      .find('[data-cy=reservation-card-cancel]')
+      .click()
+  },
+
+  whenIConfirmCancellation() {
+    reservationCancelPage.clickConfirm()
+  },
+
+  whenIChangeReservationDates(checkIn: string, checkOut: string) {
+    reservationModifyPage.setDates(checkIn, checkOut)
+  },
+
+  whenIRunModificationPreview() {
+    reservationModifyPage.runPreview()
   }
 }

@@ -513,6 +513,7 @@ definePageMeta({
                         icon="i-lucide-pencil"
                         class="rounded-2xl px-4 py-2.5 text-[14px] font-semibold"
                         :disabled="!reservation.canModify"
+                        data-cy="reservation-card-modify"
                         @click="modifyReservation(reservation.id)"
                       >
                         {{ t('reservationFlow.detail.modifyButton') }}
@@ -525,6 +526,7 @@ definePageMeta({
                         class="rounded-2xl px-4 py-2.5 text-[14px] font-semibold"
                         :disabled="!reservation.canCancel"
                         :title="reservation.canCancel ? undefined : t('reservationsList.cancelUnavailable')"
+                        data-cy="reservation-card-cancel"
                         @click="cancelReservation(reservation.id)"
                       >
                         {{ t('reservationsList.cancelReservation') }}
