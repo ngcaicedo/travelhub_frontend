@@ -2,7 +2,7 @@ import { givenSteps } from '../../steps/GivenSteps'
 import { whenSteps } from '../../steps/WhenSteps'
 import { thenSteps } from '../../steps/ThenSteps'
 import { buildTraveler, loginAsTraveler, seedUser, type SessionUser } from '../../support/auth'
-import { DEMO_PROPERTY_RENAISSANCE } from '../../support/demoData'
+import { DEMO_PROPERTY_TROPICAL } from '../../support/demoData'
 import { uniqueDateRange } from '../../support/uniqueDates'
 
 const GUESTS = 2
@@ -24,7 +24,7 @@ describe('MPF-31 | Autogestion de reserva (viajero)', () => {
     cy.intercept('POST', '**/api/v1/reservations').as('createReservation')
     loginAsTraveler(traveler)
     givenSteps.givenIAmOnPropertyDetailWithDates(
-      DEMO_PROPERTY_RENAISSANCE.id,
+      DEMO_PROPERTY_TROPICAL.id,
       checkIn,
       checkOut,
       GUESTS

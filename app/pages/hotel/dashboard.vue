@@ -294,7 +294,7 @@ function onCurrencyChange(value: string) {
 </script>
 
 <template>
-  <div class="flex flex-col gap-8 p-8">
+  <div class="flex flex-col gap-8 p-8" data-cy="hotel-dashboard">
     <div class="flex flex-col gap-1">
       <h1 class="text-3xl font-black tracking-tight text-(--ui-text-highlighted)">
         {{ t('hotel.dashboard.welcomeTitle') }}
@@ -322,55 +322,61 @@ function onCurrencyChange(value: string) {
       @close="success = null"
     />
 
-    <UCard :ui="{ body: 'p-4' }">
+    <UCard :ui="{ body: 'p-4' }" data-cy="hotel-dashboard-filters">
       <div class="flex flex-wrap items-end gap-3">
         <label class="flex flex-col gap-1">
           <span class="text-xs font-medium text-(--ui-text-muted)">
             {{ t('hotel.dashboard.filters.startDate') }}
           </span>
-          <UInput v-model="dateRangeDraft.start_date" type="date" class="w-[150px]" />
+          <UInput v-model="dateRangeDraft.start_date" type="date" class="w-[150px]" data-cy="hotel-filter-start-date" />
         </label>
         <label class="flex flex-col gap-1">
           <span class="text-xs font-medium text-(--ui-text-muted)">
             {{ t('hotel.dashboard.filters.endDate') }}
           </span>
-          <UInput v-model="dateRangeDraft.end_date" type="date" class="w-[150px]" />
+          <UInput v-model="dateRangeDraft.end_date" type="date" class="w-[150px]" data-cy="hotel-filter-end-date" />
         </label>
         <UButton
           variant="ghost"
           :label="t('hotel.dashboard.filters.clear')"
+          data-cy="hotel-filter-clear"
           @click="resetDateRange"
         />
         <UButton
           :label="t('hotel.dashboard.filters.apply')"
+          data-cy="hotel-filter-apply"
           @click="applyDateRange"
         />
       </div>
     </UCard>
 
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4" data-cy="hotel-kpis">
       <HotelKpiCard
         icon="i-lucide-banknote"
         :label="t('hotel.dashboard.kpi.revenue')"
         :value="formattedRevenue"
+        data-cy="hotel-kpi-revenue"
       />
       <HotelKpiCard
         icon="i-lucide-bed-double"
         :label="t('hotel.dashboard.kpi.occupancy')"
         :value="occupancyPct"
         icon-color="bg-amber-50 text-amber-600"
+        data-cy="hotel-kpi-occupancy"
       />
       <HotelKpiCard
         icon="i-lucide-trending-up"
         :label="t('hotel.dashboard.kpi.adr')"
         :value="formattedAdr"
         icon-color="bg-emerald-50 text-emerald-600"
+        data-cy="hotel-kpi-adr"
       />
       <HotelKpiCard
         icon="i-lucide-calendar-check"
         :label="t('hotel.dashboard.kpi.activeBookings')"
         :value="metrics ? String(metrics.active_reservations) : '—'"
         icon-color="bg-fuchsia-50 text-fuchsia-600"
+        data-cy="hotel-kpi-active-bookings"
       />
     </div>
 
@@ -384,6 +390,7 @@ function onCurrencyChange(value: string) {
     />
 
     <HotelReservationsTable
+      data-cy="hotel-reservations-table"
       :data="reservations"
       :loading="loading"
       :page="filters.page ?? 1"

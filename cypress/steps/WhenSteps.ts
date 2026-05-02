@@ -1,4 +1,5 @@
 import { CheckoutPage } from '../pages/CheckoutPage'
+import { HotelDashboardPage } from '../pages/HotelDashboardPage'
 import { LoginPage } from '../pages/LoginPage'
 import { PaymentConfirmationPage } from '../pages/PaymentConfirmationPage'
 import { PropertyDetailPage } from '../pages/PropertyDetailPage'
@@ -29,6 +30,7 @@ interface StripeStubScenario {
 }
 
 const checkoutPage = new CheckoutPage()
+const hotelDashboardPage = new HotelDashboardPage()
 const loginPage = new LoginPage()
 const paymentConfirmationPage = new PaymentConfirmationPage()
 const propertyDetailPage = new PropertyDetailPage()
@@ -194,5 +196,9 @@ export const whenSteps = {
 
   whenIRunModificationPreview() {
     reservationModifyPage.runPreview()
+  },
+
+  whenIApplyHotelDashboardDateRange(startDate: string, endDate: string) {
+    hotelDashboardPage.applyDateRange(startDate, endDate)
   }
 }

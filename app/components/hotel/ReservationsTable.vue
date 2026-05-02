@@ -129,7 +129,13 @@ const currentPage = computed({
       sort-mode="manual"
     >
       <template #guest_full_name-cell="{ row }">
-        <div class="flex items-center gap-3">
+        <div
+          class="flex items-center gap-3"
+          data-cy="hotel-reservation-row"
+          :data-cy-reservation-id="row.original.id"
+          :data-cy-reservation-number="row.original.reservation_number"
+          :data-cy-reservation-status="row.original.status"
+        >
           <span
             class="flex size-8 shrink-0 items-center justify-center rounded-full bg-(--ui-bg-elevated) text-xs font-bold text-(--ui-text-highlighted)"
           >

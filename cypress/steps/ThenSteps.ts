@@ -1,3 +1,4 @@
+import { HotelDashboardPage } from '../pages/HotelDashboardPage'
 import { LoginPage } from '../pages/LoginPage'
 import { PaymentConfirmationPage } from '../pages/PaymentConfirmationPage'
 import { PropertyDetailPage } from '../pages/PropertyDetailPage'
@@ -9,6 +10,7 @@ import { SearchPage } from '../pages/SearchPage'
 import { VerifyOtpPage } from '../pages/VerifyOtpPage'
 import { screenshot } from '../support/screenshots'
 
+const hotelDashboardPage = new HotelDashboardPage()
 const loginPage = new LoginPage()
 const paymentConfirmationPage = new PaymentConfirmationPage()
 const propertyDetailPage = new PropertyDetailPage()
@@ -229,5 +231,29 @@ export const thenSteps = {
   thenTheModificationPreviewIsAllowed() {
     reservationModifyPage.preview()
       .should('have.attr', 'data-cy-change-allowed', 'true')
+  },
+
+  thenIAmOnHotelDashboard() {
+    cy.location('pathname').should('eq', '/hotel/dashboard')
+    hotelDashboardPage.root().should('exist')
+  },
+
+  thenISeeAllHotelKpis() {
+    hotelDashboardPage.kpiRevenue().should('exist')
+    hotelDashboardPage.kpiOccupancy().should('exist')
+    hotelDashboardPage.kpiAdr().should('exist')
+    hotelDashboardPage.kpiActiveBookings().should('exist')
+    screenshot.take('hotel_kpis_visible')
+  },
+
+  thenTheHotelDashboardListsReservation(reservationId: string) {
+    hotelDashboardPage.rowByReservationId(reservationId)
+      .scrollIntoView()
+      .should('be.visible')
+    screenshot.take('hotel_dashboard_reservation_listed')
+  },
+
+  thenTheHotelDashboardHasAtLeastOneReservation() {
+    hotelDashboardPage.reservationRows().its('length').should('be.gte', 1)
   }
 }

@@ -1,9 +1,11 @@
+import { HotelDashboardPage } from '../pages/HotelDashboardPage'
 import { LoginPage } from '../pages/LoginPage'
 import { PropertyDetailPage } from '../pages/PropertyDetailPage'
 import { RegisterPage } from '../pages/RegisterPage'
 import { ReservationsListPage } from '../pages/ReservationsListPage'
 import { SearchPage } from '../pages/SearchPage'
 
+const hotelDashboardPage = new HotelDashboardPage()
 const loginPage = new LoginPage()
 const propertyDetailPage = new PropertyDetailPage()
 const registerPage = new RegisterPage()
@@ -63,6 +65,10 @@ export const givenSteps = {
 
   givenIAmOnReservationsList() {
     reservationsListPage.visit()
+  },
+
+  givenIAmOnHotelDashboard() {
+    hotelDashboardPage.visit()
   },
 
   givenOtpServiceResponds(statusCode = 200, fixture = 'responses/otpSuccess.json') {
