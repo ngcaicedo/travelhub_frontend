@@ -112,7 +112,12 @@ const canCancel = computed(() =>
 </script>
 
 <template>
-  <div class="mx-auto max-w-4xl space-y-6 px-4 py-6">
+  <div
+    class="mx-auto max-w-4xl space-y-6 px-4 py-6"
+    data-cy="hotel-reservation-detail"
+    :data-cy-reservation-id="detail?.reservation.id ?? ''"
+    :data-cy-reservation-status="detail?.reservation.status ?? ''"
+  >
     <!-- Back link -->
     <UButton
       variant="ghost"
@@ -141,10 +146,10 @@ const canCancel = computed(() =>
       <!-- Header with status badge and actions -->
       <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p class="text-sm text-(--ui-text-muted)">
+          <p class="text-sm text-(--ui-text-muted)" data-cy="hotel-detail-reservation-number">
             {{ t('hotel.detail.reservationNumber', { number: detail.reservation.id.slice(-8).toUpperCase() }) }}
           </p>
-          <div class="mt-1 flex items-center gap-3">
+          <div class="mt-1 flex items-center gap-3" data-cy="hotel-detail-status">
             <HotelStatusBadge :status="detail.reservation.status" />
           </div>
         </div>
@@ -154,6 +159,7 @@ const canCancel = computed(() =>
             v-if="canConfirm"
             color="success"
             icon="i-lucide-check"
+            data-cy="hotel-detail-action-confirm"
             @click="showConfirmModal = true"
           >
             {{ t('hotel.detail.actions.confirm') }}
@@ -163,6 +169,7 @@ const canCancel = computed(() =>
             color="error"
             variant="soft"
             icon="i-lucide-x"
+            data-cy="hotel-detail-action-cancel"
             @click="showCancelModal = true"
           >
             {{ t('hotel.detail.actions.cancel') }}
@@ -177,6 +184,7 @@ const canCancel = computed(() =>
         variant="soft"
         :title="t('hotel.detail.actions.success')"
         :close-button="{ icon: 'i-lucide-x', color: 'neutral', variant: 'link' }"
+        data-cy="hotel-detail-action-success"
         @close="actionSuccess = false"
       />
 
@@ -197,18 +205,18 @@ const canCancel = computed(() =>
             {{ t('hotel.detail.sections.guest') }}
           </h2>
         </template>
-        <div v-if="detail.guest" class="grid gap-3 sm:grid-cols-3">
+        <div v-if="detail.guest" class="grid gap-3 sm:grid-cols-3" data-cy="hotel-detail-guest">
           <div>
             <p class="text-xs text-(--ui-text-muted)">{{ t('hotel.detail.guest.name') }}</p>
-            <p class="font-medium text-(--ui-text-highlighted)">{{ detail.guest.full_name }}</p>
+            <p class="font-medium text-(--ui-text-highlighted)" data-cy="hotel-detail-guest-name">{{ detail.guest.full_name }}</p>
           </div>
           <div>
             <p class="text-xs text-(--ui-text-muted)">{{ t('hotel.detail.guest.email') }}</p>
-            <p class="font-medium text-(--ui-text-highlighted)">{{ detail.guest.email }}</p>
+            <p class="font-medium text-(--ui-text-highlighted)" data-cy="hotel-detail-guest-email">{{ detail.guest.email }}</p>
           </div>
           <div>
             <p class="text-xs text-(--ui-text-muted)">{{ t('hotel.detail.guest.phone') }}</p>
-            <p class="font-medium text-(--ui-text-highlighted)">
+            <p class="font-medium text-(--ui-text-highlighted)" data-cy="hotel-detail-guest-phone">
               {{ detail.guest.phone ?? t('hotel.detail.guest.noPhone') }}
             </p>
           </div>
@@ -225,16 +233,24 @@ const canCancel = computed(() =>
             {{ t('hotel.detail.sections.reservation') }}
           </h2>
         </template>
-        <div class="grid gap-3 sm:grid-cols-2">
+        <div class="grid gap-3 sm:grid-cols-2" data-cy="hotel-detail-reservation">
           <div>
             <p class="text-xs text-(--ui-text-muted)">{{ t('hotel.detail.reservation.checkIn') }}</p>
-            <p class="font-medium text-(--ui-text-highlighted)">
+            <p
+              class="font-medium text-(--ui-text-highlighted)"
+              data-cy="hotel-detail-check-in"
+              :data-cy-iso="detail.reservation.check_in_date"
+            >
               {{ formatDate(detail.reservation.check_in_date) }}
             </p>
           </div>
           <div>
             <p class="text-xs text-(--ui-text-muted)">{{ t('hotel.detail.reservation.checkOut') }}</p>
-            <p class="font-medium text-(--ui-text-highlighted)">
+            <p
+              class="font-medium text-(--ui-text-highlighted)"
+              data-cy="hotel-detail-check-out"
+              :data-cy-iso="detail.reservation.check_out_date"
+            >
               {{ formatDate(detail.reservation.check_out_date) }}
             </p>
           </div>
@@ -246,7 +262,11 @@ const canCancel = computed(() =>
           </div>
           <div>
             <p class="text-xs text-(--ui-text-muted)">{{ t('hotel.detail.reservation.guests') }}</p>
-            <p class="font-medium text-(--ui-text-highlighted)">{{ detail.reservation.number_of_guests }}</p>
+            <p
+              class="font-medium text-(--ui-text-highlighted)"
+              data-cy="hotel-detail-guests"
+              :data-cy-count="detail.reservation.number_of_guests"
+            >{{ detail.reservation.number_of_guests }}</p>
           </div>
           <div class="sm:col-span-2">
             <p class="text-xs text-(--ui-text-muted)">{{ t('hotel.detail.reservation.specialRequests') }}</p>
@@ -264,7 +284,7 @@ const canCancel = computed(() =>
             {{ t('hotel.detail.sections.payment') }}
           </h2>
         </template>
-        <div v-if="detail.reservation.price_breakdown" class="space-y-2">
+        <div v-if="detail.reservation.price_breakdown" class="space-y-2" data-cy="hotel-detail-payment">
           <div class="flex justify-between text-sm">
             <span class="text-(--ui-text-muted)">
               {{ t('hotel.detail.payment.accommodation', { nights: detail.reservation.price_breakdown.nights }) }}
@@ -294,7 +314,11 @@ const canCancel = computed(() =>
           <USeparator />
           <div class="flex justify-between font-bold">
             <span>{{ t('hotel.detail.payment.total') }}</span>
-            <span>
+            <span
+              data-cy="hotel-detail-payment-total"
+              :data-cy-cents="detail.reservation.price_breakdown.total_in_cents"
+              :data-cy-currency="detail.reservation.price_breakdown.currency"
+            >
               {{ formatCents(detail.reservation.price_breakdown.total_in_cents, detail.reservation.price_breakdown.currency) }}
             </span>
           </div>
@@ -383,14 +407,19 @@ const canCancel = computed(() =>
     <!-- Confirm modal -->
     <UModal v-model:open="showConfirmModal">
       <template #content>
-        <div class="space-y-4 p-6">
+        <div class="space-y-4 p-6" data-cy="hotel-detail-confirm-modal">
           <h3 class="text-lg font-bold">{{ t('hotel.detail.actions.confirmTitle') }}</h3>
           <p class="text-sm text-(--ui-text-muted)">{{ t('hotel.detail.actions.confirmDesc') }}</p>
           <div class="flex justify-end gap-2">
             <UButton variant="ghost" color="neutral" @click="showConfirmModal = false">
               {{ t('hotel.detail.actions.abort') }}
             </UButton>
-            <UButton color="success" :loading="actionLoading" @click="handleConfirm">
+            <UButton
+              color="success"
+              :loading="actionLoading"
+              data-cy="hotel-detail-confirm-modal-proceed"
+              @click="handleConfirm"
+            >
               {{ t('hotel.detail.actions.proceed') }}
             </UButton>
           </div>
@@ -401,7 +430,7 @@ const canCancel = computed(() =>
     <!-- Cancel modal -->
     <UModal v-model:open="showCancelModal">
       <template #content>
-        <div class="space-y-4 p-6">
+        <div class="space-y-4 p-6" data-cy="hotel-detail-cancel-modal">
           <h3 class="text-lg font-bold">{{ t('hotel.detail.actions.cancelTitle') }}</h3>
           <p class="text-sm text-(--ui-text-muted)">{{ t('hotel.detail.actions.cancelDesc') }}</p>
           <USelect
@@ -414,7 +443,12 @@ const canCancel = computed(() =>
             <UButton variant="ghost" color="neutral" @click="showCancelModal = false">
               {{ t('hotel.detail.actions.abort') }}
             </UButton>
-            <UButton color="error" :loading="actionLoading" @click="handleCancel">
+            <UButton
+              color="error"
+              :loading="actionLoading"
+              data-cy="hotel-detail-cancel-modal-proceed"
+              @click="handleCancel"
+            >
               {{ t('hotel.detail.actions.proceed') }}
             </UButton>
           </div>
