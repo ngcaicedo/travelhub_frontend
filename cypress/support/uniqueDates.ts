@@ -61,8 +61,12 @@ export function uniqueDateRange(testIndex: number): DateRange {
     throw new Error('uniqueDateRange: no future slots available in 2026 seed window')
   }
 
-  const minute = Math.floor(now.getTime() / 60_000)
-  const index = ((minute * RANGES_PER_MONTH) + testIndex) % futureSlots.length
+  // Mapeo deterministico testIndex -> slot. Los testIndex usados por la
+  // suite (0..2, 10..11, 20..21, 30, 40..41) son todos distintos mod 24,
+  // asi que cubren slots distintos del array `futureSlots`. Esto asume DB
+  // limpia entre runs (docker compose down -v); de lo contrario el slot
+  // se repite y el backend devuelve 400 RoomNotAvailable.
+  const index = testIndex % futureSlots.length
   const coords = futureSlots[index]!
 
   const mm = String(coords.month).padStart(2, '0')

@@ -187,6 +187,8 @@ const currentPage = computed({
             size="xs"
             icon="i-lucide-chevron-right"
             :aria-label="t('hotel.detail.viewDetail')"
+            :data-cy="'hotel-row-view-detail'"
+            :data-cy-reservation-id="row.original.id"
             @click="emit('select', row.original)"
           />
         </slot>

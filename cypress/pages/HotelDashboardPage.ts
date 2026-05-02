@@ -47,10 +47,17 @@ export class HotelDashboardPage {
   }
 
   applyDateRange(startDate: string, endDate: string) {
+    cy.intercept('GET', '**/api/v1/reservations/host/me/metrics**').as('hostMetrics')
+    cy.intercept('GET', '**/api/v1/reservations/host/me/revenue-trends**').as('hostTrends')
+
     cy.get('[data-cy=hotel-filter-start-date]').clear().type(startDate)
     cy.get('[data-cy=hotel-filter-end-date]').clear().type(endDate)
     screenshot.take('hotel_filter_dates_set')
     cy.get('[data-cy=hotel-filter-apply]').click()
+
+    cy.wait(['@hostMetrics', '@hostTrends'], { timeout: 15000 })
+    // Margen para que echarts pinte la serie tras recibir los datos.
+    cy.wait(300)
     screenshot.take('hotel_filter_applied')
   }
 }

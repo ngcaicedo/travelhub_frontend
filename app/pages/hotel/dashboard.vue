@@ -265,7 +265,13 @@ const occupancyPct = computed(() => {
 
 const rangeLabel = computed(() => {
   if (!analyticsRange.start_date || !analyticsRange.end_date) return ''
-  const fmt = (iso: string) => new Date(iso).toLocaleDateString(locale.value, { month: 'short', day: '2-digit' })
+  const fmt = (iso: string) => {
+    const [y, m, d] = iso.split('-').map(Number)
+    return new Date(y!, (m ?? 1) - 1, d ?? 1).toLocaleDateString(locale.value, {
+      month: 'short',
+      day: '2-digit'
+    })
+  }
   return `${fmt(analyticsRange.start_date)} – ${fmt(analyticsRange.end_date)}`
 })
 
@@ -437,6 +443,8 @@ function onCurrencyChange(value: string) {
             size="xs"
             icon="i-lucide-chevron-right"
             :aria-label="t('hotel.detail.viewDetail')"
+            :data-cy="'hotel-row-view-detail'"
+            :data-cy-reservation-id="reservation.id"
             @click="onReservationSelect(reservation)"
           />
         </div>

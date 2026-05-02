@@ -1,5 +1,6 @@
 import { CheckoutPage } from '../pages/CheckoutPage'
 import { HotelDashboardPage } from '../pages/HotelDashboardPage'
+import { HotelReservationDetailPage } from '../pages/HotelReservationDetailPage'
 import { LoginPage } from '../pages/LoginPage'
 import { PaymentConfirmationPage } from '../pages/PaymentConfirmationPage'
 import { PropertyDetailPage } from '../pages/PropertyDetailPage'
@@ -31,6 +32,7 @@ interface StripeStubScenario {
 
 const checkoutPage = new CheckoutPage()
 const hotelDashboardPage = new HotelDashboardPage()
+const hotelReservationDetailPage = new HotelReservationDetailPage()
 const loginPage = new LoginPage()
 const paymentConfirmationPage = new PaymentConfirmationPage()
 const propertyDetailPage = new PropertyDetailPage()
@@ -200,5 +202,27 @@ export const whenSteps = {
 
   whenIApplyHotelDashboardDateRange(startDate: string, endDate: string) {
     hotelDashboardPage.applyDateRange(startDate, endDate)
+  },
+
+  whenIOpenHotelReservationDetail(reservationId: string) {
+    cy.get(`[data-cy=hotel-row-view-detail][data-cy-reservation-id="${reservationId}"]`).click()
+  },
+
+  whenIVisitHotelReservationDetail(reservationId: string) {
+    hotelReservationDetailPage.visit(reservationId)
+  },
+
+  whenHotelConfirmsReservationFromDetail() {
+    cy.intercept('POST', '**/api/v1/hotel/reservations/*/confirm').as('hotelConfirm')
+    hotelReservationDetailPage.confirmActionButton().scrollIntoView().click()
+    hotelReservationDetailPage.confirmModalProceed().click()
+    cy.wait('@hotelConfirm', { timeout: 15000 })
+  },
+
+  whenHotelCancelsReservationFromDetail() {
+    cy.intercept('POST', '**/api/v1/hotel/reservations/*/cancel').as('hotelCancel')
+    hotelReservationDetailPage.cancelActionButton().scrollIntoView().click()
+    hotelReservationDetailPage.cancelModalProceed().click()
+    cy.wait('@hotelCancel', { timeout: 15000 })
   }
 }

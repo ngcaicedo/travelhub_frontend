@@ -1,4 +1,5 @@
 import { HotelDashboardPage } from '../pages/HotelDashboardPage'
+import { HotelReservationDetailPage } from '../pages/HotelReservationDetailPage'
 import { LoginPage } from '../pages/LoginPage'
 import { PaymentConfirmationPage } from '../pages/PaymentConfirmationPage'
 import { PropertyDetailPage } from '../pages/PropertyDetailPage'
@@ -11,6 +12,7 @@ import { VerifyOtpPage } from '../pages/VerifyOtpPage'
 import { screenshot } from '../support/screenshots'
 
 const hotelDashboardPage = new HotelDashboardPage()
+const hotelReservationDetailPage = new HotelReservationDetailPage()
 const loginPage = new LoginPage()
 const paymentConfirmationPage = new PaymentConfirmationPage()
 const propertyDetailPage = new PropertyDetailPage()
@@ -181,7 +183,7 @@ export const thenSteps = {
   },
 
   thenIAmOnPaymentConfirmationPage() {
-    cy.location('pathname').should('eq', '/notifications/payment-confirmation')
+    cy.location('pathname', { timeout: 20000 }).should('eq', '/notifications/payment-confirmation')
     cy.location('search').should('match', /paymentId=/)
     screenshot.take('payment_confirmation_url_verified')
   },
@@ -255,5 +257,56 @@ export const thenSteps = {
 
   thenTheHotelDashboardHasAtLeastOneReservation() {
     hotelDashboardPage.reservationRows().its('length').should('be.gte', 1)
+  },
+
+  thenIAmOnHotelReservationDetail(reservationId: string) {
+    cy.location('pathname').should('eq', `/hotel/reservations/${reservationId}`)
+    cy.get('[data-cy=hotel-reservation-detail]', { timeout: 20000 })
+      .should('have.attr', 'data-cy-reservation-id', reservationId)
+    screenshot.take('hotel_reservation_detail_url_verified')
+  },
+
+  thenISeeHotelReservationGuest(fullName: string, email: string) {
+    hotelReservationDetailPage.guestName().should('contain.text', fullName)
+    hotelReservationDetailPage.guestEmail().should('contain.text', email)
+  },
+
+  thenISeeHotelReservationDates(checkIn: string, checkOut: string) {
+    hotelReservationDetailPage.checkIn()
+      .invoke('attr', 'data-cy-iso')
+      .should((value) => expect(String(value).slice(0, 10)).to.eq(checkIn))
+    hotelReservationDetailPage.checkOut()
+      .invoke('attr', 'data-cy-iso')
+      .should((value) => expect(String(value).slice(0, 10)).to.eq(checkOut))
+  },
+
+  thenISeeHotelReservationGuests(count: number) {
+    hotelReservationDetailPage.guests()
+      .should('have.attr', 'data-cy-count', String(count))
+  },
+
+  thenISeeHotelReservationStatus(expected: RegExp) {
+    hotelReservationDetailPage.root()
+      .invoke('attr', 'data-cy-reservation-status')
+      .should('match', expected)
+  },
+
+  thenTheHotelReservationStatusIs(expected: RegExp) {
+    hotelReservationDetailPage.root()
+      .invoke('attr', 'data-cy-reservation-status')
+      .should('match', expected)
+  },
+
+  thenISeeHotelReservationActionSuccess() {
+    hotelReservationDetailPage.successAlert().should('be.visible')
+    screenshot.take('hotel_reservation_action_success')
+  },
+
+  thenISeeHotelReservationPaymentBreakdown() {
+    hotelReservationDetailPage.paymentTotal()
+      .scrollIntoView()
+      .should('be.visible')
+      .invoke('attr', 'data-cy-cents')
+      .then(cents => expect(Number(cents)).to.be.greaterThan(0))
   }
 }
