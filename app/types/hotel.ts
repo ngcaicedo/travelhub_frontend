@@ -3,6 +3,13 @@ export type ReservationStatus =
   | 'confirmed'
   | 'cancelled'
   | 'completed'
+  | 'modification_pending_payment'
+  | 'modification_confirmed'
+
+export interface HostReservationAvailableAction {
+  action: 'confirm' | 'cancel'
+  label: string
+}
 
 export interface HostReservationItem {
   id: string
@@ -19,6 +26,7 @@ export interface HostReservationItem {
   currency: string
   status: ReservationStatus
   created_at: string
+  available_actions: HostReservationAvailableAction[]
 }
 
 export interface HostReservationsPage {
@@ -117,11 +125,6 @@ export interface HostReservationInternalNote {
   author_user_id: string | null
   author_name: string | null
   created_at: string
-}
-
-export interface HostReservationAvailableAction {
-  action: 'confirm' | 'cancel'
-  label: string
 }
 
 export interface HostReservationDetail {

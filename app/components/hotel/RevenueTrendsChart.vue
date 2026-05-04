@@ -15,6 +15,12 @@ const emit = defineEmits<{
 
 const { t, locale } = useI18n()
 
+function formatAxisNumber(value: number) {
+  return new Intl.NumberFormat(locale.value, {
+    maximumFractionDigits: 0,
+  }).format(value)
+}
+
 const option = computed(() => {
   const buckets = props.data?.buckets ?? []
   const values = buckets.map(b => Number(b.revenue))
@@ -48,7 +54,11 @@ const option = computed(() => {
       type: 'value',
       min: 0,
       max: values.length === 1 ? Math.ceil(maxValue * 1.5) : undefined,
-      axisLabel: { color: '#94a3b8', fontSize: 10 },
+      axisLabel: {
+        color: '#94a3b8',
+        fontSize: 10,
+        formatter: (value: number) => formatAxisNumber(value),
+      },
       splitLine: { lineStyle: { color: '#f1f5f9' } },
     },
     series: [

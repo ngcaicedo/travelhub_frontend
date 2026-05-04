@@ -71,7 +71,9 @@
       "pending_payment": "Pendente",
       "confirmed": "Confirmada",
       "cancelled": "Cancelada",
-      "completed": "Concluída"
+      "completed": "Concluída",
+      "modification_pending_payment": "Modificação pendente de pagamento",
+      "modification_confirmed": "Modificação confirmada"
     },
     "cancellationReasons": {
       "maintenance": "Manutenção",
