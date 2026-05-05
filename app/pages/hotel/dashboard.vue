@@ -143,7 +143,6 @@ async function initializeAnalyticsRangeFromConfirmedReservations() {
   }
 
   const earliestDate = earliest.items[0]?.check_in_date?.slice(0, 10)
-  const latestDate = latest.items[0]?.check_in_date?.slice(0, 10)
   const latestCheckoutDate = latest.items[0]?.check_out_date?.slice(0, 10)
 
   if (!earliestDate || !latestCheckoutDate) return
