@@ -318,6 +318,7 @@ definePageMeta({
               type="button"
               class="relative pb-4 text-sm font-semibold transition-colors"
               :class="selectedTab === 'upcoming' ? 'text-blue-600' : 'text-slate-500 hover:text-slate-700'"
+              data-cy="reservation-tab-upcoming"
               @click="selectedTab = 'upcoming'"
             >
               <span class="inline-flex items-center gap-2">
@@ -339,6 +340,7 @@ definePageMeta({
               type="button"
               class="relative pb-4 text-sm font-semibold transition-colors"
               :class="selectedTab === 'past' ? 'text-blue-600' : 'text-slate-500 hover:text-slate-700'"
+              data-cy="reservation-tab-past"
               @click="selectedTab = 'past'"
             >
               <span class="inline-flex items-center gap-2">
@@ -360,6 +362,7 @@ definePageMeta({
               type="button"
               class="relative pb-4 text-sm font-semibold transition-colors"
               :class="selectedTab === 'cancelled' ? 'text-blue-600' : 'text-slate-500 hover:text-slate-700'"
+              data-cy="reservation-tab-cancelled"
               @click="selectedTab = 'cancelled'"
             >
               <span class="inline-flex items-center gap-2">
@@ -396,6 +399,7 @@ definePageMeta({
           <div
             v-else-if="!filteredReservations.length"
             class="rounded-[28px] border border-dashed border-slate-300 bg-white px-8 py-14 text-center shadow-[0_18px_60px_rgba(15,23,42,0.04)]"
+            data-cy="reservation-empty"
           >
             <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-slate-100">
               <UIcon name="i-lucide-luggage" class="h-8 w-8 text-slate-500" />
@@ -417,11 +421,18 @@ definePageMeta({
             </div>
           </div>
 
-          <div v-else class="space-y-5">
+          <div
+            v-else
+            class="space-y-5"
+            data-cy="reservation-list"
+          >
             <article
               v-for="reservation in filteredReservations"
               :key="reservation.id"
               class="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_60px_rgba(15,23,42,0.06)]"
+              data-cy="reservation-card"
+              :data-cy-reservation-id="reservation.id"
+              :data-cy-reservation-status="reservation.status"
             >
               <div class="grid lg:grid-cols-[260px_1fr]">
                 <div class="relative min-h-[240px] overflow-hidden bg-slate-100 lg:min-h-full">
@@ -502,6 +513,7 @@ definePageMeta({
                         icon="i-lucide-pencil"
                         class="rounded-2xl px-4 py-2.5 text-[14px] font-semibold"
                         :disabled="!reservation.canModify"
+                        data-cy="reservation-card-modify"
                         @click="modifyReservation(reservation.id)"
                       >
                         {{ t('reservationFlow.detail.modifyButton') }}
@@ -514,6 +526,7 @@ definePageMeta({
                         class="rounded-2xl px-4 py-2.5 text-[14px] font-semibold"
                         :disabled="!reservation.canCancel"
                         :title="reservation.canCancel ? undefined : t('reservationsList.cancelUnavailable')"
+                        data-cy="reservation-card-cancel"
                         @click="cancelReservation(reservation.id)"
                       >
                         {{ t('reservationsList.cancelReservation') }}

@@ -247,6 +247,7 @@ watch(() => [props.initialCheckInDate, props.initialCheckOutDate, props.initialN
                 :min="getTodayDate()"
                 :max="getMaxCheckoutDate()"
                 :disabled="loading"
+                data-cy="reservation-check-in"
                 required
               />
             </UFormField>
@@ -262,6 +263,7 @@ watch(() => [props.initialCheckInDate, props.initialCheckOutDate, props.initialN
                 :min="checkInDate || getTodayDate()"
                 :max="getMaxCheckoutDate()"
                 :disabled="loading"
+                data-cy="reservation-check-out"
                 required
               />
             </UFormField>
@@ -279,6 +281,7 @@ watch(() => [props.initialCheckInDate, props.initialCheckOutDate, props.initialN
           :min="1"
           :max="props.property.max_guests"
           :disabled="loading"
+          data-cy="reservation-guests"
         />
       </UFormField>
 
@@ -334,6 +337,7 @@ watch(() => [props.initialCheckInDate, props.initialCheckOutDate, props.initialN
         block
         size="lg"
         icon="i-lucide-check"
+        data-cy="reservation-confirm"
       >
         {{ t('booking.confirmBooking') }}
       </UButton>

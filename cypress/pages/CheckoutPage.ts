@@ -7,7 +7,15 @@ export class CheckoutPage {
   }
 
   chooseScenario(value: 'success' | 'insufficient' | 'declined') {
-    cy.get('[data-cy=checkout-scenario]').select(value)
+    // USelect renderiza un combobox custom (button + popover), no un <select>
+    // nativo, asi que abrimos el popover y elegimos la opcion por etiqueta i18n.
+    const labelByValue: Record<string, string> = {
+      success: 'Tarjeta aprobada',
+      insufficient: 'Fondos insuficientes',
+      declined: 'Tarjeta rechazada'
+    }
+    cy.get('[data-cy=checkout-scenario]').click()
+    cy.get('[role=option]').contains(labelByValue[value]!).click()
     screenshot.take(`checkout_scenario_${value}`)
   }
 

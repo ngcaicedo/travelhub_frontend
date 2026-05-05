@@ -22,7 +22,10 @@ const shouldShowReadMore = computed(() => props.description.length > (props.maxL
 </script>
 
 <template>
-  <section class="space-y-4">
+  <section
+    class="space-y-4"
+    data-cy="property-description"
+  >
     <h2 class="text-2xl font-bold text-gray-900">
       {{ t('property.aboutSpace') }}
     </h2>
