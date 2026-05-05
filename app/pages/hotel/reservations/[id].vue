@@ -96,6 +96,7 @@ function closeCancelModal() {
   showCancelModal.value = false
   cancelReason.value = 'hotel_policy'
   cancelNote.value = ''
+  error.value = null
 }
 
 async function handleConfirm() {

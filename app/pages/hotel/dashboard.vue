@@ -85,12 +85,18 @@ function buildRange() {
   }
 }
 
-async function reload() {
+async function reloadAnalytics() {
   const range = buildRange()
   await Promise.all([
-    refreshReservations(buildFilters()),
     refreshMetrics(range),
     refreshTrends({ ...range, granularity: 'day' }),
+  ])
+}
+
+async function reload() {
+  await Promise.all([
+    refreshReservations(buildFilters()),
+    reloadAnalytics(),
   ])
 }
 
@@ -102,9 +108,7 @@ watch(
 function applyDateRange() {
   analyticsRange.start_date = dateRangeDraft.start_date
   analyticsRange.end_date = dateRangeDraft.end_date
-  const range = buildRange()
-  refreshMetrics(range)
-  refreshTrends({ ...range, granularity: 'day' })
+  void reloadAnalytics()
 }
 
 async function resetDateRange() {
@@ -124,14 +128,14 @@ async function initializeAnalyticsRangeFromConfirmedReservations() {
   try {
     ;[earliest, latest] = await Promise.all([
       listHostReservations(authStore.token, {
-        status: ['confirmed'],
+        status: ['confirmed', 'modification_confirmed'],
         sort_by: 'check_in_date',
         sort_dir: 'asc',
         page: 1,
         page_size: 1,
       }),
       listHostReservations(authStore.token, {
-        status: ['confirmed'],
+        status: ['confirmed', 'modification_confirmed'],
         sort_by: 'check_in_date',
         sort_dir: 'desc',
         page: 1,
@@ -232,6 +236,7 @@ function closeCancelModal() {
   cancelTargetId.value = null
   cancelReason.value = 'maintenance'
   cancelNote.value = ''
+  error.value = null
 }
 
 async function cancelReservation(reservationId: string) {
@@ -263,8 +268,11 @@ async function cancelReservation(reservationId: string) {
 }
 
 onMounted(async () => {
-  await initializeAnalyticsRangeFromConfirmedReservations()
-  await reload()
+  await Promise.all([
+    initializeAnalyticsRangeFromConfirmedReservations(),
+    refreshReservations(buildFilters()),
+  ])
+  await reloadAnalytics()
 })
 
 const formattedRevenue = computed(() => {
@@ -333,9 +341,7 @@ watch(
 
 function onCurrencyChange(value: string) {
   selectedCurrency.value = value
-  const range = buildRange()
-  refreshMetrics(range)
-  refreshTrends({ ...range, granularity: 'day' })
+  void reloadAnalytics()
 }
 
 </script>

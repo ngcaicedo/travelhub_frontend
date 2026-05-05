@@ -148,17 +148,18 @@ describe('HotelDashboardPage', () => {
 
   it('loads table reservations without applying dashboard date filters', async () => {
     await mountSuspended(HotelDashboardPage)
+    await new Promise(resolve => setTimeout(resolve, 0))
 
     expect(listHostReservationsMock).toHaveBeenCalledTimes(2)
     expect(listHostReservationsMock).toHaveBeenNthCalledWith(1, 'jwt-token', expect.objectContaining({
-      status: ['confirmed'],
+      status: ['confirmed', 'modification_confirmed'],
       sort_by: 'check_in_date',
       sort_dir: 'asc',
       page: 1,
       page_size: 1,
     }))
     expect(listHostReservationsMock).toHaveBeenNthCalledWith(2, 'jwt-token', expect.objectContaining({
-      status: ['confirmed'],
+      status: ['confirmed', 'modification_confirmed'],
       sort_by: 'check_in_date',
       sort_dir: 'desc',
       page: 1,

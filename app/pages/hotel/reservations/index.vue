@@ -87,7 +87,11 @@ function hasAction(reservation: HotelReservationListItem, action: 'confirm' | 'c
 }
 
 function canCancel(reservation: HotelReservationListItem) {
-  return hasAction(reservation, 'cancel')
+  if (reservation.available_actions) {
+    return hasAction(reservation, 'cancel')
+  }
+
+  return ['pending', 'pending_payment', 'confirmed', 'modification_confirmed'].includes(reservation.status)
 }
 
 function formatMoney(amount: string, currency: string) {
@@ -137,6 +141,7 @@ function closeCancelModal() {
   cancelTargetId.value = null
   cancelReason.value = 'maintenance'
   cancelNote.value = ''
+  error.value = null
 }
 
 async function loadProperties() {
