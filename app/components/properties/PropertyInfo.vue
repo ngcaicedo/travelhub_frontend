@@ -45,10 +45,16 @@ const navigateToSection = (sectionId: string) => {
     <!-- Header with title and actions -->
     <div class="flex items-start justify-between">
       <div>
-        <h1 class="text-4xl font-bold text-gray-900">
+        <h1
+          class="text-4xl font-bold text-gray-900"
+          data-cy="property-name"
+        >
           {{ props.property.name }}
         </h1>
-        <p class="text-lg text-gray-600 mt-2 flex items-center gap-2">
+        <p
+          class="text-lg text-gray-600 mt-2 flex items-center gap-2"
+          data-cy="property-location"
+        >
           <UIcon
             name="i-lucide-map-pin"
             class="w-5 h-5"
@@ -80,7 +86,10 @@ const navigateToSection = (sectionId: string) => {
             name="i-lucide-star"
             class="w-5 h-5 fill-yellow-400 text-yellow-400"
           />
-          <span class="text-xl font-semibold text-gray-900 ml-1">
+          <span
+            class="text-xl font-semibold text-gray-900 ml-1"
+            data-cy="property-rating"
+          >
             {{ rating }}
           </span>
         </div>
@@ -130,7 +139,13 @@ const navigateToSection = (sectionId: string) => {
     </div>
 
     <!-- Property features grid -->
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-b border-gray-200 pb-4">
+    <div
+      class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-b border-gray-200 pb-4"
+      data-cy="property-features"
+      :data-cy-bedrooms="props.property.bedrooms"
+      :data-cy-bathrooms="props.property.bathrooms"
+      :data-cy-max-guests="props.property.max_guests"
+    >
       <!-- Bedrooms -->
       <div class="flex items-center gap-3">
         <div class="bg-gray-100 rounded-lg p-3">

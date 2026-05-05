@@ -288,6 +288,7 @@ definePageMeta({
       <div
         v-else-if="reservation"
         class="grid gap-6 lg:grid-cols-[1fr_320px]"
+        data-cy="reservation-modify"
       >
         <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div class="mb-6">
@@ -298,22 +299,23 @@ definePageMeta({
           <UForm class="space-y-4">
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
               <UFormField :label="t('booking.checkIn')" name="checkInDate">
-                <UInput v-model="checkInDate" type="date" required />
+                <UInput v-model="checkInDate" type="date" required data-cy="modify-check-in" />
               </UFormField>
 
               <UFormField :label="t('booking.checkOut')" name="checkOutDate">
-                <UInput v-model="checkOutDate" type="date" required />
+                <UInput v-model="checkOutDate" type="date" required data-cy="modify-check-out" />
               </UFormField>
             </div>
 
             <UFormField :label="t('booking.guests')" name="numberOfGuests">
-              <UInputNumber v-model="numberOfGuests" :min="1" />
+              <UInputNumber v-model="numberOfGuests" :min="1" data-cy="modify-guests" />
             </UFormField>
 
             <div class="flex flex-wrap gap-3 pt-2">
               <UButton
                 color="neutral"
                 :loading="previewLoading"
+                data-cy="modify-run-preview"
                 @click="runPreview"
               >
                 {{ t('reservationFlow.modify.runPreview') }}
@@ -323,6 +325,7 @@ definePageMeta({
                 color="primary"
                 :disabled="!canConfirm"
                 :loading="submitLoading"
+                data-cy="modify-confirm"
                 @click="confirmChanges"
               >
                 {{ t('reservationFlow.modify.confirmModification') }}
@@ -363,10 +366,15 @@ definePageMeta({
           <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
             <h2 class="text-lg font-semibold text-slate-900">{{ t('reservationFlow.modify.previewSummary') }}</h2>
 
-            <div v-if="preview" class="mt-4 space-y-3 text-sm">
+            <div
+              v-if="preview"
+              class="mt-4 space-y-3 text-sm"
+              data-cy="modify-preview"
+              :data-cy-change-allowed="preview.change_allowed ? 'true' : 'false'"
+            >
               <div class="flex justify-between text-slate-700">
                 <span>{{ t('reservationFlow.modify.changeAllowed') }}</span>
-                <span class="font-medium">{{ preview.change_allowed ? t('common.yes') : t('common.no') }}</span>
+                <span class="font-medium" data-cy="modify-change-allowed">{{ preview.change_allowed ? t('common.yes') : t('common.no') }}</span>
               </div>
               <div class="flex justify-between text-slate-700">
                 <span>{{ t('reservationFlow.modify.deltaAmount') }}</span>

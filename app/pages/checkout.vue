@@ -887,13 +887,13 @@ async function submitStripe() {
   lastIdempotencyKey.value = stripeSession.value!.payment_transaction_id
   if (finalized.status === 'failed') {
     lastFailureMessage.value = finalized.error
-      feedback.value = {
-        tone: 'error',
-        titleKey: 'payments.feedback.failureTitle',
-        ...resolveFailureDescription(null, finalized.error)
-      }
-      await nextTick()
+    feedback.value = {
+      tone: 'error',
+      titleKey: 'payments.feedback.failureTitle',
+      ...resolveFailureDescription(null, finalized.error)
     }
+    await nextTick()
+  }
   if (finalized.payment_id) {
     syncPaymentTrackerContext()
     await paymentTracker.startTracking({
@@ -902,10 +902,12 @@ async function submitStripe() {
       reservationId: form.reservationId
     })
     await loadPaymentAndEvents(finalized.payment_id)
-    feedback.value = {
-      tone: 'info',
-      titleText: t('payments.actions.processing'),
-      descriptionKey: 'payments.feedback.pendingVerificationDescription'
+    if (finalized.status !== 'failed') {
+      feedback.value = {
+        tone: 'info',
+        titleText: t('payments.actions.processing'),
+        descriptionKey: 'payments.feedback.pendingVerificationDescription'
+      }
     }
     return
   }
