@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref, computed } from 'vue'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
+import type { HostMetrics, HostReservationsPage, HostRevenueTrends } from '~/types/hotel'
 
 import HotelDashboardPage from '~/pages/hotel/dashboard.vue'
 
@@ -18,7 +19,7 @@ vi.mock('~/stores/auth', () => ({
   })
 }))
 
-const reservationsState = ref({
+const reservationsState = ref<HostReservationsPage>({
   items: [
     {
       id: 'res-1',
@@ -46,7 +47,7 @@ const reservationsState = ref({
   page_size: 10,
 })
 
-const metricsState = ref({
+const metricsState = ref<HostMetrics>({
   active_reservations: 1,
   occupancy_rate: 0.42,
   revenue_amount: '357.00',
@@ -56,7 +57,7 @@ const metricsState = ref({
   total_nights: 5,
 })
 
-const trendsState = ref({
+const trendsState = ref<HostRevenueTrends>({
   granularity: 'day' as const,
   currency: 'COP',
   available_currencies: ['COP'],
