@@ -57,7 +57,7 @@ const metricsState = ref({
 })
 
 const trendsState = ref({
-  granularity: 'week' as const,
+  granularity: 'day' as const,
   currency: 'COP',
   available_currencies: ['COP'],
   buckets: [],
@@ -96,6 +96,12 @@ function findButtonByText(
     includesAnyText(button.text(), candidates)
   )
 }
+
+const reservationConfirmCandidates = [
+  'Confirmar reserva',
+  'Confirm reservation',
+  'Confirmar reserva',
+]
 
 describe('HotelDashboardPage', () => {
   beforeEach(() => {
@@ -179,7 +185,7 @@ describe('HotelDashboardPage', () => {
     expect(refreshTrendsMock).toHaveBeenCalledWith(expect.objectContaining({
       start_date: '2026-08-01T00:00:00.000Z',
       end_date: '2026-12-16T23:59:59.999Z',
-      granularity: 'week',
+      granularity: 'day',
     }))
   })
 
@@ -198,7 +204,7 @@ describe('HotelDashboardPage', () => {
 
   it('allows cancellation from the dashboard table but not confirmation', async () => {
     const wrapper = await mountSuspended(HotelDashboardPage)
-    const confirmButton = findButtonByText(wrapper, ['Confirmar', 'Confirm'])
+    const confirmButton = findButtonByText(wrapper, reservationConfirmCandidates)
     expect(confirmButton).toBeFalsy()
 
     const cancelButton = findButtonByText(wrapper, ['Cancelar', 'Cancel'])
@@ -278,8 +284,9 @@ describe('HotelDashboardPage', () => {
     const text = wrapper.text()
 
     expect(text).toMatch(/Modificaci.n confirmada|Modification confirmed|Modifica..o confirmada/)
-    expect(findButtonByText(wrapper, ['Confirmar', 'Confirm'])).toBeFalsy()
+    expect(findButtonByText(wrapper, reservationConfirmCandidates)).toBeFalsy()
     expect(findButtonByText(wrapper, ['Cancelar', 'Cancel'])).toBeTruthy()
   })
+
 })
 

@@ -4,6 +4,7 @@ import type {
   HostReservationInternalNote,
   HostReservationsFilters,
   HostReservationsPage,
+  HostRevenueMode,
   HostRevenueTrends,
 } from '~/types/hotel'
 import { getApiBaseUrls, handleApiError } from '~/utils/api'
@@ -44,7 +45,7 @@ export async function listHostReservations(
 
 export async function getHostMetrics(
   token: string | null,
-  range: { start_date?: string, end_date?: string, currency?: string } = {},
+  range: { start_date?: string, end_date?: string, currency?: string, revenue_mode?: HostRevenueMode } = {},
 ): Promise<HostMetrics> {
   const { reservationsApiUrl } = getApiBaseUrls()
   try {
@@ -61,7 +62,7 @@ export async function getHostMetrics(
 
 export async function getRevenueTrends(
   token: string | null,
-  range: { start_date?: string, end_date?: string, granularity?: 'day' | 'week' | 'month', currency?: string } = {},
+  range: { start_date?: string, end_date?: string, granularity?: 'day' | 'week' | 'month', currency?: string, revenue_mode?: HostRevenueMode } = {},
 ): Promise<HostRevenueTrends> {
   const { reservationsApiUrl } = getApiBaseUrls()
   try {

@@ -751,6 +751,11 @@
         "title": "Revenue trends",
         "empty": "No data yet in the selected period"
       },
+      "revenueMode": {
+        "label": "Amount basis",
+        "confirmedReservations": "Confirmed reservations (stay total)",
+        "collectedPayments": "Collected payments (recorded)"
+      },
       "filters": {
         "title": "Filters",
         "guest": "Guest",

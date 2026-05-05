@@ -751,6 +751,11 @@
         "title": "Evolución de ingresos",
         "empty": "Aún no hay datos en el periodo seleccionado"
       },
+      "revenueMode": {
+        "label": "Base del monto",
+        "confirmedReservations": "Reservas confirmadas (monto de estadía)",
+        "collectedPayments": "Pagos cobrados (registrados)"
+      },
       "filters": {
         "title": "Filtros",
         "guest": "Huésped",

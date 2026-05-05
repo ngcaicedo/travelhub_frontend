@@ -95,7 +95,9 @@ function formatMoney(amount: string, currency: string) {
   if (Number.isNaN(parsed)) return `${amount} ${currency}`
   return new Intl.NumberFormat(localeMap[locale.value] || 'en-US', {
     style: 'currency',
-    currency
+    currency,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   }).format(parsed)
 }
 

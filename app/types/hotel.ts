@@ -46,6 +46,8 @@ export interface HostMetrics {
   total_nights: number
 }
 
+export type HostRevenueMode = 'confirmed_reservations' | 'collected_payments'
+
 export interface HostRevenueBucket {
   bucket: string
   revenue: string

@@ -90,7 +90,7 @@ async function reload() {
   await Promise.all([
     refreshReservations(buildFilters()),
     refreshMetrics(range),
-    refreshTrends({ ...range, granularity: 'week' }),
+    refreshTrends({ ...range, granularity: 'day' }),
   ])
 }
 
@@ -104,7 +104,7 @@ function applyDateRange() {
   analyticsRange.end_date = dateRangeDraft.end_date
   const range = buildRange()
   refreshMetrics(range)
-  refreshTrends({ ...range, granularity: 'week' })
+  refreshTrends({ ...range, granularity: 'day' })
 }
 
 async function resetDateRange() {
@@ -304,6 +304,19 @@ const currencyOptions = computed(() => {
   return list.map(code => ({ label: code, value: code }))
 })
 
+const trendsChartKey = computed(() => {
+  const bucketsKey = trends.value?.buckets
+    ?.map(bucket => `${bucket.bucket}:${bucket.revenue}:${bucket.reservations}`)
+    .join('|') ?? 'empty'
+
+  return [
+    selectedCurrency.value ?? 'all',
+    analyticsRange.start_date,
+    analyticsRange.end_date,
+    bucketsKey,
+  ].join('::')
+})
+
 watch(
   () => trends.value?.available_currencies,
   (list) => {
@@ -317,8 +330,9 @@ function onCurrencyChange(value: string) {
   selectedCurrency.value = value
   const range = buildRange()
   refreshMetrics(range)
-  refreshTrends({ ...range, granularity: 'week' })
+  refreshTrends({ ...range, granularity: 'day' })
 }
+
 </script>
 
 <template>
@@ -403,6 +417,7 @@ function onCurrencyChange(value: string) {
     </div>
 
     <HotelRevenueTrendsChart
+      :key="trendsChartKey"
       :data="trends"
       :loading="loading && !trends"
       :range-label="rangeLabel"
