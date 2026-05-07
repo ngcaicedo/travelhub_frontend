@@ -10,6 +10,9 @@ export interface SearchFilters {
 export class SearchPage {
   visit() {
     cy.visit('/search')
+    // Nuxt SPA (ssr: false): esperar a que el form se hidrate antes de capturar
+    cy.get('[data-cy=search-submit]', { timeout: 15000 }).should('be.visible')
+    cy.get('[data-cy=search-city]').should('be.visible')
     screenshot.take('search_page_loaded')
   }
 
@@ -39,7 +42,10 @@ export class SearchPage {
 
   submit() {
     cy.get('[data-cy=search-submit]').click()
-    screenshot.take('search_submitted')
+    // Esperar a que aparezca o el grid de resultados o el empty state antes de capturar
+    cy.get('[data-cy=search-results], [data-cy=search-empty-state]', { timeout: 15000 })
+      .should('be.visible')
+    screenshot.take('search_submitted', { fullPage: true })
   }
 
   search(filters: SearchFilters) {
@@ -70,6 +76,13 @@ export class SearchPage {
   selectSort(optionLabel: string) {
     this.sortTrigger().click()
     cy.get('[role=menu]').contains(optionLabel).click()
-    screenshot.take(`search_sort_${optionLabel.replace(/\s+/g, '_').toLowerCase()}`)
+    // El dropdown debe haberse cerrado y el label del trigger reflejar la nueva opcion
+    cy.get('[role=menu]').should('not.exist')
+    this.sortTrigger().should('contain.text', optionLabel)
+    cy.get('[data-cy=search-results]').should('be.visible')
+    screenshot.take(
+      `search_sort_${optionLabel.replace(/\s+/g, '_').toLowerCase()}`,
+      { fullPage: true }
+    )
   }
 }

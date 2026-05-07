@@ -375,7 +375,10 @@ const buildSearchRequest = (): SearchRequest => ({
       : searchState.sort === 'rating'
         ? 'rating'
         : 'name',
-  order_dir: searchState.sort === 'price_desc' ? 'desc' : 'asc',
+  order_dir:
+    searchState.sort === 'price_desc' || searchState.sort === 'rating'
+      ? 'desc'
+      : 'asc',
   page: currentPage.value,
   page_size: pageSize
 })
