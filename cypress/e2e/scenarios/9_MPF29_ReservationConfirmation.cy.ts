@@ -26,7 +26,7 @@ describe('MPF-29 | Confirmacion de reserva end-to-end', () => {
 
     // When: busca y abre el detalle de la propiedad
     whenSteps.whenISearchProperties({
-      city: 'Bogota',
+      city: 'Fiesole',
       checkIn,
       checkOut,
       guests: GUESTS

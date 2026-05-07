@@ -81,9 +81,19 @@ export const DEMO_PROPERTY_TROPICAL: DemoProperty = {
   pricePerNight: 1650.0
 }
 
+export const DEMO_PROPERTY_CIKOS: DemoProperty = {
+  id: '55555555-5555-5555-5555-555555555555',
+  ownerId: DEMO_HOTEL_A.id,
+  name: 'Hotel Cikos Executive Suites',
+  location: 'Bogotá, Colombia',
+  currency: 'COP',
+  pricePerNight: 180000.0
+}
+
 export const DEMO_PROPERTIES: DemoProperty[] = [
   DEMO_PROPERTY_RENAISSANCE,
   DEMO_PROPERTY_BEACHFRONT,
   DEMO_PROPERTY_ALPINE,
-  DEMO_PROPERTY_TROPICAL
+  DEMO_PROPERTY_TROPICAL,
+  DEMO_PROPERTY_CIKOS
 ]

@@ -319,7 +319,7 @@ const validateSearchForm = () => {
 const mapSearchResultToCard = (item: SearchResultItem): SearchResultCard => ({
   id: item.id,
   name: item.name,
-  location: `${item.city}, ${item.country}`,
+  location: [item.city, item.country].filter(Boolean).join(', '),
   rating: item.rating,
   reviewCount: Math.max(1, Math.round(item.rating * 200)),
   maxGuests: item.max_capacity,

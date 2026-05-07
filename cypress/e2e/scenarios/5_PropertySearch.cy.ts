@@ -1,10 +1,8 @@
 import { givenSteps } from '../../steps/GivenSteps'
 import { whenSteps } from '../../steps/WhenSteps'
 import { thenSteps } from '../../steps/ThenSteps'
-import { DEMO_PROPERTY_ALPINE, DEMO_PROPERTY_RENAISSANCE } from '../../support/demoData'
+import { DEMO_PROPERTY_ALPINE, DEMO_PROPERTY_CIKOS } from '../../support/demoData'
 
-// Las disponibilidades del search service estan seedeadas para los dias 10-16
-// de cada mes de 2026 (ver travelhub_miso/services/search/src/db/seed.py).
 const CHECK_IN = '2026-12-10'
 const CHECK_OUT = '2026-12-12'
 
@@ -25,14 +23,14 @@ describe('Busqueda de hospedaje | filtros ciudad/fechas/capacidad', () => {
 
     // Then
     thenSteps.thenISeeSearchResultCount(1)
-    thenSteps.thenTheFirstSearchResultIs(DEMO_PROPERTY_RENAISSANCE.id, DEMO_PROPERTY_RENAISSANCE.name)
+    thenSteps.thenTheFirstSearchResultIs(DEMO_PROPERTY_CIKOS.id, DEMO_PROPERTY_CIKOS.name)
     thenSteps.thenTheSearchSummaryContains('1')
   })
 
-  it('respeta el filtro de ciudad al cambiar a Cali', () => {
+  it('respeta el filtro de ciudad al cambiar a Chamonix', () => {
     // When
     whenSteps.whenISearchProperties({
-      city: 'Cali',
+      city: 'Chamonix',
       checkIn: CHECK_IN,
       checkOut: CHECK_OUT,
       guests: 2
@@ -49,7 +47,7 @@ describe('Busqueda de hospedaje | filtros ciudad/fechas/capacidad', () => {
       city: 'Bogota',
       checkIn: CHECK_IN,
       checkOut: CHECK_OUT,
-      guests: 20
+      guests: 100
     })
 
     // Then
