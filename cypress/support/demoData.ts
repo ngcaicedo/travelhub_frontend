@@ -81,9 +81,39 @@ export const DEMO_PROPERTY_TROPICAL: DemoProperty = {
   pricePerNight: 1650.0
 }
 
+export const DEMO_PROPERTY_CIKOS: DemoProperty = {
+  id: '55555555-5555-5555-5555-555555555555',
+  ownerId: DEMO_HOTEL_A.id,
+  name: 'Hotel Cikos Executive Suites',
+  location: 'Bogotá, Colombia',
+  currency: 'COP',
+  pricePerNight: 180000.0
+}
+
+export const DEMO_PROPERTY_CANDELARIA: DemoProperty = {
+  id: '66666666-6666-6666-6666-666666666666',
+  ownerId: DEMO_HOTEL_B.id,
+  name: 'Hostal Boutique La Candelaria',
+  location: 'Bogotá, Colombia',
+  currency: 'COP',
+  pricePerNight: 95000.0
+}
+
+export const DEMO_PROPERTY_ANDINO: DemoProperty = {
+  id: '77777777-7777-7777-7777-777777777777',
+  ownerId: DEMO_HOTEL_B.id,
+  name: 'Aparthotel Andino Premium',
+  location: 'Bogotá, Colombia',
+  currency: 'COP',
+  pricePerNight: 320000.0
+}
+
 export const DEMO_PROPERTIES: DemoProperty[] = [
   DEMO_PROPERTY_RENAISSANCE,
   DEMO_PROPERTY_BEACHFRONT,
   DEMO_PROPERTY_ALPINE,
-  DEMO_PROPERTY_TROPICAL
+  DEMO_PROPERTY_TROPICAL,
+  DEMO_PROPERTY_CIKOS,
+  DEMO_PROPERTY_CANDELARIA,
+  DEMO_PROPERTY_ANDINO
 ]

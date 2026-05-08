@@ -66,6 +66,24 @@ export const thenSteps = {
     }
   },
 
+  thenTheSearchResultsContain(propertyIds: string[]) {
+    searchPage.resultCards().should('have.length', propertyIds.length)
+    propertyIds.forEach((id) => {
+      cy.get(`[data-cy=search-result-card][data-cy-property-id="${id}"]`)
+        .should('exist')
+    })
+  },
+
+  thenTheSearchResultsAreOrdered(propertyIds: string[]) {
+    searchPage.resultCards().should('have.length', propertyIds.length)
+    searchPage.resultCards().then(($cards) => {
+      const actualIds = Array.from($cards).map(card =>
+        card.getAttribute('data-cy-property-id')
+      )
+      expect(actualIds).to.deep.equal(propertyIds)
+    })
+  },
+
   thenISeeTheSearchEmptyState() {
     searchPage.emptyState().should('be.visible')
   },

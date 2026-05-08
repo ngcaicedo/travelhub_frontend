@@ -319,7 +319,7 @@ const validateSearchForm = () => {
 const mapSearchResultToCard = (item: SearchResultItem): SearchResultCard => ({
   id: item.id,
   name: item.name,
-  location: `${item.city}, ${item.country}`,
+  location: [item.city, item.country].filter(Boolean).join(', '),
   rating: item.rating,
   reviewCount: Math.max(1, Math.round(item.rating * 200)),
   maxGuests: item.max_capacity,
@@ -375,7 +375,10 @@ const buildSearchRequest = (): SearchRequest => ({
       : searchState.sort === 'rating'
         ? 'rating'
         : 'name',
-  order_dir: searchState.sort === 'price_desc' ? 'desc' : 'asc',
+  order_dir:
+    searchState.sort === 'price_desc' || searchState.sort === 'rating'
+      ? 'desc'
+      : 'asc',
   page: currentPage.value,
   page_size: pageSize
 })
