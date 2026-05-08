@@ -9,10 +9,12 @@ const { t } = useI18n()
 type BadgeColor = NonNullable<BadgeProps['color']>
 
 const variantMap: Record<ReservationStatus, { color: BadgeColor, label: string }> = {
-  pending_payment: { color: 'warning', label: 'hotel.dashboard.status.pendingPayment' },
-  confirmed: { color: 'success', label: 'hotel.dashboard.status.confirmed' },
-  cancelled: { color: 'error', label: 'hotel.dashboard.status.cancelled' },
-  completed: { color: 'neutral', label: 'hotel.dashboard.status.completed' },
+  pending_payment: { color: 'warning', label: 'hotelReservations.status.pending_payment' },
+  confirmed: { color: 'success', label: 'hotelReservations.status.confirmed' },
+  cancelled: { color: 'error', label: 'hotelReservations.status.cancelled' },
+  completed: { color: 'neutral', label: 'hotelReservations.status.completed' },
+  modification_pending_payment: { color: 'warning', label: 'hotelReservations.status.modification_pending_payment' },
+  modification_confirmed: { color: 'info', label: 'hotelReservations.status.modification_confirmed' },
 }
 
 const variant = computed(() => variantMap[props.status] ?? variantMap.pending_payment)

@@ -71,7 +71,9 @@
       "pending_payment": "Pending",
       "confirmed": "Confirmed",
       "cancelled": "Cancelled",
-      "completed": "Completed"
+      "completed": "Completed",
+      "modification_pending_payment": "Modification pending payment",
+      "modification_confirmed": "Modification confirmed"
     },
     "cancellationReasons": {
       "maintenance": "Maintenance",
@@ -748,6 +750,11 @@
       "chart": {
         "title": "Revenue trends",
         "empty": "No data yet in the selected period"
+      },
+      "revenueMode": {
+        "label": "Amount basis",
+        "confirmedReservations": "Confirmed reservations (stay total)",
+        "collectedPayments": "Collected payments (recorded)"
       },
       "filters": {
         "title": "Filters",

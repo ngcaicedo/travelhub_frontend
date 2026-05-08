@@ -44,7 +44,9 @@
       "pending_payment": "Pendiente",
       "confirmed": "Confirmada",
       "cancelled": "Cancelada",
-      "completed": "Completada"
+      "completed": "Completada",
+      "modification_pending_payment": "Modificación pendiente de pago",
+      "modification_confirmed": "Modificación confirmada"
     },
     "cancellationReasons": {
       "maintenance": "Mantenimiento",
@@ -748,6 +750,11 @@
       "chart": {
         "title": "Evolución de ingresos",
         "empty": "Aún no hay datos en el periodo seleccionado"
+      },
+      "revenueMode": {
+        "label": "Base del monto",
+        "confirmedReservations": "Reservas confirmadas (monto de estadía)",
+        "collectedPayments": "Pagos cobrados (registrados)"
       },
       "filters": {
         "title": "Filtros",

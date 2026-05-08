@@ -3,8 +3,8 @@ import type { HostReservationItem, HostReservationsFilters } from '~/types/hotel
 import type { ReservationCancellationReason } from '~/types/reservations'
 import {
   cancelHotelReservation,
-  confirmHotelReservation,
 } from '~/services/reservationService'
+import { listHostReservations } from '~/services/hostReservationsService'
 
 definePageMeta({
   layout: 'hotel',
@@ -73,19 +73,30 @@ function buildFilters(): HostReservationsFilters {
 }
 
 function buildRange() {
+  const toUtcStartOfDay = (value?: string) =>
+    value ? `${value}T00:00:00.000Z` : undefined
+  const toUtcEndOfDay = (value?: string) =>
+    value ? `${value}T23:59:59.999Z` : undefined
+
   return {
-    start_date: analyticsRange.start_date ? new Date(analyticsRange.start_date).toISOString() : undefined,
-    end_date: analyticsRange.end_date ? new Date(analyticsRange.end_date).toISOString() : undefined,
+    start_date: toUtcStartOfDay(analyticsRange.start_date),
+    end_date: toUtcEndOfDay(analyticsRange.end_date),
     currency: selectedCurrency.value,
   }
 }
 
-async function reload() {
+async function reloadAnalytics() {
   const range = buildRange()
   await Promise.all([
-    refreshReservations(buildFilters()),
     refreshMetrics(range),
-    refreshTrends({ ...range, granularity: 'week' }),
+    refreshTrends({ ...range, granularity: 'day' }),
+  ])
+}
+
+async function reload() {
+  await Promise.all([
+    refreshReservations(buildFilters()),
+    reloadAnalytics(),
   ])
 }
 
@@ -97,15 +108,53 @@ watch(
 function applyDateRange() {
   analyticsRange.start_date = dateRangeDraft.start_date
   analyticsRange.end_date = dateRangeDraft.end_date
-  const range = buildRange()
-  refreshMetrics(range)
-  refreshTrends({ ...range, granularity: 'week' })
+  void reloadAnalytics()
 }
 
-function resetDateRange() {
+async function resetDateRange() {
   dateRangeDraft.start_date = initialStart
   dateRangeDraft.end_date = initialEnd
+  analyticsRange.start_date = initialStart
+  analyticsRange.end_date = initialEnd
+  await initializeAnalyticsRangeFromConfirmedReservations()
   applyDateRange()
+}
+
+async function initializeAnalyticsRangeFromConfirmedReservations() {
+  if (!authStore.token) return
+
+  let earliest
+  let latest
+  try {
+    ;[earliest, latest] = await Promise.all([
+      listHostReservations(authStore.token, {
+        status: ['confirmed', 'modification_confirmed'],
+        sort_by: 'check_in_date',
+        sort_dir: 'asc',
+        page: 1,
+        page_size: 1,
+      }),
+      listHostReservations(authStore.token, {
+        status: ['confirmed', 'modification_confirmed'],
+        sort_by: 'check_in_date',
+        sort_dir: 'desc',
+        page: 1,
+        page_size: 1,
+      }),
+    ])
+  } catch {
+    return
+  }
+
+  const earliestDate = earliest.items[0]?.check_in_date?.slice(0, 10)
+  const latestCheckoutDate = latest.items[0]?.check_out_date?.slice(0, 10)
+
+  if (!earliestDate || !latestCheckoutDate) return
+
+  dateRangeDraft.start_date = earliestDate
+  dateRangeDraft.end_date = latestCheckoutDate
+  analyticsRange.start_date = earliestDate
+  analyticsRange.end_date = latestCheckoutDate
 }
 
 function onTableFiltersUpdate(value: HostReservationsFilters) {
@@ -141,12 +190,12 @@ const isCancellationSubmitDisabled = computed(() =>
   (isCancellationNoteRequired.value && !cancellationNote.value)
 )
 
-function canConfirm(status: string) {
-  return status === 'pending_payment'
+function hasAction(reservation: HostReservationItem, action: 'confirm' | 'cancel') {
+  return reservation.available_actions?.some(item => item.action === action) ?? false
 }
 
-function canCancel(status: string) {
-  return status === 'pending_payment' || status === 'confirmed' || status === 'modification_confirmed'
+function canCancel(reservation: HostReservationItem) {
+  return hasAction(reservation, 'cancel')
 }
 
 function reservationStatusLabel(status: string) {
@@ -187,27 +236,7 @@ function closeCancelModal() {
   cancelTargetId.value = null
   cancelReason.value = 'maintenance'
   cancelNote.value = ''
-}
-
-async function confirmReservation(reservation: HostReservationItem) {
-  if (!authStore.token) return
-  actingId.value = reservation.id
   error.value = null
-  success.value = null
-  try {
-    await confirmHotelReservation(
-      reservation.id,
-      authStore.token,
-      t('hotelReservations.actions.confirmReason'),
-      locale.value
-    )
-    success.value = t('hotelReservations.feedback.confirmSuccess')
-    await reload()
-  } catch (err) {
-    error.value = (err as { message?: string }).message || t('hotelReservations.feedback.confirmError')
-  } finally {
-    actingId.value = null
-  }
 }
 
 async function cancelReservation(reservationId: string) {
@@ -238,7 +267,13 @@ async function cancelReservation(reservationId: string) {
   }
 }
 
-onMounted(() => reload())
+onMounted(async () => {
+  await Promise.all([
+    initializeAnalyticsRangeFromConfirmedReservations(),
+    refreshReservations(buildFilters()),
+  ])
+  await reloadAnalytics()
+})
 
 const formattedRevenue = computed(() => {
   if (!metrics.value) return '—'
@@ -282,6 +317,19 @@ const currencyOptions = computed(() => {
   return list.map(code => ({ label: code, value: code }))
 })
 
+const trendsChartKey = computed(() => {
+  const bucketsKey = trends.value?.buckets
+    ?.map(bucket => `${bucket.bucket}:${bucket.revenue}:${bucket.reservations}`)
+    .join('|') ?? 'empty'
+
+  return [
+    selectedCurrency.value ?? 'all',
+    analyticsRange.start_date,
+    analyticsRange.end_date,
+    bucketsKey,
+  ].join('::')
+})
+
 watch(
   () => trends.value?.available_currencies,
   (list) => {
@@ -293,10 +341,9 @@ watch(
 
 function onCurrencyChange(value: string) {
   selectedCurrency.value = value
-  const range = buildRange()
-  refreshMetrics(range)
-  refreshTrends({ ...range, granularity: 'week' })
+  void reloadAnalytics()
 }
+
 </script>
 
 <template>
@@ -387,6 +434,7 @@ function onCurrencyChange(value: string) {
     </div>
 
     <HotelRevenueTrendsChart
+      :key="trendsChartKey"
       :data="trends"
       :loading="loading && !trends"
       :range-label="rangeLabel"
@@ -418,17 +466,7 @@ function onCurrencyChange(value: string) {
       <template #actions="{ reservation }">
         <div class="flex justify-end gap-2">
           <UButton
-            v-if="canConfirm(reservation.status)"
-            icon="i-lucide-check"
-            color="primary"
-            size="xs"
-            :loading="actingId === reservation.id"
-            @click="confirmReservation(reservation)"
-          >
-            {{ t('hotelReservations.actions.confirm') }}
-          </UButton>
-          <UButton
-            v-if="canCancel(reservation.status)"
+            v-if="canCancel(reservation)"
             icon="i-lucide-ban"
             color="error"
             variant="soft"

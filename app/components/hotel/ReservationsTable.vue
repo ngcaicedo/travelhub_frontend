@@ -35,6 +35,7 @@ function formatPrice(item: HostReservationItem) {
   return new Intl.NumberFormat(locale.value, {
     style: 'currency',
     currency: item.currency || 'COP',
+    minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(Number(item.total_price))
 }

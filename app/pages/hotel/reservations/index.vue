@@ -6,7 +6,6 @@ import type {
 } from '~/types/reservations'
 import {
   cancelHotelReservation,
-  confirmHotelReservation,
   getHotelReservations
 } from '~/services/reservationService'
 import { getAllProperties } from '~/services/propertyServices'
@@ -83,12 +82,16 @@ function reservationStatusLabel(status: string) {
   return t(`hotelReservations.status.${status}` as never, status)
 }
 
-function canConfirm(status: string) {
-  return status === 'pending_payment'
+function hasAction(reservation: HotelReservationListItem, action: 'confirm' | 'cancel') {
+  return reservation.available_actions?.some(item => item.action === action) ?? false
 }
 
-function canCancel(status: string) {
-  return status === 'pending_payment' || status === 'confirmed' || status === 'modification_confirmed'
+function canCancel(reservation: HotelReservationListItem) {
+  if (reservation.available_actions) {
+    return hasAction(reservation, 'cancel')
+  }
+
+  return ['pending', 'pending_payment', 'confirmed', 'modification_confirmed'].includes(reservation.status)
 }
 
 function formatMoney(amount: string, currency: string) {
@@ -96,7 +99,9 @@ function formatMoney(amount: string, currency: string) {
   if (Number.isNaN(parsed)) return `${amount} ${currency}`
   return new Intl.NumberFormat(localeMap[locale.value] || 'en-US', {
     style: 'currency',
-    currency
+    currency,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   }).format(parsed)
 }
 
@@ -136,6 +141,7 @@ function closeCancelModal() {
   cancelTargetId.value = null
   cancelReason.value = 'maintenance'
   cancelNote.value = ''
+  error.value = null
 }
 
 async function loadProperties() {
@@ -159,27 +165,6 @@ async function loadReservations() {
     error.value = (err as { message?: string }).message || t('hotelReservations.feedback.loadError')
   } finally {
     loading.value = false
-  }
-}
-
-async function confirmReservation(reservationId: string) {
-  if (!authStore.token) return
-  actingId.value = reservationId
-  error.value = null
-  success.value = null
-  try {
-    await confirmHotelReservation(
-      reservationId,
-      authStore.token,
-      t('hotelReservations.actions.confirmReason'),
-      locale.value
-    )
-    success.value = t('hotelReservations.feedback.confirmSuccess')
-    await loadReservations()
-  } catch (err) {
-    error.value = (err as { message?: string }).message || t('hotelReservations.feedback.confirmError')
-  } finally {
-    actingId.value = null
   }
 }
 
@@ -362,16 +347,7 @@ onMounted(async () => {
 
           <div class="mt-5 flex flex-wrap gap-3">
             <UButton
-              v-if="canConfirm(reservation.status)"
-              icon="i-lucide-check"
-              color="primary"
-              :loading="actingId === reservation.id"
-              @click="confirmReservation(reservation.id)"
-            >
-              {{ t('hotelReservations.actions.confirm') }}
-            </UButton>
-            <UButton
-              v-if="canCancel(reservation.status)"
+              v-if="canCancel(reservation)"
               icon="i-lucide-ban"
               color="error"
               variant="soft"

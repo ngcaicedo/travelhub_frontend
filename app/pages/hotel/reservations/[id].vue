@@ -56,6 +56,7 @@ function formatCents(cents: number, currency: string) {
 const showConfirmModal = ref(false)
 const showCancelModal = ref(false)
 const cancelReason = ref<ReservationCancellationReason>('hotel_policy')
+const cancelNote = ref('')
 const actionLoading = ref(false)
 const actionSuccess = ref(false)
 
@@ -66,6 +67,38 @@ const cancelReasonOptions = [
   { label: t('hotelReservations.cancellationReasons.other'), value: 'other' as const },
 ]
 
+const isCancellationNoteRequired = computed(() => cancelReason.value === 'other')
+const cancellationNote = computed(() => cancelNote.value.trim())
+const isCancellationSubmitDisabled = computed(() =>
+  actionLoading.value ||
+  (isCancellationNoteRequired.value && !cancellationNote.value)
+)
+
+function reservationStatusLabel(status: string) {
+  return t(`hotelReservations.status.${status}` as never, status)
+}
+
+function calculateNights(checkIn: string, checkOut: string) {
+  const inDate = new Date(checkIn).getTime()
+  const outDate = new Date(checkOut).getTime()
+  return Math.max(Math.round((outDate - inDate) / (1000 * 60 * 60 * 24)), 0)
+}
+
+function cancelSummaryPrimary() {
+  return detail.value?.guest?.full_name?.trim() || detail.value?.reservation.id_room?.trim() || '—'
+}
+
+function cancelSummarySecondary() {
+  return detail.value?.reservation.id_room?.trim() || '—'
+}
+
+function closeCancelModal() {
+  showCancelModal.value = false
+  cancelReason.value = 'hotel_policy'
+  cancelNote.value = ''
+  error.value = null
+}
+
 async function handleConfirm() {
   actionLoading.value = true
   const ok = await confirm(reservationId.value)
@@ -75,11 +108,21 @@ async function handleConfirm() {
 }
 
 async function handleCancel() {
+  if (isCancellationNoteRequired.value && !cancellationNote.value) {
+    error.value = t('hotelReservations.feedback.otherReasonRequired')
+    return
+  }
   actionLoading.value = true
-  const ok = await cancel(reservationId.value, cancelReason.value)
+  const ok = await cancel(
+    reservationId.value,
+    cancelReason.value,
+    cancellationNote.value || undefined,
+  )
   actionLoading.value = false
-  showCancelModal.value = false
-  if (ok) actionSuccess.value = true
+  if (ok) {
+    closeCancelModal()
+    actionSuccess.value = true
+  }
 }
 
 // ── Notes ─────────────────────────────────────────────────────────────────────
@@ -430,21 +473,120 @@ const canCancel = computed(() =>
     <!-- Cancel modal -->
     <UModal v-model:open="showCancelModal">
       <template #content>
-        <div class="space-y-4 p-6" data-cy="hotel-detail-cancel-modal">
-          <h3 class="text-lg font-bold">{{ t('hotel.detail.actions.cancelTitle') }}</h3>
-          <p class="text-sm text-(--ui-text-muted)">{{ t('hotel.detail.actions.cancelDesc') }}</p>
-          <USelect
-            v-model="cancelReason"
-            :items="cancelReasonOptions"
-            value-key="value"
-            :label="t('hotel.detail.actions.cancelReason')"
+        <div class="space-y-6 p-6" data-cy="hotel-detail-cancel-modal">
+          <div class="space-y-2">
+            <h3 class="text-lg font-bold text-slate-900">{{ t('hotel.detail.actions.cancelTitle') }}</h3>
+            <p class="text-sm text-slate-500">{{ t('hotel.detail.actions.cancelDesc') }}</p>
+          </div>
+
+          <div
+            v-if="detail"
+            class="space-y-3 rounded-2xl border border-blue-100 bg-slate-50 p-5"
+          >
+            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-blue-600">
+              {{ t('hotelReservations.cancelModal.summaryTitle') }}
+            </p>
+            <p class="text-[1.75rem] font-semibold leading-tight text-slate-900">
+              {{ cancelSummaryPrimary() }}
+            </p>
+            <p class="text-sm font-medium leading-6 text-slate-500 break-words">
+              {{ t('hotelReservations.cancelModal.reservationId', { id: detail.reservation.id }) }}
+            </p>
+            <p class="flex items-center gap-2 text-sm font-medium leading-6 text-slate-700">
+              <UIcon
+                name="i-lucide-calendar-days"
+                class="h-4 w-4 shrink-0 text-slate-400"
+              />
+              <span>{{ formatDate(detail.reservation.check_in_date) }} - {{ formatDate(detail.reservation.check_out_date) }}</span>
+            </p>
+            <p class="text-sm leading-6 text-slate-500">
+              {{ t('hotelReservations.cancelModal.staySummaryWithRoom', {
+                nights: calculateNights(detail.reservation.check_in_date, detail.reservation.check_out_date),
+                room: cancelSummarySecondary()
+              }) }}
+            </p>
+            <p class="text-sm leading-6 text-slate-600">
+              {{ t('hotelReservations.cancelModal.guestsAndStatus', {
+                guests: detail.reservation.number_of_guests,
+                status: reservationStatusLabel(detail.reservation.status)
+              }) }}
+            </p>
+          </div>
+
+          <div class="space-y-3">
+            <label
+              for="detail-reservation-cancel-reason"
+              class="text-[15px] font-semibold text-slate-700"
+            >
+              {{ t('hotelReservations.cancelModal.reasonLabel') }}
+            </label>
+            <USelect
+              id="detail-reservation-cancel-reason"
+              v-model="cancelReason"
+              :items="cancelReasonOptions"
+              :placeholder="t('hotelReservations.cancelModal.reasonPlaceholder')"
+              class="w-full"
+              :ui="{
+                base: 'h-12 rounded-xl border-slate-200 bg-white text-slate-700',
+                trailingIcon: 'text-slate-400'
+              }"
+              data-testid="detail-cancel-reason-select"
+            />
+          </div>
+
+          <div class="space-y-3">
+            <label
+              for="detail-reservation-cancel-note"
+              class="text-[15px] font-semibold text-slate-700"
+            >
+              {{ t('hotelReservations.cancelModal.notesLabel') }}
+              {{ isCancellationNoteRequired
+                ? t('hotelReservations.cancelModal.requiredTag')
+                : t('hotelReservations.cancelModal.optionalTag') }}
+            </label>
+            <UTextarea
+              id="detail-reservation-cancel-note"
+              v-model="cancelNote"
+              :rows="4"
+              autoresize
+              class="w-full"
+              :ui="{
+                base: 'min-h-[108px] rounded-xl border-slate-200 bg-slate-50 px-4 py-3 text-slate-700 placeholder:text-slate-400'
+              }"
+              :placeholder="t('hotelReservations.cancelModal.notesPlaceholder')"
+              data-testid="detail-cancel-note-textarea"
+            />
+            <p
+              v-if="isCancellationNoteRequired && !cancellationNote"
+              class="text-sm font-medium text-rose-600"
+            >
+              {{ t('hotelReservations.cancelModal.notesRequiredMessage') }}
+            </p>
+          </div>
+
+          <UAlert
+            color="warning"
+            variant="subtle"
+            icon="i-lucide-circle-alert"
+            :title="t('hotelReservations.cancelModal.warningTitle')"
+            class="rounded-2xl border border-amber-200 bg-amber-50"
+            :ui="{
+              title: 'text-[15px] font-semibold text-amber-700',
+              description: 'text-[15px] leading-7 text-amber-700',
+              icon: 'text-amber-500'
+            }"
+            :description="detail?.reservation.status === 'confirmed'
+              ? t('hotelReservations.cancelModal.warningConfirmed')
+              : t('hotelReservations.cancelModal.warningPending')"
           />
+
           <div class="flex justify-end gap-2">
-            <UButton variant="ghost" color="neutral" @click="showCancelModal = false">
+            <UButton variant="ghost" color="neutral" @click="closeCancelModal()">
               {{ t('hotel.detail.actions.abort') }}
             </UButton>
             <UButton
               color="error"
+              :disabled="isCancellationSubmitDisabled"
               :loading="actionLoading"
               data-cy="hotel-detail-cancel-modal-proceed"
               @click="handleCancel"
