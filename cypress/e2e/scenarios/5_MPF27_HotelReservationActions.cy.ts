@@ -1,18 +1,7 @@
-function buildJwt(payload: Record<string, unknown>) {
-  const header = { alg: 'HS256', typ: 'JWT' }
-  const encode = (value: unknown) => btoa(JSON.stringify(value))
-  return `${encode(header)}.${encode(payload)}.signature`
-}
-
-function setHotelSession() {
-  const token = buildJwt({
-    sub: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-    email: 'hotel-a@travelhub.demo',
-    role: 'hotel',
-  })
-
-  cy.setCookie('auth_token', token)
-}
+import { givenSteps } from '../../steps/GivenSteps'
+import { thenSteps } from '../../steps/ThenSteps'
+import { whenSteps } from '../../steps/WhenSteps'
+import { demoHotelA, loginAsHotelPartner } from '../../support/auth'
 
 function stubDashboardRequests() {
   cy.intercept('GET', '**/api/v1/reservations/host/me', (req) => {
@@ -186,10 +175,11 @@ function stubDashboardRequests() {
 
 describe('MPF-27 | Confirmar y cancelar reservas desde hotel', () => {
   beforeEach(() => {
-    setHotelSession()
+    loginAsHotelPartner(demoHotelA)
   })
 
   it('muestra acciones consistentes en dashboard y confirma una reserva pendiente desde el detalle', () => {
+    // Given: dashboard hotelero con reservas mockeadas y una reserva pendiente confirmable solo desde detalle
     stubDashboardRequests()
 
     cy.intercept('GET', '**/api/v1/hotel/reservations/res-pending', {
@@ -253,32 +243,36 @@ describe('MPF-27 | Confirmar y cancelar reservas desde hotel', () => {
       })
     }).as('confirmPendingReservation')
 
-    cy.visit('/hotel/dashboard')
+    givenSteps.givenIAmOnHotelDashboard()
+    thenSteps.thenIAmOnHotelDashboard()
     cy.wait('@hostReservations')
     cy.wait('@hostReservations')
     cy.wait('@hostReservations')
     cy.wait('@hostMetrics')
     cy.wait('@hostRevenueTrends')
 
+    // Then: el dashboard usa available_actions y el rango dinamico correcto
     cy.contains(/Modificación confirmada|Modification confirmed|Modificação confirmada/i).should('be.visible')
     cy.get('input[type="date"]').first().should('have.value', '2026-08-01')
     cy.get('input[type="date"]').eq(1).should('have.value', '2026-12-17')
-
     cy.contains('Ana Pendiente')
       .closest('tr')
       .within(() => {
         cy.contains('button', /Confirmar reserva|Confirm reservation/i).should('not.exist')
       })
 
-    cy.get('[data-cy="hotel-row-view-detail"][data-cy-reservation-id="res-pending"]').click()
+    // When: el hotel abre el detalle y confirma la reserva pendiente
+    whenSteps.whenIOpenHotelReservationDetail('res-pending')
     cy.wait('@getPendingReservationDetail')
     cy.contains('button', /Confirmar reserva|Confirm reservation/i).click()
-
     cy.wait('@confirmPendingReservation')
-    cy.contains(/La reserva fue confirmada|reservation was confirmed|reserva foi confirmada/i).should('be.visible')
+
+    // Then: se confirma la accion y se informa exito al hotel
+    thenSteps.thenISeeHotelReservationActionSuccess()
   })
 
   it('permite cancelar desde el detalle con motivo y nota adicional', () => {
+    // Given: una reserva modification_confirmed que permite cancelar desde detalle
     cy.intercept('GET', '**/api/v1/hotel/reservations/res-mod', {
       statusCode: 200,
       body: {
@@ -353,19 +347,23 @@ describe('MPF-27 | Confirmar y cancelar reservas desde hotel', () => {
       })
     }).as('cancelReservationFromDetail')
 
-    cy.visit('/hotel/reservations/res-mod')
+    givenSteps.givenIAmOnHotelDashboard()
+    whenSteps.whenIVisitHotelReservationDetail('res-mod')
     cy.wait('@getHostReservationDetail')
+    thenSteps.thenIAmOnHotelReservationDetail('res-mod')
 
+    // When: el hotel abre el modal, define motivo y agrega nota
     cy.contains('button', /Cancelar reserva|Cancel reservation/i)
       .should('be.visible')
       .click()
-
     cy.get('[data-testid="detail-cancel-reason-select"]').click()
     cy.contains('maintenance').click({ force: true })
     cy.get('[data-testid="detail-cancel-note-textarea"]').should('be.visible')
     cy.get('textarea').clear().type('Se dañó la tubería principal')
     cy.contains('button', /Proceder|Proceed|Prosseguir/i).click()
-
     cy.wait('@cancelReservationFromDetail')
+
+    // Then: el flujo completa la cancelacion con motivo y nota adicional
+    thenSteps.thenISeeHotelReservationActionSuccess()
   })
 })
