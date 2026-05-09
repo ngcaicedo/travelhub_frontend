@@ -45,6 +45,24 @@ const availabilityBlocked = ref(false)
 const effectiveNightlyRate = ref<number | null>(null)
 let availabilityRequestSequence = 0
 
+const extractApiDetailText = (details: unknown): string => {
+  if (typeof details === 'string') {
+    return details.toLowerCase()
+  }
+
+  if (typeof details === 'object' && details !== null) {
+    const record = details as Record<string, unknown>
+    const candidate = [record.detail, record.message, record.error]
+      .find(value => typeof value === 'string' && value.trim().length > 0)
+
+    if (typeof candidate === 'string') {
+      return candidate.toLowerCase()
+    }
+  }
+
+  return ''
+}
+
 const parseLocalDate = (dateValue: string): Date | null => {
   const [yearStr, monthStr, dayStr] = dateValue.split('-')
   if (!yearStr || !monthStr || !dayStr) return null
@@ -296,13 +314,13 @@ const handleSubmit = async () => {
       }
     })
   } catch (err: unknown) {
-    const apiError = err as { statusCode?: number, details?: unknown }
+    const apiError = err as { statusCode?: number, details?: unknown, message?: string }
     const statusCode = apiError.statusCode
-    const detailText = typeof apiError.details === 'string'
-      ? apiError.details.toLowerCase()
-      : ''
+    const detailText = extractApiDetailText(apiError.details)
+    const isUnavailableError = apiError.message === 'errors.unavailable'
+      || detailText.includes('not available')
 
-    if (statusCode === 400 && detailText.includes('not available')) {
+    if (statusCode === 400 && isUnavailableError) {
       submitError.value = unavailableDatesMessage.value
     } else if (statusCode === 400) {
       submitError.value = t('errors.validation')
