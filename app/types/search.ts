@@ -45,3 +45,20 @@ export interface SearchResponse {
   pagination: SearchPagination
   empty_state: SearchEmptyStateItem[]
 }
+
+export interface PropertyAvailabilityRequest {
+  property_id: string
+  check_in: string
+  check_out: string
+  guests: number
+}
+
+export interface PropertyAvailabilityResponse {
+  property_id: string
+  check_in: string
+  check_out: string
+  guests: number
+  available: boolean
+  price_from: number | null
+  currency: string | null
+}

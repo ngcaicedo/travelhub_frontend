@@ -19,6 +19,15 @@ describe('api utils', () => {
       expect(result.statusCode).toBe(400)
     })
 
+    it('maps 400 unavailable detail to unavailable error', () => {
+      const result = handleApiError({
+        statusCode: 400,
+        data: { detail: 'Room abc is not available for the selected dates' }
+      })
+      expect(result.message).toBe('errors.unavailable')
+      expect(result.statusCode).toBe(400)
+    })
+
     it('maps 401 to unauthorized error', () => {
       const result = handleApiError({ statusCode: 401 })
       expect(result.message).toBe('errors.unauthorized')

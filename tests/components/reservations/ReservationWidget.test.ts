@@ -5,6 +5,7 @@ import { mountSuspended } from '@nuxt/test-utils/runtime'
 import ReservationWidget from '~/components/reservations/ReservationWidget.vue'
 
 const mockCreateReservation = vi.fn()
+const mockCheckAvailability = vi.fn()
 const mockLoading = ref(false)
 const mockError = ref<string | null>(null)
 
@@ -23,6 +24,12 @@ vi.mock('~/stores/auth', () => ({
     role: 'traveler',
     isAuthenticated: true
   })
+}))
+
+vi.mock('~/services/search', () => ({
+  searchService: {
+    checkAvailability: (...args: unknown[]) => mockCheckAvailability(...args)
+  }
 }))
 
 const defaultProps = {
@@ -50,21 +57,28 @@ const formatDate = (d: Date) => {
 describe('ReservationWidget', () => {
   beforeEach(() => {
     mockCreateReservation.mockReset()
+    mockCheckAvailability.mockReset()
+    mockCheckAvailability.mockResolvedValue({
+      property_id: 'prop-123',
+      check_in: '2026-05-10',
+      check_out: '2026-05-11',
+      guests: 1,
+      available: true,
+      price_from: 150000,
+      currency: 'COP'
+    })
     mockLoading.value = false
     mockError.value = null
   })
 
   it('renders price per night', async () => {
     const wrapper = await mountSuspended(ReservationWidget, { props: defaultProps })
-    const text = wrapper.text()
-    // Should display the price somewhere
-    expect(text).toMatch(/150/)
+    expect(wrapper.text()).toMatch(/150/)
   })
 
   it('renders check-in and check-out date inputs', async () => {
     const wrapper = await mountSuspended(ReservationWidget, { props: defaultProps })
-    const dateInputs = wrapper.findAll('input[type="date"]')
-    expect(dateInputs.length).toBeGreaterThanOrEqual(2)
+    expect(wrapper.findAll('input[type="date"]').length).toBeGreaterThanOrEqual(2)
   })
 
   it('renders guest count input', async () => {
@@ -90,6 +104,7 @@ describe('ReservationWidget', () => {
       checkOutDate: string
       numberOfGuests: number
     }
+
     expect(vm.checkInDate).toBe(checkIn)
     expect(vm.checkOutDate).toBe(checkOut)
     expect(vm.numberOfGuests).toBe(3)
@@ -113,15 +128,47 @@ describe('ReservationWidget', () => {
     }
 
     expect(vm.stayDuration).toBe(1)
-    // Fórmula canónica: accommodation = 150000*1*1 = 150000;
-    // service_fee = 150000*0.08 = 12000; subtotal = 162000;
-    // sin tax_rate explícito en props => taxes = 0; total = 162000
     expect(vm.totalPrice).toBe(162000)
+  })
+
+  it('uses effective nightly rate when availability returns a dynamic tariff', async () => {
+    const checkIn = formatDate(tomorrow)
+    const checkOut = formatDate(dayAfterTomorrow)
+
+    mockCheckAvailability.mockResolvedValue({
+      property_id: 'prop-123',
+      check_in: checkIn,
+      check_out: checkOut,
+      guests: 2,
+      available: true,
+      price_from: 180000,
+      currency: 'COP'
+    })
+
+    const wrapper = await mountSuspended(ReservationWidget, {
+      props: {
+        ...defaultProps,
+        initialCheckInDate: checkIn,
+        initialCheckOutDate: checkOut,
+        initialNumberOfGuests: 2
+      }
+    })
+
+    await flushPromises()
+
+    const vm = wrapper.vm as unknown as {
+      totalPrice: number
+      selectedNightlyRate: number
+    }
+
+    expect(mockCheckAvailability).toHaveBeenCalled()
+    expect(vm.selectedNightlyRate).toBe(180000)
+    expect(vm.totalPrice).toBe(388800)
+    expect(wrapper.text()).toMatch(/Tarifa actualizada|Updated rate|Tarifa atualizada/)
   })
 
   it('disables booking when dates are not set', async () => {
     const wrapper = await mountSuspended(ReservationWidget, { props: defaultProps })
-
     const vm = wrapper.vm as unknown as { canBook: boolean }
     expect(vm.canBook).toBe(false)
   })
@@ -141,6 +188,36 @@ describe('ReservationWidget', () => {
 
     const vm = wrapper.vm as unknown as { canBook: boolean }
     expect(vm.canBook).toBe(true)
+  })
+
+  it('disables booking when availability says the property is unavailable', async () => {
+    const checkIn = formatDate(tomorrow)
+    const checkOut = formatDate(dayAfterTomorrow)
+
+    mockCheckAvailability.mockResolvedValue({
+      property_id: 'prop-123',
+      check_in: checkIn,
+      check_out: checkOut,
+      guests: 2,
+      available: false,
+      price_from: null,
+      currency: 'COP'
+    })
+
+    const wrapper = await mountSuspended(ReservationWidget, {
+      props: {
+        ...defaultProps,
+        initialCheckInDate: checkIn,
+        initialCheckOutDate: checkOut,
+        initialNumberOfGuests: 2
+      }
+    })
+
+    await flushPromises()
+
+    const vm = wrapper.vm as unknown as { canBook: boolean }
+    expect(vm.canBook).toBe(false)
+    expect(wrapper.text()).toMatch(/Elige otras fechas|choose different dates|Escolha outras datas/i)
   })
 
   it('calls createReservation on submit and redirects', async () => {
@@ -192,6 +269,31 @@ describe('ReservationWidget', () => {
     expect(vm.submitError).toBeTruthy()
   })
 
+  it('shows detailed unavailable message when reservation fails with 400 not available detail', async () => {
+    const checkIn = formatDate(tomorrow)
+    const checkOut = formatDate(dayAfterTomorrow)
+
+    mockCreateReservation.mockRejectedValue({
+      statusCode: 400,
+      details: 'Room prop-123 is not available for the selected dates'
+    })
+
+    const wrapper = await mountSuspended(ReservationWidget, {
+      props: {
+        ...defaultProps,
+        initialCheckInDate: checkIn,
+        initialCheckOutDate: checkOut,
+        initialNumberOfGuests: 2
+      }
+    })
+
+    await wrapper.find('form').trigger('submit')
+    await flushPromises()
+
+    const vm = wrapper.vm as unknown as { submitError: string | null }
+    expect(vm.submitError).toMatch(/Elige otras fechas|choose different dates|Escolha outras datas/i)
+  })
+
   it('shows error when reservation fails with 409', async () => {
     const checkIn = formatDate(tomorrow)
     const checkOut = formatDate(dayAfterTomorrow)
@@ -211,7 +313,7 @@ describe('ReservationWidget', () => {
     await flushPromises()
 
     const vm = wrapper.vm as unknown as { submitError: string | null }
-    expect(vm.submitError).toBeTruthy()
+    expect(vm.submitError).toMatch(/Elige otras fechas|choose different dates|Escolha outras datas/i)
   })
 
   it('shows generic error for unknown status codes', async () => {

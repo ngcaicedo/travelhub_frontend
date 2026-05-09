@@ -4,6 +4,24 @@ export interface ApiError {
   details?: unknown
 }
 
+const extractDetailText = (detail: unknown): string | null => {
+  if (typeof detail === 'string' && detail.trim().length > 0) {
+    return detail.trim()
+  }
+
+  if (typeof detail === 'object' && detail !== null) {
+    const record = detail as Record<string, unknown>
+    const candidate = [record.message, record.detail, record.error]
+      .find(value => typeof value === 'string' && value.trim().length > 0)
+
+    if (typeof candidate === 'string') {
+      return candidate.trim()
+    }
+  }
+
+  return null
+}
+
 export const getApiBaseUrls = () => {
   const config = useRuntimeConfig()
 
@@ -31,7 +49,12 @@ export const handleApiError = (error: unknown): ApiError => {
   }
 
   const statusCode = err.statusCode || 0
-  const message = errorMap[statusCode] || 'errors.unknown'
+  const detailText = extractDetailText(err.data)
+  const normalizedDetail = detailText?.toLowerCase() || ''
+
+  const message = statusCode === 400 && normalizedDetail.includes('not available')
+    ? 'errors.unavailable'
+    : errorMap[statusCode] || 'errors.unknown'
 
   return {
     message,
