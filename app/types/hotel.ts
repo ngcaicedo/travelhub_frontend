@@ -136,3 +136,15 @@ export interface HostReservationDetail {
   internal_notes: HostReservationInternalNote[]
   available_actions: HostReservationAvailableAction[]
 }
+
+export interface HostIncomeReportParams {
+  year: number
+  month: number | null
+  currency?: string
+}
+
+export interface HostIncomeComparison {
+  current: HostMetrics
+  previous: HostMetrics
+  change_percent: number | null
+}
