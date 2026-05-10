@@ -15,7 +15,6 @@ function buildDateRange(year: number, month: number | null): { start_date: strin
       end_date: `${year}-12-31T23:59:59.999Z`,
     }
   }
-  const start = new Date(year, month - 1, 1)
   const end = new Date(year, month, 0)
   const pad = (n: number) => String(n).padStart(2, '0')
   return {

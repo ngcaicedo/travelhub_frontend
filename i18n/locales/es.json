@@ -733,6 +733,7 @@
   "hotel": {
     "nav": {
       "dashboard": "Panel",
+      "incomeReport": "Reporte de ingresos",
       "portalLabel": "Portal Estratégico",
       "adminAccount": "Cuenta Admin"
     },
@@ -858,6 +859,45 @@
       "errors": {
         "notFound": "No se encontró la reserva.",
         "load": "No se pudo cargar el detalle de la reserva."
+      }
+    },
+    "income": {
+      "metaTitle": "Reporte de ingresos",
+      "title": "Reporte de ingresos",
+      "subtitle": "Evalúa el desempeño comercial de tu hotel.",
+      "picker": {
+        "year": "Año",
+        "month": "Mes",
+        "fullYear": "Año completo",
+        "months": {
+          "jan": "Enero",
+          "feb": "Febrero",
+          "mar": "Marzo",
+          "apr": "Abril",
+          "may": "Mayo",
+          "jun": "Junio",
+          "jul": "Julio",
+          "aug": "Agosto",
+          "sep": "Septiembre",
+          "oct": "Octubre",
+          "nov": "Noviembre",
+          "dec": "Diciembre"
+        }
+      },
+      "summary": {
+        "total": "Ingresos totales",
+        "vsLastPeriod": "vs. período anterior",
+        "increase": "Aumento",
+        "decrease": "Disminución",
+        "noChange": "Sin cambios"
+      },
+      "chart": {
+        "title": "Tendencia de ingresos",
+        "noData": "Sin datos para el período seleccionado."
+      },
+      "errors": {
+        "load": "No se pudo cargar el reporte de ingresos.",
+        "unauthorized": "No tienes permisos para ver reportes financieros."
       }
     }
   }
