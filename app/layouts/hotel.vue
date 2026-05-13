@@ -15,6 +15,12 @@ const navItems = computed<NavigationMenuItem[][]>(() => [
       to: '/hotel/dashboard',
       active: route.path === '/hotel/dashboard',
     },
+    {
+      label: t('hotel.nav.pricing'),
+      icon: 'i-lucide-badge-dollar-sign',
+      to: '/hotel/pricing',
+      active: route.path.startsWith('/hotel/pricing'),
+    },
   ],
 ])
 

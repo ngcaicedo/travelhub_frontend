@@ -729,6 +729,7 @@
   "hotel": {
     "nav": {
       "dashboard": "Dashboard",
+      "pricing": "Pricing",
       "portalLabel": "Strategic Portal",
       "adminAccount": "Admin Account"
     },
@@ -736,6 +737,7 @@
       "headerTitle": "Strategic Dashboard",
       "welcomeTitle": "Good morning",
       "welcomeSubtitle": "Here is what's happening with your property today.",
+      "manageSeasonalPricing": "Manage Seasonal Pricing",
       "error": "We could not load the data",
       "kpi": {
         "revenue": "Revenue",
@@ -778,6 +780,101 @@
           "createdAt": "Created",
           "amount": "Amount",
           "status": "Status"
+        }
+      }
+    },
+    "pricing": {
+      "breadcrumb": {
+        "dashboard": "Pricing Dashboard",
+        "propertyRules": "Property Rules",
+        "addRule": "Add New Pricing Rule",
+        "editRule": "Edit Rule"
+      },
+      "actions": {
+        "addNewRule": "Add New Pricing Rule",
+        "backToRules": "Back to rules",
+        "managePricing": "Manage Pricing",
+        "createRule": "Create Rule",
+        "updateRule": "Update Rule",
+        "editRule": "Edit Rule",
+        "cancel": "Cancel",
+        "saveRule": "Save Rule"
+      },
+      "dashboard": {
+        "title": "Pricing Dashboard",
+        "subtitle": "Select a property to manage its seasonal pricing rules.",
+        "loadPropertiesErrorTitle": "Unable to load properties",
+        "loadingProperties": "Loading properties..."
+      },
+      "rules": {
+        "title": "Seasonal Pricing Rules",
+        "loadErrorTitle": "Unable to load pricing rules",
+        "loading": "Loading seasonal pricing...",
+        "empty": "No pricing rules found for this property."
+      },
+      "create": {
+        "title": "Add New Pricing Rule",
+        "subtitle": "Configure dynamic triggers to maximize revenue based on market demand.",
+        "saveErrorTitle": "Could not save pricing rule",
+        "loading": "Loading pricing data..."
+      },
+      "edit": {
+        "title": "Edit Pricing Rule",
+        "subtitle": "Update pricing values and keep integrity controls in sync.",
+        "lockedTitle": "This rule is locked",
+        "lockedDescription": "Integrity checks marked this rule as locked. Editing is disabled.",
+        "updateErrorTitle": "Could not update pricing rule",
+        "loading": "Loading pricing rule...",
+        "integrityStatus": "Integrity Status"
+      },
+      "integrity": {
+        "normal": "Normal",
+        "locked": "Locked",
+        "compromised": "Compromised"
+      },
+      "ruleCard": {
+        "baseRate": "Base rate"
+      },
+      "preview": {
+        "title": "Rule Preview",
+        "simulated": "SIMULATED",
+        "estimatedImpact": "Estimated impact (last 7 days)",
+        "revenueUplift": "Revenue Uplift",
+        "avgAdrChange": "Avg. ADR Change",
+        "occThresholdHits": "Occ. Threshold Hits",
+        "nightsSuffix": "Nights"
+      },
+      "form": {
+        "ruleBasics": "Rule Basics",
+        "seasonStart": "Season Start",
+        "seasonEnd": "Season End",
+        "pricePerNight": "Price Per Night",
+        "currency": "Currency",
+        "taxRate": "Tax Rate",
+        "cleaningFee": "Cleaning Fee",
+        "triggersAndLogic": "Triggers & Logic",
+        "triggerType": "Trigger Type",
+        "whenOccupancyExceeds": "When occupancy exceeds (%)",
+        "action": "Action",
+        "adjustmentAmount": "Adjustment Amount",
+        "applicability": "Applicability",
+        "roomTypes": "Room Types",
+        "activePeriod": "Active Period",
+        "activePeriodHint": "Defined by season start and end dates.",
+        "realTimeHint": "Rules are processed in real-time once activated.",
+        "triggerOptions": {
+          "occupancy": "Occupancy Based",
+          "calendar": "Calendar Based",
+          "demandSpike": "Demand Spike"
+        },
+        "actionOptions": {
+          "increasePrice": "Increase Price",
+          "decreasePrice": "Decrease Price"
+        },
+        "roomTypeOptions": {
+          "standard": "Standard Room",
+          "deluxe": "Deluxe King",
+          "suite": "Executive Suite"
         }
       }
     },

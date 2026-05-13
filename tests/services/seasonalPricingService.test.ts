@@ -22,12 +22,24 @@ describe('seasonalPricingService', () => {
   it('lists seasonal pricing records', async () => {
     mockFetch.mockResolvedValue([{ id: 'sp-1' }])
 
-    await listSeasonalPricing('prop-1')
+    const result = await listSeasonalPricing('prop-1')
 
     expect(mockFetch).toHaveBeenCalledWith(
       '/api/v1/properties/prop-1/seasonal-pricing',
       expect.objectContaining({ method: 'GET' }),
     )
+    expect(result).toEqual([{ id: 'sp-1' }])
+  })
+
+  it('normalizes paginated seasonal pricing responses', async () => {
+    mockFetch.mockResolvedValue({
+      items: [{ id: 'sp-1' }, { id: 'sp-2' }],
+      total: 2,
+    })
+
+    const result = await listSeasonalPricing('prop-1')
+
+    expect(result).toEqual([{ id: 'sp-1' }, { id: 'sp-2' }])
   })
 
   it('gets a seasonal pricing record by id', async () => {

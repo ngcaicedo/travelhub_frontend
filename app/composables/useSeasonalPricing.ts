@@ -76,11 +76,11 @@ export function useSeasonalPricing(
   }
 
   async function loadList(currentPropertyId: string) {
-    items.value = await listSeasonalPricing(currentPropertyId)
+    items.value = await listSeasonalPricing(currentPropertyId, auth.token)
   }
 
   async function loadSelectedRule(currentPropertyId: string, currentRuleId: string) {
-    selectedRule.value = await getSeasonalPricing(currentPropertyId, currentRuleId)
+    selectedRule.value = await getSeasonalPricing(currentPropertyId, currentRuleId, auth.token)
     syncDraftFromRule(selectedRule.value)
   }
 

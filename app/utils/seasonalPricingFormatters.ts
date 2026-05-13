@@ -5,11 +5,22 @@ export function formatSeasonalPricingCurrency(
   currency: string,
   locale = 'es-CO',
 ): string {
-  return new Intl.NumberFormat(locale, {
-    style: 'currency',
-    currency,
-    maximumFractionDigits: 2,
-  }).format(amount)
+  const normalizedCurrency = (currency || '').trim().toUpperCase() || 'COP'
+
+  try {
+    return new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency: normalizedCurrency,
+      maximumFractionDigits: 2,
+    }).format(amount)
+  } catch {
+    // Fallback for malformed currency codes coming from inconsistent API payloads.
+    return new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency: 'COP',
+      maximumFractionDigits: 2,
+    }).format(amount)
+  }
 }
 
 export function formatSeasonalPricingDateRange(
@@ -23,7 +34,31 @@ export function formatSeasonalPricingDateRange(
     day: '2-digit',
   })
 
-  return `${formatter.format(new Date(startDate))} - ${formatter.format(new Date(endDate))}`
+  function toValidDate(d: string): Date | null {
+    try {
+      const dt = new Date(d)
+      return isNaN(dt.getTime()) ? null : dt
+    } catch {
+      return null
+    }
+  }
+
+  const s = toValidDate(startDate)
+  const e = toValidDate(endDate)
+
+  if (s && e) {
+    return `${formatter.format(s)} - ${formatter.format(e)}`
+  }
+
+  if (s && !e) {
+    return `${formatter.format(s)} - `
+  }
+
+  if (!s && e) {
+    return ` - ${formatter.format(e)}`
+  }
+
+  return ''
 }
 
 export function getSeasonalPricingIntegrityState(
