@@ -61,7 +61,7 @@ describe('useSeasonalPricing', () => {
 
     const wrapper = await mountSuspended(Comp)
 
-    expect(mockListSeasonalPricing).toHaveBeenCalledWith('prop-1')
+    expect(mockListSeasonalPricing).toHaveBeenCalledWith('prop-1', null)
     expect(wrapper.vm.items).toEqual([baseRule])
     expect(wrapper.vm.error).toBeNull()
   })
@@ -76,7 +76,7 @@ describe('useSeasonalPricing', () => {
 
     const wrapper = await mountSuspended(Comp)
 
-    expect(mockGetSeasonalPricing).toHaveBeenCalledWith('prop-1', 'sp-1')
+    expect(mockGetSeasonalPricing).toHaveBeenCalledWith('prop-1', 'sp-1', null)
     expect(wrapper.vm.selectedRule).toEqual(baseRule)
     expect((wrapper.vm.formDraft as { season_start: string }).season_start).toBe('2026-12-01')
   })

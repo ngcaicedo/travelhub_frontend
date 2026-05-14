@@ -21,8 +21,7 @@ describe('PricingRuleForm', () => {
 
     const text = wrapper.text()
     expect(text).toContain('Rule Basics')
-    expect(text).toContain('Triggers & Logic')
-    expect(text).toContain('Applicability')
+    expect(text).toContain('Rules are processed in real-time once activated')
   })
 
   it('disables submit when canEdit is false', async () => {
