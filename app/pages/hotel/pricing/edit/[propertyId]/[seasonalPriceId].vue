@@ -33,7 +33,7 @@ function cancel() {
 async function submit() {
   const updated = await submitUpdate(formDraft.value)
   if (updated) {
-    router.push(`/hotel/pricing/${propertyId.value}/${updated.id}`)
+    router.push(`/hotel/pricing/${propertyId.value}`)
   }
 }
 </script>

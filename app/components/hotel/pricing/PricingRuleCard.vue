@@ -50,7 +50,7 @@ const formattedRange = computed(() =>
           variant="soft"
           color="neutral"
           icon="i-lucide-pencil"
-          :to="`/hotel/pricing/${propertyId}/${rule.id}`"
+          :to="`/hotel/pricing/edit/${propertyId}/${rule.id}`"
         >
           {{ t('hotel.pricing.actions.editRule') }}
         </UButton>

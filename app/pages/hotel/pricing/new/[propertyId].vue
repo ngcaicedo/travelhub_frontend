@@ -28,7 +28,7 @@ function cancel() {
 async function submit() {
   const created = await submitCreate(formDraft.value)
   if (created) {
-    router.push(`/hotel/pricing/${propertyId.value}/${created.id}`)
+    router.push(`/hotel/pricing/${propertyId.value}`)
   }
 }
 </script>

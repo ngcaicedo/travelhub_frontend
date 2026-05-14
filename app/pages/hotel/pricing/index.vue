@@ -68,7 +68,7 @@ onMounted(loadProperties)
 
         <template #footer>
           <UButton color="primary" variant="soft" :to="`/hotel/pricing/${property.id}`">
-            {{ t('hotel.pricing.dashboard.managePricing') }}
+            {{ t('hotel.pricing.actions.managePricing') }}
           </UButton>
         </template>
       </UCard>
