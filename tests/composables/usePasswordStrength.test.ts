@@ -49,7 +49,7 @@ describe('usePasswordStrength', () => {
 
     expect(score.value).toBe(4)
     expect(label.value).toBe('T(auth.register.strengthVeryStrong)')
-    expect(textColor.value).toBe('text-success-500')
+    expect(textColor.value).toBe('text-success-700')
   })
 
   it('reacts to password changes', () => {
