@@ -15,7 +15,9 @@
     "loadMore": "Cargar más",
     "loading": "Cargando...",
     "yes": "Sí",
-    "no": "No"
+    "no": "No",
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña"
   },
   "nav": {
     "home": "Inicio"
@@ -26,7 +28,10 @@
     "checkout": "Proceso de pago",
     "reservations": "Mis reservas",
     "hotelReservations": "Reservas hotel",
-    "logout": "Cerrar sesión"
+    "logout": "Cerrar sesión",
+    "language": "Idioma",
+    "mainNav": "Navegación principal",
+    "breadcrumbNav": "Ruta de navegación"
   },
   "hotelReservations": {
     "metaTitle": "Dashboard de reservas hoteleras",
@@ -383,6 +388,8 @@
     "mostRecent": "Más recientes",
     "travelerProtection": "Protección al viajero incluida. Reembolso completo si cancelas dentro de las 48 horas de la reserva.",
     "reportListing": "Reportar este anuncio",
+    "shareProperty": "Compartir propiedad",
+    "addToFavorites": "Añadir a favoritos",
     "morePhotos": "+{count} fotos",
     "showAllPhotos": "Ver todas las fotos",
     "policies": {
@@ -786,7 +793,8 @@
           "checkIn": "Estadía",
           "createdAt": "Creada",
           "amount": "Monto",
-          "status": "Estado"
+          "status": "Estado",
+          "actions": "Acciones"
         }
       }
     },
