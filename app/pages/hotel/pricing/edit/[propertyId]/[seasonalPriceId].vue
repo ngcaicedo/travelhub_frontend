@@ -1,12 +1,12 @@
 <script setup lang="ts">
+import PricingRuleForm from '~/components/hotel/pricing/PricingRuleForm.vue'
+import PricingRulePreview from '~/components/hotel/pricing/PricingRulePreview.vue'
+import PricingRuleIntegrityBadge from '~/components/hotel/pricing/PricingRuleIntegrityBadge.vue'
+
 definePageMeta({
   layout: 'hotel',
   middleware: 'hotel-only',
 })
-
-import PricingRuleForm from '~/components/hotel/pricing/PricingRuleForm.vue'
-import PricingRulePreview from '~/components/hotel/pricing/PricingRulePreview.vue'
-import PricingRuleIntegrityBadge from '~/components/hotel/pricing/PricingRuleIntegrityBadge.vue'
 
 const { t } = useI18n()
 

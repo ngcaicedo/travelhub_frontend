@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import PricingRuleList from '~/components/hotel/pricing/PricingRuleList.vue'
+
 definePageMeta({
   layout: 'hotel',
   middleware: 'hotel-only',
 })
-
-import PricingRuleList from '~/components/hotel/pricing/PricingRuleList.vue'
 
 const { t } = useI18n()
 

@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import PricingRuleForm from '~/components/hotel/pricing/PricingRuleForm.vue'
+import PricingRulePreview from '~/components/hotel/pricing/PricingRulePreview.vue'
+
 definePageMeta({
   layout: 'hotel',
 })
-
-import PricingRuleForm from '~/components/hotel/pricing/PricingRuleForm.vue'
-import PricingRulePreview from '~/components/hotel/pricing/PricingRulePreview.vue'
 
 const { t } = useI18n()
 
