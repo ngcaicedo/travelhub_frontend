@@ -72,10 +72,14 @@ export interface HotelReservationListItem {
   number_of_guests: number
   total_price: string
   currency: string
-  status: 'pending_payment' | 'confirmed' | 'cancelled' | 'completed'
+  status: ReservationStatus | 'completed'
   hold_expires_at: string
   created_at: string
   updated_at: string
+  available_actions?: Array<{
+    action: 'confirm' | 'cancel'
+    label: string
+  }>
 }
 
 export interface HotelReservationActionResponse {

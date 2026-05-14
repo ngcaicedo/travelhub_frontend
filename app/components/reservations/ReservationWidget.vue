@@ -7,6 +7,7 @@ import {
   validateReservationDates
 } from '~/utils/validation'
 import { computeCanonicalBreakdown } from '~/utils/pricing'
+import { parseApiDateToTimestamp } from '~/utils/dates'
 import { useReservations } from '~/composables/useReservations'
 import { useAuthStore } from '~/stores/auth'
 
@@ -153,9 +154,8 @@ const handleSubmit = async () => {
     }
 
     const response = await createReservation(reservationData)
-    const lockExpiresAt = response.hold_expires_at
-      ? new Date(response.hold_expires_at).getTime()
-      : (Date.now() + reservationLockDurationMs)
+    const lockExpiresAt = parseApiDateToTimestamp(response.hold_expires_at)
+      ?? (Date.now() + reservationLockDurationMs)
 
     // Redirigir al checkout para completar el pago con ventana de bloqueo.
     await router.push({
@@ -247,6 +247,7 @@ watch(() => [props.initialCheckInDate, props.initialCheckOutDate, props.initialN
                 :min="getTodayDate()"
                 :max="getMaxCheckoutDate()"
                 :disabled="loading"
+                data-cy="reservation-check-in"
                 required
               />
             </UFormField>
@@ -262,6 +263,7 @@ watch(() => [props.initialCheckInDate, props.initialCheckOutDate, props.initialN
                 :min="checkInDate || getTodayDate()"
                 :max="getMaxCheckoutDate()"
                 :disabled="loading"
+                data-cy="reservation-check-out"
                 required
               />
             </UFormField>
@@ -270,15 +272,14 @@ watch(() => [props.initialCheckInDate, props.initialCheckOutDate, props.initialN
       </div>
 
       <!-- Guests -->
-      <UFormField
-        :label="t('booking.guests')"
-        name="guests"
-      >
+      <UFormField :label="t('booking.guests')">
         <UInputNumber
           v-model="numberOfGuests"
           :min="1"
           :max="props.property.max_guests"
           :disabled="loading"
+          :aria-label="t('booking.guests')"
+          data-cy="reservation-guests"
         />
       </UFormField>
 
@@ -334,6 +335,7 @@ watch(() => [props.initialCheckInDate, props.initialCheckOutDate, props.initialN
         block
         size="lg"
         icon="i-lucide-check"
+        data-cy="reservation-confirm"
       >
         {{ t('booking.confirmBooking') }}
       </UButton>

@@ -15,7 +15,9 @@
     "loadMore": "Cargar más",
     "loading": "Cargando...",
     "yes": "Sí",
-    "no": "No"
+    "no": "No",
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña"
   },
   "nav": {
     "home": "Inicio"
@@ -26,7 +28,10 @@
     "checkout": "Proceso de pago",
     "reservations": "Mis reservas",
     "hotelReservations": "Reservas hotel",
-    "logout": "Cerrar sesión"
+    "logout": "Cerrar sesión",
+    "language": "Idioma",
+    "mainNav": "Navegación principal",
+    "breadcrumbNav": "Ruta de navegación"
   },
   "hotelReservations": {
     "metaTitle": "Dashboard de reservas hoteleras",
@@ -44,7 +49,9 @@
       "pending_payment": "Pendiente",
       "confirmed": "Confirmada",
       "cancelled": "Cancelada",
-      "completed": "Completada"
+      "completed": "Completada",
+      "modification_pending_payment": "Modificación pendiente de pago",
+      "modification_confirmed": "Modificación confirmada"
     },
     "cancellationReasons": {
       "maintenance": "Mantenimiento",
@@ -97,7 +104,8 @@
       "warningConfirmed": "Al confirmar, se iniciará el proceso de reembolso automático según la política de cancelación vigente. Esta acción no se puede deshacer.",
       "warningPending": "Al confirmar, la reserva quedará cancelada y la habitación volverá a estar disponible. Esta acción no se puede deshacer.",
       "keepReservation": "Mantener reserva",
-      "confirmAction": "Confirmar cancelación"
+      "confirmAction": "Confirmar cancelación",
+      "staySummaryWithRoom": "{nights} noches • {room}"
     }
   },
   "reservationsList": {
@@ -380,6 +388,8 @@
     "mostRecent": "Más recientes",
     "travelerProtection": "Protección al viajero incluida. Reembolso completo si cancelas dentro de las 48 horas de la reserva.",
     "reportListing": "Reportar este anuncio",
+    "shareProperty": "Compartir propiedad",
+    "addToFavorites": "Añadir a favoritos",
     "morePhotos": "+{count} fotos",
     "showAllPhotos": "Ver todas las fotos",
     "policies": {
@@ -750,6 +760,11 @@
         "title": "Evolución de ingresos",
         "empty": "Aún no hay datos en el periodo seleccionado"
       },
+      "revenueMode": {
+        "label": "Base del monto",
+        "confirmedReservations": "Reservas confirmadas (monto de estadía)",
+        "collectedPayments": "Pagos cobrados (registrados)"
+      },
       "filters": {
         "title": "Filtros",
         "guest": "Huésped",
@@ -780,7 +795,8 @@
           "checkIn": "Estadía",
           "createdAt": "Creada",
           "amount": "Monto",
-          "status": "Estado"
+          "status": "Estado",
+          "actions": "Acciones"
         }
       }
     },

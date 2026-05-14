@@ -227,7 +227,7 @@ definePageMeta({
             <h1 class="text-[34px] leading-[1.02] font-bold tracking-tight text-slate-900 md:text-[50px]">
               {{ t('booking.success') }}
             </h1>
-            <p class="mx-auto mt-2 max-w-[520px] text-[16px] leading-7 text-slate-500">
+            <p class="mx-auto mt-2 max-w-[520px] text-[16px] leading-7 text-slate-600">
               {{ t('booking.confirmationSent') }}
             </p>
           </div>
@@ -247,7 +247,7 @@ definePageMeta({
                   <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#2563eb]">
                     {{ t('booking.reservationDetails') }}
                   </p>
-                  <p class="pt-0.5 text-[14px] font-medium text-slate-400">
+                  <p class="pt-0.5 text-[14px] font-medium text-slate-600">
                     {{ reservationReference }}
                   </p>
                 </div>
@@ -263,7 +263,7 @@ definePageMeta({
                       class="mt-0.5 h-4.5 w-4.5 text-[#2563eb]"
                     />
                     <div>
-                      <p class="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                      <p class="text-[11px] font-medium uppercase tracking-wide text-slate-600">
                         {{ t('booking.checkIn') }}
                       </p>
                       <p class="text-[14px] leading-5 font-medium text-slate-700">
@@ -280,7 +280,7 @@ definePageMeta({
                     class="mt-0.5 h-4.5 w-4.5 text-[#2563eb]"
                   />
                   <div>
-                    <p class="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                    <p class="text-[11px] font-medium uppercase tracking-wide text-slate-600">
                       {{ t('booking.checkOut') }}
                     </p>
                     <p class="text-[14px] leading-5 font-medium text-slate-700">
@@ -295,7 +295,7 @@ definePageMeta({
                     class="mt-0.5 h-4.5 w-4.5 text-[#2563eb]"
                   />
                   <div>
-                    <p class="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                    <p class="text-[11px] font-medium uppercase tracking-wide text-slate-600">
                       {{ t('booking.guests') }}
                     </p>
                     <p class="text-[14px] leading-5 font-medium text-slate-700">
@@ -310,7 +310,7 @@ definePageMeta({
                     class="mt-0.5 h-4.5 w-4.5 text-[#2563eb]"
                   />
                   <div>
-                    <p class="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                    <p class="text-[11px] font-medium uppercase tracking-wide text-slate-600">
                       {{ t('booking.total') }}
                     </p>
                     <p class="text-[14px] leading-5 font-medium text-slate-700">
@@ -373,7 +373,7 @@ definePageMeta({
                 <p class="mb-1 text-[15px] font-semibold text-slate-900">
                   {{ t('booking.checkInInstructions') }}
                 </p>
-                <p class="max-w-[250px] text-[14px] leading-6 text-slate-500">
+                <p class="max-w-[250px] text-[14px] leading-6 text-slate-600">
                   {{ t('booking.checkInInstructionsDescription') }}
                 </p>
               </div>
@@ -384,7 +384,7 @@ definePageMeta({
             <div class="mb-7 border-t border-slate-200" />
             <div class="text-center">
               <button
-                class="inline-flex items-center gap-2 text-[15px] font-medium text-slate-500 transition-colors hover:text-slate-700"
+                class="inline-flex items-center gap-2 text-[15px] font-medium text-slate-600 transition-colors hover:text-slate-700"
                 @click="backToHome"
               >
                 <UIcon

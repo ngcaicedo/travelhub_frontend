@@ -163,6 +163,8 @@ async function onSubmit() {
               variant="ghost"
               size="xs"
               :padded="false"
+              :aria-label="showPassword ? t('common.hidePassword') : t('common.showPassword')"
+              :aria-pressed="showPassword"
               @click="showPassword = !showPassword"
             />
           </template>
@@ -185,7 +187,7 @@ async function onSubmit() {
               class="text-xs font-medium uppercase"
               :class="textColor"
             >{{ label }}</span>
-            <span class="text-xs text-slate-400">{{ $t('auth.register.passwordHint') }}</span>
+            <span class="text-xs text-slate-600">{{ $t('auth.register.passwordHint') }}</span>
           </div>
         </div>
       </UFormField>

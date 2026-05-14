@@ -133,6 +133,8 @@ async function onSubmit() {
                 variant="ghost"
                 size="xs"
                 :padded="false"
+                :aria-label="showPassword ? t('common.hidePassword') : t('common.showPassword')"
+                :aria-pressed="showPassword"
                 @click="showPassword = !showPassword"
               />
             </template>

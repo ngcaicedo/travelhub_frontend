@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
+import { nextTick } from 'vue'
 
 import HotelReservationDetailPage from '~/pages/hotel/reservations/[id].vue'
 
@@ -194,6 +195,24 @@ describe('HotelReservationDetailPage', () => {
     wrapper.unmount()
   })
 
+  it('shows confirm button for modification_pending_payment when backend exposes confirm', async () => {
+    detailRef.value = {
+      ...baseDetail,
+      reservation: {
+        ...baseDetail.reservation,
+        status: 'modification_pending_payment',
+      },
+      available_actions: [{ action: 'confirm', label: 'Confirmar reserva' }],
+    }
+    const wrapper = await mountSuspended(HotelReservationDetailPage, {
+      route: { params: { id: 'res-abc-123' } },
+    })
+    const allText = wrapper.text()
+    const hasConfirmBtn = ['Confirmar reserva', 'Confirm reservation'].some(t => allText.includes(t))
+    expect(hasConfirmBtn).toBe(true)
+    wrapper.unmount()
+  })
+
   it('back button navigates to /hotel/dashboard', async () => {
     detailRef.value = baseDetail
     const wrapper = await mountSuspended(HotelReservationDetailPage, {
@@ -226,6 +245,63 @@ describe('HotelReservationDetailPage', () => {
       'Detalhamento não disponível',
     ]
     expect(noBreakdownTexts.some(t => wrapper.text().includes(t))).toBe(true)
+    wrapper.unmount()
+  })
+
+  it('shows cancellation note textarea in the detail modal', async () => {
+    detailRef.value = baseDetail
+    const wrapper = await mountSuspended(HotelReservationDetailPage, {
+      route: { params: { id: 'res-abc-123' } },
+    })
+
+    const cancelButton = wrapper.findAll('button').find(b =>
+      ['Cancelar reserva', 'Cancel reservation'].some(t => b.text().includes(t)),
+    )
+    expect(cancelButton).toBeDefined()
+
+    await cancelButton!.trigger('click')
+    await nextTick()
+    await nextTick()
+
+    expect(document.body.querySelector('[data-testid="detail-cancel-note-textarea"]')).not.toBeNull()
+    wrapper.unmount()
+  })
+
+  it('passes cancellation note from detail modal to cancel action', async () => {
+    detailRef.value = baseDetail
+    cancelMock.mockResolvedValue(true)
+    const wrapper = await mountSuspended(HotelReservationDetailPage, {
+      route: { params: { id: 'res-abc-123' } },
+    })
+
+    const cancelButton = wrapper.findAll('button').find(b =>
+      ['Cancelar reserva', 'Cancel reservation'].some(t => b.text().includes(t)),
+    )
+    expect(cancelButton).toBeDefined()
+
+    await cancelButton!.trigger('click')
+    await nextTick()
+    await nextTick()
+
+    const textarea = document.body.querySelector('textarea') as HTMLTextAreaElement | null
+    expect(textarea).not.toBeNull()
+    textarea!.value = 'Se dañó la tubería principal'
+    textarea!.dispatchEvent(new Event('input', { bubbles: true }))
+    await nextTick()
+
+    const proceedButton = Array.from(document.body.querySelectorAll('button')).find(button =>
+      ['Proceder', 'Proceed', 'Prosseguir'].some(t => button.textContent?.includes(t)),
+    ) as HTMLButtonElement | undefined
+    expect(proceedButton).toBeDefined()
+
+    proceedButton!.click()
+    await nextTick()
+
+    expect(cancelMock).toHaveBeenCalledWith(
+      'res-abc-123',
+      'hotel_policy',
+      'Se dañó la tubería principal',
+    )
     wrapper.unmount()
   })
 })

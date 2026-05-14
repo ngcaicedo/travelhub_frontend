@@ -15,6 +15,23 @@ const emit = defineEmits<{
 
 const { t, locale } = useI18n()
 
+function formatAxisNumber(value: number) {
+  return new Intl.NumberFormat(locale.value, {
+    maximumFractionDigits: 0,
+  }).format(value)
+}
+
+function formatBusinessDateLabel(value: string) {
+  const datePart = value.slice(0, 10)
+  const [year, month, day] = datePart.split('-').map(Number)
+  if (!year || !month || !day) return value
+
+  return new Date(year, month - 1, day, 12).toLocaleDateString(locale.value, {
+    month: 'short',
+    day: '2-digit',
+  })
+}
+
 const option = computed(() => {
   const buckets = props.data?.buckets ?? []
   const values = buckets.map(b => Number(b.revenue))
@@ -29,7 +46,8 @@ const option = computed(() => {
         const value = new Intl.NumberFormat(locale.value, {
           style: 'currency',
           currency: props.data?.currency?.toUpperCase() || 'COP',
-          maximumFractionDigits: 0,
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
         }).format(item.value)
         return `${item.name}<br/><strong>${value}</strong>`
       },
@@ -37,10 +55,7 @@ const option = computed(() => {
     xAxis: {
       type: 'category',
       boundaryGap: false,
-      data: buckets.map(b => new Date(b.bucket).toLocaleDateString(locale.value, {
-        month: 'short',
-        day: '2-digit',
-      })),
+      data: buckets.map(b => formatBusinessDateLabel(b.bucket)),
       axisLine: { lineStyle: { color: '#cbd5e1' } },
       axisLabel: { color: '#64748b', fontSize: 10 },
     },
@@ -48,7 +63,11 @@ const option = computed(() => {
       type: 'value',
       min: 0,
       max: values.length === 1 ? Math.ceil(maxValue * 1.5) : undefined,
-      axisLabel: { color: '#94a3b8', fontSize: 10 },
+      axisLabel: {
+        color: '#94a3b8',
+        fontSize: 10,
+        formatter: (value: number) => formatAxisNumber(value),
+      },
       splitLine: { lineStyle: { color: '#f1f5f9' } },
     },
     series: [
@@ -83,9 +102,9 @@ const option = computed(() => {
   <UCard>
     <template #header>
       <div class="flex items-center justify-between gap-2">
-        <h3 class="text-base font-bold text-(--ui-text-highlighted)">
+        <h2 class="text-base font-bold text-(--ui-text-highlighted)">
           {{ t('hotel.dashboard.chart.title') }}
-        </h3>
+        </h2>
         <div class="flex items-center gap-2">
           <USelect
             v-if="currencyOptions && currencyOptions.length > 1"

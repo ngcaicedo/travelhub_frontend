@@ -365,12 +365,12 @@ describe('reservationService', () => {
     it('confirms a hotel reservation', async () => {
       mockFetch.mockResolvedValue({ reservation: mockReservationResponse, status_after: 'confirmed' })
 
-      await confirmHotelReservation('res-123', 'jwt-token', 'manual')
+      await confirmHotelReservation('res-123', 'jwt-token', 'manual', 'en')
 
       expect(mockFetch).toHaveBeenCalledWith('/api/v1/hotel/reservations/res-123/confirm', {
         baseURL: 'http://localhost:3003',
         method: 'POST',
-        body: { reason: 'manual' },
+        body: { reason: 'manual', locale: 'en' },
         headers: {
           Authorization: 'Bearer jwt-token',
           'Content-Type': 'application/json'
@@ -381,12 +381,12 @@ describe('reservationService', () => {
     it('cancels a hotel reservation with predefined reason', async () => {
       mockFetch.mockResolvedValue({ reservation: mockReservationResponse, status_after: 'cancelled' })
 
-      await cancelHotelReservation('res-123', 'jwt-token', 'maintenance', 'room issue')
+      await cancelHotelReservation('res-123', 'jwt-token', 'maintenance', 'room issue', 'pt')
 
       expect(mockFetch).toHaveBeenCalledWith('/api/v1/hotel/reservations/res-123/cancel', {
         baseURL: 'http://localhost:3003',
         method: 'POST',
-        body: { reason: 'maintenance', note: 'room issue' },
+        body: { reason: 'maintenance', note: 'room issue', locale: 'pt' },
         headers: {
           Authorization: 'Bearer jwt-token',
           'Content-Type': 'application/json'

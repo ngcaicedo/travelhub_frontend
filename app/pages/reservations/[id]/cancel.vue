@@ -170,7 +170,7 @@ definePageMeta({
         <h1 class="text-4xl font-bold tracking-tight text-slate-900">
           {{ t('reservationFlow.cancel.title') }}
         </h1>
-        <p class="mt-2 text-slate-500">
+        <p class="mt-2 text-slate-600">
           {{ t('reservationFlow.cancel.subtitle') }}
         </p>
       </div>
@@ -194,16 +194,18 @@ definePageMeta({
       <div
         v-else-if="reservation && preview"
         class="grid gap-6 lg:grid-cols-[1fr_320px]"
+        data-cy="reservation-cancel"
+        :data-cy-change-allowed="preview.change_allowed ? 'true' : 'false'"
       >
         <div class="space-y-4">
           <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <p class="text-sm text-slate-500">{{ t('reservationFlow.cancel.reservationLabel') }} #{{ reservation.id }}</p>
+            <p class="text-sm text-slate-600">{{ t('reservationFlow.cancel.reservationLabel') }} #{{ reservation.id }}</p>
             <p class="mt-2 text-xl font-semibold text-slate-900">{{ statusLabel }}</p>
             <div
               v-if="policyItems.length"
               class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4"
             >
-              <p class="mb-3 text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
+              <p class="mb-3 text-xs font-semibold uppercase tracking-[0.12em] text-slate-600">
                 {{ t('reservationFlow.policy.title') }}
               </p>
               <ul class="space-y-2">
@@ -228,6 +230,8 @@ definePageMeta({
                 v-model="reason"
                 :rows="4"
                 :placeholder="t('reservationFlow.cancel.reasonPlaceholder')"
+                class="w-full"
+                :ui="{ base: 'w-full resize-y' }"
               />
             </UFormField>
           </div>
@@ -257,11 +261,11 @@ definePageMeta({
           <div class="mt-4 space-y-3 border-b border-slate-200 pb-4 text-sm">
             <div class="flex justify-between text-slate-700">
               <span>{{ t('reservationFlow.cancel.refundAmount') }}</span>
-              <span class="font-medium">{{ formatMoney(preview.refund_amount, reservation.currency) }}</span>
+              <span class="font-medium" data-cy="cancel-refund-amount">{{ formatMoney(preview.refund_amount, reservation.currency) }}</span>
             </div>
             <div class="flex justify-between text-slate-700">
               <span>{{ t('reservationFlow.cancel.penaltyAmount') }}</span>
-              <span class="font-medium">{{ formatMoney(preview.penalty_amount, reservation.currency) }}</span>
+              <span class="font-medium" data-cy="cancel-penalty-amount">{{ formatMoney(preview.penalty_amount, reservation.currency) }}</span>
             </div>
             <div
               v-if="refundTypeLabel"
@@ -282,6 +286,7 @@ definePageMeta({
               color="error"
               :loading="submitLoading"
               :disabled="!preview.change_allowed"
+              data-cy="cancel-confirm"
               @click="confirmCancellationFlow"
             >
               {{ t('reservationFlow.cancel.confirmButton') }}
@@ -291,6 +296,7 @@ definePageMeta({
               block
               color="neutral"
               variant="soft"
+              data-cy="cancel-keep"
               @click="keepReservation"
             >
               {{ t('reservationFlow.cancel.keepButton') }}

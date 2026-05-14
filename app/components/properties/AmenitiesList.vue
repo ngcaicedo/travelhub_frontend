@@ -36,7 +36,10 @@ const getAmenityIcon = (amenity: string): string => {
 </script>
 
 <template>
-  <section class="space-y-6">
+  <section
+    class="space-y-6"
+    data-cy="property-amenities"
+  >
     <h2 class="text-2xl font-bold text-gray-900">
       {{ t('property.whatThisOffers') }}
     </h2>
@@ -46,6 +49,7 @@ const getAmenityIcon = (amenity: string): string => {
         v-for="amenity in displayedAmenities"
         :key="amenity"
         class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
+        data-cy="property-amenity-item"
       >
         <UIcon
           :name="getAmenityIcon(amenity)"

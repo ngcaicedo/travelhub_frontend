@@ -8,12 +8,14 @@ Cypress.on('uncaught:exception', (error) => {
   const isKnownLeftError = message.includes("Cannot read properties of undefined (reading 'left')")
   const isHeaderComponentError = stack.includes('Header.vue')
   const isSelectComponentError = stack.includes('Select.vue')
+  const isResizeObserverError = message.includes('ResizeObserver loop completed with undelivered notifications')
 
   if (
     isKnownMatchedError
     || isKnownLeftError
     || isHeaderComponentError
     || isSelectComponentError
+    || isResizeObserverError
   ) {
     Cypress.log({
       name: 'uncaught:exception',
@@ -29,3 +31,4 @@ Cypress.on('uncaught:exception', (error) => {
 beforeEach(() => {
   cy.setCookie('i18n_locale', 'es')
 })
+

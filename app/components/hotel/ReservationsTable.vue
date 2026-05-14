@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { h } from 'vue'
 import type { TableColumn } from '@nuxt/ui'
 import type { HostReservationItem, HostReservationsPage } from '~/types/hotel'
 
@@ -35,6 +36,7 @@ function formatPrice(item: HostReservationItem) {
   return new Intl.NumberFormat(locale.value, {
     style: 'currency',
     currency: item.currency || 'COP',
+    minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(Number(item.total_price))
 }
@@ -69,11 +71,13 @@ const columns = computed<TableColumn<HostReservationItem>[]>(() => {
       accessorKey: 'total_price',
       header: t('hotel.dashboard.table.headers.amount'),
       enableSorting: true,
-      meta: { class: { td: 'text-right', th: 'text-right' } }    },
+      meta: { class: { td: 'text-right', th: 'text-right' } }
+    },
     {
       id: 'actions',
-      header: '',
-      meta: { class: { td: 'w-10 text-right', th: 'w-10' } }    }
+      header: () => h('span', { class: 'sr-only' }, t('hotel.dashboard.table.headers.actions')),
+      meta: { class: { td: 'w-10 text-right', th: 'w-10' } }
+    }
   ]
 })
 
@@ -102,9 +106,9 @@ const currentPage = computed({
   <UCard>
     <template #header>
       <div class="flex items-center justify-between">
-        <h3 class="text-base font-bold text-(--ui-text-highlighted)">
+        <h2 class="text-base font-bold text-(--ui-text-highlighted)">
           {{ t('hotel.dashboard.table.title') }}
-        </h3>
+        </h2>
         <span class="text-xs text-(--ui-text-muted)">
           {{ t('hotel.dashboard.table.totalLabel', { total: data?.total ?? 0 }) }}
         </span>
@@ -127,7 +131,13 @@ const currentPage = computed({
       sort-mode="manual"
     >
       <template #guest_full_name-cell="{ row }">
-        <div class="flex items-center gap-3">
+        <div
+          class="flex items-center gap-3"
+          data-cy="hotel-reservation-row"
+          :data-cy-reservation-id="row.original.id"
+          :data-cy-reservation-number="row.original.reservation_number"
+          :data-cy-reservation-status="row.original.status"
+        >
           <span
             class="flex size-8 shrink-0 items-center justify-center rounded-full bg-(--ui-bg-elevated) text-xs font-bold text-(--ui-text-highlighted)"
           >
@@ -172,14 +182,18 @@ const currentPage = computed({
       </template>
 
       <template #actions-cell="{ row }">
-        <UButton
-          variant="ghost"
-          color="neutral"
-          size="xs"
-          icon="i-lucide-chevron-right"
-          :aria-label="t('hotel.detail.viewDetail')"
-          @click="emit('select', row.original)"
-        />
+        <slot name="actions" :reservation="row.original">
+          <UButton
+            variant="ghost"
+            color="neutral"
+            size="xs"
+            icon="i-lucide-chevron-right"
+            :aria-label="t('hotel.detail.viewDetail')"
+            :data-cy="'hotel-row-view-detail'"
+            :data-cy-reservation-id="row.original.id"
+            @click="emit('select', row.original)"
+          />
+        </slot>
       </template>
     </UTable>
 

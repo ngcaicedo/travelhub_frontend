@@ -11,7 +11,7 @@ class Screenshot {
   private counter = 0
   private currentTest = ''
 
-  take(name: string) {
+  take(name: string, options: { fullPage?: boolean } = {}) {
     const title = Cypress.currentTest?.title ?? 'unnamedTest'
     if (title !== this.currentTest) {
       this.currentTest = title
@@ -21,7 +21,7 @@ class Screenshot {
     this.counter++
     const safeTitle = sanitize(title)
     cy.screenshot(`${safeTitle}/${idx}_${name}`, {
-      capture: 'viewport',
+      capture: options.fullPage ? 'fullPage' : 'viewport',
       overwrite: true
     })
   }

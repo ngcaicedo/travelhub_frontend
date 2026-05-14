@@ -113,6 +113,8 @@ definePageMeta({
       <div
         v-else-if="reservation"
         class="space-y-6"
+        data-cy="reservation-cancelled"
+        :data-cy-status="reservation.status"
       >
         <div class="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
           <div class="mb-4 flex justify-center">
@@ -124,7 +126,7 @@ definePageMeta({
           <h1 class="text-4xl font-bold tracking-tight text-slate-900">
             {{ statusTitle }}
           </h1>
-          <p class="mx-auto mt-3 max-w-[520px] text-slate-500">
+          <p class="mx-auto mt-3 max-w-[520px] text-slate-600">
             {{ statusDescription }}
           </p>
 

@@ -15,7 +15,9 @@
     "loadMore": "Load more",
     "loading": "Loading...",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
   },
   "nav": {
     "home": "Home"
@@ -26,7 +28,10 @@
     "checkout": "Checkout",
     "reservations": "My reservations",
     "hotelReservations": "Hotel reservations",
-    "logout": "Logout"
+    "logout": "Logout",
+    "language": "Language",
+    "mainNav": "Main navigation",
+    "breadcrumbNav": "Breadcrumb"
   },
   "reservationsList": {
     "meta": {
@@ -71,7 +76,9 @@
       "pending_payment": "Pending",
       "confirmed": "Confirmed",
       "cancelled": "Cancelled",
-      "completed": "Completed"
+      "completed": "Completed",
+      "modification_pending_payment": "Modification pending payment",
+      "modification_confirmed": "Modification confirmed"
     },
     "cancellationReasons": {
       "maintenance": "Maintenance",
@@ -124,9 +131,11 @@
       "warningConfirmed": "Once confirmed, the automatic refund process will begin according to the active cancellation policy. This action cannot be undone.",
       "warningPending": "Once confirmed, the reservation will be cancelled and the room will become available again. This action cannot be undone.",
       "keepReservation": "Keep reservation",
-      "confirmAction": "Confirm cancellation"
+      "confirmAction": "Confirm cancellation",
+      "staySummaryWithRoom": "{nights} nights • {room}"
     }
-  },  "auth": {
+  },
+  "auth": {
     "hero": {
       "title": "Explore the world with confidence.",
       "description": "Access exclusive deals, manage your itineraries, and discover hidden gems around the globe."
@@ -379,6 +388,8 @@
     "mostRecent": "Most Recent",
     "travelerProtection": "Traveler Protection included. Full refund if canceled within 48 hours of booking.",
     "reportListing": "Report this listing",
+    "shareProperty": "Share property",
+    "addToFavorites": "Add to favorites",
     "morePhotos": "+{count} photos",
     "showAllPhotos": "Show all photos",
     "policies": {
@@ -749,6 +760,11 @@
         "title": "Revenue trends",
         "empty": "No data yet in the selected period"
       },
+      "revenueMode": {
+        "label": "Amount basis",
+        "confirmedReservations": "Confirmed reservations (stay total)",
+        "collectedPayments": "Collected payments (recorded)"
+      },
       "filters": {
         "title": "Filters",
         "guest": "Guest",
@@ -779,7 +795,8 @@
           "checkIn": "Stay",
           "createdAt": "Created",
           "amount": "Amount",
-          "status": "Status"
+          "status": "Status",
+          "actions": "Actions"
         }
       }
     },

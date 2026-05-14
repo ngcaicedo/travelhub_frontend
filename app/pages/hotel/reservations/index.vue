@@ -6,7 +6,6 @@ import type {
 } from '~/types/reservations'
 import {
   cancelHotelReservation,
-  confirmHotelReservation,
   getHotelReservations
 } from '~/services/reservationService'
 import { getAllProperties } from '~/services/propertyServices'
@@ -57,7 +56,7 @@ definePageMeta({
 })
 
 const cancelTargetReservation = computed(() =>
-  reservations.value.find(reservation => reservation.id === cancelTargetId.value) || null
+  reservations.value.find(reservation => reservation.id === cancelTargetId.value)
 )
 
 const isCancelModalOpen = computed({
@@ -83,12 +82,16 @@ function reservationStatusLabel(status: string) {
   return t(`hotelReservations.status.${status}` as never, status)
 }
 
-function canConfirm(status: string) {
-  return status === 'pending_payment'
+function hasAction(reservation: HotelReservationListItem, action: 'confirm' | 'cancel') {
+  return reservation.available_actions?.some(item => item.action === action) ?? false
 }
 
-function canCancel(status: string) {
-  return status === 'pending_payment' || status === 'confirmed'
+function canCancel(reservation: HotelReservationListItem) {
+  if (reservation.available_actions) {
+    return hasAction(reservation, 'cancel')
+  }
+
+  return ['pending', 'pending_payment', 'confirmed', 'modification_confirmed'].includes(reservation.status)
 }
 
 function formatMoney(amount: string, currency: string) {
@@ -96,7 +99,9 @@ function formatMoney(amount: string, currency: string) {
   if (Number.isNaN(parsed)) return `${amount} ${currency}`
   return new Intl.NumberFormat(localeMap[locale.value] || 'en-US', {
     style: 'currency',
-    currency
+    currency,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   }).format(parsed)
 }
 
@@ -118,6 +123,14 @@ function calculateNights(checkIn: string, checkOut: string) {
   return Math.round(diffMs / (1000 * 60 * 60 * 24))
 }
 
+function cancelSummaryPrimary(reservation: HotelReservationListItem) {
+  return propertyName(reservation.id_property) || '—'
+}
+
+function cancelSummarySecondary(reservation: HotelReservationListItem) {
+  return propertyName(reservation.id_property) || '—'
+}
+
 function openCancelModal(reservationId: string) {
   cancelTargetId.value = reservationId
   cancelReason.value = 'maintenance'
@@ -128,6 +141,7 @@ function closeCancelModal() {
   cancelTargetId.value = null
   cancelReason.value = 'maintenance'
   cancelNote.value = ''
+  error.value = null
 }
 
 async function loadProperties() {
@@ -154,26 +168,6 @@ async function loadReservations() {
   }
 }
 
-async function confirmReservation(reservationId: string) {
-  if (!authStore.token) return
-  actingId.value = reservationId
-  error.value = null
-  success.value = null
-  try {
-    await confirmHotelReservation(
-      reservationId,
-      authStore.token,
-      t('hotelReservations.actions.confirmReason')
-    )
-    success.value = t('hotelReservations.feedback.confirmSuccess')
-    await loadReservations()
-  } catch (err) {
-    error.value = (err as { message?: string }).message || t('hotelReservations.feedback.confirmError')
-  } finally {
-    actingId.value = null
-  }
-}
-
 async function cancelReservation(reservationId: string) {
   if (!authStore.token) return
   if (isCancellationNoteRequired.value && !cancellationNote.value) {
@@ -189,7 +183,8 @@ async function cancelReservation(reservationId: string) {
       reservationId,
       authStore.token,
       cancelReason.value,
-      cancelReason.value === 'other' ? cancellationNote.value : undefined
+      cancellationNote.value || undefined,
+      locale.value
     )
     closeCancelModal()
     success.value = t('hotelReservations.feedback.cancelSuccess')
@@ -352,16 +347,7 @@ onMounted(async () => {
 
           <div class="mt-5 flex flex-wrap gap-3">
             <UButton
-              v-if="canConfirm(reservation.status)"
-              icon="i-lucide-check"
-              color="primary"
-              :loading="actingId === reservation.id"
-              @click="confirmReservation(reservation.id)"
-            >
-              {{ t('hotelReservations.actions.confirm') }}
-            </UButton>
-            <UButton
-              v-if="canCancel(reservation.status)"
+              v-if="canCancel(reservation)"
               icon="i-lucide-ban"
               color="error"
               variant="soft"
@@ -410,43 +396,36 @@ onMounted(async () => {
           v-if="cancelTargetReservation"
           class="space-y-7"
         >
-          <div class="rounded-2xl border border-[#d8e2f0] bg-[#f5f8ff] p-5">
+          <div class="rounded-2xl border border-[#d8e2f0] bg-[#f5f8ff] px-4 py-4 sm:px-5">
             <p class="text-xs font-semibold uppercase tracking-[0.14em] text-[#255cff]">
               {{ t('hotelReservations.cancelModal.summaryTitle') }}
             </p>
-            <div class="mt-3 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-              <div>
-                <p class="max-w-[250px] text-[18px] font-bold leading-8 text-slate-900">
-                  {{ propertyName(cancelTargetReservation.id_property) }}
-                </p>
-                <p class="mt-1 text-[15px] text-slate-500">
-                  {{ t('hotelReservations.cancelModal.reservationId', { id: cancelTargetReservation.id }) }}
-                </p>
-                <p class="mt-3 text-[15px] text-slate-600">
-                  {{ t('hotelReservations.cancelModal.guestsAndStatus', {
-                    guests: cancelTargetReservation.number_of_guests,
-                    status: reservationStatusLabel(cancelTargetReservation.status)
-                  }) }}
-                </p>
-              </div>
-              <div class="space-y-2 text-[15px] text-slate-500 sm:text-right">
-                <p class="flex items-center gap-2 sm:justify-end">
-                  <UIcon
-                    name="i-lucide-calendar-days"
-                    class="h-4 w-4 text-slate-400"
-                  />
-                  <span>{{ formatDate(cancelTargetReservation.check_in_date) }} - {{ formatDate(cancelTargetReservation.check_out_date) }}</span>
-                </p>
-                <p>
-                  {{ t('hotelReservations.cancelModal.staySummary', {
-                    nights: calculateNights(cancelTargetReservation.check_in_date, cancelTargetReservation.check_out_date),
-                    guests: cancelTargetReservation.number_of_guests
-                  }) }}
-                </p>
-                <p class="font-medium text-slate-700">
-                  {{ formatMoney(cancelTargetReservation.total_price, cancelTargetReservation.currency) }}
-                </p>
-              </div>
+            <div class="mt-3 space-y-2.5">
+              <p class="text-[18px] font-bold leading-7 text-slate-900">
+                {{ cancelSummaryPrimary(cancelTargetReservation) }}
+              </p>
+              <p class="text-sm font-medium leading-6 text-slate-500 break-words">
+                {{ t('hotelReservations.cancelModal.reservationId', { id: cancelTargetReservation.id }) }}
+              </p>
+              <p class="flex items-center gap-2 text-sm font-medium leading-6 text-slate-700">
+                <UIcon
+                  name="i-lucide-calendar-days"
+                  class="h-4 w-4 shrink-0 text-slate-400"
+                />
+                <span>{{ formatDate(cancelTargetReservation.check_in_date) }} - {{ formatDate(cancelTargetReservation.check_out_date) }}</span>
+              </p>
+              <p class="text-sm leading-6 text-slate-500">
+                {{ t('hotelReservations.cancelModal.staySummaryWithRoom', {
+                  nights: calculateNights(cancelTargetReservation.check_in_date, cancelTargetReservation.check_out_date),
+                  room: cancelSummarySecondary(cancelTargetReservation)
+                }) }}
+              </p>
+              <p class="text-sm leading-6 text-slate-600">
+                {{ t('hotelReservations.cancelModal.guestsAndStatus', {
+                  guests: cancelTargetReservation.number_of_guests,
+                  status: reservationStatusLabel(cancelTargetReservation.status)
+                }) }}
+              </p>
             </div>
           </div>
 

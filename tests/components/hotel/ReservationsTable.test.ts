@@ -21,7 +21,8 @@ describe('HotelReservationsTable', () => {
         total_price: '500.00',
         currency: 'COP',
         status: 'confirmed',
-        created_at: '2026-04-01T00:00:00Z'
+        created_at: '2026-04-01T00:00:00Z',
+        available_actions: [],
       }
     ],
     total: 1,

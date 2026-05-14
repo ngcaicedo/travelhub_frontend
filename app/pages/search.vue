@@ -319,7 +319,7 @@ const validateSearchForm = () => {
 const mapSearchResultToCard = (item: SearchResultItem): SearchResultCard => ({
   id: item.id,
   name: item.name,
-  location: `${item.city}, ${item.country}`,
+  location: [item.city, item.country].filter(Boolean).join(', '),
   rating: item.rating,
   reviewCount: Math.max(1, Math.round(item.rating * 200)),
   maxGuests: item.max_capacity,
@@ -375,7 +375,10 @@ const buildSearchRequest = (): SearchRequest => ({
       : searchState.sort === 'rating'
         ? 'rating'
         : 'name',
-  order_dir: searchState.sort === 'price_desc' ? 'desc' : 'asc',
+  order_dir:
+    searchState.sort === 'price_desc' || searchState.sort === 'rating'
+      ? 'desc'
+      : 'asc',
   page: currentPage.value,
   page_size: pageSize
 })
@@ -466,7 +469,7 @@ onMounted(async () => {
 <template>
   <div class="min-h-screen bg-slate-50">
     <div class="max-w-7xl mx-auto px-safe py-6 lg:py-8 space-y-6">
-      <nav class="flex items-center gap-2 text-sm text-slate-500">
+      <nav class="flex items-center gap-2 text-sm text-slate-600" :aria-label="t('navigation.breadcrumbNav')">
         <NuxtLink
           to="/"
           class="hover:text-slate-700 transition-colors"
@@ -489,7 +492,10 @@ onMounted(async () => {
             <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-950 tracking-tight">
               {{ searchState.city ? t('search.heading', { city: searchState.city }) : t('search.breadcrumb.currentSearch') }}
             </h1>
-            <p class="text-sm sm:text-base text-slate-500">
+            <p
+              class="text-sm sm:text-base text-slate-500"
+              data-cy="search-summary"
+            >
               {{ summaryText }}
             </p>
           </div>
@@ -502,6 +508,7 @@ onMounted(async () => {
                 color="neutral"
                 icon="i-lucide-arrow-up-down"
                 trailing-icon="i-lucide-chevron-down"
+                data-cy="search-sort-trigger"
               >
                 {{ t('search.sortButton', { option: activeSortLabel }) }}
               </UButton>
@@ -523,6 +530,7 @@ onMounted(async () => {
                   icon="i-lucide-map-pinned"
                   :placeholder="t('search.placeholders.city')"
                   size="md"
+                  data-cy="search-city"
                   :class="validationErrors.city ? 'ring-1 ring-error-500' : ''"
                 />
                 <p class="min-h-5 text-sm text-error-600">
@@ -535,6 +543,7 @@ onMounted(async () => {
                   v-model="searchState.checkIn"
                   type="date"
                   size="md"
+                  data-cy="search-check-in"
                   :class="validationErrors.checkIn ? 'ring-1 ring-error-500' : ''"
                 />
                 <p class="min-h-5 text-sm text-error-600">
@@ -547,6 +556,7 @@ onMounted(async () => {
                   v-model="searchState.checkOut"
                   type="date"
                   size="md"
+                  data-cy="search-check-out"
                   :class="validationErrors.checkOut ? 'ring-1 ring-error-500' : ''"
                 />
                 <p class="min-h-5 text-sm text-error-600">
@@ -560,6 +570,7 @@ onMounted(async () => {
                   type="number"
                   min="1"
                   size="md"
+                  data-cy="search-guests"
                   :class="validationErrors.guests ? 'ring-1 ring-error-500' : ''"
                 />
                 <p class="min-h-5 text-sm text-error-600">
@@ -575,7 +586,7 @@ onMounted(async () => {
                   <p class="text-sm font-semibold text-slate-900">
                     {{ t('search.amenitiesLabel') }}
                   </p>
-                  <p class="text-xs text-slate-400">
+                  <p class="text-xs text-slate-600">
                     {{ t('search.amenitiesHint') }}
                   </p>
                 </div>
@@ -639,6 +650,7 @@ onMounted(async () => {
                 size="md"
                 icon="i-lucide-search"
                 class="w-full sm:w-auto justify-center"
+                data-cy="search-submit"
                 :loading="search.loading.value"
               >
                 {{ t('search.searchAction') }}
@@ -673,11 +685,15 @@ onMounted(async () => {
           <section
             v-if="results.length > 0"
             class="grid grid-cols-1 xl:grid-cols-2 gap-6"
+            data-cy="search-results"
           >
             <article
               v-for="result in results"
               :key="result.id"
               class="overflow-hidden rounded-xl bg-white border border-slate-200 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(15,23,42,0.08)]"
+              data-cy="search-result-card"
+              :data-cy-property-id="result.id"
+              :data-cy-property-name="result.name"
             >
               <div class="relative h-[256px] overflow-hidden">
                 <img
@@ -722,13 +738,13 @@ onMounted(async () => {
 
                   <div class="shrink-0 flex flex-col items-end gap-1">
                     <div class="rounded bg-travelhub-500/10 px-2 py-1">
-                      <p class="text-sm font-bold text-travelhub-500">
+                      <p class="text-sm font-bold text-travelhub-700">
                         {{ formatRating(result.rating) }}
                       </p>
                     </div>
                     <p
                       v-if="result.reviewCount"
-                      class="text-[10px] font-bold uppercase tracking-[0.5px] text-slate-400"
+                      class="text-[10px] font-bold uppercase tracking-[0.5px] text-slate-600"
                     >
                       {{ result.reviewCount.toLocaleString() }} {{ t('search.reviews') }}
                     </p>
@@ -737,7 +753,7 @@ onMounted(async () => {
 
                 <div class="flex items-end justify-between border-t border-zinc-50 pt-5">
                   <div>
-                    <p class="text-[10px] font-bold uppercase tracking-[0.5px] text-slate-400">
+                    <p class="text-[10px] font-bold uppercase tracking-[0.5px] text-slate-600">
                       {{ t('search.pricePerNight') }}
                     </p>
                     <div class="flex items-baseline gap-1">
@@ -759,6 +775,7 @@ onMounted(async () => {
                     }"
                     size="lg"
                     class="justify-center"
+                    data-cy="search-result-view-property"
                   >
                     {{ t('search.viewProperty') }}
                   </UButton>
@@ -770,6 +787,7 @@ onMounted(async () => {
           <div
             v-else
             class="rounded-xl border border-slate-200 bg-white p-8 sm:p-10 shadow-sm"
+            data-cy="search-empty-state"
           >
             <div class="mx-auto max-w-2xl space-y-5 text-center">
               <div class="mx-auto flex size-14 items-center justify-center rounded-full bg-travelhub-50 text-travelhub-600">
