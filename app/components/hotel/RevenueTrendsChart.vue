@@ -102,9 +102,9 @@ const option = computed(() => {
   <UCard>
     <template #header>
       <div class="flex items-center justify-between gap-2">
-        <h3 class="text-base font-bold text-(--ui-text-highlighted)">
+        <h2 class="text-base font-bold text-(--ui-text-highlighted)">
           {{ t('hotel.dashboard.chart.title') }}
-        </h3>
+        </h2>
         <div class="flex items-center gap-2">
           <USelect
             v-if="currencyOptions && currencyOptions.length > 1"

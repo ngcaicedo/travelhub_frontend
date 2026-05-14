@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { locale, locales, setLocale } = useI18n()
+const { t, locale, locales, setLocale } = useI18n()
 
 const localeOptions = computed(() =>
   (locales.value as Array<{ code: string, name: string }>).map(l => ({
@@ -28,6 +28,7 @@ function onLocaleChange(code: string) {
         variant="ghost"
         size="sm"
         class="w-auto"
+        :aria-label="t('navigation.language')"
         @update:model-value="onLocaleChange"
       />
     </header>

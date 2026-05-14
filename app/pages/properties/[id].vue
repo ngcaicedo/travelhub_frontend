@@ -183,7 +183,7 @@ definePageMeta({
                   color="neutral"
                   size="sm"
                   leading-icon="i-lucide-flag"
-                  class="text-slate-400"
+                  class="text-slate-600"
                 >
                   {{ t('property.reportListing') }}
                 </UButton>

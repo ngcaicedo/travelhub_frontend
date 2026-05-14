@@ -47,6 +47,8 @@ function onLocaleChange(code: string) {
       v-model:open="open"
       collapsible
       resizable
+      role="complementary"
+      :aria-label="t('hotel.nav.portalLabel')"
       :ui="{ footer: 'border-t border-default' }"
     >
       <template #header="{ collapsed }">
@@ -77,6 +79,7 @@ function onLocaleChange(code: string) {
         orientation="vertical"
         highlight
         :collapsed="false"
+        :aria-label="t('navigation.mainNav')"
       />
 
       <template #footer="{ collapsed }">
@@ -106,7 +109,11 @@ function onLocaleChange(code: string) {
     </UDashboardSidebar>
 
     <UDashboardPanel id="hotel-main">
-      <UDashboardNavbar :title="t('hotel.dashboard.headerTitle')">
+      <UDashboardNavbar
+        :title="t('hotel.dashboard.headerTitle')"
+        role="banner"
+        :aria-label="t('hotel.dashboard.headerTitle')"
+      >
         <template #right>
           <USelect
             :model-value="locale"
@@ -116,14 +123,15 @@ function onLocaleChange(code: string) {
             variant="ghost"
             size="sm"
             class="w-[138px]"
+            :aria-label="t('navigation.language')"
             @update:model-value="onLocaleChange"
           />
         </template>
       </UDashboardNavbar>
 
-      <div class="flex-1 overflow-y-auto">
+      <main class="flex-1 overflow-y-auto">
         <slot />
-      </div>
+      </main>
     </UDashboardPanel>
   </UDashboardGroup>
 </template>
