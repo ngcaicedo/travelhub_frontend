@@ -18,12 +18,12 @@ describe('Busqueda de hospedaje | filtros ciudad/fechas/capacidad', () => {
   })
 
   it('devuelve las tres propiedades seedeadas en Bogota cuando los filtros son validos', () => {
-    // When
+    // When: guests=6 excluye el cluster del mapa (max_guests 2..5) y deja solo los 3 demos
     whenSteps.whenISearchProperties({
       city: 'Bogota',
       checkIn: CHECK_IN,
       checkOut: CHECK_OUT,
-      guests: 2
+      guests: 6
     })
 
     // Then: las 3 propiedades de Bogota aparecen (orden por defecto = name asc)

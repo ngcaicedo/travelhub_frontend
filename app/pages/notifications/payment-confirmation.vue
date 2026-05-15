@@ -338,7 +338,7 @@ definePageMeta({
         class="py-16 text-center"
       >
         <UIcon name="i-lucide-loader-circle" class="mx-auto mb-4 size-8 animate-spin text-travelhub-500" />
-        <p class="text-slate-500">
+        <p class="text-slate-600">
           {{ t('common.loading') }}
         </p>
       </div>
@@ -363,7 +363,7 @@ definePageMeta({
           <p class="mt-3 text-lg text-slate-600">
             {{ t('notifications.verification.subtitle') }}
           </p>
-          <p class="mx-auto mt-6 max-w-[560px] text-sm leading-6 text-slate-500">
+          <p class="mx-auto mt-6 max-w-[560px] text-sm leading-6 text-slate-600">
             {{ t('notifications.verification.description') }}
           </p>
         </div>
@@ -414,7 +414,7 @@ definePageMeta({
           <h1 class="text-[34px] leading-[1.02] font-bold tracking-tight text-slate-900 md:text-[50px]">
             <span data-cy="payment-confirmation-title">{{ t('notifications.success.title') }}</span>
           </h1>
-          <p class="mx-auto mt-2 max-w-[520px] text-[16px] leading-7 text-slate-500">
+          <p class="mx-auto mt-2 max-w-[520px] text-[16px] leading-7 text-slate-600">
             {{ t('notifications.success.subtitle') }}
           </p>
         </div>
@@ -434,7 +434,7 @@ definePageMeta({
                 <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#2563eb]">
                   {{ t('notifications.summary.badge') }}
                 </p>
-                <p class="pt-0.5 text-[14px] font-medium text-slate-400">
+                <p class="pt-0.5 text-[14px] font-medium text-slate-600">
                   {{ receiptReference }}
                 </p>
               </div>
@@ -444,7 +444,7 @@ definePageMeta({
               </h2>
               <p
                 v-if="confirmation.property_address"
-                class="mb-5 text-[13px] text-slate-500"
+                class="mb-5 text-[13px] text-slate-600"
               >
                 {{ confirmation.property_address }}
               </p>
@@ -457,7 +457,7 @@ definePageMeta({
                     class="mt-0.5 h-4.5 w-4.5 text-[#2563eb]"
                   />
                   <div>
-                    <p class="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                    <p class="text-[11px] font-medium uppercase tracking-wide text-slate-600">
                       {{ t('notifications.summary.dates') }}
                     </p>
                     <p class="text-[14px] leading-5 font-medium text-slate-700">
@@ -472,7 +472,7 @@ definePageMeta({
                     class="mt-0.5 h-4.5 w-4.5 text-[#2563eb]"
                   />
                   <div>
-                    <p class="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                    <p class="text-[11px] font-medium uppercase tracking-wide text-slate-600">
                       {{ t('notifications.summary.checkOut') }}
                     </p>
                     <p class="text-[14px] leading-5 font-medium text-slate-700">
@@ -487,7 +487,7 @@ definePageMeta({
                     class="mt-0.5 h-4.5 w-4.5 text-[#2563eb]"
                   />
                   <div>
-                    <p class="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                    <p class="text-[11px] font-medium uppercase tracking-wide text-slate-600">
                       {{ t('notifications.summary.guests') }}
                     </p>
                     <p class="text-[14px] leading-5 font-medium text-slate-700">
@@ -498,7 +498,7 @@ definePageMeta({
               </div>
 
               <div class="mb-5 rounded-xl border border-slate-100 bg-slate-50/60 px-4 py-3">
-                <p class="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                <p class="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-600">
                   {{ t('notifications.summary.priceBreakdown') }}
                 </p>
                 <dl class="space-y-1 text-[13px]">
@@ -547,7 +547,7 @@ definePageMeta({
               </div>
 
               <div class="mb-4 rounded-xl bg-slate-50/80 px-3 py-2.5">
-                <p class="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                <p class="text-[11px] font-medium uppercase tracking-wide text-slate-600">
                   {{ t('notifications.summary.stay') }}
                 </p>
                 <p class="mt-1 text-[13px] font-medium text-slate-700">
@@ -557,7 +557,7 @@ definePageMeta({
 
               <div class="mb-5 border-t border-slate-100 pt-4">
                 <div>
-                  <p class="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                  <p class="text-[11px] font-medium uppercase tracking-wide text-slate-600">
                     {{ t('notifications.summary.reservationId') }}
                   </p>
                   <p class="mt-1 text-[13px] break-all font-medium text-slate-700">
@@ -616,7 +616,7 @@ definePageMeta({
                 <p class="mb-1 text-[15px] font-semibold text-slate-900">
                   {{ t('booking.checkInInstructions') }}
                 </p>
-                <p class="max-w-[250px] text-[14px] leading-6 text-slate-500">
+                <p class="max-w-[250px] text-[14px] leading-6 text-slate-600">
                   {{ t('booking.checkInInstructionsDescription') }}
                 </p>
               </div>

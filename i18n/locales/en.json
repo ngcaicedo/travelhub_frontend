@@ -15,7 +15,9 @@
     "loadMore": "Load more",
     "loading": "Loading...",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
   },
   "nav": {
     "home": "Home"
@@ -26,7 +28,10 @@
     "checkout": "Checkout",
     "reservations": "My reservations",
     "hotelReservations": "Hotel reservations",
-    "logout": "Logout"
+    "logout": "Logout",
+    "language": "Language",
+    "mainNav": "Main navigation",
+    "breadcrumbNav": "Breadcrumb"
   },
   "reservationsList": {
     "meta": {
@@ -383,6 +388,8 @@
     "mostRecent": "Most Recent",
     "travelerProtection": "Traveler Protection included. Full refund if canceled within 48 hours of booking.",
     "reportListing": "Report this listing",
+    "shareProperty": "Share property",
+    "addToFavorites": "Add to favorites",
     "morePhotos": "+{count} photos",
     "showAllPhotos": "Show all photos",
     "policies": {
@@ -791,7 +798,8 @@
           "checkIn": "Stay",
           "createdAt": "Created",
           "amount": "Amount",
-          "status": "Status"
+          "status": "Status",
+          "actions": "Actions"
         }
       }
     },

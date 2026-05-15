@@ -436,15 +436,13 @@ watch(
       </div>
 
       <!-- Guests -->
-      <UFormField
-        :label="t('booking.guests')"
-        name="guests"
-      >
+      <UFormField :label="t('booking.guests')">
         <UInputNumber
           v-model="numberOfGuests"
           :min="1"
           :max="props.property.max_guests"
           :disabled="loading"
+          :aria-label="t('booking.guests')"
           data-cy="reservation-guests"
         />
       </UFormField>

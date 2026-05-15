@@ -469,7 +469,7 @@ onMounted(async () => {
 <template>
   <div class="min-h-screen bg-slate-50">
     <div class="max-w-7xl mx-auto px-safe py-6 lg:py-8 space-y-6">
-      <nav class="flex items-center gap-2 text-sm text-slate-500">
+      <nav class="flex items-center gap-2 text-sm text-slate-600" :aria-label="t('navigation.breadcrumbNav')">
         <NuxtLink
           to="/"
           class="hover:text-slate-700 transition-colors"
@@ -586,7 +586,7 @@ onMounted(async () => {
                   <p class="text-sm font-semibold text-slate-900">
                     {{ t('search.amenitiesLabel') }}
                   </p>
-                  <p class="text-xs text-slate-400">
+                  <p class="text-xs text-slate-600">
                     {{ t('search.amenitiesHint') }}
                   </p>
                 </div>
@@ -738,13 +738,13 @@ onMounted(async () => {
 
                   <div class="shrink-0 flex flex-col items-end gap-1">
                     <div class="rounded bg-travelhub-500/10 px-2 py-1">
-                      <p class="text-sm font-bold text-travelhub-500">
+                      <p class="text-sm font-bold text-travelhub-700">
                         {{ formatRating(result.rating) }}
                       </p>
                     </div>
                     <p
                       v-if="result.reviewCount"
-                      class="text-[10px] font-bold uppercase tracking-[0.5px] text-slate-400"
+                      class="text-[10px] font-bold uppercase tracking-[0.5px] text-slate-600"
                     >
                       {{ result.reviewCount.toLocaleString() }} {{ t('search.reviews') }}
                     </p>
@@ -753,7 +753,7 @@ onMounted(async () => {
 
                 <div class="flex items-end justify-between border-t border-zinc-50 pt-5">
                   <div>
-                    <p class="text-[10px] font-bold uppercase tracking-[0.5px] text-slate-400">
+                    <p class="text-[10px] font-bold uppercase tracking-[0.5px] text-slate-600">
                       {{ t('search.pricePerNight') }}
                     </p>
                     <div class="flex items-baseline gap-1">

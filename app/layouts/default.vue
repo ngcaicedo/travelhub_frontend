@@ -66,7 +66,7 @@ function onLocaleChange(code: string) {
             <AppLogo class="h-6 w-auto shrink-0" />
           </NuxtLink>
 
-          <nav class="hidden items-center gap-2 md:flex">
+          <nav class="hidden items-center gap-2 md:flex" :aria-label="t('navigation.mainNav')">
             <UButton
               v-for="item in navigationItems"
               :key="item.to"
@@ -89,6 +89,7 @@ function onLocaleChange(code: string) {
             variant="ghost"
             size="sm"
             class="w-[138px]"
+            :aria-label="t('navigation.language')"
             @update:model-value="onLocaleChange"
           />
           <UButton

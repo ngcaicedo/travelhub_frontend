@@ -292,7 +292,7 @@ definePageMeta({
       >
         <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div class="mb-6">
-            <p class="text-sm text-slate-500">{{ t('reservationFlow.modify.currentStatus') }}</p>
+            <p class="text-sm text-slate-600">{{ t('reservationFlow.modify.currentStatus') }}</p>
             <p class="mt-1 text-xl font-semibold text-slate-900">{{ statusLabel }}</p>
           </div>
 
@@ -307,8 +307,13 @@ definePageMeta({
               </UFormField>
             </div>
 
-            <UFormField :label="t('booking.guests')" name="numberOfGuests">
-              <UInputNumber v-model="numberOfGuests" :min="1" data-cy="modify-guests" />
+            <UFormField :label="t('booking.guests')">
+              <UInputNumber
+                v-model="numberOfGuests"
+                :min="1"
+                :aria-label="t('booking.guests')"
+                data-cy="modify-guests"
+              />
             </UFormField>
 
             <div class="flex flex-wrap gap-3 pt-2">
@@ -392,7 +397,7 @@ definePageMeta({
                 v-if="policyItems.length"
                 class="rounded-xl border border-slate-200 bg-slate-50 p-3"
               >
-                <p class="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
+                <p class="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-slate-600">
                   {{ t('reservationFlow.policy.title') }}
                 </p>
                 <ul class="space-y-2">
@@ -411,7 +416,7 @@ definePageMeta({
               </p>
             </div>
 
-            <p v-else class="mt-3 text-sm text-slate-500">
+            <p v-else class="mt-3 text-sm text-slate-600">
               {{ t('reservationFlow.modify.runPreviewHint') }}
             </p>
           </div>

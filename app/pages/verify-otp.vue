@@ -45,7 +45,7 @@ async function onSubmit() {
         <h1 class="text-3xl font-bold text-slate-900">
           {{ $t('auth.verifyOtp.title') }}
         </h1>
-        <p class="mt-2 text-base text-slate-500">
+        <p class="mt-2 text-base text-slate-600">
           {{ $t('auth.verifyOtp.description') }}
         </p>
       </div>

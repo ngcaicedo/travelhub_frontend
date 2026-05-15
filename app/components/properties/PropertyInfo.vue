@@ -69,11 +69,13 @@ const navigateToSection = (sectionId: string) => {
           icon="i-lucide-share-2"
           variant="ghost"
           size="lg"
+          :aria-label="t('property.shareProperty')"
         />
         <UButton
           icon="i-lucide-heart"
           variant="ghost"
           size="lg"
+          :aria-label="t('property.addToFavorites')"
         />
       </div>
     </div>
@@ -132,7 +134,7 @@ const navigateToSection = (sectionId: string) => {
         <p class="text-sm font-semibold text-slate-900">
           {{ t('property.travelHubPlus') }}
         </p>
-        <p class="text-xs text-slate-500">
+        <p class="text-xs text-slate-600">
           {{ t('property.travelHubPlusDesc') }}
         </p>
       </div>

@@ -32,13 +32,13 @@ const openExternalMap = () => {
         <p class="text-slate-700 font-medium">
           {{ props.location }}
         </p>
-        <p class="text-sm text-slate-500">
+        <p class="text-sm text-slate-600">
           {{ props.latitude }}, {{ props.longitude }}
         </p>
         <UButton
           icon="i-lucide-external-link"
           color="primary"
-          variant="soft"
+          variant="solid"
           @click="openExternalMap"
         >
           {{ t('property.openInGoogleMaps') }}

@@ -126,7 +126,7 @@ definePageMeta({
           <h1 class="text-4xl font-bold tracking-tight text-slate-900">
             {{ statusTitle }}
           </h1>
-          <p class="mx-auto mt-3 max-w-[520px] text-slate-500">
+          <p class="mx-auto mt-3 max-w-[520px] text-slate-600">
             {{ statusDescription }}
           </p>
 

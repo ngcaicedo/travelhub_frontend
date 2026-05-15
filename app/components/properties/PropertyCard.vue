@@ -56,9 +56,9 @@ const formattedPrice = computed(() => {
     <!-- Content Container -->
     <div class="p-4 space-y-3">
       <!-- Title -->
-      <h3 class="font-bold text-lg text-gray-900 line-clamp-2 group-hover:text-primary transition-colors">
+      <h2 class="font-bold text-lg text-gray-900 line-clamp-2 group-hover:text-primary transition-colors">
         {{ property.name }}
-      </h3>
+      </h2>
 
       <!-- Location -->
       <div class="flex items-center gap-2 text-gray-600">
