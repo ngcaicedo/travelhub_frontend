@@ -129,7 +129,7 @@ export function useSeasonalPricing(
     validationErrors.value = validation.errors
 
     if (!validation.isValid) {
-      error.value = 'errors.validation'
+      error.value = 'hotel.pricing.validation.generic'
       return null
     }
 
@@ -167,7 +167,7 @@ export function useSeasonalPricing(
     validationErrors.value = validation.errors
 
     if (!validation.isValid) {
-      error.value = 'errors.validation'
+      error.value = 'hotel.pricing.validation.generic'
       return null
     }
 

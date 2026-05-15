@@ -660,7 +660,8 @@
     "checkout_after_checkin": "Check-out must be after check-in",
     "no_past_dates": "Cannot select past dates",
     "unavailable": "This property is not available for these dates",
-    "failed": "Error loading reservation"
+    "failed": "Error loading reservation",
+    "locked": "This rule is currently locked"
   },
   "search": {
     "pageTitle": "Search properties",
@@ -860,6 +861,14 @@
         "avgAdrChange": "Avg. ADR Change",
         "occThresholdHits": "Occ. Threshold Hits",
         "nightsSuffix": "Nights"
+      },
+      "validation": {
+        "generic": "Please check the form for errors",
+        "invalidDate": "Invalid date format",
+        "invalidDateRange": "End date must be after start date",
+        "negativeAmount": "Value cannot be negative",
+        "invalidCurrency": "Currency must be a 3-letter code",
+        "invalidTaxRate": "Tax rate must be between 0 and 1"
       },
       "form": {
         "ruleBasics": "Rule Basics",

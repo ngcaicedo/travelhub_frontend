@@ -15,31 +15,31 @@ export function validateSeasonalPricingPayload(
   const errors: SeasonalPricingValidationErrors = {}
 
   if (!isIsoDate(payload.season_start)) {
-    errors.season_start = 'errors.validation.invalidDate'
+    errors.season_start = 'hotel.pricing.validation.invalidDate'
   }
 
   if (!isIsoDate(payload.season_end)) {
-    errors.season_end = 'errors.validation.invalidDate'
+    errors.season_end = 'hotel.pricing.validation.invalidDate'
   }
 
   if (isIsoDate(payload.season_start) && isIsoDate(payload.season_end) && payload.season_start >= payload.season_end) {
-    errors.season_end = 'errors.validation.invalidDateRange'
+    errors.season_end = 'hotel.pricing.validation.invalidDateRange'
   }
 
   if (payload.price_per_night < 0) {
-    errors.price_per_night = 'errors.validation.negativeAmount'
+    errors.price_per_night = 'hotel.pricing.validation.negativeAmount'
   }
 
   if (payload.currency.length !== 3) {
-    errors.currency = 'errors.validation.invalidCurrency'
+    errors.currency = 'hotel.pricing.validation.invalidCurrency'
   }
 
   if (payload.tax_rate < 0 || payload.tax_rate > 1) {
-    errors.tax_rate = 'errors.validation.invalidTaxRate'
+    errors.tax_rate = 'hotel.pricing.validation.invalidTaxRate'
   }
 
   if (payload.cleaning_fee < 0) {
-    errors.cleaning_fee = 'errors.validation.negativeAmount'
+    errors.cleaning_fee = 'hotel.pricing.validation.negativeAmount'
   }
 
   return {

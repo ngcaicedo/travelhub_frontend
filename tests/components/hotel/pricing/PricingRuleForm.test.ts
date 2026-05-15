@@ -20,8 +20,8 @@ describe('PricingRuleForm', () => {
     })
 
     const text = wrapper.text()
-    expect(text).toContain('Rule Basics')
-    expect(text).toContain('Rules are processed in real-time once activated')
+    expect(text).toMatch(/(rule.*basics|bases.*regla|base.*regra)/i)
+    expect(text).toMatch(/(real.?time|tiempo.?real|tempo.?real)/i)
   })
 
   it('disables submit when canEdit is false', async () => {

@@ -4,6 +4,7 @@ import PricingRulePreview from '~/components/hotel/pricing/PricingRulePreview.vu
 
 definePageMeta({
   layout: 'hotel',
+  middleware: 'hotel-only',
 })
 
 const { t } = useI18n()

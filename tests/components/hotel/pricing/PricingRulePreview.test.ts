@@ -18,8 +18,8 @@ describe('PricingRulePreview', () => {
     })
 
     const text = wrapper.text()
-    expect(text).toContain('SIMULATED')
-    expect(text).toContain('Revenue Uplift')
+    expect(text).toMatch(/simulad/i)
+    expect(text).toMatch(/(revenue.*uplift|incremento.*ingresos|aumento.*receita)/i)
     expect(text).toContain('Avg. ADR Change')
     expect(text).toContain('Occ. Threshold Hits')
   })

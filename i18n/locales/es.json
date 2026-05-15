@@ -660,7 +660,8 @@
     "checkout_after_checkin": "El check-out debe ser posterior al check-in",
     "no_past_dates": "No se pueden seleccionar fechas pasadas",
     "unavailable": "Esta propiedad no está disponible para estas fechas",
-    "failed": "Error al cargar la reserva"
+    "failed": "Error al cargar la reserva",
+    "locked": "Esta regla está bloqueada"
   },
   "search": {
     "pageTitle": "Buscar propiedades",
@@ -860,6 +861,14 @@
         "avgAdrChange": "Cambio promedio ADR",
         "occThresholdHits": "Activaciones por umbral de ocupación",
         "nightsSuffix": "Noches"
+      },
+      "validation": {
+        "generic": "Revisa el formulario para corregir errores",
+        "invalidDate": "Formato de fecha inválido",
+        "invalidDateRange": "La fecha de fin debe ser posterior a la de inicio",
+        "negativeAmount": "El valor no puede ser negativo",
+        "invalidCurrency": "La moneda debe ser un código de 3 letras",
+        "invalidTaxRate": "La tasa de impuestos debe estar entre 0 y 1"
       },
       "form": {
         "ruleBasics": "Bases de la regla",

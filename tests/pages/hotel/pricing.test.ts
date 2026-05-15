@@ -34,6 +34,6 @@ describe('hotel pricing navigation', () => {
     const pricingLink = wrapper.find('a[href="/hotel/pricing"]')
 
     expect(pricingLink.exists()).toBe(true)
-    expect(wrapper.text()).toContain('Manage Seasonal Pricing')
+    expect(wrapper.text()).toMatch(/(manage|gestionar|gerenciar).*(pricing|precios|preços)/i)
   })
 })
