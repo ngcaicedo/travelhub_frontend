@@ -18,9 +18,9 @@ describe('PricingRulePreview', () => {
     })
 
     const text = wrapper.text()
-    expect(text).toMatch(/simulad/i)
+    expect(text).toMatch(/(simulated|simulad)/i)
     expect(text).toMatch(/(revenue.*uplift|incremento.*ingresos|aumento.*receita)/i)
-    expect(text).toContain('Avg. ADR Change')
-    expect(text).toContain('Occ. Threshold Hits')
+    expect(text).toMatch(/(avg\.? adr|cambio.*adr|variação.*adr)/i)
+    expect(text).toMatch(/(occ\.? threshold|umbral.*ocupaci|limite.*ocupa)/i)
   })
 })

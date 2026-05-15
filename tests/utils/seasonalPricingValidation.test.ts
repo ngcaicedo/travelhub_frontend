@@ -25,7 +25,7 @@ describe('seasonalPricingValidation', () => {
     })
 
     expect(result.isValid).toBe(false)
-    expect(result.errors.season_end).toBe('errors.validation.invalidDateRange')
+    expect(result.errors.season_end).toBe('hotel.pricing.validation.invalidDateRange')
   })
 
   it('rejects negative amounts', () => {
@@ -36,8 +36,8 @@ describe('seasonalPricingValidation', () => {
     })
 
     expect(result.isValid).toBe(false)
-    expect(result.errors.price_per_night).toBe('errors.validation.negativeAmount')
-    expect(result.errors.cleaning_fee).toBe('errors.validation.negativeAmount')
+    expect(result.errors.price_per_night).toBe('hotel.pricing.validation.negativeAmount')
+    expect(result.errors.cleaning_fee).toBe('hotel.pricing.validation.negativeAmount')
   })
 
   it('rejects invalid currency and tax rate', () => {
@@ -48,7 +48,7 @@ describe('seasonalPricingValidation', () => {
     })
 
     expect(result.isValid).toBe(false)
-    expect(result.errors.currency).toBe('errors.validation.invalidCurrency')
-    expect(result.errors.tax_rate).toBe('errors.validation.invalidTaxRate')
+    expect(result.errors.currency).toBe('hotel.pricing.validation.invalidCurrency')
+    expect(result.errors.tax_rate).toBe('hotel.pricing.validation.invalidTaxRate')
   })
 })
