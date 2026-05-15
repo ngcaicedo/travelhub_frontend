@@ -36,7 +36,7 @@ export function formatSeasonalPricingDateRange(
 
   function toValidDate(d: string): Date | null {
     try {
-      const dt = new Date(d)
+      const dt = new Date(d + 'T00:00:00')
       return isNaN(dt.getTime()) ? null : dt
     } catch {
       return null
