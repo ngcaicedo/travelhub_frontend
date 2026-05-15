@@ -661,7 +661,8 @@
     "checkout_after_checkin": "O check-out deve ser após o check-in",
     "no_past_dates": "Não é possível selecionar datas passadas",
     "unavailable": "Esta propriedade não está disponível para estas datas",
-    "failed": "Erro ao carregar a reserva"
+    "failed": "Erro ao carregar a reserva",
+    "locked": "Esta regra está bloqueada"
   },
   "search": {
     "pageTitle": "Buscar propriedades",
@@ -741,6 +742,7 @@
   "hotel": {
     "nav": {
       "dashboard": "Painel",
+      "pricing": "Preços",
       "portalLabel": "Portal Estratégico",
       "adminAccount": "Conta Admin"
     },
@@ -748,6 +750,7 @@
       "headerTitle": "Painel Estratégico",
       "welcomeTitle": "Bom dia",
       "welcomeSubtitle": "Veja o que está acontecendo na sua propriedade hoje.",
+      "manageSeasonalPricing": "Gerenciar Preços Sazonais",
       "error": "Não foi possível carregar os dados",
       "kpi": {
         "revenue": "Receita",
@@ -796,6 +799,109 @@
           "amount": "Valor",
           "status": "Estado",
           "actions": "Ações"
+        }
+      }
+    },
+    "pricing": {
+      "breadcrumb": {
+        "dashboard": "Painel de preços",
+        "propertyRules": "Regras da propriedade",
+        "addRule": "Adicionar nova regra",
+        "editRule": "Editar regra"
+      },
+      "actions": {
+        "addNewRule": "Adicionar nova regra de preços",
+        "backToRules": "Voltar para regras",
+        "managePricing": "Gerenciar preços",
+        "createRule": "Criar regra",
+        "updateRule": "Atualizar regra",
+        "editRule": "Editar regra",
+        "cancel": "Cancelar",
+        "saveRule": "Salvar regra"
+      },
+      "dashboard": {
+        "title": "Painel de preços",
+        "subtitle": "Selecione uma propriedade para gerenciar suas regras de preços sazonais.",
+        "loadPropertiesErrorTitle": "Não foi possível carregar as propriedades",
+        "loadingProperties": "Carregando propriedades..."
+      },
+      "rules": {
+        "title": "Regras de preços sazonais",
+        "loadErrorTitle": "Não foi possível carregar as regras de preços",
+        "loading": "Carregando preços sazonais...",
+        "empty": "Nenhuma regra de preços foi encontrada para esta propriedade."
+      },
+      "create": {
+        "title": "Adicionar nova regra de preços",
+        "subtitle": "Configure gatilhos dinâmicos para maximizar a receita com base na demanda do mercado.",
+        "saveErrorTitle": "Não foi possível salvar a regra de preços",
+        "loading": "Carregando dados de preços..."
+      },
+      "edit": {
+        "title": "Editar regra de preços",
+        "subtitle": "Atualize valores de preços e mantenha os controles de integridade sincronizados.",
+        "lockedTitle": "Esta regra está bloqueada",
+        "lockedDescription": "As verificações de integridade marcaram esta regra como bloqueada. A edição está desabilitada.",
+        "updateErrorTitle": "Não foi possível atualizar a regra de preços",
+        "loading": "Carregando regra de preços...",
+        "integrityStatus": "Status de integridade"
+      },
+      "integrity": {
+        "normal": "Normal",
+        "locked": "Bloqueada",
+        "compromised": "Comprometida"
+      },
+      "ruleCard": {
+        "baseRate": "Tarifa base"
+      },
+      "preview": {
+        "title": "Prévia da regra",
+        "simulated": "SIMULADO",
+        "estimatedImpact": "Impacto estimado (últimos 7 dias)",
+        "revenueUplift": "Aumento de receita",
+        "avgAdrChange": "Variação média da ADR",
+        "occThresholdHits": "Acionamentos por limite de ocupação",
+        "nightsSuffix": "Noites"
+      },
+      "validation": {
+        "generic": "Verifique o formulário para corrigir erros",
+        "invalidDate": "Formato de data inválido",
+        "invalidDateRange": "A data final deve ser posterior à data inicial",
+        "negativeAmount": "O valor não pode ser negativo",
+        "invalidCurrency": "A moeda deve ser um código de 3 letras",
+        "invalidTaxRate": "A taxa de imposto deve estar entre 0 e 1"
+      },
+      "form": {
+        "ruleBasics": "Base da regra",
+        "seasonStart": "Início da temporada",
+        "seasonEnd": "Fim da temporada",
+        "pricePerNight": "Preço por noite",
+        "currency": "Moeda",
+        "taxRate": "Taxa de imposto",
+        "cleaningFee": "Taxa de limpeza",
+        "triggersAndLogic": "Gatilhos e lógica",
+        "triggerType": "Tipo de gatilho",
+        "whenOccupancyExceeds": "Quando a ocupação ultrapassar (%)",
+        "action": "Ação",
+        "adjustmentAmount": "Valor do ajuste",
+        "applicability": "Aplicabilidade",
+        "roomTypes": "Tipos de quarto",
+        "activePeriod": "Período ativo",
+        "activePeriodHint": "Definido pelas datas de início e fim da temporada.",
+        "realTimeHint": "As regras são processadas em tempo real após a ativação.",
+        "triggerOptions": {
+          "occupancy": "Baseado em ocupação",
+          "calendar": "Baseado em calendário",
+          "demandSpike": "Pico de demanda"
+        },
+        "actionOptions": {
+          "increasePrice": "Aumentar preço",
+          "decreasePrice": "Diminuir preço"
+        },
+        "roomTypeOptions": {
+          "standard": "Quarto padrão",
+          "deluxe": "Deluxe King",
+          "suite": "Suíte executiva"
         }
       }
     },

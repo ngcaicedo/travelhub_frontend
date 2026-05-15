@@ -660,7 +660,8 @@
     "checkout_after_checkin": "El check-out debe ser posterior al check-in",
     "no_past_dates": "No se pueden seleccionar fechas pasadas",
     "unavailable": "Esta propiedad no está disponible para estas fechas",
-    "failed": "Error al cargar la reserva"
+    "failed": "Error al cargar la reserva",
+    "locked": "Esta regla está bloqueada"
   },
   "search": {
     "pageTitle": "Buscar propiedades",
@@ -740,6 +741,7 @@
   "hotel": {
     "nav": {
       "dashboard": "Panel",
+      "pricing": "Precios",
       "portalLabel": "Portal Estratégico",
       "adminAccount": "Cuenta Admin"
     },
@@ -747,6 +749,7 @@
       "headerTitle": "Panel Estratégico",
       "welcomeTitle": "Buenos días",
       "welcomeSubtitle": "Esto es lo que sucede en tu propiedad hoy.",
+      "manageSeasonalPricing": "Gestionar Precios Estacionales",
       "error": "No pudimos cargar la información",
       "kpi": {
         "revenue": "Ingresos",
@@ -795,6 +798,109 @@
           "amount": "Monto",
           "status": "Estado",
           "actions": "Acciones"
+        }
+      }
+    },
+    "pricing": {
+      "breadcrumb": {
+        "dashboard": "Panel de precios",
+        "propertyRules": "Reglas de propiedad",
+        "addRule": "Agregar nueva regla",
+        "editRule": "Editar regla"
+      },
+      "actions": {
+        "addNewRule": "Agregar nueva regla de precios",
+        "backToRules": "Volver a reglas",
+        "managePricing": "Gestionar precios",
+        "createRule": "Crear regla",
+        "updateRule": "Actualizar regla",
+        "editRule": "Editar regla",
+        "cancel": "Cancelar",
+        "saveRule": "Guardar regla"
+      },
+      "dashboard": {
+        "title": "Panel de precios",
+        "subtitle": "Selecciona una propiedad para gestionar sus reglas de precios estacionales.",
+        "loadPropertiesErrorTitle": "No se pudieron cargar las propiedades",
+        "loadingProperties": "Cargando propiedades..."
+      },
+      "rules": {
+        "title": "Reglas de precios estacionales",
+        "loadErrorTitle": "No se pudieron cargar las reglas de precios",
+        "loading": "Cargando precios estacionales...",
+        "empty": "No se encontraron reglas de precios para esta propiedad."
+      },
+      "create": {
+        "title": "Agregar nueva regla de precios",
+        "subtitle": "Configura disparadores dinámicos para maximizar ingresos según la demanda del mercado.",
+        "saveErrorTitle": "No se pudo guardar la regla de precios",
+        "loading": "Cargando datos de precios..."
+      },
+      "edit": {
+        "title": "Editar regla de precios",
+        "subtitle": "Actualiza valores de precios y mantén los controles de integridad sincronizados.",
+        "lockedTitle": "Esta regla está bloqueada",
+        "lockedDescription": "Las verificaciones de integridad marcaron esta regla como bloqueada. La edición está deshabilitada.",
+        "updateErrorTitle": "No se pudo actualizar la regla de precios",
+        "loading": "Cargando regla de precios...",
+        "integrityStatus": "Estado de integridad"
+      },
+      "integrity": {
+        "normal": "Normal",
+        "locked": "Bloqueada",
+        "compromised": "Comprometida"
+      },
+      "ruleCard": {
+        "baseRate": "Tarifa base"
+      },
+      "preview": {
+        "title": "Vista previa de regla",
+        "simulated": "SIMULADO",
+        "estimatedImpact": "Impacto estimado (últimos 7 días)",
+        "revenueUplift": "Incremento de ingresos",
+        "avgAdrChange": "Cambio promedio ADR",
+        "occThresholdHits": "Activaciones por umbral de ocupación",
+        "nightsSuffix": "Noches"
+      },
+      "validation": {
+        "generic": "Revisa el formulario para corregir errores",
+        "invalidDate": "Formato de fecha inválido",
+        "invalidDateRange": "La fecha de fin debe ser posterior a la de inicio",
+        "negativeAmount": "El valor no puede ser negativo",
+        "invalidCurrency": "La moneda debe ser un código de 3 letras",
+        "invalidTaxRate": "La tasa de impuestos debe estar entre 0 y 1"
+      },
+      "form": {
+        "ruleBasics": "Bases de la regla",
+        "seasonStart": "Inicio de temporada",
+        "seasonEnd": "Fin de temporada",
+        "pricePerNight": "Precio por noche",
+        "currency": "Moneda",
+        "taxRate": "Tasa de impuestos",
+        "cleaningFee": "Tarifa de limpieza",
+        "triggersAndLogic": "Disparadores y lógica",
+        "triggerType": "Tipo de disparador",
+        "whenOccupancyExceeds": "Cuando la ocupación supere (%)",
+        "action": "Acción",
+        "adjustmentAmount": "Monto de ajuste",
+        "applicability": "Aplicabilidad",
+        "roomTypes": "Tipos de habitación",
+        "activePeriod": "Período activo",
+        "activePeriodHint": "Definido por las fechas de inicio y fin de temporada.",
+        "realTimeHint": "Las reglas se procesan en tiempo real una vez activadas.",
+        "triggerOptions": {
+          "occupancy": "Basado en ocupación",
+          "calendar": "Basado en calendario",
+          "demandSpike": "Pico de demanda"
+        },
+        "actionOptions": {
+          "increasePrice": "Aumentar precio",
+          "decreasePrice": "Disminuir precio"
+        },
+        "roomTypeOptions": {
+          "standard": "Habitación estándar",
+          "deluxe": "Deluxe King",
+          "suite": "Suite ejecutiva"
         }
       }
     },
