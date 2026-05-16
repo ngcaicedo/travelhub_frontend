@@ -1,5 +1,3 @@
-import { givenSteps } from '../../steps/GivenSteps'
-import { thenSteps } from '../../steps/ThenSteps'
 import { DEMO_HOTEL_A } from '../../support/demoData'
 import { screenshot } from '../../support/screenshots'
 import { HotelIncomeReportPage } from '../../pages/HotelIncomeReportPage'
