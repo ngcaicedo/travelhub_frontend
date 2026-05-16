@@ -4,7 +4,13 @@ import type { Property, Review } from '~/types/api'
 import { getPropertyDetails } from '~/services/propertyServices'
 import { handleApiError } from '~/utils/api'
 
-export const useProperty = (propertyId?: MaybeRefOrGetter<string | undefined>) => {
+export const useProperty = (
+  propertyId?: MaybeRefOrGetter<string | undefined>,
+  range?: {
+    checkIn?: MaybeRefOrGetter<string | null | undefined>,
+    checkOut?: MaybeRefOrGetter<string | null | undefined>,
+  },
+) => {
   const { t } = useI18n()
 
   const loading = ref(false)
@@ -17,7 +23,12 @@ export const useProperty = (propertyId?: MaybeRefOrGetter<string | undefined>) =
     error.value = null
 
     try {
-      const { property: fetchedProperty, reviews: fetchedReviews } = await getPropertyDetails(toValue(propertyId))
+      const checkIn = range?.checkIn ? toValue(range.checkIn) ?? null : null
+      const checkOut = range?.checkOut ? toValue(range.checkOut) ?? null : null
+      const { property: fetchedProperty, reviews: fetchedReviews } = await getPropertyDetails(
+        toValue(propertyId),
+        { checkIn, checkOut },
+      )
       property.value = fetchedProperty
       reviews.value = fetchedProperty.reviews || fetchedReviews || []
     } catch (err: unknown) {
@@ -29,10 +40,13 @@ export const useProperty = (propertyId?: MaybeRefOrGetter<string | undefined>) =
     }
   }
 
-  // Cargar automáticamente si se proporciona propertyId
   watch(
-    () => toValue(propertyId),
-    (newId) => {
+    [
+      () => toValue(propertyId),
+      () => range?.checkIn ? toValue(range.checkIn) : null,
+      () => range?.checkOut ? toValue(range.checkOut) : null,
+    ],
+    ([newId]) => {
       if (newId) {
         fetchProperty()
       }

@@ -15,6 +15,8 @@ interface Props {
   property: {
     id: string
     price_per_night: number
+    base_price_per_night?: number | null
+    has_seasonal_discount?: boolean
     currency: string
     max_guests: number
     tax_rate?: number
@@ -32,11 +34,24 @@ const authStore = useAuthStore()
 const reservationLockDurationMs = 15 * 60 * 1000
 
 const props = defineProps<Props>()
+const emit = defineEmits<{
+  (e: 'update:checkInDate', value: string): void
+  (e: 'update:checkOutDate', value: string): void
+}>()
 
 const checkInDate = ref<string>(props.initialCheckInDate || '')
 const checkOutDate = ref<string>(props.initialCheckOutDate || '')
 const numberOfGuests = ref<number>(props.initialNumberOfGuests || 1)
 const submitError = ref<string | null>(null)
+
+watch(checkInDate, (value) => emit('update:checkInDate', value))
+watch(checkOutDate, (value) => emit('update:checkOutDate', value))
+watch(() => props.initialCheckInDate, (value) => {
+  if (value && value !== checkInDate.value) checkInDate.value = value
+})
+watch(() => props.initialCheckOutDate, (value) => {
+  if (value && value !== checkOutDate.value) checkOutDate.value = value
+})
 
 const parseLocalDate = (dateValue: string): Date | null => {
   const [yearStr, monthStr, dayStr] = dateValue.split('-')
@@ -189,6 +204,15 @@ watch(error, (newError) => {
   }
 })
 
+const hasSeasonalDiscount = computed(() =>
+  Boolean(props.property.has_seasonal_discount && props.property.base_price_per_night),
+)
+const seasonalDiscountPercent = computed(() => {
+  const base = props.property.base_price_per_night
+  if (!hasSeasonalDiscount.value || !base) return 0
+  return Math.round((1 - props.property.price_per_night / base) * 100)
+})
+
 watch(() => [props.initialCheckInDate, props.initialCheckOutDate, props.initialNumberOfGuests], () => {
   if (props.initialCheckInDate) {
     checkInDate.value = props.initialCheckInDate
@@ -206,8 +230,21 @@ watch(() => [props.initialCheckInDate, props.initialCheckOutDate, props.initialN
   <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-lg space-y-6">
     <!-- Price Header -->
     <div>
+      <span
+        v-if="hasSeasonalDiscount"
+        class="inline-flex items-center rounded-full bg-emerald-100 text-emerald-700 px-2 py-0.5 text-xs font-extrabold mb-1"
+        :title="t('property.seasonalDiscountTooltip')"
+      >
+        -{{ seasonalDiscountPercent }}% {{ t('property.seasonalDiscount') }}
+      </span>
       <h3 class="text-3xl font-bold text-gray-900">
         {{ formatCurrency(props.property.price_per_night, props.property.currency, locale) }}
+        <span
+          v-if="hasSeasonalDiscount && props.property.base_price_per_night"
+          class="text-lg text-gray-400 font-normal line-through ml-2"
+        >
+          {{ formatCurrency(props.property.base_price_per_night, props.property.currency, locale) }}
+        </span>
         <span class="text-lg text-gray-600 font-normal">/{{ t('common.night') }}</span>
       </h3>
     </div>
