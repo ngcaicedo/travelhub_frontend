@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({
   layout: 'hotel',
-  middleware: 'hotel-manager',
+  middleware: 'hotel-only',
 })
 
 const { t, locale } = useI18n()
@@ -49,7 +49,7 @@ onMounted(() => load())
 </script>
 
 <template>
-  <div class="flex flex-col gap-8 p-8">
+  <div class="flex flex-col gap-8 p-8" data-cy="hotel-income-report">
     <div class="flex flex-col gap-1">
       <UButton
         to="/hotel/dashboard"
@@ -71,6 +71,7 @@ onMounted(() => load())
 
     <UAlert
       v-if="error"
+      data-cy="hotel-income-error"
       icon="i-lucide-alert-circle"
       color="error"
       :title="t('hotel.income.errors.load')"

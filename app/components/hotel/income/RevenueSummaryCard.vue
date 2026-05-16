@@ -52,7 +52,7 @@ const changeColor = computed(() => {
 </script>
 
 <template>
-  <UCard :ui="{ body: 'p-6' }">
+  <UCard :ui="{ body: 'p-6' }" data-cy="hotel-income-summary-card">
     <div v-if="loading" class="space-y-3">
       <USkeleton class="h-5 w-32" />
       <USkeleton class="h-9 w-48" />
@@ -64,7 +64,7 @@ const changeColor = computed(() => {
         {{ t('hotel.income.summary.total') }}
       </p>
 
-      <p class="mt-1 text-4xl font-black tracking-tight text-(--ui-text-highlighted)">
+      <p class="mt-1 text-4xl font-black tracking-tight text-(--ui-text-highlighted)" data-cy="hotel-income-revenue-total">
         {{ formattedTotal }}
       </p>
 

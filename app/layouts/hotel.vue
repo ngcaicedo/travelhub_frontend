@@ -7,11 +7,8 @@ const { t, locale, locales, setLocale } = useI18n()
 
 const open = ref(false)
 
-const managerRoles = ['hotel_admin', 'hotel_manager']
-const isManager = computed(() => !!authStore.role && managerRoles.includes(authStore.role))
-
-const navItems = computed<NavigationMenuItem[][]>(() => {
-  const items: NavigationMenuItem[] = [
+const navItems = computed<NavigationMenuItem[][]>(() => [
+  [
     {
       label: t('hotel.nav.dashboard'),
       icon: 'i-lucide-layout-dashboard',
@@ -23,6 +20,12 @@ const navItems = computed<NavigationMenuItem[][]>(() => {
       icon: 'i-lucide-badge-dollar-sign',
       to: '/hotel/pricing',
       active: route.path.startsWith('/hotel/pricing'),
+    },
+    {
+      label: t('hotel.nav.incomeReport'),
+      icon: 'i-lucide-bar-chart-2',
+      to: '/hotel/reports/income',
+      active: route.path.startsWith('/hotel/reports'),
     },
   ],
 ])

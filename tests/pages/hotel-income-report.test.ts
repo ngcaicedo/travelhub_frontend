@@ -9,12 +9,12 @@ vi.mock('~/stores/auth', () => ({
     token: 'jwt-token',
     isAuthenticated: true,
     isHotelUser: true,
-    role: 'hotel_admin',
+    role: 'hotel',
   }),
 }))
 
 const loadMock = vi.fn()
-const paramsRef = ref({ year: 2026, month: 5, currency: undefined as string | undefined })
+const paramsRef = ref<{ year: number, month: number | null, currency: string | undefined }>({ year: 2026, month: 5, currency: undefined })
 const comparisonRef = ref<object | null>(null)
 const trendsRef = ref<object | null>(null)
 const loadingRef = ref(false)
@@ -31,36 +31,7 @@ vi.mock('~/composables/useIncomeReport', () => ({
   }),
 }))
 
-const baseComparison = {
-  current: {
-    active_reservations: 5,
-    occupancy_rate: 0.75,
-    revenue_amount: '1000000.00',
-    revenue_currency: 'COP',
-    available_currencies: ['COP'],
-    average_daily_rate: '333333.33',
-    total_nights: 15,
-  },
-  previous: {
-    active_reservations: 3,
-    occupancy_rate: 0.60,
-    revenue_amount: '800000.00',
-    revenue_currency: 'COP',
-    available_currencies: ['COP'],
-    average_daily_rate: '266666.67',
-    total_nights: 12,
-  },
-  change_percent: 25,
-}
 
-const baseTrends = {
-  granularity: 'day',
-  currency: 'COP',
-  available_currencies: ['COP'],
-  buckets: [
-    { bucket: '2026-05-01', revenue: '500000', reservations: 3 },
-  ],
-}
 
 describe('hotel/reports/income.vue', () => {
   beforeEach(() => {
@@ -99,7 +70,7 @@ describe('hotel/reports/income.vue', () => {
   })
 
   it('calls load() again when year changes', async () => {
-    const wrapper = await mountSuspended(HotelIncomeReportPage)
+    await mountSuspended(HotelIncomeReportPage)
     loadMock.mockClear()
 
     paramsRef.value.year = 2025
@@ -110,7 +81,7 @@ describe('hotel/reports/income.vue', () => {
   })
 
   it('calls load() again when month changes', async () => {
-    const wrapper = await mountSuspended(HotelIncomeReportPage)
+    await mountSuspended(HotelIncomeReportPage)
     loadMock.mockClear()
 
     paramsRef.value.month = null

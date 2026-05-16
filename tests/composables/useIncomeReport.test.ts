@@ -37,7 +37,8 @@ const baseTrends = {
   ],
 }
 
-function harness(setupFn: () => Record<string, unknown>) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function harness(setupFn: () => Record<string, any>) {
   return defineComponent({
     setup() {
       return setupFn()
