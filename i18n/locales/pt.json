@@ -381,6 +381,8 @@
       "policies": "Políticas"
     },
     "bookNow": "Reserve agora",
+    "seasonalDiscount": "DESC",
+    "seasonalDiscountTooltip": "Tarifa especial para suas datas",
     "capacity": "Capacidade",
     "host": "Anfitrião",
     "travelHubPlus": "Propriedade TravelHub Plus",
