@@ -18,11 +18,12 @@ describe('MPF-12 | Ordenar resultados de busqueda', () => {
     givenSteps.givenIAmOnSearch()
 
     // When: una busqueda inicial deja la pagina lista para reordenar
+    //       guests=6 excluye el cluster del mapa (max_guests 2..5) y deja solo los 3 demos
     whenSteps.whenISearchProperties({
       city: 'Bogota',
       checkIn: CHECK_IN,
       checkOut: CHECK_OUT,
-      guests: 2
+      guests: 6
     })
 
     // Then: la primera peticion usa el orden por defecto (recomendado -> name asc)

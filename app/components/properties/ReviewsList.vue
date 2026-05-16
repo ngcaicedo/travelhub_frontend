@@ -49,9 +49,9 @@ const formatReviewDate = (isoDate: string): string => {
           </p>
         </div>
       </div>
-      <span class="text-sm text-slate-500">
+      <span class="text-sm text-slate-600">
         {{ t('property.sortBy') }}:
-        <span class="text-travelhub-500 font-medium">{{ t('property.mostRecent') }}</span>
+        <span class="text-travelhub-700 font-medium">{{ t('property.mostRecent') }}</span>
       </span>
     </div>
 

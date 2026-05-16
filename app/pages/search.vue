@@ -19,6 +19,9 @@ interface SearchResultCard {
   reviewCount?: number
   maxGuests: number
   pricePerNight: number
+  basePricePerNight: number | null
+  hasSeasonalDiscount: boolean
+  discountPercent: number
   currency: string
   image: string
   imageAlt: string
@@ -316,19 +319,27 @@ const validateSearchForm = () => {
   return isValid
 }
 
-const mapSearchResultToCard = (item: SearchResultItem): SearchResultCard => ({
-  id: item.id,
-  name: item.name,
-  location: [item.city, item.country].filter(Boolean).join(', '),
-  rating: item.rating,
-  reviewCount: Math.max(1, Math.round(item.rating * 200)),
-  maxGuests: item.max_capacity,
-  pricePerNight: Number(item.price_from),
-  currency: item.currency,
-  image: item.main_image_url || '/mock/property-1.svg',
-  imageAlt: item.name,
-  amenities: item.amenities.map((amenity) => amenityLabelMap.value[amenity] || amenity.replaceAll('_', ' '))
-})
+const mapSearchResultToCard = (item: SearchResultItem): SearchResultCard => {
+  const price = Number(item.price_from)
+  const basePrice = item.base_price_from ? Number(item.base_price_from) : null
+  const hasDiscount = Boolean(item.has_seasonal_discount && basePrice && basePrice > price)
+  return {
+    id: item.id,
+    name: item.name,
+    location: [item.city, item.country].filter(Boolean).join(', '),
+    rating: item.rating,
+    reviewCount: Math.max(1, Math.round(item.rating * 200)),
+    maxGuests: item.max_capacity,
+    pricePerNight: price,
+    basePricePerNight: hasDiscount ? basePrice : null,
+    hasSeasonalDiscount: hasDiscount,
+    discountPercent: hasDiscount && basePrice ? Math.round((1 - price / basePrice) * 100) : 0,
+    currency: item.currency,
+    image: item.main_image_url || '/mock/property-1.svg',
+    imageAlt: item.name,
+    amenities: item.amenities.map((amenity) => amenityLabelMap.value[amenity] || amenity.replaceAll('_', ' '))
+  }
+}
 
 const getStarFillPercent = (rating: number, index: number) => {
   const normalized = Math.max(0, Math.min(5, rating))
@@ -469,7 +480,7 @@ onMounted(async () => {
 <template>
   <div class="min-h-screen bg-slate-50">
     <div class="max-w-7xl mx-auto px-safe py-6 lg:py-8 space-y-6">
-      <nav class="flex items-center gap-2 text-sm text-slate-500">
+      <nav class="flex items-center gap-2 text-sm text-slate-600" :aria-label="t('navigation.breadcrumbNav')">
         <NuxtLink
           to="/"
           class="hover:text-slate-700 transition-colors"
@@ -586,7 +597,7 @@ onMounted(async () => {
                   <p class="text-sm font-semibold text-slate-900">
                     {{ t('search.amenitiesLabel') }}
                   </p>
-                  <p class="text-xs text-slate-400">
+                  <p class="text-xs text-slate-600">
                     {{ t('search.amenitiesHint') }}
                   </p>
                 </div>
@@ -738,13 +749,13 @@ onMounted(async () => {
 
                   <div class="shrink-0 flex flex-col items-end gap-1">
                     <div class="rounded bg-travelhub-500/10 px-2 py-1">
-                      <p class="text-sm font-bold text-travelhub-500">
+                      <p class="text-sm font-bold text-travelhub-700">
                         {{ formatRating(result.rating) }}
                       </p>
                     </div>
                     <p
                       v-if="result.reviewCount"
-                      class="text-[10px] font-bold uppercase tracking-[0.5px] text-slate-400"
+                      class="text-[10px] font-bold uppercase tracking-[0.5px] text-slate-600"
                     >
                       {{ result.reviewCount.toLocaleString() }} {{ t('search.reviews') }}
                     </p>
@@ -753,12 +764,27 @@ onMounted(async () => {
 
                 <div class="flex items-end justify-between border-t border-zinc-50 pt-5">
                   <div>
-                    <p class="text-[10px] font-bold uppercase tracking-[0.5px] text-slate-400">
-                      {{ t('search.pricePerNight') }}
-                    </p>
-                    <div class="flex items-baseline gap-1">
+                    <div class="flex items-center gap-2">
+                      <p class="text-[10px] font-bold uppercase tracking-[0.5px] text-slate-600">
+                        {{ t('search.pricePerNight') }}
+                      </p>
+                      <span
+                        v-if="result.hasSeasonalDiscount"
+                        class="inline-flex items-center rounded-full bg-emerald-100 text-emerald-700 px-2 py-0.5 text-[10px] font-extrabold tracking-wide"
+                        :title="t('property.seasonalDiscountTooltip')"
+                      >
+                        -{{ result.discountPercent }}% {{ t('property.seasonalDiscount') }}
+                      </span>
+                    </div>
+                    <div class="flex items-baseline gap-2">
                       <span class="text-2xl font-extrabold text-slate-900">
                         {{ formatMoney(result.pricePerNight, result.currency) }}
+                      </span>
+                      <span
+                        v-if="result.hasSeasonalDiscount && result.basePricePerNight"
+                        class="text-sm font-medium text-slate-400 line-through"
+                      >
+                        {{ formatMoney(result.basePricePerNight, result.currency) }}
                       </span>
                       <span class="text-sm font-medium text-slate-500">/ {{ t('search.night') }}</span>
                     </div>

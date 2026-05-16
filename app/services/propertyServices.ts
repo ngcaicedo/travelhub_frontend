@@ -18,7 +18,10 @@ export const getAllProperties = async (): Promise<Property[]> => {
   }
 }
 
-export const getPropertyDetails = async (propertyId?: string): Promise<PropertyDetails> => {
+export const getPropertyDetails = async (
+  propertyId?: string,
+  range?: { checkIn?: string | null, checkOut?: string | null },
+): Promise<PropertyDetails> => {
   if (!propertyId) {
     throw new Error('Property ID is required')
   }
@@ -26,9 +29,19 @@ export const getPropertyDetails = async (propertyId?: string): Promise<PropertyD
   const config = useRuntimeConfig()
   const baseUrl = config.public.propertiesApiUrl
 
+
+  const query: Record<string, string> = {}
+  if (range?.checkIn && range?.checkOut) {
+    query.check_in = range.checkIn
+    query.check_out = range.checkOut
+  }
+
   try {
-    const propertyData = await $fetch<Property>(`${baseUrl}/api/v1/properties/${propertyId}`)
-    
+    const propertyData = await $fetch<Property>(
+      `${baseUrl}/api/v1/properties/${propertyId}`,
+      Object.keys(query).length ? { query } : undefined,
+    )
+
     return {
       property: propertyData,
       reviews: propertyData.reviews || []

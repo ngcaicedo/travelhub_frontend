@@ -17,13 +17,26 @@ const handleClick = () => {
 
 const mainImage = computed(() => props.property.images[0])
 const rating = computed(() => props.property.rating.toFixed(2))
-const formattedPrice = computed(() => {
-  return new Intl.NumberFormat(locale.value, {
-    style: 'currency',
-    currency: props.property.currency || 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0
-  }).format(props.property.price_per_night)
+
+const currencyFormatter = computed(() => new Intl.NumberFormat(locale.value, {
+  style: 'currency',
+  currency: props.property.currency || 'USD',
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 0,
+}))
+const formattedPrice = computed(() => currencyFormatter.value.format(props.property.price_per_night))
+const hasDiscount = computed(() =>
+  Boolean(props.property.has_seasonal_discount && props.property.base_price_per_night)
+)
+const formattedBasePrice = computed(() =>
+  hasDiscount.value && props.property.base_price_per_night
+    ? currencyFormatter.value.format(props.property.base_price_per_night)
+    : null,
+)
+const discountPercent = computed(() => {
+  const base = props.property.base_price_per_night
+  if (!hasDiscount.value || !base) return 0
+  return Math.round((1 - props.property.price_per_night / base) * 100)
 })
 </script>
 
@@ -56,9 +69,9 @@ const formattedPrice = computed(() => {
     <!-- Content Container -->
     <div class="p-4 space-y-3">
       <!-- Title -->
-      <h3 class="font-bold text-lg text-gray-900 line-clamp-2 group-hover:text-primary transition-colors">
+      <h2 class="font-bold text-lg text-gray-900 line-clamp-2 group-hover:text-primary transition-colors">
         {{ property.name }}
-      </h3>
+      </h2>
 
       <!-- Location -->
       <div class="flex items-center gap-2 text-gray-600">
@@ -73,9 +86,25 @@ const formattedPrice = computed(() => {
 
       <!-- Price and Book Button -->
       <div class="border-t border-gray-200 pt-3 flex items-center justify-between gap-3">
-        <p class="text-2xl font-bold text-gray-900">
-          {{ formattedPrice }}/{{ t('common.night') }}
-        </p>
+        <div class="flex flex-col">
+          <span
+            v-if="hasDiscount"
+            class="inline-flex items-center self-start rounded-full bg-emerald-100 text-emerald-700 px-2 py-0.5 text-xs font-semibold"
+          >
+            -{{ discountPercent }}% {{ t('property.seasonalDiscount') }}
+          </span>
+          <div class="flex items-baseline gap-2">
+            <p class="text-2xl font-bold text-gray-900">
+              {{ formattedPrice }}/{{ t('common.night') }}
+            </p>
+            <p
+              v-if="hasDiscount && formattedBasePrice"
+              class="text-sm text-gray-400 line-through"
+            >
+              {{ formattedBasePrice }}
+            </p>
+          </div>
+        </div>
         <UButton
           size="sm"
           color="primary"

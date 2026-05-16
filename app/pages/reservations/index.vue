@@ -247,7 +247,7 @@ definePageMeta({
                 <p class="truncate text-[15px] font-semibold text-slate-900">
                   {{ profileName }}
                 </p>
-                <p class="truncate text-xs text-slate-500">
+                <p class="truncate text-xs text-slate-600">
                   {{ authStore.email || t('reservationsList.sidebarSubtitle') }}
                 </p>
               </div>
@@ -277,7 +277,7 @@ definePageMeta({
             </div>
 
             <div class="mt-8 rounded-2xl bg-slate-50 p-4">
-              <p class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
+              <p class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-600">
                 {{ t('reservationsList.sidebarTitle') }}
               </p>
               <p class="mt-2 text-sm leading-6 text-slate-600">
@@ -288,7 +288,7 @@ definePageMeta({
           </div>
         </aside>
 
-        <main class="min-w-0">
+        <section class="min-w-0">
           <div class="mb-6 flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
             <div>
               <p class="text-xs font-semibold uppercase tracking-[0.2em] text-blue-600">
@@ -297,7 +297,7 @@ definePageMeta({
               <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
                 {{ t('reservationsList.title') }}
               </h1>
-              <p class="mt-3 max-w-2xl text-base leading-7 text-slate-500">
+              <p class="mt-3 max-w-2xl text-base leading-7 text-slate-600">
                 {{ t('reservationsList.subtitle') }}
               </p>
             </div>
@@ -317,7 +317,7 @@ definePageMeta({
             <button
               type="button"
               class="relative pb-4 text-sm font-semibold transition-colors"
-              :class="selectedTab === 'upcoming' ? 'text-blue-600' : 'text-slate-500 hover:text-slate-700'"
+              :class="selectedTab === 'upcoming' ? 'text-blue-600' : 'text-slate-600 hover:text-slate-700'"
               data-cy="reservation-tab-upcoming"
               @click="selectedTab = 'upcoming'"
             >
@@ -325,7 +325,7 @@ definePageMeta({
                 {{ t('reservationsList.upcoming') }}
                 <span
                   class="rounded-full px-2 py-0.5 text-[11px] font-bold"
-                  :class="selectedTab === 'upcoming' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-500'"
+                  :class="selectedTab === 'upcoming' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-600'"
                 >
                   {{ upcomingCount }}
                 </span>
@@ -339,7 +339,7 @@ definePageMeta({
             <button
               type="button"
               class="relative pb-4 text-sm font-semibold transition-colors"
-              :class="selectedTab === 'past' ? 'text-blue-600' : 'text-slate-500 hover:text-slate-700'"
+              :class="selectedTab === 'past' ? 'text-blue-600' : 'text-slate-600 hover:text-slate-700'"
               data-cy="reservation-tab-past"
               @click="selectedTab = 'past'"
             >
@@ -347,7 +347,7 @@ definePageMeta({
                 {{ t('reservationsList.past') }}
                 <span
                   class="rounded-full px-2 py-0.5 text-[11px] font-bold"
-                  :class="selectedTab === 'past' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-500'"
+                  :class="selectedTab === 'past' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-600'"
                 >
                   {{ pastCount }}
                 </span>
@@ -361,7 +361,7 @@ definePageMeta({
             <button
               type="button"
               class="relative pb-4 text-sm font-semibold transition-colors"
-              :class="selectedTab === 'cancelled' ? 'text-blue-600' : 'text-slate-500 hover:text-slate-700'"
+              :class="selectedTab === 'cancelled' ? 'text-blue-600' : 'text-slate-600 hover:text-slate-700'"
               data-cy="reservation-tab-cancelled"
               @click="selectedTab = 'cancelled'"
             >
@@ -369,7 +369,7 @@ definePageMeta({
                 {{ t('reservationsList.cancelled') }}
                 <span
                   class="rounded-full px-2 py-0.5 text-[11px] font-bold"
-                  :class="selectedTab === 'cancelled' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-500'"
+                  :class="selectedTab === 'cancelled' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-600'"
                 >
                   {{ cancelledCount }}
                 </span>
@@ -402,12 +402,12 @@ definePageMeta({
             data-cy="reservation-empty"
           >
             <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-slate-100">
-              <UIcon name="i-lucide-luggage" class="h-8 w-8 text-slate-500" />
+              <UIcon name="i-lucide-luggage" class="h-8 w-8 text-slate-600" />
             </div>
             <h2 class="mt-5 text-2xl font-bold tracking-tight text-slate-900">
               {{ t('reservationsList.emptyTitle') }}
             </h2>
-            <p class="mx-auto mt-3 max-w-[520px] text-slate-500">
+            <p class="mx-auto mt-3 max-w-[520px] text-slate-600">
               {{ t('reservationsList.emptyDescription') }}
             </p>
 
@@ -452,7 +452,7 @@ definePageMeta({
                       <h2 class="truncate text-2xl font-bold tracking-tight text-slate-900">
                         {{ reservation.propertyName }}
                       </h2>
-                      <p class="mt-1 flex items-center gap-1.5 text-sm text-slate-500">
+                      <p class="mt-1 flex items-center gap-1.5 text-sm text-slate-600">
                         <UIcon name="i-lucide-map-pin" class="h-4 w-4 shrink-0 text-blue-600" />
                         {{ reservation.location }}
                       </p>
@@ -462,7 +462,7 @@ definePageMeta({
                       <p class="text-3xl font-bold tracking-tight text-blue-600">
                         {{ reservation.totalLabel }}
                       </p>
-                      <p class="mt-1 text-sm text-slate-400">
+                      <p class="mt-1 text-sm text-slate-600">
                         {{ reservation.status === 'pending_payment' ? t('reservationsList.estimatedPrice') : t('reservationsList.totalPrice') }}
                       </p>
                     </div>
@@ -470,7 +470,7 @@ definePageMeta({
 
                   <div class="mt-6 grid gap-4 border-t border-slate-200 pt-5 sm:grid-cols-2">
                     <div class="rounded-2xl bg-slate-50 p-4">
-                      <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                      <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-600">
                         {{ t('booking.checkIn') }}
                       </p>
                       <p class="mt-1 text-[15px] font-semibold text-slate-900">
@@ -479,7 +479,7 @@ definePageMeta({
                     </div>
 
                     <div class="rounded-2xl bg-slate-50 p-4">
-                      <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                      <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-600">
                         {{ t('booking.checkOut') }}
                       </p>
                       <p class="mt-1 text-[15px] font-semibold text-slate-900">
@@ -488,7 +488,7 @@ definePageMeta({
                     </div>
                   </div>
 
-                  <div class="mt-5 flex flex-wrap items-center gap-4 text-sm text-slate-500">
+                  <div class="mt-5 flex flex-wrap items-center gap-4 text-sm text-slate-600">
                     <span class="inline-flex items-center gap-2">
                       <UIcon name="i-lucide-users" class="h-4.5 w-4.5 text-blue-600" />
                       {{ reservation.guestLabel }}
@@ -501,10 +501,10 @@ definePageMeta({
 
                   <div class="mt-6 flex flex-wrap gap-3 border-t border-slate-200 pt-5">
                     <template v-if="reservation.isModificationPendingPayment">
-                      <p class="w-full text-sm text-slate-500">{{ t('reservationsList.additionalPaymentAtCheckIn') }}</p>
+                      <p class="w-full text-sm text-slate-600">{{ t('reservationsList.additionalPaymentAtCheckIn') }}</p>
                     </template>
                     <template v-else-if="reservation.isModified">
-                      <p class="w-full text-sm text-slate-500">{{ t('reservationsList.modifiedReservationNoActions') }}</p>
+                      <p class="w-full text-sm text-slate-600">{{ t('reservationsList.modifiedReservationNoActions') }}</p>
                     </template>
                     <template v-else>
                       <UButton
@@ -537,7 +537,7 @@ definePageMeta({
               </div>
             </article>
           </div>
-        </main>
+        </section>
       </div>
     </div>
   </div>

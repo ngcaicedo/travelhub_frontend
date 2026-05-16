@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { h } from 'vue'
 import type { TableColumn } from '@nuxt/ui'
 import type { HostReservationItem, HostReservationsPage } from '~/types/hotel'
 
@@ -74,7 +75,7 @@ const columns = computed<TableColumn<HostReservationItem>[]>(() => {
     },
     {
       id: 'actions',
-      header: '',
+      header: () => h('span', { class: 'sr-only' }, t('hotel.dashboard.table.headers.actions')),
       meta: { class: { td: 'w-10 text-right', th: 'w-10' } }
     }
   ]
@@ -105,9 +106,9 @@ const currentPage = computed({
   <UCard>
     <template #header>
       <div class="flex items-center justify-between">
-        <h3 class="text-base font-bold text-(--ui-text-highlighted)">
+        <h2 class="text-base font-bold text-(--ui-text-highlighted)">
           {{ t('hotel.dashboard.table.title') }}
-        </h3>
+        </h2>
         <span class="text-xs text-(--ui-text-muted)">
           {{ t('hotel.dashboard.table.totalLabel', { total: data?.total ?? 0 }) }}
         </span>

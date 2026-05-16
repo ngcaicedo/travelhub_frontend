@@ -26,10 +26,10 @@ const tabItems = computed<TabsItem[]>(() => [
     }"
   >
     <div class="mb-8">
-      <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">
+      <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">
         {{ $t('auth.register.title') }}
-      </h2>
-      <p class="mt-2 text-base text-slate-500">
+      </h1>
+      <p class="mt-2 text-base text-slate-600">
         {{ $t('auth.register.subtitle') }}
       </p>
     </div>

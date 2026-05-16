@@ -10,9 +10,9 @@ describe('RegisterPage', () => {
 
   it('renders title and subtitle', async () => {
     const wrapper = await mountSuspended(RegisterPage)
-    const h2 = wrapper.find('h2')
-    expect(h2.exists()).toBe(true)
-    expect(h2.text().length).toBeGreaterThan(0)
+    const h1 = wrapper.find('h1')
+    expect(h1.exists()).toBe(true)
+    expect(h1.text().length).toBeGreaterThan(0)
   })
 
   it('renders the account type tabs', async () => {

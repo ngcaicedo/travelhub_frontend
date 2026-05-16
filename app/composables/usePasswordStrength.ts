@@ -6,10 +6,10 @@ interface StrengthTier {
 
 const TIERS: [string, string, string][] = [
   ['', '', ''],
-  ['auth.register.strengthWeak', 'bg-error-500', 'text-error-500'],
-  ['auth.register.strengthMedium', 'bg-travelhub-500', 'text-travelhub-500'],
-  ['auth.register.strengthStrong', 'bg-success-500', 'text-success-500'],
-  ['auth.register.strengthVeryStrong', 'bg-success-500', 'text-success-500']
+  ['auth.register.strengthWeak', 'bg-error-500', 'text-error-700'],
+  ['auth.register.strengthMedium', 'bg-travelhub-500', 'text-travelhub-700'],
+  ['auth.register.strengthStrong', 'bg-success-500', 'text-success-700'],
+  ['auth.register.strengthVeryStrong', 'bg-success-500', 'text-success-700']
 ]
 
 export function usePasswordStrength(password: Ref<string>) {

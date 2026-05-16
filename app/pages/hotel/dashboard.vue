@@ -355,6 +355,16 @@ function onCurrencyChange(value: string) {
       <p class="text-base text-(--ui-text-muted)">
         {{ t('hotel.dashboard.welcomeSubtitle') }}
       </p>
+      <div class="pt-2">
+        <UButton
+          to="/hotel/pricing"
+          icon="i-lucide-badge-dollar-sign"
+          color="neutral"
+          variant="soft"
+        >
+          {{ t('hotel.dashboard.manageSeasonalPricing') }}
+        </UButton>
+      </div>
     </div>
 
     <UAlert

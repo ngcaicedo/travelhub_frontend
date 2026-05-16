@@ -1199,7 +1199,7 @@ async function simulateDuplicate() {
               >
                 {{ stripeNotice }}
               </p>
-              <p class="mt-3 text-xs text-slate-400">
+              <p class="mt-3 text-xs text-slate-600">
                 {{ t('payments.integration.securityNoticeStripeHint') }}
               </p>
             </div>
@@ -1320,7 +1320,7 @@ async function simulateDuplicate() {
                       {{ eventDetail(event) }}
                     </p>
                   </div>
-                  <time class="text-xs text-slate-400">{{ formatDate(event.created_at) }}</time>
+                  <time class="text-xs text-slate-600">{{ formatDate(event.created_at) }}</time>
                 </div>
               </li>
             </ul>
@@ -1334,7 +1334,7 @@ async function simulateDuplicate() {
         </div>
       </div>
 
-      <aside class="rounded-[2rem] border border-slate-200 bg-white p-4 shadow-sm">
+      <div class="rounded-[2rem] border border-slate-200 bg-white p-4 shadow-sm">
         <img
           :src="booking.coverUrl"
           :alt="booking.property"
@@ -1352,14 +1352,14 @@ async function simulateDuplicate() {
           </div>
           <div class="mt-6 grid grid-cols-2 gap-4 border-y border-slate-100 py-5 text-sm">
             <div>
-              <p class="text-xs uppercase tracking-[0.2em] text-slate-400">
+              <p class="text-xs uppercase tracking-[0.2em] text-slate-600">
                 {{ t('payments.summary.dates') }}
               </p><p class="mt-2 font-medium text-slate-900">
                 {{ booking.dates }}
               </p>
             </div>
             <div>
-              <p class="text-xs uppercase tracking-[0.2em] text-slate-400">
+              <p class="text-xs uppercase tracking-[0.2em] text-slate-600">
                 {{ t('payments.summary.guests') }}
               </p><p class="mt-2 font-medium text-slate-900">
                 {{ booking.guests }}
@@ -1367,7 +1367,7 @@ async function simulateDuplicate() {
             </div>
           </div>
           <div class="mt-6">
-            <p class="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
+            <p class="text-xs font-semibold uppercase tracking-[0.25em] text-slate-600">
               {{ t('payments.summary.breakdown') }}
             </p><ul class="mt-4 space-y-3 text-sm text-slate-600">
               <li
@@ -1386,11 +1386,11 @@ async function simulateDuplicate() {
               {{ formatMoney(form.amountInCents, form.currency) }}
             </p>
           </div>
-          <p class="mt-6 text-center text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+          <p class="mt-6 text-center text-xs font-semibold uppercase tracking-[0.2em] text-slate-600">
             {{ t('payments.summary.footer') }}
           </p>
         </div>
-      </aside>
+      </div>
     </div>
   </section>
 </template>
