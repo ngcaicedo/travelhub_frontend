@@ -8,7 +8,7 @@ import {
   cancelHotelReservation,
   getHotelReservations
 } from '~/services/reservationService'
-import { getAllProperties } from '~/services/propertyServices'
+import { getPropertiesByOwner } from '~/services/propertyServices'
 
 const authStore = useAuthStore()
 const route = useRoute()
@@ -145,7 +145,13 @@ function closeCancelModal() {
 }
 
 async function loadProperties() {
-  properties.value = await getAllProperties()
+  // Scope to the partner's own properties — see comment in pages/hotel/pricing/index.vue.
+  const ownerId = authStore.userId
+  if (!ownerId) {
+    properties.value = []
+    return
+  }
+  properties.value = await getPropertiesByOwner(ownerId)
   if (!selectedPropertyId.value && properties.value.length > 0) {
     selectedPropertyId.value = properties.value[0]!.id
   }
