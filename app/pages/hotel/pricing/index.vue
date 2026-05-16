@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Property } from '~/types/api'
-import { getAllProperties } from '~/services/propertyServices'
+import { getPropertiesByOwner } from '~/services/propertyServices'
+import { useAuthStore } from '~/stores/auth'
 
 definePageMeta({
   layout: 'hotel',
@@ -8,6 +9,7 @@ definePageMeta({
 })
 
 const { t } = useI18n()
+const auth = useAuthStore()
 
 const loading = ref(false)
 const error = ref<string | null>(null)
@@ -17,7 +19,15 @@ async function loadProperties() {
   loading.value = true
   error.value = null
   try {
-    properties.value = await getAllProperties()
+    // Scope the listing to the logged-in partner's properties only — without
+    // the owner_id filter the backend returns *every* hotel in the system and
+    // any write attempt hits 403 (see issue with Hotel Galeras Centro).
+    const ownerId = auth.userId
+    if (!ownerId) {
+      error.value = 'errors.unauthorized'
+      return
+    }
+    properties.value = await getPropertiesByOwner(ownerId)
   } catch (e: unknown) {
     const apiError = e as { message?: string }
     error.value = apiError.message ?? 'errors.unknown'
