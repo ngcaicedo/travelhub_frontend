@@ -745,6 +745,7 @@
     "nav": {
       "dashboard": "Painel",
       "pricing": "Preços",
+      "incomeReport": "Relatório de receitas",
       "portalLabel": "Portal Estratégico",
       "adminAccount": "Conta Admin"
     },
@@ -975,6 +976,45 @@
       "errors": {
         "notFound": "Reserva não encontrada.",
         "load": "Não foi possível carregar o detalhe da reserva."
+      }
+    },
+    "income": {
+      "metaTitle": "Relatório de receitas",
+      "title": "Relatório de receitas",
+      "subtitle": "Avalie o desempenho comercial do seu hotel.",
+      "picker": {
+        "year": "Ano",
+        "month": "Mês",
+        "fullYear": "Ano completo",
+        "months": {
+          "jan": "Janeiro",
+          "feb": "Fevereiro",
+          "mar": "Março",
+          "apr": "Abril",
+          "may": "Maio",
+          "jun": "Junho",
+          "jul": "Julho",
+          "aug": "Agosto",
+          "sep": "Setembro",
+          "oct": "Outubro",
+          "nov": "Novembro",
+          "dec": "Dezembro"
+        }
+      },
+      "summary": {
+        "total": "Receita total",
+        "vsLastPeriod": "vs. período anterior",
+        "increase": "Aumento",
+        "decrease": "Diminuição",
+        "noChange": "Sem alteração"
+      },
+      "chart": {
+        "title": "Tendência de receitas",
+        "noData": "Sem dados para o período selecionado."
+      },
+      "errors": {
+        "load": "Não foi possível carregar o relatório de receitas.",
+        "unauthorized": "Você não tem permissão para ver relatórios financeiros."
       }
     }
   }

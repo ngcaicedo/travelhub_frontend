@@ -1,0 +1,10 @@
+{
+  "granularity": "day",
+  "currency": "COP",
+  "available_currencies": ["COP"],
+  "buckets": [
+    { "bucket": "2026-05-01", "revenue": "1300000", "reservations": 2 },
+    { "bucket": "2026-05-08", "revenue": "1950000", "reservations": 3 },
+    { "bucket": "2026-05-15", "revenue": "1950000", "reservations": 3 }
+  ]
+}

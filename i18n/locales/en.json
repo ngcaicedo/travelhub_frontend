@@ -743,6 +743,7 @@
   "hotel": {
     "nav": {
       "dashboard": "Dashboard",
+      "incomeReport": "Income Report",
       "pricing": "Pricing",
       "portalLabel": "Strategic Portal",
       "adminAccount": "Admin Account"
@@ -974,6 +975,45 @@
       "errors": {
         "notFound": "Reservation not found.",
         "load": "Could not load reservation detail."
+      }
+    },
+    "income": {
+      "metaTitle": "Income Report",
+      "title": "Income Report",
+      "subtitle": "Evaluate your hotel's commercial performance.",
+      "picker": {
+        "year": "Year",
+        "month": "Month",
+        "fullYear": "Full year",
+        "months": {
+          "jan": "January",
+          "feb": "February",
+          "mar": "March",
+          "apr": "April",
+          "may": "May",
+          "jun": "June",
+          "jul": "July",
+          "aug": "August",
+          "sep": "September",
+          "oct": "October",
+          "nov": "November",
+          "dec": "December"
+        }
+      },
+      "summary": {
+        "total": "Total income",
+        "vsLastPeriod": "vs. previous period",
+        "increase": "Increase",
+        "decrease": "Decrease",
+        "noChange": "No change"
+      },
+      "chart": {
+        "title": "Income trend",
+        "noData": "No data for the selected period."
+      },
+      "errors": {
+        "load": "Could not load the income report.",
+        "unauthorized": "You do not have permission to view financial reports."
       }
     }
   }

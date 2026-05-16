@@ -1,0 +1,9 @@
+{
+  "active_reservations": 8,
+  "occupancy_rate": 0.65,
+  "revenue_amount": "5200000.00",
+  "revenue_currency": "COP",
+  "available_currencies": ["COP"],
+  "average_daily_rate": "650000.00",
+  "total_nights": 8
+}
