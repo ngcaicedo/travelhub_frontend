@@ -28,10 +28,11 @@ describe('RegisterForm', () => {
       expect(wrapper.find('[data-cy="register-contact-name"]').exists()).toBe(false)
     })
 
-    it('renders common fields: email, phone, password', async () => {
+    it('renders common fields: email, phone, country, password', async () => {
       const wrapper = await mountSuspended(RegisterForm, { props: { type: 'traveler' } })
       expect(wrapper.find('[data-cy="register-email"]').exists()).toBe(true)
       expect(wrapper.find('[data-cy="register-phone"]').exists()).toBe(true)
+      expect(wrapper.find('[data-cy="register-country"]').exists()).toBe(true)
       expect(wrapper.find('[data-cy="register-password"]').exists()).toBe(true)
     })
 
@@ -58,12 +59,13 @@ describe('RegisterForm', () => {
 
       // Set form state directly via VM
       const vm = wrapper.vm as unknown as {
-        form: { fullName: string, email: string, phone: string, password: string }
+        form: { fullName: string, email: string, phone: string, countryCode: string, password: string }
         agreeTerms: boolean
       }
       vm.form.fullName = 'John Doe'
       vm.form.email = 'john@example.com'
       vm.form.phone = '+1234567890'
+      vm.form.countryCode = 'US'
       vm.form.password = 'StrongPass123!'
       vm.agreeTerms = true
 
@@ -75,6 +77,7 @@ describe('RegisterForm', () => {
         expect.objectContaining({
           email: 'john@example.com',
           full_name: 'John Doe',
+          country_code: 'US',
           role: 'traveler'
         })
       )
@@ -141,13 +144,14 @@ describe('RegisterForm', () => {
       const wrapper = await mountSuspended(RegisterForm, { props: { type: 'hotelPartner' } })
 
       const vm = wrapper.vm as unknown as {
-        form: { hotelName: string, contactName: string, email: string, phone: string, password: string }
+        form: { hotelName: string, contactName: string, email: string, phone: string, countryCode: string, password: string }
         agreeTerms: boolean
       }
       vm.form.hotelName = 'My Hotel'
       vm.form.contactName = 'Jane Smith'
       vm.form.email = 'jane@hotel.com'
       vm.form.phone = '+1234567890'
+      vm.form.countryCode = 'BR'
       vm.form.password = 'StrongPass123!'
       vm.agreeTerms = true
 
@@ -159,7 +163,8 @@ describe('RegisterForm', () => {
         expect.objectContaining({
           role: 'hotel',
           hotel_name: 'My Hotel',
-          full_name: 'Jane Smith'
+          full_name: 'Jane Smith',
+          country_code: 'BR'
         })
       )
     })
