@@ -16,6 +16,7 @@ describe('usersService', () => {
       phone: '+123',
       password: 'pass',
       full_name: 'John',
+      country_code: 'CO',
       role: 'traveler' as const
     }
 

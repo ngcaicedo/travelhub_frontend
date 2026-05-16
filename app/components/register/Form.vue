@@ -12,6 +12,7 @@ const { t } = useI18n()
 interface BaseForm {
   email: string
   phone: string
+  countryCode: string
   password: string
 }
 
@@ -28,8 +29,8 @@ type FormType = TravelerForm | HotelPartnerForm
 
 const form = reactive<FormType>(
   props.type === 'traveler'
-    ? { fullName: '', email: '', phone: '', password: '' }
-    : { hotelName: '', contactName: '', email: '', phone: '', password: '' }
+    ? { fullName: '', email: '', phone: '', countryCode: 'CO', password: '' }
+    : { hotelName: '', contactName: '', email: '', phone: '', countryCode: 'CO', password: '' }
 )
 
 const showPassword = ref(false)
@@ -37,6 +38,13 @@ const agreeTerms = ref(false)
 const error = ref('')
 const isLoading = ref(false)
 const { score, label, bgColor, textColor } = usePasswordStrength(toRef(() => form.password))
+const countryOptions = computed(() => [
+  { label: t('auth.register.countries.CO'), value: 'CO' },
+  { label: t('auth.register.countries.US'), value: 'US' },
+  { label: t('auth.register.countries.BR'), value: 'BR' },
+  { label: t('auth.register.countries.ES'), value: 'ES' },
+  { label: t('auth.register.countries.PT'), value: 'PT' }
+])
 
 async function onSubmit() {
   if (!agreeTerms.value) {
@@ -48,7 +56,7 @@ async function onSubmit() {
   isLoading.value = true
 
   try {
-    const base = { email: form.email, phone: form.phone, password: form.password }
+    const base = { email: form.email, phone: form.phone, country_code: form.countryCode, password: form.password }
     const payload: RegisterPayload
       = props.type === 'traveler'
         ? { ...base, full_name: (form as TravelerForm).fullName, role: 'traveler' }
@@ -142,6 +150,17 @@ async function onSubmit() {
           size="xl"
           class="w-full"
           data-cy="register-phone"
+        />
+      </UFormField>
+
+      <UFormField :label="$t('auth.register.country')">
+        <USelect
+          v-model="form.countryCode"
+          :items="countryOptions"
+          icon="i-lucide-map-pin"
+          size="xl"
+          class="w-full"
+          data-cy="register-country"
         />
       </UFormField>
 
