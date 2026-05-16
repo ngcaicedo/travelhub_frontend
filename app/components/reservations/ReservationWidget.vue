@@ -35,8 +35,7 @@ const reservationLockDurationMs = 15 * 60 * 1000
 
 const props = defineProps<Props>()
 const emit = defineEmits<{
-  (e: 'update:checkInDate', value: string): void
-  (e: 'update:checkOutDate', value: string): void
+  (e: 'update:checkInDate' | 'update:checkOutDate', value: string): void
 }>()
 
 const checkInDate = ref<string>(props.initialCheckInDate || '')

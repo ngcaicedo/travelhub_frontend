@@ -9,6 +9,7 @@ const props = withDefaults(defineProps<{
 }>(), {
   loading: false,
   canEdit: true,
+  submitLabel: '',
 })
 
 const { t } = useI18n()

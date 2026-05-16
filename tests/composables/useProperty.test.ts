@@ -52,7 +52,7 @@ describe('useProperty', () => {
     })
 
     const wrapper = await mountSuspended(TestComponent)
-    expect(mockGetPropertyDetails).toHaveBeenCalledWith('prop-1')
+    expect(mockGetPropertyDetails).toHaveBeenCalledWith('prop-1', { checkIn: null, checkOut: null })
     expect(wrapper.text()).toContain('Test Villa')
   })
 
