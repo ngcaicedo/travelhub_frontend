@@ -10,11 +10,18 @@ vi.mock('~/stores/auth', () => ({
     token: 'jwt-token',
     isAuthenticated: true,
     isHotelUser: true,
+    // Real auth store derives `userId` from the JWT claim `sub`. The page now
+    // uses it to scope the property listing to the logged-in partner.
+    userId: 'owner-1',
   }),
 }))
 
 vi.mock('~/services/propertyServices', () => ({
+  // Both names are exported because some tests import the unscoped helper.
   getAllProperties: vi.fn().mockResolvedValue([
+    { id: 'prop-1', name: 'Hotel Andes' },
+  ]),
+  getPropertiesByOwner: vi.fn().mockResolvedValue([
     { id: 'prop-1', name: 'Hotel Andes' },
   ]),
 }))
@@ -38,7 +45,7 @@ vi.mock('#app', async () => {
 const textMatchers = {
   dashboard: ['Dashboard de reservas', 'Reservations dashboard', 'Painel de reservas'],
   cancel: ['Cancelar', 'Cancel'],
-  cancelModalTitle: ['Confirmar cancelación', 'Confirm cancellation', 'Confirmar cancelamento'],
+  cancelModalTitle: ['Confirmar cancelaciï¿½n', 'Confirm cancellation', 'Confirmar cancelamento'],
   reservationSummary: ['Resumen de la reserva', 'Reservation summary', 'Resumo da reserva'],
 }
 
