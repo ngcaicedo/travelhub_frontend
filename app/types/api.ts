@@ -6,6 +6,7 @@ export interface RegisterPayload {
   password: string
   full_name: string
   hotel_name?: string
+  country_code?: string
   role: UserRole
 }
 
@@ -25,6 +26,8 @@ export interface UserResponse {
   phone: string
   full_name: string
   hotel_name?: string
+  country_code: string
+  data_region: string
   status: number
 }
 // API Response & Request types

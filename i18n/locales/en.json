@@ -170,6 +170,14 @@
       "emailPlaceholder": "john{'@'}example.com",
       "phone": "Phone Number",
       "phonePlaceholder": "3001234567",
+      "country": "Country of residence",
+      "countries": {
+        "CO": "Colombia",
+        "US": "United States",
+        "BR": "Brazil",
+        "ES": "Spain",
+        "PT": "Portugal"
+      },
       "password": "Password",
       "passwordPlaceholder": "â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢",
       "passwordHint": "At least 8 characters",
