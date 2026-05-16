@@ -24,6 +24,8 @@ export interface SearchResultItem {
   main_image_url: string | null
   rating: number
   price_from: string
+  base_price_from?: string | null
+  has_seasonal_discount?: boolean
   currency: string
   amenities: readonly string[]
 }

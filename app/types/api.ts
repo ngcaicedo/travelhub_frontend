@@ -46,6 +46,8 @@ export interface Property {
   latitude?: number
   longitude?: number
   price_per_night: number
+  base_price_per_night?: number | null
+  has_seasonal_discount?: boolean
   currency: string
   rating: number
   review_count: number

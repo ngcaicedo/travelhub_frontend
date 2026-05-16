@@ -16,13 +16,13 @@ const route = useRoute()
 // Simulamos que recibimos el ID de la propiedad desde la ruta
 const propertyId = computed(() => decodePropertyRouteId(route.params.id as string | undefined))
 
-// Extract reservation dates from search query params
-const initialCheckInDate = computed(() => {
+// Extract reservation dates from search query params (initial values).
+const initialCheckInFromQuery = computed(() => {
   const value = route.query.check_in
   return typeof value === 'string' ? value : ''
 })
 
-const initialCheckOutDate = computed(() => {
+const initialCheckOutFromQuery = computed(() => {
   const value = route.query.check_out
   return typeof value === 'string' ? value : ''
 })
@@ -32,7 +32,21 @@ const initialNumberOfGuests = computed(() => {
   return Number.isFinite(value) && value > 0 ? value : undefined
 })
 
-const { property, reviews, loading } = useProperty(propertyId)
+
+const selectedCheckIn = ref(initialCheckInFromQuery.value)
+const selectedCheckOut = ref(initialCheckOutFromQuery.value)
+
+watch(initialCheckInFromQuery, (value) => {
+  if (value) selectedCheckIn.value = value
+})
+watch(initialCheckOutFromQuery, (value) => {
+  if (value) selectedCheckOut.value = value
+})
+
+const { property, reviews, loading } = useProperty(propertyId, {
+  checkIn: selectedCheckIn,
+  checkOut: selectedCheckOut,
+})
 
 const breadcrumbItems = computed(() => [
   { label: t('nav.home'), icon: 'i-lucide-home', to: '/properties' },
@@ -160,9 +174,11 @@ definePageMeta({
             <div class="sticky top-20 space-y-4">
               <ReservationWidget
                 :property="property"
-                :initial-check-in-date="initialCheckInDate"
-                :initial-check-out-date="initialCheckOutDate"
+                :initial-check-in-date="selectedCheckIn"
+                :initial-check-out-date="selectedCheckOut"
                 :initial-number-of-guests="initialNumberOfGuests"
+                @update:check-in-date="selectedCheckIn = $event"
+                @update:check-out-date="selectedCheckOut = $event"
               />
 
               <!-- Traveler Protection -->
